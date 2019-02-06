@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2019 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
  */
 package io.personium.core.model.lock;
 
-
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- * Utility to manage Lock.
+ * Utility to manage Account Lock.
  */
 public abstract class AccountLockManager extends LockManager {
 
     abstract Lock getLock(String fullKey);
+
     abstract Boolean putLock(String fullKey, Lock lock);
 
     /**
@@ -34,28 +34,77 @@ public abstract class AccountLockManager extends LockManager {
     public static final String CATEGORY_ACCOUNT_LOCK = "AccountLock_";
 
     /**
-     * Write AccountLock to memcached.
+     * Countup failed count to memcached.
      * Lock time follows properties.
      * @param accountId Account ID that failed authentication
      */
-    public static void registAccountLockObjct(final String accountId) {
-        String key =  CATEGORY_ACCOUNT_LOCK + accountId;
-        if (!singleton.doPutAccountLock(key, "", accountLockLifeTime)) {
+    public static void countupFailedCount(final String accountId) {
+        if (accountLockCount <= 0 || accountLockTime <= 0) {
+            return;
+        }
+
+        int failedCount = getFailedCount(accountId);
+        failedCount++;
+
+        // put failed count to memcached.
+        String key = CATEGORY_ACCOUNT_LOCK + accountId;
+        if (!singleton.doPutAccountLock(key, failedCount, accountLockTime)) {
             throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }
     }
 
     /**
-     * Check the status of AccountLock.
+     * Check the account locked.
      * @param accountId account ID
      * @return TRUE: Lock / FALSE: Unlock
      */
-    public static boolean hasLockObject(final String accountId) {
+    public static boolean isLockedAccount(final String accountId) {
+        if (accountLockCount <= 0 || accountLockTime <= 0) {
+            return false;
+        }
+
+        int failedCount = getFailedCount(accountId);
+        if (failedCount >= accountLockCount) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * release account lock.
+     * @param accountId account ID
+     */
+    public static void releaseAccountLock(final String accountId) {
+        if (accountLockCount <= 0 || accountLockTime <= 0) {
+            return;
+        }
+
+        String key = CATEGORY_ACCOUNT_LOCK + accountId;
         try {
-            String key =  CATEGORY_ACCOUNT_LOCK + accountId;
-            //Confirm Lock of target account
-            String lockPublic = singleton.doGetAccountLock(key);
-            return lockPublic != null;
+            singleton.doReleaseAccountLock(key);
+        } catch (MemcachedClientException e) {
+            throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
+        }
+    }
+
+    /**
+     * get failed count from memcached.
+     * @param accountId account ID
+     * @return failed count
+     */
+    public static int getFailedCount(final String accountId) {
+        if (accountLockCount <= 0 || accountLockTime <= 0) {
+            return 0;
+        }
+
+        String key = CATEGORY_ACCOUNT_LOCK + accountId;
+        try {
+            Integer failedCount = singleton.doGetAccountLock(key);
+            if (failedCount != null) {
+                return failedCount.intValue();
+            } else {
+                return 0;
+            }
         } catch (MemcachedClientException e) {
             throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }

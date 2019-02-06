@@ -100,30 +100,6 @@ public class Common {
      */
     public static final String PATTERN_ROLE_CLASS_URL = "(^.+)__role/__/(" + REGEX_NAME + ")/?$";
     /**
-     * Pattern service path using personium-localbox "/$1/$2".<br>
-     * Explanation of applicable group.<br>
-     * $1:CollectionName
-     * $2:ServiceName
-     */
-    public static final String PATTERN_SERVICE_LOCALBOX_PATH = "/(" + REGEX_NAME + ")/(" + REGEX_NAME + ")$";
-    /**
-     * Pattern service path using personium-localcell "/$1/$2/$3".<br>
-     * Explanation of applicable group.<br>
-     * $1:BoxName
-     * $2:CollectionName
-     * $3:ServiceName
-     */
-    public static final String PATTERN_SERVICE_LOCALCELL_PATH = "/(" + REGEX_NAME + "|__)" + PATTERN_SERVICE_LOCALBOX_PATH; // CHECKSTYLE IGNORE - To maintain readability
-    /**
-     * Pattern service path using personium-localunit "/$1/$2/$3/$4".<br>
-     * Explanation of applicable group.<br>
-     * $1:CellName
-     * $2:BoxName
-     * $3:CollectionName
-     * $4:ServiceName
-     */
-    public static final String PATTERN_SERVICE_LOCALUNIT_PATH = "/(" + REGEX_NAME + ")" + PATTERN_SERVICE_LOCALCELL_PATH; // CHECKSTYLE IGNORE - To maintain readability
-    /**
      * Pattern cell path using personium-localunit "/$1/".<br>
      * Explanation of applicable group.<br>
      * $1:CellName

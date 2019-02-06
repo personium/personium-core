@@ -17,6 +17,7 @@
 package io.personium.core.rule.action;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class LogAction extends Action {
      */
     public LogAction(final Cell cell, LEVEL level) {
         this();
-        String unitUserName = getUnitUserName(cell.getOwner());
+        String unitUserName = getUnitUserName(Optional.ofNullable(cell.getOwner()));
         String prefix1 = cell.getId().substring(IDX_1ST_START, IDX_1ST_END);
         String prefix2 = cell.getId().substring(IDX_2ND_START, IDX_2ND_END);
         String path = new StringBuilder(unitUserName)
@@ -90,13 +91,9 @@ public class LogAction extends Action {
      * @param owner owner of cell
      * @return UnitUserName
      */
-    private String getUnitUserName(final String owner) {
-        String unitUserName = null;
-        if (owner == null) {
-            unitUserName = "anon";
-        } else {
-            unitUserName = IndexNameEncoder.encodeEsIndexName(owner);
-        }
+    private String getUnitUserName(final Optional<String> owner) {
+        String unitUserName  = owner.map(o -> IndexNameEncoder.encodeEsIndexName(o))
+                                    .orElse("anon");
         return unitUserName;
     }
 
@@ -118,10 +115,8 @@ public class LogAction extends Action {
      */
     @Override
     public PersoniumEvent execute(PersoniumEvent event) {
-        String requestKey = event.getRequestKey();
-        if (requestKey == null) {
-            requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
-        }
+        String requestKey = event.getRequestKey()
+                                 .orElse(ResourceUtils.validateXPersoniumRequestKey(null));
         outputLog(event, requestKey);
         clearEventLogPath();
         return null;
@@ -134,19 +129,13 @@ public class LogAction extends Action {
      */
     @Override
     public PersoniumEvent execute(PersoniumEvent[] events) {
-        String commonRequestKey = null;
+        Optional<String> commonRequestKey = Optional.empty();
 
-        for (PersoniumEvent event : events) {
-            String requestKey = event.getRequestKey();
-            if (requestKey == null) {
-                if (commonRequestKey != null) {
-                    requestKey = commonRequestKey;
-                } else {
-                    requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
-                }
-            }
-            if (commonRequestKey == null) {
-                commonRequestKey = requestKey;
+        for (PersoniumEvent event: events) {
+            String requestKey = event.getRequestKey()
+                                     .orElse(commonRequestKey.orElse(ResourceUtils.validateXPersoniumRequestKey(null)));
+            if (!commonRequestKey.isPresent()) {
+                commonRequestKey = Optional.ofNullable(requestKey);
             }
             outputLog(event, requestKey);
         }
@@ -176,11 +165,12 @@ public class LogAction extends Action {
                 .toString();
     }
 
+    private String makeCsvItem(Optional<String> item) {
+        return item.map(i -> makeCsvItem(i)).orElse(null);
+    }
+
     // convert to CSV format
     private String makeCsvItem(String item) {
-        if (null == item) {
-            return item;
-        }
         String replacedItem = item.replaceAll("\"", "\"\"");
         return new StringBuilder("\"")
                 .append(replacedItem)

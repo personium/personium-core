@@ -69,9 +69,6 @@ public class PersoniumUnitConfig {
     /** Port number key for UnitUrl. */
     public static final String UNIT_PORT = KEY_ROOT + "unitPort";
 
-    /** Path key for UnitUrl. */
-    public static final String UNIT_PATH = KEY_ROOT + "unitPath";
-
     /** URL format to access cell (true: path based(default) false: per cell fqdn). */
     public static final String PATH_BASED_CELL_URL_ENABLED = KEY_ROOT + "pathBasedCellUrl.enabled";
 
@@ -137,8 +134,7 @@ public class PersoniumUnitConfig {
      * Setting around Account.
      */
     public static final class Account {
-        /** Whether or not to update the last login time of Account at the time of successful password authentication (true: Update (default) false: Do not update).*/
-        public static final String ACCOUNT_LAST_AUTHENTICATED_ENABLED = KEY_ROOT + "account.lastauthenticated.enabled";
+        // TODO add properties later.
     }
 
     /**
@@ -173,9 +169,6 @@ public class PersoniumUnitConfig {
         /** Type of Lock Tolerance: memcached.*/
         public static final String TYPE = KEY_ROOT + "lock.type";
 
-        /** Account lock expiration date (s).*/
-        public static final String ACCOUNTLOCK_LIFETIME = KEY_ROOT + "lock.accountlock.time";
-
         /** Number of retries at lock acquisition.*/
         public static final String RETRY_TIMES = KEY_ROOT + "lock.retry.times";
 
@@ -196,6 +189,28 @@ public class PersoniumUnitConfig {
 
         /** Lock memcached operation Timeout value (ms).*/
         public static final String MEMCACHED_OPTIMEOUT = KEY_ROOT + "lock.memcached.opTimeout";
+    }
+
+    /**
+     * Authn setting.
+     */
+    public static final class Authn {
+        /** Account lock expiration failed count.*/
+        public static final String ACCOUNT_LOCK_COUNT = KEY_ROOT + "authn.account.lockCount";
+        /** Account lock expiration failed count maximum value. */
+        private static final Long ACCOUNT_LOCK_COUNT_MAX = 100L;
+        /** Account lock expiration failed count minimum value. */
+        private static final Long ACCOUNT_LOCK_COUNT_MIN = 0L;
+
+        /** Account lock expiration time (s).*/
+        public static final String ACCOUNT_LOCK_TIME = KEY_ROOT + "authn.account.lockTime";
+        /** Account lock expiration time maximum value. */
+        private static final Long ACCOUNT_LOCK_TIME_MAX = 2592000L;
+        /** Account lock expiration time minimum value. */
+        private static final Long ACCOUNT_LOCK_TIME_MIN = 0L;
+
+        /** Account valid authentication interval time (s).*/
+        public static final String ACCOUNT_VALID_AUTHN_INTERVAL = KEY_ROOT + "authn.account.validAuthnInterval";
     }
 
     /**
@@ -371,11 +386,8 @@ public class PersoniumUnitConfig {
         /** message queue implementation to use. */
         public static final String MQ = KEY_ROOT + "eventbus.mq";
 
-        /** ActiveMQ broker url. */
-        public static final String ACTIVEMQ_BROKER_URL = KEY_ROOT + "eventbus.activemq.brokerUrl";
-
-        /** Kafka servers. */
-        public static final String KAFKA_SERVERS = KEY_ROOT + "eventbus.kafka.bootstrap.servers";
+        /** broker. */
+        public static final String BROKER = KEY_ROOT + "eventbus.broker";
 
         /** queue name of EventBus. */
         public static final String QUEUE = KEY_ROOT + "eventbus.queue";
@@ -388,6 +400,22 @@ public class PersoniumUnitConfig {
 
         /** Number of threads to process event. */
         public static final String EVENTPROC_THREAD_NUM = KEY_ROOT + "eventbus.eventProcessing.thread.num";
+    }
+
+    /**
+     * Stream configurations.
+     */
+    public static final class Stream {
+        /** Message queue implementation to use. */
+        public static final String MQ = KEY_ROOT + "stream.mq";
+        /** Broker. */
+        public static final String BROKER = KEY_ROOT + "stream.broker";
+        /** username to connect to broker. */
+        public static final String USERNAME = KEY_ROOT + "stream.username";
+        /** password to connect to broker. */
+        public static final String PASSWORD = KEY_ROOT + "stream.password";
+        /** data retention period. */
+        public static final String EXPIRESIN = KEY_ROOT + "stream.expiresIn";
     }
 
     /**
@@ -431,6 +459,7 @@ public class PersoniumUnitConfig {
      */
     protected PersoniumUnitConfig() {
         this.doReload();
+        this.doCheckProperties();
     }
 
     /**
@@ -565,6 +594,33 @@ public class PersoniumUnitConfig {
     }
 
     /**
+     * check a properties.
+     */
+    private synchronized void doCheckProperties() {
+        checkNumber(Authn.ACCOUNT_LOCK_COUNT, Authn.ACCOUNT_LOCK_COUNT_MIN, Authn.ACCOUNT_LOCK_COUNT_MAX);
+        checkNumber(Authn.ACCOUNT_LOCK_TIME, Authn.ACCOUNT_LOCK_TIME_MIN, Authn.ACCOUNT_LOCK_TIME_MAX);
+    }
+
+    /**
+     * check parameter is number and within range.
+     *
+     * @param key properity key
+     * @param min manimum value (Unlimited if null is set)
+     * @param max maximum value (Unlimited if null is set)
+     */
+    private void checkNumber(String key, Long min, Long max) {
+        // check is number.
+        try {
+            long value = Long.parseLong(this.props.getProperty(key));
+            if (min != null && value < min || max != null && value > max) {
+                throw new RuntimeException("illegal parameter. " + key + " out of range.");
+            }
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("illegal parameter. " + key + " number format error.", e);
+        }
+    }
+
+    /**
      * Acquire setting value.
      * @param key
      * @return setting value
@@ -677,14 +733,6 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Get path for Unit.
-     * @return path
-     */
-    public static String getUnitPath() {
-        return get(UNIT_PATH);
-    }
-
-    /**
      * URL format to access cell.
      * @return true: path based. false: per cell fqdn.
      */
@@ -704,22 +752,12 @@ public class PersoniumUnitConfig {
      * @return base url
      */
     public static String getBaseUrl() {
-        String path = getUnitPath();
-        if (path != null) {
-            if (path.endsWith("/")) {
-                path = path.substring(0, path.length() - 1);
-            }
-        } else {
-            path = "";
-        }
-
-        UriBuilder uriBuilder = UriBuilder
-                .fromPath(path)
-                .scheme(getUnitScheme())
-                .host(PersoniumCoreUtils.getFQDN())
-                .port(getUnitPort());
-
-        return uriBuilder.build().toString() + "/";
+         return UriBuilder.fromPath("/")
+                          .scheme(getUnitScheme())
+                          .host(PersoniumCoreUtils.getFQDN())
+                          .port(getUnitPort())
+                          .build()
+                          .toString();
     }
 
     /**
@@ -881,10 +919,17 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return Account lock expiration date (s).
+     * @return Account lock expiration failed count.
      */
-    public static String getAccountLockLifetime() {
-        return get(Lock.ACCOUNTLOCK_LIFETIME);
+    public static int getAccountLockCount() {
+        return Integer.parseInt(get(Authn.ACCOUNT_LOCK_COUNT));
+    }
+
+    /**
+     * @return Account lock expiration time (s).
+     */
+    public static int getAccountLockTime() {
+        return Integer.parseInt(get(Authn.ACCOUNT_LOCK_TIME));
     }
 
     /**
@@ -934,6 +979,13 @@ public class PersoniumUnitConfig {
      */
     public static long getLockMemcachedOpTimeout() {
         return Long.parseLong(get(Lock.MEMCACHED_OPTIMEOUT));
+    }
+
+    /**
+     * @return Account valid authentication interval time (s).
+     */
+    public static int getAccountValidAuthnInterval() {
+        return Integer.parseInt(get(Authn.ACCOUNT_VALID_AUTHN_INTERVAL));
     }
 
     /**
@@ -1211,19 +1263,11 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Get broker url of setting for activemq.
+     * Get broker for EventBus.
      * @return broker url
      */
-    public static String getEventBusActiveMQBrokerUrl() {
-        return get(EventBus.ACTIVEMQ_BROKER_URL);
-    }
-
-    /**
-     * Get servers of setting for kafka.
-     * @return comma-separated servers
-     */
-    public static String getEventBusKafkaServers() {
-        return get(EventBus.KAFKA_SERVERS);
+    public static String getEventBusBroker() {
+        return get(EventBus.BROKER);
     }
 
     /**
@@ -1256,6 +1300,46 @@ public class PersoniumUnitConfig {
      */
     public static int getEventProcThreadNum() {
         return Integer.parseInt(get(EventBus.EVENTPROC_THREAD_NUM));
+    }
+
+    /**
+     * Get message queue implementation for Stream.
+     * @return message queue string
+     */
+    public static String getStreamMQ() {
+        return get(Stream.MQ);
+    }
+
+    /**
+     * Get broker for Stream.
+     * @return broker
+     */
+    public static String getStreamBroker() {
+        return get(Stream.BROKER);
+    }
+
+    /**
+     * Get username for Stream.
+     * @return username
+     */
+    public static String getStreamUsername() {
+        return get(Stream.USERNAME);
+    }
+
+    /**
+     * Get password for Stream.
+     * @return password
+     */
+    public static String getStreamPassword() {
+        return get(Stream.PASSWORD);
+    }
+
+    /**
+     * Get expiresIn for Stream.
+     * @return expiresIn
+     */
+    public static int getStreamExpiresIn() {
+        return Integer.parseInt(get(Stream.EXPIRESIN));
     }
 
     /**
@@ -1348,14 +1432,6 @@ public class PersoniumUnitConfig {
         int depth = getUserdataSimpleTypePropertyLimits().length;
         String expr = get(UserDataProperties.COMPLEX_TYPE_PROPERTY_LIMITS);
         return getPropertyLimits(expr, depth);
-    }
-
-    /**
-     * Whether or not to update the last login time of Account when password authentication is successful ().
-     * @return true: Update (default) false: Do not update
-     */
-    public static boolean getAccountLastAuthenticatedEnable() {
-        return Boolean.parseBoolean(get(Account.ACCOUNT_LAST_AUTHENTICATED_ENABLED));
     }
 
     /**

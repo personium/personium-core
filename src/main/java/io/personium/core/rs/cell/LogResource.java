@@ -63,7 +63,7 @@ import io.personium.core.annotations.PROPFIND;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
-import io.personium.core.event.EventUtils;
+import io.personium.core.eventlog.EventUtils;
 import io.personium.core.eventlog.ArchiveLogCollection;
 import io.personium.core.eventlog.ArchiveLogFile;
 import io.personium.core.model.Cell;

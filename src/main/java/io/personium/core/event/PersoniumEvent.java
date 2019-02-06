@@ -16,9 +16,16 @@
  */
 package io.personium.core.event;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import io.personium.common.auth.token.Role;
 import io.personium.core.model.DavRsCmp;
@@ -58,32 +65,32 @@ public class PersoniumEvent implements Serializable {
      * Get value of Subject.
      * @return value of Subject
      */
-    public final String getSubject() {
-        return subject;
+    public final Optional<String> getSubject() {
+        return Optional.ofNullable(subject);
     }
 
     /**
      * Get value of Type.
      * @return value of Type
      */
-    public final String getType() {
-        return type;
+    public final Optional<String> getType() {
+        return Optional.ofNullable(type);
     }
 
     /**
      * Get value of Schema.
      * @return value of Schema
      */
-    public final String getSchema() {
-        return schema;
+    public final Optional<String> getSchema() {
+        return Optional.ofNullable(schema);
     }
 
     /**
      * Get value of Object.
      * @return object string
      */
-    public final String getObject() {
-        return object;
+    public final Optional<String> getObject() {
+        return Optional.ofNullable(object);
     }
 
     /**
@@ -98,8 +105,8 @@ public class PersoniumEvent implements Serializable {
      * Get value of Info.
      * @return value of Info
      */
-    public String getInfo() {
-        return info;
+    public final Optional<String> getInfo() {
+        return Optional.ofNullable(info);
     }
 
     /**
@@ -114,40 +121,60 @@ public class PersoniumEvent implements Serializable {
      * Get value of RequestKey.
      * @return value of RequestKey
      */
-    public final String getRequestKey() {
-        return requestKey;
+    public final Optional<String> getRequestKey() {
+        return Optional.ofNullable(requestKey);
     }
 
     /**
      * Get value of EventId.
      * @return value of EventId
      */
-    public final String getEventId() {
-        return eventId;
+    public final Optional<String> getEventId() {
+        return Optional.ofNullable(eventId);
     }
 
     /**
      * Get value of RuleChain.
      * @return value of RuleChain
      */
-    public final String getRuleChain() {
-        return ruleChain;
+    public final Optional<String> getRuleChain() {
+        return Optional.ofNullable(ruleChain);
     }
 
     /**
      * Get value of Via.
      * @return value of Via
      */
-    public final String getVia() {
-        return via;
+    public final Optional<String> getVia() {
+        return Optional.ofNullable(via);
     }
 
     /**
      * Get value of roles.
      * @return value of roles
      */
-    public final String getRoles() {
-        return roles;
+    public final Optional<String> getRoles() {
+        return Optional.ofNullable(roles);
+    }
+
+    /**
+     * Get role list.
+     * @return role list
+     */
+    public final List<Role> getRoleList() {
+        return getRoles().map(rolesStr ->
+                              Stream.of(rolesStr.split(Pattern.quote(",")))
+                                    .map(r -> {
+                                         try {
+                                             URL url = new URL(r);
+                                             return new Role(url);
+                                         } catch (MalformedURLException e) {
+                                             return null;
+                                         }
+                                     })
+                                    .filter(role -> role != null)
+                                    .collect(Collectors.toList()))
+                         .orElse(new ArrayList<Role>());
     }
 
     /**
@@ -209,10 +236,7 @@ public class PersoniumEvent implements Serializable {
      * @param cellUrl cell url of cell that event belongs to
      */
     public void convertObject(String cellUrl) {
-        String result = UriUtils.convertSchemeFromLocalCellToHttp(cellUrl, this.object);
-        if (result != null) {
-            this.object = result;
-        }
+        this.object = UriUtils.convertSchemeFromLocalCellToHttp(cellUrl, this.object);
     }
 
     /**
@@ -287,6 +311,7 @@ public class PersoniumEvent implements Serializable {
          */
         public Builder() {
             this.external = INTERNAL_EVENT;
+            this.cellId = ""; // must not be null
         }
 
         /**
@@ -509,13 +534,8 @@ public class PersoniumEvent implements Serializable {
             }
             if (this.roles == null) {
                 List<Role> roleList = builder.davRsCmp.getAccessContext().getRoleList();
-                for (Role role : roleList) {
-                    if (this.roles == null) {
-                        this.roles = role.createUrl();
-                    } else {
-                        this.roles += "," + role.createUrl();
-                    }
-                }
+                List<String> list = roleList.stream().map(role -> role.createUrl()).collect(Collectors.toList());
+                this.roles = String.join(",", list);
             }
         }
     }

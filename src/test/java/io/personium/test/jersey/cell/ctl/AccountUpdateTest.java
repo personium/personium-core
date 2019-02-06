@@ -16,7 +16,6 @@
  */
 package io.personium.test.jersey.cell.ctl;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.apache.http.HttpStatus;
@@ -141,7 +140,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 元のユーザパスワードでは認証不可を確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // Accountを戻しておく
         this.userName = newUserName;
@@ -165,7 +164,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 元のユーザパスワードでは認証不可を確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // Accountを戻しておく
         this.userName = newUserName;
@@ -189,7 +188,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 元のユーザパスワードでは認証不可を確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // Accountを戻しておく
         this.updatePwd(this.orgUserName, this.orgPass, HttpStatus.SC_NO_CONTENT);
@@ -213,7 +212,7 @@ public class AccountUpdateTest extends ODataCommon {
         //
         // 元のユーザパスワードでは認証不可を確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // Accountを戻しておく
         this.userName = newUserName;
@@ -235,87 +234,6 @@ public class AccountUpdateTest extends ODataCommon {
             // Account更新
             AccountUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updateUserName,
                     orgPass, HttpStatus.SC_NO_CONTENT);
-            // Account取得
-            TResponse res = AccountUtils
-                    .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
-            String getLastAuthenticated = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                    .get("results"))
-                    .get("LastAuthenticated");
-            assertNull(getLastAuthenticated);
-        } finally {
-            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
-        }
-    }
-
-    /**
-     * アカウントを更新時にLastAuthenticatedにnullを指定して更新されること.
-     */
-    @Test
-    public final void アカウントを更新時にLastAuthenticatedにnullを指定して更新されること() {
-        String updateUserName = "account1999";
-        String updatePass = "password19999";
-
-        try {
-            // Account作成
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
-                    HttpStatus.SC_CREATED);
-            // Account更新
-            AccountUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updateUserName,
-                    orgPass, null, HttpStatus.SC_NO_CONTENT);
-            // Account取得
-            TResponse res = AccountUtils
-                    .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
-            String getLastAuthenticated = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                    .get("results"))
-                    .get("LastAuthenticated");
-            assertNull(getLastAuthenticated);
-        } finally {
-            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
-        }
-    }
-
-    /**
-     * アカウントを更新時にLastAuthenticatedに時刻を指定して更新されること.
-     */
-    @Test
-    public final void アカウントを更新時にLastAuthenticatedに時刻を指定して更新されること() {
-        String updateUserName = "account1999";
-        String updatePass = "password19999";
-
-        try {
-            // Account作成
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
-                    HttpStatus.SC_CREATED);
-            // Account更新
-            AccountUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updateUserName,
-                    orgPass, "/Date(1414656074074)/", HttpStatus.SC_NO_CONTENT);
-            // Account取得
-            TResponse res = AccountUtils
-                    .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
-            String getLastAuthenticated = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                    .get("results"))
-                    .get("LastAuthenticated");
-            assertEquals("/Date(1414656074074)/", getLastAuthenticated);
-        } finally {
-            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
-        }
-    }
-
-    /**
-     * アカウントを更新時にLastAuthenticatedに不正な書式を指定して400エラーとなること.
-     */
-    @Test
-    public final void アカウントを更新時にLastAuthenticatedに不正な書式を指定して400エラーとなること() {
-        String updateUserName = "account1999";
-        String updatePass = "password19999";
-
-        try {
-            // Account作成
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
-                    HttpStatus.SC_CREATED);
-            // Account更新
-            AccountUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updateUserName,
-                    orgPass, "/Date(1359340262406/", HttpStatus.SC_BAD_REQUEST);
             // Account取得
             TResponse res = AccountUtils
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
@@ -356,7 +274,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 更新失敗したAccountでは認証不可であることを確認
         this.auth(newUserName, newPassword, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // 元のユーザパスワードで認証可能であることを確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);
@@ -390,7 +308,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 更新失敗したAccountでは認証不可であることを確認
         this.auth(newUserName, newPassword, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // 元のユーザパスワードで認証可能であることを確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);
@@ -424,7 +342,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 更新失敗したAccountでは認証不可であることを確認
         this.auth(newUserName, newPassword, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // 元のユーザパスワードで認証可能であることを確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);

@@ -36,6 +36,7 @@ import java.util.Map;
 
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
@@ -53,8 +54,6 @@ import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwa.AlgorithmUtils;
 import org.apache.http.HttpResponse;
-import org.odata4j.core.OEntityKey;
-import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,23 +72,20 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumCoreMessageUtils;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellRsCmp;
-import io.personium.core.model.ModelFactory;
-import io.personium.core.model.ctl.Account;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.fs.CellKeysFile;
 import io.personium.core.odata.OEntityWrapper;
-import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.FacadeResource;
 import io.personium.core.utils.ResourceUtils;
 
@@ -114,6 +110,8 @@ public class AuthzEndPointResource {
 
     private final Cell cell;
     private final CellRsCmp cellRsCmp;
+    private String ipaddress;
+    private UriInfo requestURIInfo;
 
     /** Login form _ Javascript source file. */
     private static final String AJAX_FILE_NAME = "ajax.js";
@@ -125,13 +123,6 @@ public class AuthzEndPointResource {
     private static final String MSG_INCORRECT_ID_PASS = PersoniumCoreMessageUtils.getMessage("PS-AU-0004");
     /** Message when cookie authentication failed. */
     private static final String MSG_MISS_COOKIE = PersoniumCoreMessageUtils.getMessage("PS-AU-0005");
-    /** Message when account locked. */
-    private static final String MSG_ACCOUNT_LOCK = PersoniumCoreMessageUtils.getMessage("PS-AU-0006");
-
-    /**
-     * The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
-     */
-    private String accountId;
 
     /**
      * constructor.
@@ -157,6 +148,7 @@ public class AuthzEndPointResource {
      * @param keepLogin query parameter
      * @param isCancel Cancel flag
      * @param uriInfo context
+     * @param xForwardedFor X-Forwarded-For Header
      * @return JAX-RS Response Object
      */
     @GET
@@ -169,11 +161,11 @@ public class AuthzEndPointResource {
             @QueryParam(Key.SCOPE) final String scope,
             @QueryParam(Key.KEEPLOGIN) final String keepLogin,
             @QueryParam(Key.CANCEL_FLG) final String isCancel,
-            @Context final UriInfo uriInfo) {
+            @Context final UriInfo uriInfo,
+            @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
 
         return auth(responseType, clientId, redirectUri, null, null,
-                pCookie, state, scope, keepLogin, isCancel, uriInfo);
-
+                pCookie, state, scope, keepLogin, isCancel, uriInfo, xForwardedFor);
     }
 
     /**
@@ -184,13 +176,15 @@ public class AuthzEndPointResource {
      * @param pCookie p_cookie
      * @param formParams Body parameters
      * @param uriInfo context
+     * @param xForwardedFor X-Forwarded-For Header
      * @return JAX-RS Response Object
      */
     @POST
     public final Response authPost(
             @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
             MultivaluedMap<String, String> formParams,
-            @Context final UriInfo uriInfo) {
+            @Context final UriInfo uriInfo,
+            @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
         // Using @FormParam will cause a closed error on the library side in case of an incorrect body.
         // Since we can not catch Exception, retrieve the value after receiving it with MultivaluedMap.
         String responseType = formParams.getFirst(Key.RESPONSE_TYPE);
@@ -204,7 +198,7 @@ public class AuthzEndPointResource {
         String isCancel = formParams.getFirst(Key.CANCEL_FLG);
 
         return auth(responseType, clientId, redirectUri, username, password,
-                pCookie, state, scope, keepLogin, isCancel, uriInfo);
+                pCookie, state, scope, keepLogin, isCancel, uriInfo, xForwardedFor);
     }
 
     /**
@@ -241,9 +235,13 @@ public class AuthzEndPointResource {
             final String scope,
             final String keepLogin,
             final String isCancel,
-            final UriInfo uriInfo) {
+            final UriInfo uriInfo,
+            final String xForwardedFor) {
 
-        //clientId and redirectUri parameter check
+        this.requestURIInfo = uriInfo;
+        this.ipaddress = xForwardedFor;
+
+         //clientId and redirectUri parameter check
         try {
             this.validateClientIdAndRedirectUri(clientId, redirectUri);
         } catch (PersoniumCoreException e) {
@@ -283,16 +281,6 @@ public class AuthzEndPointResource {
             //When there is a setting in either user ID or password
             Response response = handlePassword(responseType, clientId, redirectUri,
                     username, password, state, scope, keepLogin);
-
-            if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()
-                    && isSuccessAuthorization(response)) {
-                //Obtain schema information of Account
-                PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(cell);
-                EdmEntitySet esetAccount = producer.getMetadata().getEdmEntitySet(Account.EDM_TYPE_NAME);
-                OEntityKey originalKey = OEntityKey.parse("('" + username + "')");
-                //Ask Producer to change the last login time (Get / release lock within this method)
-                producer.updateLastAuthenticated(esetAccount, originalKey, accountId);
-            }
             return response;
         } else if (pCookie != null) {
             return handlePCookie(responseType, clientId, redirectUri,
@@ -329,26 +317,43 @@ public class AuthzEndPointResource {
             return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
         }
         //In order to update the last login time, keep UUID in class variable
-        accountId = (String) oew.getUuid();
+        String accountId = (String) oew.getUuid();
 
-        //Check lock
         Boolean isLock = true;
         try {
+            //Check valid authentication interval
+            isLock = AuthResourceUtils.isLockedInterval(accountId);
+            if (isLock) {
+                //Update lock time of memcached
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
+                PersoniumCoreLog.Auth.AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
+            }
+
+            //Check account lock
             isLock = AuthResourceUtils.isLockedAccount(accountId);
             if (isLock) {
                 //Update lock time of memcached
-                AuthResourceUtils.registAccountLock(accountId);
-                // Message is the same as ID / PASS error. intentional?
-                log.info("responseMessage : " + MSG_ACCOUNT_LOCK);
-                return returnHtmlForm(responseType, clientId, redirectUri, MSG_ACCOUNT_LOCK, state, scope);
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
+                PersoniumCoreLog.Auth.AUTHN_FAILED_ACCOUNT_IS_LOCKED.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
             }
 
             //Check user ID and password
             passCheck = cell.authenticateAccount(oew, password);
             if (!passCheck) {
                 //Make lock on memcached
-                AuthResourceUtils.registAccountLock(accountId);
-                log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
+                PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_PASSWORD.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
             }
         } catch (PersoniumCoreException e) {
@@ -393,6 +398,19 @@ public class AuthzEndPointResource {
         if (StringUtils.isNotEmpty(state)) {
             paramMap.put(OAuth2Helper.Key.STATE, state);
         }
+
+        // get last auth history.
+        AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
+                cellRsCmp.getDavCmp().getFsPath(), accountId);
+        String lastAuthenticated = last.getLastAuthenticated() != null ? last.getLastAuthenticated().toString() : null;
+        String failedCount = last.getFailedCount() != null ? last.getFailedCount().toString() : null;
+        paramMap.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
+        paramMap.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
+        // update auth history.
+        AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId);
+        // release account lock.
+        AuthResourceUtils.releaseAccountLock(accountId);
+
         return returnSuccessRedirect(responseType, redirectUri, paramMap, keepLogin);
     }
 

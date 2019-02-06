@@ -72,13 +72,10 @@ public class AuthErrorTest extends PersoniumTest {
             // 他のテストと共用するAccountを使用すると、認証失敗のロックがかかり、テストが失敗する。このため、このテスト独自のAccountを作成する
             AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, accountName, "password1",
                     HttpStatus.SC_CREATED);
-
-            Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(TEST_CELL1, accountName);
             Http.request("authn/password-cl-c0.txt")
                     .with("remoteCell", TEST_CELL1)
                     .with("username", accountName).with("password", "password2")
                     .returns().statusCode(HttpStatus.SC_BAD_REQUEST);
-            AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(TEST_CELL1, accountName, lastAuthenticatedTime);
         } finally {
             AccountUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountName, -1);
         }
@@ -313,7 +310,7 @@ public class AuthErrorTest extends PersoniumTest {
     @Test
     public final void パスワード認証APIのヘッダにclient_secretの指定がない場合_400が返却されること() {
         String schemaTransCellAccessTokenHeader =
-                "Basic " + PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
+                PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
 
         // セルに対してパスワード認証
         TResponse passRes = Http.request("authn/auth-with-header.txt")
@@ -387,7 +384,7 @@ public class AuthErrorTest extends PersoniumTest {
         String transCellAccessToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
         String schemaTransCellAccessTokenHeader =
-                "Basic " + PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
+                PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
 
         // セルに対してトークン認証
         TResponse tokenRes =
@@ -459,7 +456,7 @@ public class AuthErrorTest extends PersoniumTest {
         String refreshToken = (String) json.get(OAuth2Helper.Key.REFRESH_TOKEN);
 
         String schemaTransCellAccessTokenHeader =
-                "Basic " + PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
+                PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
         // リフレッシュトークン認証
         TResponse tokenRes = Http.request("authn/auth-with-header.txt")
                 .with("remoteCell", TEST_CELL1)

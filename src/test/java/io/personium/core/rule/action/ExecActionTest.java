@@ -17,14 +17,11 @@
 package io.personium.core.rule.action;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import org.json.simple.JSONObject;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -32,7 +29,6 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.event.PersoniumEvent;
-import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
 import io.personium.test.categories.Unit;
 
@@ -43,154 +39,6 @@ import io.personium.test.categories.Unit;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ PersoniumUnitConfig.class })
 public class ExecActionTest {
-
-    /**
-     * Test getRequestUrl().
-     * Normal test.
-     * @throws Exception exception occurred in some errors
-     */
-    @Test
-    public void getRequestUrl_Normal() throws Exception {
-        // --------------------
-        // Test method args
-        // --------------------
-        String service = "http://personium/cell/box/col/service";
-        String cellName = "cell";
-        String boxName = "box";
-        String svcName = "service";
-        String engineHost = "personium.engine";
-        int enginePort = 8080;
-        String enginePath = "personium-engine";
-        String cellUrl = "http://personium/cell/";
-
-        // --------------------
-        // Expected result
-        // --------------------
-        String expected = String.format("http://%s:%d/%s/%s/%s/service/%s",
-                engineHost, enginePort, enginePath, cellName, boxName, svcName);
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        PowerMockito.spy(PersoniumUnitConfig.class);
-        PowerMockito.doReturn(engineHost).when(PersoniumUnitConfig.class, "getEngineHost");
-        PowerMockito.doReturn(enginePort).when(PersoniumUnitConfig.class, "getEnginePort");
-        PowerMockito.doReturn(enginePath).when(PersoniumUnitConfig.class, "getEnginePath");
-        Cell cell = mock(Cell.class);
-        PowerMockito.doReturn(cellUrl).when(cell).getUrl();
-        PowerMockito.doReturn(cellName).when(cell).getName();
-
-        // --------------------
-        // Run method
-        // --------------------
-        ActionInfo ai = new ActionInfo(null, service, null, null);
-        ExecAction action = new ExecAction(cell, ai);
-        String result = action.getRequestUrl();
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(result, is(expected));
-    }
-
-    /**
-     * Test getRequestUrl().
-     * Normal test.
-     * service is null.
-     * @throws Exception exception occurred in some errors
-     */
-    @Test
-    public void getRequestUrl_Normal_service_is_null() throws Exception {
-        // --------------------
-        // Test method args
-        // --------------------
-        String service = null;
-        String cellUrl = "http://personium/cell/";
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Cell cell = mock(Cell.class);
-        PowerMockito.doReturn(cellUrl).when(cell).getUrl();
-
-        // --------------------
-        // Run method
-        // --------------------
-        ActionInfo ai = new ActionInfo(null, service, null, null);
-        ExecAction action = new ExecAction(cell, ai);
-        String result = action.getRequestUrl();
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertNull(result);
-    }
-
-    /**
-     * Test getRequestUrl().
-     * Normal test.
-     * service is invalid.
-     * @throws Exception exception occurred in some errors
-     */
-    @Test
-    public void getRequestUrl_Normal_service_is_invalid() throws Exception {
-        // --------------------
-        // Test method args
-        // --------------------
-        String service = "/personium/cell";
-        String cellUrl = "http://personium/cell/";
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Cell cell = mock(Cell.class);
-        PowerMockito.doReturn(cellUrl).when(cell).getUrl();
-
-        // --------------------
-        // Run method
-        // --------------------
-        ActionInfo ai = new ActionInfo(null, service, null, null);
-        ExecAction action = new ExecAction(cell, ai);
-        String result = action.getRequestUrl();
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertNull(result);
-    }
-
-    /**
-     * Test getRequestUrl().
-     * Normal test.
-     * service is incorrect.
-     * @throws Exception exception occurred in some errors
-     */
-    @Test
-    public void getRequestUrl_Normal_service_is_incorrect() throws Exception {
-        // --------------------
-        // Test method args
-        // --------------------
-        String service = "http://personium/cell/box/svc";
-        String cellUrl = "http://personium/cell/";
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Cell cell = mock(Cell.class);
-        PowerMockito.doReturn(cellUrl).when(cell).getUrl();
-
-        // --------------------
-        // Run method
-        // --------------------
-        ActionInfo ai = new ActionInfo(null, service, null, null);
-        ExecAction action = new ExecAction(cell, ai);
-        String result = action.getRequestUrl();
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertNull(result);
-    }
 
     /**
      * Test createEvent().
@@ -229,12 +77,12 @@ public class ExecActionTest {
                 .via("via")
                 .roles("roles")
                 .build();
-        JSONObject json = action.createEvent(event);
+        Map<String, Object> map = action.createEvent(event);
 
         // --------------------
         // Confirm result
         // --------------------
-        assertThat(json.size(), is(size));
+        assertThat(map.size(), is(size));
     }
 
     /**
@@ -274,12 +122,12 @@ public class ExecActionTest {
                 .via("via")
                 .roles("roles")
                 .build();
-        JSONObject json = action.createEvent(event);
+        Map<String, Object> map = action.createEvent(event);
 
         // --------------------
         // Confirm result
         // --------------------
-        assertThat(json.size(), is(size));
+        assertThat(map.size(), is(size));
     }
 
     /**
@@ -319,12 +167,12 @@ public class ExecActionTest {
                 .via("via")
                 .roles("roles")
                 .build();
-        JSONObject json = action.createEvent(event);
+        Map<String, Object> map = action.createEvent(event);
 
         // --------------------
         // Confirm result
         // --------------------
-        assertThat(json.size(), is(size));
+        assertThat(map.size(), is(size));
     }
 
 }

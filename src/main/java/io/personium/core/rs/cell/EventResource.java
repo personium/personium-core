@@ -17,11 +17,11 @@
 package io.personium.core.rs.cell;
 
 import java.io.Reader;
+import java.util.Map;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.core.Response;
 
-import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,8 +112,8 @@ public class EventResource {
      * @return Analyzed Event object
      */
     private PersoniumEvent getRequestBody(final Reader reader) {
-        JSONObject body;
-        body = ResourceUtils.parseBodyAsJSON(reader);
+        Map<String, Object> body;
+        body = ResourceUtils.parseBodyAsJsonToMap(reader);
 
         Object obj;
 
@@ -138,15 +138,13 @@ public class EventResource {
         }
         String info = (String) body.get("Info");
 
-        PersoniumEvent ev = new PersoniumEvent.Builder()
-                .external()
-                .type(type)
-                .object(object)
-                .info(info)
-                .davRsCmp(this.davRsCmp)
-                .build();
-
-        return ev;
+        return new PersoniumEvent.Builder()
+                                 .external()
+                                 .type(type)
+                                 .object(object)
+                                 .info(info)
+                                 .davRsCmp(this.davRsCmp)
+                                 .build();
     }
 
     /**
@@ -154,18 +152,24 @@ public class EventResource {
      * @param event Event object
      */
     private void validateEventProperties(final PersoniumEvent event) {
-        String type = event.getType();
-        if (type != null && !PersoniumEvent.validateType(type)) {
-            throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Type");
-        }
-        String object = event.getObject();
-        if (object != null && !PersoniumEvent.validateObject(object)) {
-            throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Object");
-        }
-        String info = event.getInfo();
-        if (info != null && !PersoniumEvent.validateInfo(info)) {
-            throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Info");
-        }
+        event.getType()
+             .ifPresent(type -> {
+                  if (!PersoniumEvent.validateType(type)) {
+                      throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Type");
+                  }
+              });
+        event.getObject()
+             .ifPresent(object -> {
+                  if (!PersoniumEvent.validateObject(object)) {
+                      throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Object");
+                  }
+              });
+        event.getInfo()
+             .ifPresent(info -> {
+                  if (!PersoniumEvent.validateInfo(info)) {
+                      throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Info");
+                  }
+              });
     }
 
 }

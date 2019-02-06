@@ -16,17 +16,22 @@
  */
 package io.personium.core.rule;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import javax.ws.rs.core.UriBuilder;
+
 import org.odata4j.core.NamedValue;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
@@ -84,46 +89,46 @@ public class RuleManager {
         String object;
         String info;
         String action;
-        String service;
+        String targeturl;
         String boxname;
         BoxInfo box;
         String name;
+        long hitcount;
     }
 
     /** EventType definition for rule event. */
-    private static final String RULEEVENT_RULE_CREATE = PersoniumEventType.cellctl(
-            Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
-    private static final String RULEEVENT_RULE_UPDATE = PersoniumEventType.cellctl(
-            Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.UPDATE);
-    private static final String RULEEVENT_RULE_MERGE = PersoniumEventType.cellctl(
-            Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.MERGE);
-    private static final String RULEEVENT_RULE_DELETE = PersoniumEventType.cellctl(
-            Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
-    private static final String RULEEVENT_RULE_LINK_BOX_CREATE = PersoniumEventType.cellctlLink(
-            Rule.EDM_TYPE_NAME, Box.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
-    private static final String RULEEVENT_RULE_LINK_BOX_DELETE = PersoniumEventType.cellctlLink(
-            Rule.EDM_TYPE_NAME, Box.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
-    private static final String RULEEVENT_BOX_LINK_RULE_CREATE = PersoniumEventType.cellctlLink(
-            Box.EDM_TYPE_NAME, Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
-    private static final String RULEEVENT_BOX_LINK_RULE_DELETE = PersoniumEventType.cellctlLink(
-            Box.EDM_TYPE_NAME, Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
-    private static final String RULEEVENT_RULE_NAVPROP_BOX_CREATE = PersoniumEventType.cellctlNavProp(
-            Rule.EDM_TYPE_NAME, Box.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
-    private static final String RULEEVENT_BOX_NAVPROP_RULE_CREATE = PersoniumEventType.cellctlNavProp(
-            Box.EDM_TYPE_NAME, Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
-    private static final String RULEEVENT_BOX_UPDATE = PersoniumEventType.cellctl(
-            Box.EDM_TYPE_NAME, PersoniumEventType.Operation.UPDATE);
-    private static final String RULEEVENT_BOX_MERGE = PersoniumEventType.cellctl(
-            Box.EDM_TYPE_NAME, PersoniumEventType.Operation.MERGE);
-    private static final String RULEEVENT_CELL_IMPORT = PersoniumEventType.cell(
-            PersoniumEventType.Operation.IMPORT);
-
-    static final String LOCALUNIT = UriUtils.SCHEME_LOCALUNIT + ":";
-    static final String LOCALCELL = UriUtils.SCHEME_LOCALCELL + ":";
-    static final String LOCALBOX = UriUtils.SCHEME_LOCALBOX + ":";
+    private static final String RULEEVENT_RULE_CREATE =
+            PersoniumEventType.cellctl(Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+    private static final String RULEEVENT_RULE_UPDATE =
+            PersoniumEventType.cellctl(Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.UPDATE);
+    private static final String RULEEVENT_RULE_MERGE =
+            PersoniumEventType.cellctl(Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.MERGE);
+    private static final String RULEEVENT_RULE_DELETE =
+            PersoniumEventType.cellctl(Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
+    private static final String RULEEVENT_RULE_LINK_BOX_CREATE =
+            PersoniumEventType.cellctlLink(Rule.EDM_TYPE_NAME, Box.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+    private static final String RULEEVENT_RULE_LINK_BOX_DELETE =
+            PersoniumEventType.cellctlLink(Rule.EDM_TYPE_NAME, Box.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
+    private static final String RULEEVENT_BOX_LINK_RULE_CREATE =
+            PersoniumEventType.cellctlLink(Box.EDM_TYPE_NAME, Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+    private static final String RULEEVENT_BOX_LINK_RULE_DELETE =
+            PersoniumEventType.cellctlLink(Box.EDM_TYPE_NAME, Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
+    private static final String RULEEVENT_RULE_NAVPROP_BOX_CREATE =
+            PersoniumEventType.cellctlNavProp(Rule.EDM_TYPE_NAME,
+                                              Box.EDM_TYPE_NAME,
+                                              PersoniumEventType.Operation.CREATE);
+    private static final String RULEEVENT_BOX_NAVPROP_RULE_CREATE =
+            PersoniumEventType.cellctlNavProp(Box.EDM_TYPE_NAME,
+                                              Rule.EDM_TYPE_NAME,
+                                              PersoniumEventType.Operation.CREATE);
+    private static final String RULEEVENT_BOX_UPDATE =
+            PersoniumEventType.cellctl(Box.EDM_TYPE_NAME, PersoniumEventType.Operation.UPDATE);
+    private static final String RULEEVENT_BOX_MERGE =
+            PersoniumEventType.cellctl(Box.EDM_TYPE_NAME, PersoniumEventType.Operation.MERGE);
+    private static final String RULEEVENT_CELL_IMPORT = PersoniumEventType.cell(PersoniumEventType.Operation.IMPORT);
 
     private static RuleManager instance = null;
-    private TimerRuleManager timerRuleManager = null;
+    private Optional<TimerRuleManager> timerRuleManager = Optional.empty();
     private Map<String, Map<String, RuleInfo>> rules;
     private Map<String, Map<String, BoxInfo>> boxes;
     private Logger logger;
@@ -164,7 +169,7 @@ public class RuleManager {
     private void initialize() {
         // Initialize TimerRuleManager.
         if (PersoniumUnitConfig.getTimerEventThreadNum() > 0) {
-            timerRuleManager = TimerRuleManager.getInstance();
+            timerRuleManager = Optional.of(TimerRuleManager.getInstance());
         }
 
         // Load rules from DB.
@@ -189,10 +194,10 @@ public class RuleManager {
         ruleEventPublisher.close();
 
         // Finalize TimerRuleManager.
-        if (timerRuleManager != null) {
-            timerRuleManager.shutdown();
-            timerRuleManager = null;
-        }
+        timerRuleManager.ifPresent(manager -> {
+                             manager.shutdown();
+                         });
+        timerRuleManager = Optional.empty();
 
         // Shutdown thread pool.
         try {
@@ -208,7 +213,7 @@ public class RuleManager {
     }
 
     /**
-     * Match with rule and execute the matched rule.
+     * If the event matches with rule, then execute action of the matched rule.
      * @param event target event object
      */
     public void judge(PersoniumEvent event) {
@@ -217,9 +222,6 @@ public class RuleManager {
         }
 
         String cellId = event.getCellId();
-        if (cellId == null) {
-            return;
-        }
 
         Cell cell = ModelFactory.cellFromId(cellId);
         if (cell == null) {
@@ -234,16 +236,10 @@ public class RuleManager {
         CellLockManager.incrementReferenceCount(cell.getId());
 
         // set event id
-        String eventId = event.getEventId();
-        if (eventId == null) {
-            eventId = PersoniumUUID.randomUUID();
-        }
+        String eventId = event.getEventId().orElse(PersoniumUUID.randomUUID());
 
         List<ActionInfo> actionList = new ArrayList<ActionInfo>();
-        String ruleChain = event.getRuleChain();
-        if (ruleChain == null) {
-            ruleChain = "0";
-        }
+        String ruleChain = event.getRuleChain().orElse("0");
         try {
             int i = Integer.parseInt(ruleChain);
             i++;
@@ -262,27 +258,47 @@ public class RuleManager {
                 if (map != null) {
                     for (Map.Entry<String, RuleInfo> e : map.entrySet()) {
                         RuleInfo rule = e.getValue();
-                        if (match(rule, event)) {
-                            String service = rule.service;
-                            // replace personium-localcell and personium-localbox
-                            if (service != null) {
-                                if (service.startsWith(LOCALCELL)) {
-                                    service = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), service);
-                                } else if (service.startsWith(LOCALBOX)) {
-                                    synchronized (boxLockObj) {
-                                        String boxName = getBoxName(rule);
-                                        if (boxName != null) {
-                                            service = service.replace(LOCALBOX, cell.getUrl() + boxName);
-                                        } else {
-                                            logger.error(
-                                                    "ignore the Rule(%s) because _Box.Name is null.",
-                                                    rule.name);
-                                            continue;
+                        if (isMatched(rule, event)) {
+                            String targetUrl = rule.targeturl;
+                            // replace localcell and localbox
+                            if (targetUrl != null) {
+                                // get relative path to set as fragment
+                                //   {Cell URL}box/col/...#box/col/...
+                                String relative = null;
+                                try {
+                                    URI uri = new URI(targetUrl);
+                                    String scheme = uri.getScheme();
+                                    if (UriUtils.SCHEME_LOCALCELL.equals(scheme)) {
+                                        relative = uri.getPath().substring(1);
+                                        targetUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), targetUrl);
+                                    } else if (UriUtils.SCHEME_LOCALBOX.equals(scheme)) {
+                                        synchronized (boxLockObj) {
+                                            String boxName = getBoxName(rule);
+                                            if (boxName != null) {
+                                                relative = boxName + uri.getPath();
+                                                String boxUrl = cell.getUrl() + boxName + "/";
+                                                targetUrl = UriUtils.convertSchemeFromLocalBoxToHttp(boxUrl, targetUrl);
+                                            } else {
+                                                logger.error(
+                                                        "ignore the Rule(%s) because _Box.Name is null.",
+                                                        rule.name);
+                                                continue;
+                                            }
                                         }
                                     }
+                                    if (relative != null) {
+                                        targetUrl += "#" + relative;
+                                    }
+                                } catch (Exception ex) {
+                                    logger.error(
+                                            "ignore the Rule(%s) because TargetUrl is invalid.",
+                                            rule.name);
+                                    continue;
                                 }
                             }
-                            ActionInfo ai = new ActionInfo(rule.action, service, eventId, ruleChain);
+                            logger.debug("TargetUrl:{} -> {}", rule.targeturl, targetUrl);
+                            rule.hitcount++;
+                            ActionInfo ai = new ActionInfo(rule.action, targetUrl, eventId, ruleChain);
                             actionList.add(ai);
                         }
                     }
@@ -295,12 +311,13 @@ public class RuleManager {
 
         // when the type of the event is timer.periodic or timer.oneshot
         if (PersoniumEventType.timerPeriodic().equals(event.getType())
-                || PersoniumEventType.timerOneshot().equals(event.getType())) {
+            || PersoniumEventType.timerOneshot().equals(event.getType())) {
             // validate subject
-            String subject = event.getSubject();
-            if (subject != null && !subject.startsWith(cell.getUrl())) {
-                event.resetSubject();
-            }
+            event.getSubject().ifPresent(subject -> {
+                                   if (!subject.startsWith(cell.getUrl())) {
+                                       event.resetSubject();
+                                   }
+                               });
         }
 
         // execute action
@@ -318,23 +335,24 @@ public class RuleManager {
 
     private void publish(PersoniumEvent event) {
         // publish event about rule
-        String type = event.getType();
-        if (!event.getExternal()
-                && (RULEEVENT_RULE_CREATE.equals(type)
-                || RULEEVENT_RULE_UPDATE.equals(type)
-                || RULEEVENT_RULE_MERGE.equals(type)
-                || RULEEVENT_RULE_DELETE.equals(type)
-                || RULEEVENT_RULE_LINK_BOX_CREATE.equals(type)
-                || RULEEVENT_RULE_LINK_BOX_DELETE.equals(type)
-                || RULEEVENT_BOX_LINK_RULE_CREATE.equals(type)
-                || RULEEVENT_BOX_LINK_RULE_DELETE.equals(type)
-                || RULEEVENT_RULE_NAVPROP_BOX_CREATE.equals(type)
-                || RULEEVENT_BOX_NAVPROP_RULE_CREATE.equals(type)
-                || RULEEVENT_BOX_UPDATE.equals(type)
-                || RULEEVENT_BOX_MERGE.equals(type)
-                || RULEEVENT_CELL_IMPORT.equals(type))) {
-            ruleEventPublisher.send(event);
-        }
+        event.getType().ifPresent(type -> {
+                            if (!event.getExternal()
+                                && (RULEEVENT_RULE_CREATE.equals(type)
+                                    || RULEEVENT_RULE_UPDATE.equals(type)
+                                    || RULEEVENT_RULE_MERGE.equals(type)
+                                    || RULEEVENT_RULE_DELETE.equals(type)
+                                    || RULEEVENT_RULE_LINK_BOX_CREATE.equals(type)
+                                    || RULEEVENT_RULE_LINK_BOX_DELETE.equals(type)
+                                    || RULEEVENT_BOX_LINK_RULE_CREATE.equals(type)
+                                    || RULEEVENT_BOX_LINK_RULE_DELETE.equals(type)
+                                    || RULEEVENT_RULE_NAVPROP_BOX_CREATE.equals(type)
+                                    || RULEEVENT_BOX_NAVPROP_RULE_CREATE.equals(type)
+                                    || RULEEVENT_BOX_UPDATE.equals(type)
+                                    || RULEEVENT_BOX_MERGE.equals(type)
+                                    || RULEEVENT_CELL_IMPORT.equals(type))) {
+                               ruleEventPublisher.publish(event);
+                           }
+                       });
     }
 
     private String getBoxName(RuleInfo rule) {
@@ -351,8 +369,8 @@ public class RuleManager {
         return null;
     }
 
-    private boolean match(RuleInfo rule, PersoniumEvent event) {
-        if (rule == null || event == null) {
+    private boolean isMatched(RuleInfo rule, PersoniumEvent event) {
+        if (rule == null) {
             return false;
         }
 
@@ -366,9 +384,12 @@ public class RuleManager {
 
         // compare type
         if (rule.type != null) {
-            if (event.getType() == null) {
-                return false;
-            } else if (!event.getType().startsWith(rule.type)) {
+            // if rule.type is .xxx then backward match, otherwise forward match.
+            if (rule.type.startsWith(PersoniumEventType.SEPARATOR)) {
+                if (!event.getType().map(type -> type.endsWith(rule.type)).orElse(false)) {
+                    return false;
+                }
+            } else if (!event.getType().map(type -> type.startsWith(rule.type)).orElse(false)) {
                 return false;
             }
         }
@@ -376,41 +397,39 @@ public class RuleManager {
         // compare schema
         synchronized (boxLockObj) {
             String schema = getBoxSchema(rule);
-            if (schema != null && !schema.equals(event.getSchema())) {
+            if (schema != null
+                && !event.getSchema().map(s -> schema.equals(s)).orElse(false)) {
                 return false;
             }
         }
 
         // compare subject
-        if (rule.subject != null && !rule.subject.equals(event.getSubject())) {
+        if (rule.subject != null
+            && !event.getSubject().map(s -> rule.subject.equals(s)).orElse(false)) {
             return false;
         }
 
         // compare object
         String object = rule.object;
         if (object != null) {
-            synchronized (boxLockObj) {
-                String boxName = getBoxName(rule);
-                if (object.startsWith(LOCALBOX)) {
-                    // replace personium-localbox to personium-localcell
+            if (object.startsWith(UriUtils.SCHEME_BOX_URI)) {
+                // replace localbox to localcell
+                synchronized (boxLockObj) {
+                    String boxName = getBoxName(rule);
                     object = UriUtils.convertSchemeFromLocalBoxToLocalCell(object, boxName);
                     logger.debug(rule.object + " -> " + object);
                 }
             }
-            if (event.getObject() == null) {
-                return false;
-            } else if (!event.getObject().startsWith(object)) {
+            final String fobj = object;
+            if (!event.getObject().map(o -> o.startsWith(fobj)).orElse(false)) {
                 return false;
             }
         }
 
         // compare info
-        if (rule.info != null) {
-            if (event.getInfo() == null) {
-                return false;
-            } else if (!event.getInfo().startsWith(rule.info)) {
-                return false;
-            }
+        if (rule.info != null
+            && !event.getInfo().map(i -> i.startsWith(rule.info)).orElse(false)) {
+            return false;
         }
 
         return true;
@@ -470,9 +489,10 @@ public class RuleManager {
         rule.subject = (String) oEntity.getProperty(Rule.P_SUBJECT.getName()).getValue();
         rule.external = (Boolean) oEntity.getProperty(Rule.P_EXTERNAL.getName()).getValue();
         rule.action = (String) oEntity.getProperty(Rule.P_ACTION.getName()).getValue();
-        rule.service = (String) oEntity.getProperty(Rule.P_SERVICE.getName()).getValue();
+        rule.targeturl = (String) oEntity.getProperty(Rule.P_TARGETURL.getName()).getValue();
         rule.boxname = (String) oEntity.getProperty(Common.P_BOX_NAME.getName()).getValue();
         rule.name = (String) oEntity.getProperty(Rule.P_NAME.getName()).getValue();
+        rule.hitcount = 0;
 
         return rule;
     }
@@ -594,36 +614,36 @@ public class RuleManager {
 
         try {
 
-            String type = event.getType();
+            String type = event.getType().get();
             if (RULEEVENT_RULE_CREATE.equals(type)) {
                 // register
-                OEntityKey oEntityKey = convertFirst(event.getObject());
+                OEntityKey oEntityKey = convertFirst(event.getObject().get());
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
             } else if (RULEEVENT_RULE_UPDATE.equals(type) || RULEEVENT_RULE_MERGE.equals(type)) {
                 // unregister
-                OEntityKey oEntityKey = convertFirst(event.getObject());
+                OEntityKey oEntityKey = convertFirst(event.getObject().get());
                 ret = unregisterRuleByOEntityKey(oEntityKey, cell);
                 if (!ret) {
                     return ret;
                 }
                 // register
-                OEntityKey newOEntityKey = convertFirst(event.getInfo());
+                OEntityKey newOEntityKey = convertFirst(event.getInfo().get());
                 ret = registerRuleByOEntityKey(producer, newOEntityKey, cell);
             } else if (RULEEVENT_RULE_DELETE.equals(type)) {
                 // unregister
-                OEntityKey oEntityKey = convertFirst(event.getObject());
+                OEntityKey oEntityKey = convertFirst(event.getObject().get());
                 ret = unregisterRuleByOEntityKey(oEntityKey, cell);
             } else if (RULEEVENT_RULE_LINK_BOX_CREATE.equals(type)) {
                 // link (unregister & register)
-                OEntityKey ruleKey = convertFirst(event.getObject());
+                OEntityKey ruleKey = convertFirst(event.getObject().get());
                 ret = unregisterRuleByOEntityKey(ruleKey, cell);
                 // register
-                OEntityKey boxKey = convertSecond(event.getObject());
+                OEntityKey boxKey = convertSecond(event.getObject().get());
                 OEntityKey oEntityKey = createOEntityKeyFromBoxAndRule(boxKey, ruleKey);
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
             } else if (RULEEVENT_RULE_LINK_BOX_DELETE.equals(type)) {
                 // delete link (unregister & register)
-                OEntityKey ruleKey = convertFirst(event.getObject());
+                OEntityKey ruleKey = convertFirst(event.getObject().get());
                 ret = unregisterRuleByOEntityKey(ruleKey, cell);
                 // register
                 String ruleName = getComplexKeyValue(ruleKey, Rule.P_NAME.getName());
@@ -634,15 +654,15 @@ public class RuleManager {
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
             } else if (RULEEVENT_BOX_LINK_RULE_CREATE.equals(type)) {
                 // link (unregister & register)
-                OEntityKey ruleKey = convertSecond(event.getObject());
+                OEntityKey ruleKey = convertSecond(event.getObject().get());
                 ret = unregisterRuleByOEntityKey(ruleKey, cell);
                 // register
-                OEntityKey boxKey = convertFirst(event.getObject());
+                OEntityKey boxKey = convertFirst(event.getObject().get());
                 OEntityKey oEntityKey = createOEntityKeyFromBoxAndRule(boxKey, ruleKey);
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
             } else if (RULEEVENT_BOX_LINK_RULE_DELETE.equals(type)) {
                 // link (unregister & register)
-                OEntityKey ruleKey = convertSecond(event.getObject());
+                OEntityKey ruleKey = convertSecond(event.getObject().get());
                 ret = unregisterRuleByOEntityKey(ruleKey, cell);
                 // register
                 String ruleName = getComplexKeyValue(ruleKey, Rule.P_NAME.getName());
@@ -653,20 +673,20 @@ public class RuleManager {
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
             } else if (RULEEVENT_RULE_NAVPROP_BOX_CREATE.equals(type)) {
                 // link (unregister & register)
-                OEntityKey ruleKey = convertFirst(event.getObject());
+                OEntityKey ruleKey = convertFirst(event.getObject().get());
                 ret = unregisterRuleByOEntityKey(ruleKey, cell);
                 // register
-                OEntityKey boxKey = convertSecond(event.getObject());
+                OEntityKey boxKey = convertSecond(event.getObject().get());
                 OEntityKey oEntityKey = createOEntityKeyFromBoxAndRule(boxKey, ruleKey);
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
             } else if (RULEEVENT_BOX_NAVPROP_RULE_CREATE.equals(type)) {
                 // register
-                OEntityKey boxKey = convertFirst(event.getObject());
-                OEntityKey ruleKey = convertSecond(event.getObject());
+                OEntityKey boxKey = convertFirst(event.getObject().get());
+                OEntityKey ruleKey = convertSecond(event.getObject().get());
                 OEntityKey oEntityKey = createOEntityKeyFromBoxAndRule(boxKey, ruleKey);
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
             } else if (RULEEVENT_BOX_UPDATE.equals(type) || RULEEVENT_BOX_MERGE.equals(type)) {
-                OEntityKey boxKey = convertFirst(event.getInfo());
+                OEntityKey boxKey = convertFirst(event.getInfo().get());
                 String boxName = getComplexKeyValue(boxKey, Rule.P_NAME.getName());
                 Box box = cell.getBoxForName(boxName);
                 if (box != null) {
@@ -696,8 +716,7 @@ public class RuleManager {
                 if (bi != null) {
                     bi.name = box.getName();
                     String schema = box.getSchema();
-                    schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
-                    bi.schema = schema;
+                    bi.schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
                 }
             }
         }
@@ -744,6 +763,17 @@ public class RuleManager {
         }
     }
 
+    private String removeFragment(String url) {
+        try {
+            return UriBuilder.fromUri(url)
+                             .fragment(null)
+                             .build()
+                             .toString();
+        } catch (Exception e) {
+            return url;
+        }
+    }
+
     /**
      * Register rule by OEntity object.
      * @param oEntity OEntity object of Rule
@@ -756,13 +786,35 @@ public class RuleManager {
 
         // Replace personium-localunit scheme to http scheme.
         rule.subject = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.subject);
-        rule.service = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.service);
+        // Remove fragment from TargetUrl
+        rule.targeturl = removeFragment(rule.targeturl);
+        try {
+            URI uri = new URI(rule.targeturl);
+            if (UriUtils.SCHEME_LOCALUNIT.equals(uri.getScheme())) {
+                String path = uri.getPath();
+                List<String> list = Stream.of(path.split(Pattern.quote("/")))
+                                          .filter(s -> !s.isEmpty())
+                                          .collect(Collectors.toList());
+                String relative = null;
+                if (list.size() > 1) {
+                    list.remove(0);
+                    relative = list.stream().collect(Collectors.joining("/"));
+                }
+                String turl = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.targeturl);
+                if (relative != null) {
+                    turl += "#" + relative;
+                }
+                rule.targeturl = turl;
+            }
+        } catch (Exception e) {
+            logger.debug("exception occurred");
+        }
 
         if (rule.action == null) {
             return false;
         }
 
-        String cellId = cell.getId();
+        final String cellId = cell.getId();
 
         String boxId = null;
 
@@ -809,10 +861,14 @@ public class RuleManager {
             rmap.put(keyString, rule);
 
             // TimerRuleManager
-            if (timerRuleManager != null) {
-                timerRuleManager.registerRule(rule.name, rule.subject,
-                        rule.type, rule.object, rule.info, cellId, boxId);
-            }
+            final String fboxId = boxId;
+            timerRuleManager.ifPresent(manager -> manager.registerRule(rule.name,
+                                                                       rule.subject,
+                                                                       rule.type,
+                                                                       rule.object,
+                                                                       rule.info,
+                                                                       cellId,
+                                                                       fboxId));
         }
 
         return true;
@@ -856,10 +912,13 @@ public class RuleManager {
                     }
 
                     // TimerRuleManager
-                    if (timerRuleManager != null) {
-                        timerRuleManager.unregisterRule(rule.subject,
-                                rule.type, rule.object, rule.info, cell.getId(), boxId);
-                    }
+                    final String fboxId = boxId;
+                    timerRuleManager.ifPresent(manager -> manager.unregisterRule(rule.subject,
+                                                                                 rule.type,
+                                                                                 rule.object,
+                                                                                 rule.info,
+                                                                                 cell.getId(),
+                                                                                 fboxId));
 
                     return true;
                 }
@@ -872,57 +931,60 @@ public class RuleManager {
      * Get rules and boxes managed on RuleManager.
      * This method is for the debug purpose.
      * @param cell target cell object
-     * @return JSON format string of rules managed on RuleManager
+     * @return rules managed on RuleManager
      */
-    @SuppressWarnings("unchecked")
-    public String getRules(Cell cell) {
-        JSONObject jsonRules = new JSONObject();
-        JSONArray jsonRuleArray = new JSONArray();
-        JSONArray jsonBoxArray = new JSONArray();
+    public Map<String, Object> getRules(Cell cell) {
+        Map<String, Object> ret = new HashMap<>();
         String cellId = cell.getId();
         logger.info("cellId is " + cellId);
         synchronized (lockObj) {
-            Map<String, RuleInfo> mapRule = rules.get(cellId);
-            if (mapRule != null) {
-                logger.info("list is not null");
-                for (RuleInfo ri : mapRule.values()) {
-                    logger.info("rule");
-                    JSONObject json = new JSONObject();
-                    json.put(Rule.P_EXTERNAL.getName(), ri.external);
-                    json.put(Rule.P_SUBJECT.getName(), ri.subject);
-                    json.put(Rule.P_TYPE.getName(), ri.type);
-                    json.put(Rule.P_OBJECT.getName(), ri.object);
-                    json.put(Rule.P_INFO.getName(), ri.info);
-                    json.put(Rule.P_ACTION.getName(), ri.action);
-                    json.put(Rule.P_SERVICE.getName(), ri.service);
-                    if (ri.box != null) {
-                        json.put(Box.P_SCHEMA.getName(), ri.box.schema);
-                        json.put(Common.P_BOX_NAME.getName(), ri.box.name);
-                    }
-                    json.put(Rule.P_NAME.getName(), ri.name);
-                    jsonRuleArray.add(json);
-                }
-            }
-            synchronized (boxLockObj) {
-                Map<String, BoxInfo> mapBox = boxes.get(cellId);
-                if (mapBox != null) {
-                    for (BoxInfo bi : mapBox.values()) {
-                        JSONObject json = new JSONObject();
-                        json.put(Common.P_NAME.getName(), bi.name);
-                        json.put(Box.P_SCHEMA.getName(), bi.schema);
-                        json.put("id", bi.id);
-                        jsonBoxArray.add(json);
-                    }
-                }
-            }
-        }
-        jsonRules.put("rules", jsonRuleArray);
-        jsonRules.put("boxes", jsonBoxArray);
-        if (timerRuleManager != null) {
-            jsonRules.put("timers", timerRuleManager.getTimerList(cell));
-        }
+            Optional<Map<String, RuleInfo>> rulesForCell = Optional.ofNullable(rules.get(cellId));
+            List<Map<String, Object>> ruleList;
+            ruleList = rulesForCell.map(mapRule ->
+                                        mapRule.values()
+                                               .stream()
+                                               .map(ri -> {
+                                                    Map<String, Object> m = new HashMap<>();
+                                                    m.put(Rule.P_EXTERNAL.getName(), ri.external);
+                                                    m.put(Rule.P_SUBJECT.getName(), ri.subject);
+                                                    m.put(Rule.P_TYPE.getName(), ri.type);
+                                                    m.put(Rule.P_OBJECT.getName(), ri.object);
+                                                    m.put(Rule.P_INFO.getName(), ri.info);
+                                                    m.put(Rule.P_ACTION.getName(), ri.action);
+                                                    m.put(Rule.P_TARGETURL.getName(), ri.targeturl);
+                                                    if (ri.box != null) {
+                                                        m.put(Box.P_SCHEMA.getName(), ri.box.schema);
+                                                        m.put(Common.P_BOX_NAME.getName(), ri.box.name);
+                                                    }
+                                                    m.put(Rule.P_NAME.getName(), ri.name);
+                                                    m.put("HitCount", ri.hitcount);
+                                                    return m;
+                                                })
+                                               .collect(Collectors.toList()))
+                                  .orElse(new ArrayList<>());
+            ret.put("rules", ruleList);
 
-        return jsonRules.toString();
+            synchronized (boxLockObj) {
+                Optional<Map<String, BoxInfo>> boxesForCell = Optional.ofNullable(boxes.get(cellId));
+                List<Map<String, Object>> boxList;
+                boxList = boxesForCell.map(mapBox ->
+                                           mapBox.values()
+                                                 .stream()
+                                                 .map(bi -> {
+                                                      Map<String, Object> m = new HashMap<>();
+                                                      m.put(Common.P_NAME.getName(), bi.name);
+                                                      m.put(Box.P_SCHEMA.getName(), bi.schema);
+                                                      m.put("id", bi.id);
+                                                      return m;
+                                                  })
+                                                 .collect(Collectors.toList()))
+                                      .orElse(new ArrayList<>());
+                ret.put("boxes", boxList);
+            }
+        }
+        timerRuleManager.ifPresent(manager -> ret.put("timers", manager.getTimerList(cell)));
+
+        return ret;
     }
 
 }

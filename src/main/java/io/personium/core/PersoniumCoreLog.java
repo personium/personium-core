@@ -16,12 +16,12 @@
  */
 package io.personium.core;
 
-import io.personium.plugin.base.PluginMessageUtils.Severity;
-
 import java.text.MessageFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
  * Log message creation class.
@@ -103,6 +103,34 @@ public final class PersoniumCoreLog {
          * {0}: Detailed message
          */
         public static final PersoniumCoreLog UNSUPPORTED_ACCOUNT_GRANT_TYPE = create("PL-AU-0005");
+        /**
+         * Authentication failed. No such account.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog AUTHN_FAILED_NO_SUCH_ACCOUNT = create("PL-AU-0006");
+        /**
+         * Authentication failed. Consequtive authentication trial before valid authentication interval.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL = create("PL-AU-0007");
+        /**
+         * Authentication failed. Account is locked.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog AUTHN_FAILED_ACCOUNT_IS_LOCKED = create("PL-AU-0008");
+        /**
+         * Authentication failed. Incorrect password.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog AUTHN_FAILED_INCORRECT_PASSWORD = create("PL-AU-0009");
     }
 
     /**

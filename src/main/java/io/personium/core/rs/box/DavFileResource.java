@@ -81,16 +81,16 @@ public class DavFileResource {
         Response res = rb.build();
 
         // post event to EventBus
-        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
-                this.davRsCmp.getUrl());
-        String info = Integer.toString(res.getStatus());
         String type = PersoniumEventType.webdav(PersoniumEventType.Operation.UPDATE);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(res.getStatus());
         PersoniumEvent event = new PersoniumEvent.Builder()
-                .type(type)
-                .object(object)
-                .info(info)
-                .davRsCmp(this.davRsCmp)
-                .build();
+                                                 .type(type)
+                                                 .object(object)
+                                                 .info(info)
+                                                 .davRsCmp(this.davRsCmp)
+                                                 .build();
         EventBus eventBus = this.davRsCmp.getCell().getEventBus();
         eventBus.post(event);
 
@@ -116,15 +116,15 @@ public class DavFileResource {
 
         // post event to EventBus
         String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
-                this.davRsCmp.getUrl());
+                                                                  this.davRsCmp.getUrl());
         String info = Integer.toString(res.getStatus());
         String type = PersoniumEventType.webdav(PersoniumEventType.Operation.GET);
         PersoniumEvent event = new PersoniumEvent.Builder()
-                .type(type)
-                .object(object)
-                .info(info)
-                .davRsCmp(this.davRsCmp)
-                .build();
+                                                 .type(type)
+                                                 .object(object)
+                                                 .info(info)
+                                                 .davRsCmp(this.davRsCmp)
+                                                 .build();
         EventBus eventBus = this.davRsCmp.getCell().getEventBus();
         eventBus.post(event);
 
@@ -147,16 +147,16 @@ public class DavFileResource {
         Response res = rb.build();
 
         // post event to EventBus
-        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
-                this.davRsCmp.getUrl());
-        String info = Integer.toString(res.getStatus());
         String type = PersoniumEventType.webdav(PersoniumEventType.Operation.DELETE);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(res.getStatus());
         PersoniumEvent event = new PersoniumEvent.Builder()
-                .type(type)
-                .object(object)
-                .info(info)
-                .davRsCmp(this.davRsCmp)
-                .build();
+                                                 .type(type)
+                                                 .object(object)
+                                                 .info(info)
+                                                 .davRsCmp(this.davRsCmp)
+                                                 .build();
         EventBus eventBus = this.davRsCmp.getCell().getEventBus();
         eventBus.post(event);
 
@@ -174,7 +174,23 @@ public class DavFileResource {
         // Access Control
         this.davRsCmp.checkAccessContext(
                 this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
-        return this.davRsCmp.doProppatch(requestBodyXml);
+        Response response = this.davRsCmp.doProppatch(requestBodyXml);
+
+        // post event to EventBus
+        String type = PersoniumEventType.webdav(PersoniumEventType.Operation.PROPPATCH);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -192,8 +208,27 @@ public class DavFileResource {
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
-        return this.davRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
-                BoxPrivilege.READ_ACL);
+        Response response = this.davRsCmp.doPropfind(requestBodyXml,
+                                                     depth,
+                                                     contentLength,
+                                                     transferEncoding,
+                                                     BoxPrivilege.READ_ACL);
+
+        // post event to EventBus
+        String type = PersoniumEventType.webdav(PersoniumEventType.Operation.PROPFIND);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -206,7 +241,23 @@ public class DavFileResource {
     public Response acl(final Reader reader) {
         // Access Control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
-        return this.davRsCmp.doAcl(reader);
+        Response response = this.davRsCmp.doAcl(reader);
+
+        // post event to EventBus
+        String type = PersoniumEventType.webdav(PersoniumEventType.Operation.ACL);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**

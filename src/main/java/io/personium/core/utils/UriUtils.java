@@ -31,6 +31,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.core.PersoniumUnitConfig;
+
 /**
  * Scheme Utilities.
  * @author fjqs
@@ -52,6 +54,8 @@ public class UriUtils {
 
     /** LOCAL_UNIT ADDITION. */
     public static final String SCHEME_UNIT_URI = "personium-localunit:/";
+    /** LOCAL_CELL ADDITION. */
+    public static final String SCHEME_CELL_URI = "personium-localcell:/";
     /** LOCAL_BOX ADDITION. */
     public static final String SCHEME_BOX_URI = "personium-localbox:/";
 
@@ -113,72 +117,98 @@ public class UriUtils {
     }
 
     /**
-     * Convert scheme from LocalUnit to http.
-     * @param unitUrl String
-     * @param localUnitSchemeUrl String
-     * @return Url with http scheme
+     * Convert scheme from LocalUnit to http(s).
+     * @param unitUrl unit url
+     * @param localUnitSchemeUrl local unit url
+     * @return url string with http(s) scheme
      */
     public static String convertSchemeFromLocalUnitToHttp(String unitUrl, String localUnitSchemeUrl) {
-        if (localUnitSchemeUrl != null && localUnitSchemeUrl.startsWith(SCHEME_LOCALUNIT)) {
-            // SchemeLocalUnit(http://host/localunit/)
-            return localUnitSchemeUrl.replace(SCHEME_UNIT_URI, unitUrl);
+        if (localUnitSchemeUrl != null && localUnitSchemeUrl.startsWith(SCHEME_UNIT_URI)) {
+            String pathBased = localUnitSchemeUrl.replaceFirst(SCHEME_UNIT_URI, unitUrl);
+            if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
+                return pathBased;
+            } else {
+                try {
+                    return convertPathBaseToFqdnBase(pathBased);
+                } catch (URISyntaxException e) {
+                    return localUnitSchemeUrl;
+                }
+            }
         }
         return localUnitSchemeUrl;
     }
 
     /**
-     * Convert scheme from http to LocalUnit.
+     * Convert scheme from http(s) to LocalUnit.
      * Convert only if the target URL matches UnitURL.
-     * @param unitUrl UnitURL
-     * @param url Target URL
-     * @return Url with LocalUnit scheme
+     * @param unitUrl unit url
+     * @param url target url
+     * @return url string with local unit scheme
      */
     public static String convertSchemeFromHttpToLocalUnit(String unitUrl, String url) {
-        if (url != null && url.startsWith(unitUrl)) {
-            return url.replace(unitUrl, SCHEME_UNIT_URI);
+        if (url == null) {
+            return url;
+        }
+        if (url.startsWith(unitUrl)) {
+            return url.replaceFirst(unitUrl, SCHEME_UNIT_URI);
+        }
+
+        // convert to path based url
+        String pathBased;
+        try {
+            pathBased = convertFqdnBaseToPathBase(url);
+        } catch (URISyntaxException e) {
+            return url;
+        }
+
+        if (pathBased != null && pathBased.startsWith(unitUrl)) {
+            return pathBased.replaceFirst(unitUrl, SCHEME_UNIT_URI);
+        }
+
+        return url;
+    }
+
+    /**
+     * Convert scheme from LocalCell to http(s).
+     * @param cellUrl cell url string
+     * @param localCellUrl local cell url
+     * @return url string with http(s) scheme
+     */
+    public static String convertSchemeFromLocalCellToHttp(String cellUrl, String localCellUrl) {
+        if (localCellUrl != null && localCellUrl.startsWith(SCHEME_CELL_URI)) {
+            return localCellUrl.replaceFirst(SCHEME_CELL_URI, cellUrl);
+        }
+        return localCellUrl;
+    }
+
+    /**
+     * Convert scheme from http(s) to LocalCell.
+     * @param cellUrl cell url string
+     * @param url target url string
+     * @return url string with local cell scheme
+     */
+    public static String convertSchemeFromHttpToLocalCell(String cellUrl, String url) {
+        if (url != null && url.startsWith(cellUrl)) {
+            return url.replaceFirst(cellUrl, SCHEME_CELL_URI);
         }
         return url;
     }
 
     /**
-     * Convert scheme from LocalCell to http.
-     * @param cellUrl String
-     * @param localCellUrl String
-     * @return Url with http scheme
+     * Convert scheme from LocalBox to http(s).
+     * @param boxUrl box url string
+     * @param localBoxUrl local box url
+     * @return url string with http(s) scheme
      */
-    public static String convertSchemeFromLocalCellToHttp(String cellUrl, String localCellUrl) {
-        // cellUrl: http://host/cell/
-
-        if (localCellUrl == null || !localCellUrl.startsWith(SCHEME_LOCALCELL)) {
-            return localCellUrl;
+    public static String convertSchemeFromLocalBoxToHttp(String boxUrl, String localBoxUrl) {
+        if (localBoxUrl != null && localBoxUrl.startsWith(SCHEME_BOX_URI)) {
+            return localBoxUrl.replaceFirst(SCHEME_BOX_URI, boxUrl);
         }
-
-        String[] parts = localCellUrl.split(":/", 2);
-        if (parts.length != 2) {
-            return localCellUrl;
-        }
-
-        return new StringBuilder(cellUrl).append(parts[1]).toString();
+        return localBoxUrl;
     }
 
     /**
-     * Convert scheme from http to LocalCell.
-     * @param cellUrl String
-     * @param url String
-     * @return url with personium-localcell scheme
-     */
-    public static String convertSchemeFromHttpToLocalCell(String cellUrl, String url) {
-        if (url == null || !url.startsWith(cellUrl)) {
-            return null;
-        }
-
-        String retUrl = url.replaceFirst(cellUrl, UriUtils.SCHEME_LOCALCELL + ":/");
-
-        return retUrl;
-    }
-
-    /**
-     * Convert scheme from http to LocalBox.
+     * Convert scheme from http(s) to LocalBox.
      * Convert only if the target URL matches BoxURL.
      * @param boxUrl boxURL
      * @param url Target URL
@@ -186,7 +216,7 @@ public class UriUtils {
      */
     public static String convertSchemeFromHttpToLocalBox(String boxUrl, String url) {
         if (url != null && url.startsWith(boxUrl)) {
-            return url.replaceFirst(boxUrl, UriUtils.SCHEME_LOCALBOX + ":/");
+            return url.replaceFirst(boxUrl, SCHEME_BOX_URI);
         }
         return url;
     }
@@ -195,28 +225,14 @@ public class UriUtils {
      * Convert scheme from LocalBox to LocalCell.
      * @param boxUrl String
      * @param boxName String
-     * @return url with personim-localcell scheme
+     * @return url with localcell scheme
      */
     public static String convertSchemeFromLocalBoxToLocalCell(String boxUrl, String boxName) {
-        if (boxUrl == null || boxName == null) {
-            return null;
-        } else if (boxUrl.startsWith(SCHEME_LOCALCELL)) {
-             return boxUrl;
-        } else if (!boxUrl.startsWith(SCHEME_LOCALBOX)) {
-            return null;
+        if (boxUrl != null && boxName != null && boxUrl.startsWith(SCHEME_BOX_URI)) {
+            String localCell = SCHEME_CELL_URI + boxName + "/";
+            return boxUrl.replaceFirst(SCHEME_BOX_URI, localCell);
         }
-
-        String[] parts = boxUrl.split(":/", 2);
-        if (parts.length != 2) {
-            return null;
-        }
-
-        return new StringBuilder(SCHEME_LOCALCELL)
-                .append(":/")
-                .append(boxName)
-                .append("/")
-                .append(parts[1])
-                .toString();
+        return boxUrl;
     }
 
     /**
@@ -228,6 +244,9 @@ public class UriUtils {
     public static String convertFqdnBaseToPathBase(String sourceUrl) throws URISyntaxException {
         String convertedUrl = sourceUrl;
         URI uri = new URI(sourceUrl);
+        if (uri.getHost() == null) {
+            return convertedUrl;
+        }
 
         String cellName = uri.getHost().split("\\.")[0];
         StringBuilder pathBuilder = new StringBuilder();
@@ -253,6 +272,9 @@ public class UriUtils {
     public static String convertPathBaseToFqdnBase(String sourceUrl) throws URISyntaxException {
         String convertedUrl = sourceUrl;
         URI uri = new URI(sourceUrl);
+        if (uri.getHost() == null) {
+            return convertedUrl;
+        }
 
         String domain = uri.getHost();
         String cellName = uri.getPath().split("/")[1];
@@ -267,27 +289,6 @@ public class UriUtils {
         uriBuilder.replacePath(path);
         convertedUrl = uriBuilder.build().toString();
         return convertedUrl;
-    }
-
-    /**
-     * getUnitUrl.
-     * @param cellUrl String
-     * @return url String
-     */
-    public static String getUnitUrl(String cellUrl) {
-        return getUnitUrl(cellUrl, 1);
-    }
-
-    /**
-     * getUnitUrl.
-     * @param cellUrl String
-     * @param index int from last
-     * @return url String
-     */
-    public static String getUnitUrl(String cellUrl, int index) {
-        String[] list = cellUrl.split(STRING_SLASH);
-        //Cut out the character before the character whose specified character was found by the specified number from the end
-        return StringUtils.substringBeforeLast(cellUrl, list[list.length - index]);
     }
 
     /**

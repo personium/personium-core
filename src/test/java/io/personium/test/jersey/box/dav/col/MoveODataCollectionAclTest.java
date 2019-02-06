@@ -150,7 +150,7 @@ public class MoveODataCollectionAclTest extends PersoniumTest {
                 HttpStatus.SC_UNAUTHORIZED);
         PersoniumCoreException expectedException = PersoniumCoreAuthzException.TOKEN_PARSE_ERROR;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
-        AuthTestCommon.waitForAccountLock();
+        AuthTestCommon.waitForIntervalLock();
     }
 
     /**

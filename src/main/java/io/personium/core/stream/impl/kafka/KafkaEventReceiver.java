@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.core.event.impl.kafka;
+package io.personium.core.stream.impl.kafka;
 
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -32,24 +32,45 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.event.EventReceiver;
 import io.personium.core.event.EventSubscriber;
 import io.personium.core.event.PersoniumEvent;
 
 /**
- * EventSubcriber for Kafka.
+ * EventReceiver for Kafka.
  */
-public class KafkaEventSubscriber implements EventSubscriber {
-    private static Logger log = LoggerFactory.getLogger(KafkaEventSubscriber.class);
+public class KafkaEventReceiver implements EventReceiver, EventSubscriber {
+    private static Logger log = LoggerFactory.getLogger(KafkaEventReceiver.class);
 
     private KafkaConsumer<String, PersoniumEvent> consumer;
+    private String broker;
 
     private static final long POLL_TIMEOUT = 1000L;
 
     /**
      * Constructor.
+     * @param broker brokers
      */
-    public KafkaEventSubscriber() {
+    public KafkaEventReceiver(final String broker) {
+        this.broker = broker;
+    }
+
+    /**
+     * Open.
+     * @param topic topic name
+     */
+    @Override
+    public void open(final String topic) {
+        Properties props = new Properties();
+        props.put("bootstrap.servers", broker);
+        props.put("group.id", "event_receiver");
+        props.put("enable.auto.commit", "true");
+        props.put("auto.commit.intervals.ms", "1000");
+        props.put("key.deserializer", StringDeserializer.class);
+        props.put("value.deserializer", PersoniumEventDeserializer.class);
+
+        consumer = new KafkaConsumer<>(props);
+        consumer.subscribe(Arrays.asList(topic));
     }
 
     /**
@@ -58,10 +79,8 @@ public class KafkaEventSubscriber implements EventSubscriber {
      */
     @Override
     public void subscribe(final String topic) {
-        String servers = PersoniumUnitConfig.getEventBusKafkaServers();
-
         Properties props = new Properties();
-        props.put("bootstrap.servers", servers);
+        props.put("bootstrap.servers", broker);
         props.put("group.id", UUID.randomUUID().toString());
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.intervals.ms", "1000");
@@ -83,8 +102,7 @@ public class KafkaEventSubscriber implements EventSubscriber {
         try {
             ConsumerRecords<String, PersoniumEvent> records = consumer.poll(POLL_TIMEOUT);
             for (ConsumerRecord<String, PersoniumEvent> record : records) {
-                PersoniumEvent event = record.value();
-                list.add(event);
+                list.add(record.value());
             }
         } catch (InterruptException e) {
             log.debug("Interrupted");
@@ -98,15 +116,23 @@ public class KafkaEventSubscriber implements EventSubscriber {
     }
 
     /**
-     * Unsubscribe.
+     * Close.
      */
     @Override
-    public void unsubscribe() {
+    public void close() {
         try {
             consumer.close();
         } catch (InterruptException e) {
             log.debug("Interrupted");
         }
+    }
+
+    /**
+     * Unsubscribe.
+     */
+    @Override
+    public void unsubscribe() {
+        close();
     }
 
 }

@@ -97,9 +97,9 @@ public class EventResourceTest {
         // --------------------
         // Confirm result
         // --------------------
-        assertEquals("TypeData", event.getType());
-        assertEquals("ObjectData", event.getObject());
-        assertEquals("InfoData", event.getInfo());
+        assertEquals("TypeData", event.getType().get());
+        assertEquals("ObjectData", event.getObject().get());
+        assertEquals("InfoData", event.getInfo().get());
     }
 
     /**
@@ -174,9 +174,9 @@ public class EventResourceTest {
         // --------------------
         // Confirm result
         // --------------------
-        assertEquals(null, event.getType());
-        assertEquals(null, event.getObject());
-        assertEquals(null, event.getInfo());
+        assertEquals(null, event.getType().orElse(null));
+        assertEquals(null, event.getObject().orElse(null));
+        assertEquals(null, event.getInfo().orElse(null));
     }
 
     /**
@@ -227,7 +227,7 @@ public class EventResourceTest {
         // --------------------
         // Confirm result
         // --------------------
-        assertEquals(null, event.getType());
+        assertEquals(null, event.getType().orElse(null));
     }
 
     /**
@@ -277,9 +277,9 @@ public class EventResourceTest {
         // --------------------
         // Confirm result
         // --------------------
-        assertEquals(newValue.toString(), event.getType());
-        assertEquals("ObjectData", event.getObject());
-        assertEquals("InfoData", event.getInfo());
+        assertEquals(newValue.toString(), event.getType().get());
+        assertEquals("ObjectData", event.getObject().get());
+        assertEquals("InfoData", event.getInfo().get());
     }
 
     /**
@@ -500,9 +500,9 @@ public class EventResourceTest {
         // --------------------
         // Confirm result
         // --------------------
-        assertEquals("\\/Date(1350451322147)\\/", event.getType());
-        assertEquals("ObjectData", event.getObject());
-        assertEquals("InfoData", event.getInfo());
+        assertEquals("\\/Date(1350451322147)\\/", event.getType().get());
+        assertEquals("ObjectData", event.getObject().get());
+        assertEquals("InfoData", event.getInfo().get());
     }
 
 
@@ -554,7 +554,7 @@ public class EventResourceTest {
         // --------------------
         // Confirm result
         // --------------------
-        assertEquals(null, event.getObject());
+        assertEquals(null, event.getObject().orElse(null));
     }
 
     /**
@@ -604,9 +604,9 @@ public class EventResourceTest {
         // --------------------
         // Confirm result
         // --------------------
-        assertEquals("TypeData", event.getType());
-        assertEquals(newValue.toString(), event.getObject());
-        assertEquals("InfoData", event.getInfo());
+        assertEquals("TypeData", event.getType().get());
+        assertEquals(newValue.toString(), event.getObject().get());
+        assertEquals("InfoData", event.getInfo().get());
     }
 
     /**
@@ -749,7 +749,7 @@ public class EventResourceTest {
         // --------------------
         // Confirm result
         // --------------------
-        assertEquals(null, event.getInfo());
+        assertEquals(null, event.getInfo().orElse(null));
     }
 
     /**
@@ -799,9 +799,9 @@ public class EventResourceTest {
         // --------------------
         // Confirm result
         // --------------------
-        assertEquals("TypeData", event.getType());
-        assertEquals("ObjectData", event.getObject());
-        assertEquals(newValue.toString(), event.getInfo());
+        assertEquals("TypeData", event.getType().get());
+        assertEquals("ObjectData", event.getObject().get());
+        assertEquals(newValue.toString(), event.getInfo().get());
     }
 
     /**

@@ -126,7 +126,7 @@ public class BasicAuthCellLevelTest extends PersoniumTest {
                 authSchemaCell, authSchemaAccount, authSchemaPassword);
         assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
         AuthTestCommon.checkAuthenticateHeaderNotExists(dcRes);
-        AuthTestCommon.waitForAccountLock();
+        AuthTestCommon.waitForIntervalLock();
 
         // __authz
         // 認証失敗時：200でHTMLが返却される。この際、HTML中にメッセージが付与される。
@@ -139,7 +139,7 @@ public class BasicAuthCellLevelTest extends PersoniumTest {
         assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", dcRes.getFirstHeader(HttpHeaders.CONTENT_TYPE));
         ImplicitFlowTest.checkHtmlBody(dcRes, "PS-AU-0004", authTargetCell);
         AuthTestCommon.checkAuthenticateHeaderNotExists(dcRes);
-        AuthTestCommon.waitForAccountLock();
+        AuthTestCommon.waitForIntervalLock();
     }
 
     /**

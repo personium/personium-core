@@ -14,7 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.personium.core.stream;
+
 /**
- * Classes for implementations by activemq.
+ * Send data to queue.
  */
-package io.personium.core.event.impl.activemq;
+public interface DataSender {
+
+    /**
+     * Open connection.
+     * @param queue queue name
+     */
+    void open(final String queue);
+
+    /**
+     * Send data to queue.
+     * @param cellUrl cell url
+     * @param data data to send
+     */
+    void send(final String cellUrl, final String data);
+
+    /**
+     * Close connection.
+     */
+    void close();
+
+}

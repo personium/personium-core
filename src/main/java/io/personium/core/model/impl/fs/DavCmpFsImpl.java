@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1336,6 +1336,12 @@ public class DavCmpFsImpl implements DavCmp {
             throw PersoniumCoreException.Server.UNKNOWN_ERROR;
         }
         return element.getFirstChild().getNodeValue();
+    }
+
+    @Override
+    public String getPropertyAsRawString(String propertyName, String propertyNamespace) {
+        String key = propertyName + PROP_KEY_SEPARATOR + propertyNamespace;
+        return this.metaFile.getProperty(key);
     }
 
     @Override

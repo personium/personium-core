@@ -127,7 +127,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
                     body, HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // $batch - スキーマなしのBox配下に対して認証スキーマが誤っているとき認証エラーとなること
             res = BatchUtils.batchRequestAnyAuthScheme(invalidScheme, cellName, boxName, colName, BatchUtils.BOUNDARY,
@@ -187,7 +187,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
                     srcEntityTypeName, srcUserId, targetEntityTypeName, HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // NavPro経由一覧
             UserDataUtils.listViaNPAnyAuthSchema(token, cellName, boxName, colName, srcEntityTypeName, srcUserId,
@@ -196,7 +196,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
                     srcUserId, targetEntityTypeName, "", HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         } finally {
             // ユーザODataの削除
             UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
@@ -228,7 +228,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
                     stringBody, cellName, boxName, colName, srcEntityTypeName);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ユーザOData取得(Basic認証-成功)
             UserDataUtils.getWithQueryAnyAuthSchema(cellName, token, boxName, colName, srcEntityTypeName, "",
@@ -239,7 +239,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
                     "", srcUserId, HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ユーザOData更新(Basic認証-成功)
             UserDataUtils.updateAnyAuthSchema(token, HttpStatus.SC_NO_CONTENT, jsonBody, cellName, boxName, colName,
@@ -249,7 +249,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
                     boxName, colName, srcEntityTypeName, srcUserId, "*");
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ユーザOData部分更新(Basic認証-成功)
             UserDataUtils.mergeAnyAuthSchema(token, HttpStatus.SC_NO_CONTENT, jsonBody, cellName, boxName, colName,
@@ -259,7 +259,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
                     boxName, colName, srcEntityTypeName, srcUserId, "*");
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ユーザOData一覧取得(Basic認証-成功)
             UserDataUtils.listAnyAuthSchema(cellName, boxName, colName, srcEntityTypeName, "", token, HttpStatus.SC_OK);
@@ -268,7 +268,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
                     HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ユーザOData削除(Basic認証-成功)
             UserDataUtils.deleteAnyAuthSchema(token, HttpStatus.SC_NO_CONTENT, cellName, boxName, colName,
@@ -278,7 +278,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
                     colName, srcEntityTypeName, srcUserId);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         } finally {
             // ユーザOData削除
             UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1, cellName, boxName, colName, srcEntityTypeName,
@@ -311,7 +311,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
                     targetEntityTypeName, targetUserId, HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // $links一覧(Basic認証-成功)
             UserDataUtils.listLinkAnyAuthSchema(token, cellName, boxName, colName, srcEntityTypeName, srcUserId,
@@ -320,7 +320,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
             res = UserDataUtils.listLinkAnyAuthSchema(invalidToken, cellName, boxName, colName,
                     srcEntityTypeName, srcUserId, targetEntityTypeName, HttpStatus.SC_UNAUTHORIZED);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // $links削除(Basic認証-成功)
             UserDataUtils.deleteLinksAnyAuthSchema(token, cellName, boxName, colName, srcEntityTypeName, srcUserId,
@@ -329,7 +329,7 @@ public class BasicAuthODataCollectionLevelTest extends PersoniumTest {
             res = UserDataUtils.deleteLinksAnyAuthSchema(invalidToken, cellName, boxName, colName, srcEntityTypeName,
                     srcUserId, targetEntityTypeName, targetUserId, HttpStatus.SC_UNAUTHORIZED);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         } finally {
             // ユーザODataの削除
             UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,

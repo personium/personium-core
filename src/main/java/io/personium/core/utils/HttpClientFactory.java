@@ -22,7 +22,6 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -32,6 +31,7 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
@@ -57,7 +57,7 @@ public class HttpClientFactory {
      * @param type communication type
      * @return HttpClient class instance created
      */
-    public static HttpClient create(final String type) {
+    public static CloseableHttpClient create(final String type) {
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(TIMEOUT)
                 .setSocketTimeout(TIMEOUT)
@@ -86,13 +86,11 @@ public class HttpClientFactory {
                 .build();
         HttpClientConnectionManager cm = new BasicHttpClientConnectionManager(registry);
 
-        HttpClient hc = HttpClientBuilder.create()
-                .setDefaultRequestConfig(config)
-                .setConnectionManager(cm)
-                .useSystemProperties()
-                .build();
-
-        return hc;
+        return HttpClientBuilder.create()
+                                .setDefaultRequestConfig(config)
+                                .setConnectionManager(cm)
+                                .useSystemProperties()
+                                .build();
     }
 
     private static SSLConnectionSocketFactory createInsecureSSLConnectionSocketFactory()

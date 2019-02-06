@@ -147,7 +147,7 @@ public class AuthBasicTest extends PersoniumTest {
             // レスポンスボディのチェック
             ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getCode(),
                     PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getMessage());
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         } finally {
             // Cellを再帰的削除
             Setup.cellBulkDeletion(MY_CELL);
@@ -208,7 +208,7 @@ public class AuthBasicTest extends PersoniumTest {
                     PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED_IN_ACCOUNT_LOCK.getMessage());
 
             // Accountロック解除後のBasic認証(正しい認証情報)で作成できること
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
             res = UserDataUtils.createWithBasic(TEST_ACCOUNT, TEST_ACCOUNT_PASSWORD, HttpStatus.SC_CREATED, body,
                     MY_CELL, TEST_BOX1, TEST_ODATA, entityType);
         } finally {
@@ -394,7 +394,7 @@ public class AuthBasicTest extends PersoniumTest {
             assertThat(headers).contains(expected);
             ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.getCode(),
                     PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.getMessage());
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         } finally {
             UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1, TEST_CELL1, TEST_BOX1, TEST_ODATA, entityType,
                     userId);

@@ -223,17 +223,11 @@ public class ImplicitFlowTest extends PersoniumTest {
     @Test
     public final void パスワード認証で自分セルローカルトークンを取得できること() {
 
-        // 認証前のアカウントの最終ログイン時刻を取得しておく
-        Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
-
         String addbody = "&username=account2&password=password2";
 
         PersoniumResponse res = requesttoAuthz(addbody);
 
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-
-        // アカウントの最終ログイン時刻が更新されたことの確認
-        AuthTestCommon.accountLastAuthenticatedCheck(Setup.TEST_CELL1, "account2", lastAuthenticatedTime);
 
         // cookieの値と有効期限の確認
         checkSessionId(false, Setup.TEST_CELL1);
@@ -259,28 +253,23 @@ public class ImplicitFlowTest extends PersoniumTest {
     @Test
     public final void パスワード認証で不正なパスワードを指定して自分セルトークンを取得し認証フォームにエラーメッセージが出力されること() {
 
-        // 認証前のアカウントの最終ログイン時刻を取得しておく
-        Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
-
         String addbody = "&username=account2&password=dummypassword";
 
         PersoniumResponse res = requesttoAuthz(addbody);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-        // アカウントの最終ログイン時刻が更新されていないことの確認
-        AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(Setup.TEST_CELL1, "account2", lastAuthenticatedTime);
 
         // レスポンスヘッダのチェック
         assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
 
         // レスポンスボディのチェック
         checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-        AuthTestCommon.waitForAccountLock();
+        AuthTestCommon.waitForIntervalLock();
     }
 
     /**
      * パスワード認証失敗後1秒以内に成功する認証をリクエストした場合200が返却されてエラーhtmlが返却されること.
-     * io.personium.core.lock.accountlock.timeを1秒に設定すると失敗するためIgnore
+     * io.personium.core.authn.account.validAuthnIntervalを1秒に設定すると失敗するためIgnore
      */
     @Test
     @Ignore
@@ -288,9 +277,6 @@ public class ImplicitFlowTest extends PersoniumTest {
         String lockType = PersoniumUnitConfig.getLockType();
         if (lockType.equals("memcached")) {
             String addbody = "&username=account2&password=dummypassword";
-
-            // 認証前のアカウントの最終ログイン時刻を取得しておく
-            Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
 
             // パスワード認証(失敗)
             PersoniumResponse res = requesttoAuthz(addbody);
@@ -306,21 +292,19 @@ public class ImplicitFlowTest extends PersoniumTest {
             res = requesttoAuthz(addbody);
 
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            // アカウントの最終ログイン時刻が更新されていないことの確認
-            AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(Setup.TEST_CELL1, "account2", lastAuthenticatedTime);
 
             // レスポンスヘッダのチェック
             assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
 
             // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0006", Setup.TEST_CELL1);
-            AuthTestCommon.waitForAccountLock();
+            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
+            AuthTestCommon.waitForIntervalLock();
         }
     }
 
     /**
      * パスワード認証失敗後1秒以内に失敗する認証をリクエストした場合200が返却されてエラーhtmlが返却されること.
-     * io.personium.core.lock.accountlock.timeを1秒に設定すると失敗するためIgnore
+     * io.personium.core.authn.account.validAuthnIntervalを1秒に設定すると失敗するためIgnore
      */
     @Test
     @Ignore
@@ -348,8 +332,8 @@ public class ImplicitFlowTest extends PersoniumTest {
             assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
 
             // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0006", Setup.TEST_CELL1);
-            AuthTestCommon.waitForAccountLock();
+            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
+            AuthTestCommon.waitForIntervalLock();
         }
     }
 
@@ -373,7 +357,7 @@ public class ImplicitFlowTest extends PersoniumTest {
 
             addbody = "&username=account2&password=password2";
 
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // 1秒後にパスワード認証(認証成功)
             res = requesttoAuthz(addbody);
@@ -415,7 +399,7 @@ public class ImplicitFlowTest extends PersoniumTest {
 
             addbody = "&username=account2&password=dummypassword";
 
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // 1秒後にパスワード認証(401エラー(PS-AU-0004))
             res = requesttoAuthz(addbody);
@@ -427,7 +411,7 @@ public class ImplicitFlowTest extends PersoniumTest {
 
             // レスポンスボディのチェック
             checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         }
     }
 
@@ -437,17 +421,12 @@ public class ImplicitFlowTest extends PersoniumTest {
     @Test
     public final void パスワード認証でユーザ名またはパスワードに空文字を指定して自分セルトークンを取得し認証フォームにエラーメッセージが出力されること() {
 
-        // 認証前のアカウントの最終ログイン時刻を取得しておく
-        Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
-
         // ユーザ名が空
         String addbody = "&username=&password=password2";
 
         PersoniumResponse res = requesttoAuthz(addbody);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-        // アカウントの最終ログイン時刻が更新されていないことの確認
-        AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(Setup.TEST_CELL1, "account2", lastAuthenticatedTime);
 
         // レスポンスヘッダのチェック
         assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
@@ -461,15 +440,13 @@ public class ImplicitFlowTest extends PersoniumTest {
         res = requesttoAuthz(addbody);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-        // アカウントの最終ログイン時刻が更新されていないことの確認
-        AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(Setup.TEST_CELL1, "account2", lastAuthenticatedTime);
 
         // レスポンスヘッダのチェック
         assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
 
         // レスポンスボディのチェック
         checkHtmlBody(res, "PS-AU-0003", Setup.TEST_CELL1);
-        AuthTestCommon.waitForAccountLock();
+        AuthTestCommon.waitForIntervalLock();
     }
 
     /**
@@ -498,17 +475,12 @@ public class ImplicitFlowTest extends PersoniumTest {
     @Test
     public final void パスワード認証でトランスセルトークンを取得できること() {
 
-        // 認証前のアカウントの最終ログイン時刻を取得しておく
-        Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL2, "account4");
-
         String addbody = "&username=account4&password=password4&p_target=" + UrlUtils.cellRoot(Setup.TEST_CELL1);
 
         PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
                 null);
 
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-        // アカウントの最終ログイン時刻が更新されたことの確認
-        AuthTestCommon.accountLastAuthenticatedCheck(Setup.TEST_CELL2, "account4", lastAuthenticatedTime);
 
         // cookieの値と有効期限の確認
         checkSessionId(false, Setup.TEST_CELL2);
@@ -542,9 +514,6 @@ public class ImplicitFlowTest extends PersoniumTest {
     @Ignore // UUT promotion setting API invalidation.
     public final void パスワード認証でULUUTを取得できること() {
 
-        // 認証前のアカウントの最終ログイン時刻を取得しておく
-        Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
-
         String addbody = "&username=account2&password=password2&p_owner=true";
 
         // アカウントにユニット昇格権限付与
@@ -553,8 +522,6 @@ public class ImplicitFlowTest extends PersoniumTest {
 
         PersoniumResponse res = requesttoAuthz(addbody);
 
-        // アカウントの最終ログイン時刻が更新されたことの確認
-        AuthTestCommon.accountLastAuthenticatedCheck(Setup.TEST_CELL1, "account2", lastAuthenticatedTime);
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
         // cookieが設定されていないことの確認
@@ -624,15 +591,10 @@ public class ImplicitFlowTest extends PersoniumTest {
         String addbody = "&username=account2&password=password2";
         String redirectUri = REDIRECT_HTML;
 
-        // 認証前のアカウントの最終ログイン時刻を取得しておく
-        Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
-
         PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
                 redirectUri);
 
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-        // アカウントの最終ログイン時刻が更新されていないことの確認
-        AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(Setup.TEST_CELL1, "account2", lastAuthenticatedTime);
 
         assertEquals(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error?code=PR400-AZ-0003",
                 res.getFirstHeader(HttpHeaders.LOCATION));
@@ -715,17 +677,12 @@ public class ImplicitFlowTest extends PersoniumTest {
 
         String transCellAccessToken = getTcToken();
 
-        // 認証前のアカウントの最終ログイン時刻を取得しておく
-        Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
-
         // トークン認証
         String addbody = "&assertion=" + transCellAccessToken;
         PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
                 null);
 
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-        // アカウントの最終ログイン時刻が更新されていないことの確認
-        AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(Setup.TEST_CELL1, "account2", lastAuthenticatedTime);
 
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
         Map<String, String> response = parseResponse(res);
@@ -925,8 +882,6 @@ public class ImplicitFlowTest extends PersoniumTest {
         // cookieの値と有効期限の確認
         String sessionId = checkSessionId(false, Setup.TEST_CELL1);
 
-        // 認証前のアカウントの最終ログイン時刻を取得しておく
-        Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
         // Cookie認証
         String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
                 + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
@@ -936,8 +891,6 @@ public class ImplicitFlowTest extends PersoniumTest {
         res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
 
         checkSessionId(true, Setup.TEST_CELL1);
-        // アカウントの最終ログイン時刻が更新されていないことの確認
-        AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(Setup.TEST_CELL1, "account2", lastAuthenticatedTime);
 
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
         Map<String, String> response = parseResponse(res);

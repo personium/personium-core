@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2019 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,166 +16,185 @@
  */
 package io.personium.test.jersey.cell.auth;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.Field;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.lock.LockManager;
 import io.personium.core.rs.PersoniumCoreApplication;
-import io.personium.core.rs.cell.TokenEndPointResource;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
+import io.personium.test.setup.Setup;
+import io.personium.test.utils.AccountUtils;
+import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 
 /**
- * 認証のテスト.
+ * account lock test.
  */
 @RunWith(PersoniumIntegTestRunner.class)
-@Category({Unit.class, Integration.class, Regression.class })
+@Category({ Unit.class, Integration.class, Regression.class })
 public class AuthAccountLockTest extends PersoniumTest {
 
-    static final String TEST_CELL1 = "testcell1";
-    static final String TEST_CELL2 = "testcell2";
-    static final String TEST_APP_CELL1 = "schema1";
+    private static final int TEST_ACCOUNTLOCK_COUNT = 3;
+    private static final int TEST_ACCOUNTLOCK_TIME = 5;
+
+    /** test cell name. */
+    private static final String TEST_CELL = "testcellauthaccountlock";
+    /** test account name. */
+    private static final String TEST_ACCOUNT1 = "account1";
+    /** test account name. */
+    private static final String TEST_ACCOUNT2 = "account2";
+    /** test account password. */
+    private static final String TEST_PASSWORD = "password";
 
     /**
-     * 前処理.
+     * before class.
+     * @throws Exception Unexpected exception
+     */
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        // Rewrite "accountLockCount" as test parameters.
+        Field field = LockManager.class.getDeclaredField("accountLockCount");
+        field.setAccessible(true);
+        field.set(LockManager.class, TEST_ACCOUNTLOCK_COUNT);
+        // Rewrite "accountLockTime" as test parameters.
+        field = LockManager.class.getDeclaredField("accountLockTime");
+        field.setAccessible(true);
+        field.set(LockManager.class, TEST_ACCOUNTLOCK_TIME);
+    }
+
+    /**
+     * after class.
+     * @throws Exception Unexpected exception
+     */
+    @AfterClass
+    public static void afterClass() throws Exception {
+        // Restore "accountLockCount".
+        Field field = LockManager.class.getDeclaredField("accountLockCount");
+        field.setAccessible(true);
+        field.set(LockManager.class, PersoniumUnitConfig.getAccountLockCount());
+        // Restore "accountLockTime".
+        field = LockManager.class.getDeclaredField("accountLockTime");
+        field.setAccessible(true);
+        field.set(LockManager.class, PersoniumUnitConfig.getAccountLockTime());
+    }
+
+    /**
+     * before.
      */
     @Before
     public void before() {
         LockManager.deleteAllLocks();
+        CellUtils.create(TEST_CELL, Setup.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+        AccountUtils.create(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD,
+                HttpStatus.SC_CREATED);
+        AccountUtils.create(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD,
+                HttpStatus.SC_CREATED);
     }
 
     /**
-     * 後処理.
+     * after.
      */
     @After
     public void after() {
         LockManager.deleteAllLocks();
+        AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT1, -1);
+        AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT2, -1);
+        CellUtils.delete(Setup.MASTER_TOKEN_NAME, TEST_CELL, -1);
     }
 
-    /**
-     * ログ.
-     */
-    static Logger log = LoggerFactory.getLogger(TokenEndPointResource.class);
+    /** log. */
+    static Logger log = LoggerFactory.getLogger(AuthAccountLockTest.class);
 
     /**
-     * コンストラクタ.
+     * constructor.
      */
     public AuthAccountLockTest() {
         super(new PersoniumCoreApplication());
     }
 
     /**
-     * パスワード認証失敗後1秒以内に成功する認証をリクエストした場合400が返却されること(PR400-AN-0019).
-     * io.personium.core.lock.accountlock.timeを1秒に設定すると失敗するためIgnore
+     * Tests that are account locked when the failure is greater than or equal to "authn.account.lockCount".
+     * Tests that lock is released after "authn.account.lockTime" elapsed.
      */
     @Test
-    @Ignore
-    public final void パスワード認証失敗後1秒以内に成功する認証をリクエストした場合400が返却されること() {
-        // パスワード認証1回目_ 不正なパスワード指定(400エラー(PR400-AN-0017))
-        TResponse passRes = requestAuthorization(TEST_CELL1, "account1",
-                "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+    public final void lock_and_unlock() {
+        // before account lock.
+        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
+
+        // authentication failed repeatedly, account is locked.
+        for (int i = 0; i < TEST_ACCOUNTLOCK_COUNT; i++) {
+            requestAuthorization(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
+        }
+        AuthTestCommon.waitForIntervalLock();
+        TResponse passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_BAD_REQUEST);
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
-        // 1秒以内にパスワード認証(400エラー(PR400-AN-0019))
-        passRes = requestAuthorization(TEST_CELL1, "account1", "password1", HttpStatus.SC_BAD_REQUEST);
-        body = (String) passRes.bodyAsJson().get("error_description");
-        assertTrue(body.startsWith("[PR400-AN-0019]"));
+        // other account not locked.
+        requestAuthorization(TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD, HttpStatus.SC_OK);
 
-        AuthTestCommon.waitForAccountLock();
-    }
-
-    /**
-     * パスワード認証失敗後1秒以内に失敗する認証をリクエストした場合400が返却されること(PR400-AN-0019).
-     * io.personium.core.lock.accountlock.timeを1秒に設定すると失敗するためIgnore
-     */
-    @Test
-    @Ignore
-    public final void パスワード認証失敗後1秒以内に失敗する認証をリクエストした場合400が返却されること() {
-        // パスワード認証1回目_ 不正なパスワード指定(400エラー(PR400-AN-0017))
-        TResponse passRes = requestAuthorization(TEST_CELL1, "account1",
-                "dummypassword1", HttpStatus.SC_BAD_REQUEST);
-        String body = (String) passRes.bodyAsJson().get("error_description");
-        assertTrue(body.startsWith("[PR400-AN-0017]"));
-
-        // 1秒以内にパスワード認証(400エラー(PR400-AN-0019))
-        passRes = requestAuthorization(TEST_CELL1, "account1", "dummypassword1", HttpStatus.SC_BAD_REQUEST);
-        body = (String) passRes.bodyAsJson().get("error_description");
-        assertTrue(body.startsWith("[PR400-AN-0019]"));
-
-        AuthTestCommon.waitForAccountLock();
-    }
-
-    /**
-     * パスワード認証失敗後1秒後に成功する認証をリクエストした場合200が返却されること.
-     */
-    @Test
-    public final void パスワード認証失敗後1秒後に成功する認証をリクエストした場合200が返却されること() {
-        // パスワード認証1回目_ 不正なパスワード指定(400エラー(PR400-AN-0017))
-        TResponse passRes = requestAuthorization(TEST_CELL1, "account1",
-                "dummypassword1", HttpStatus.SC_BAD_REQUEST);
-        String body = (String) passRes.bodyAsJson().get("error_description");
-        assertTrue(body.startsWith("[PR400-AN-0017]"));
-
+        // wait account lock expiration time (s). accountlock is released .
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1000 * TEST_ACCOUNTLOCK_TIME);
         } catch (InterruptedException e) {
             log.debug("");
         }
-        // 1秒後にパスワード認証(認証成功)
-        passRes = requestAuthorization(TEST_CELL1, "account1", "password1", HttpStatus.SC_OK);
-        body = (String) passRes.bodyAsJson().get("access_token");
-        assertNotNull(body);
+        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
     }
 
     /**
-     * パスワード認証失敗後1秒後に失敗する認証をリクエストした場合400が返却されること(PR400-AN-0017).
+     * Test that the failure count is reset on successful authentication.
      */
     @Test
-    public final void パスワード認証失敗後1秒後に失敗する認証をリクエストした場合400が返却されること() {
-        // パスワード認証1回目_ 不正なパスワード指定(400エラー(PR400-AN-0017))
-        TResponse passRes = requestAuthorization(TEST_CELL1, "account1",
-                "dummypassword1", HttpStatus.SC_BAD_REQUEST);
-        String body = (String) passRes.bodyAsJson().get("error_description");
-        assertTrue(body.startsWith("[PR400-AN-0017]"));
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            log.debug("");
+    public final void reset_failed_count() {
+        // first authenticated.
+        for (int i = 0; i < TEST_ACCOUNTLOCK_COUNT - 1; i++) {
+            requestAuthorization(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
         }
+        AuthTestCommon.waitForIntervalLock();
+        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
 
-        // 1秒後にパスワード認証(400エラー(PR400-AN-0017))
-        passRes = requestAuthorization(TEST_CELL1, "account1", "dummypassword1", HttpStatus.SC_BAD_REQUEST);
-        body = (String) passRes.bodyAsJson().get("error_description");
-        assertTrue(body.startsWith("[PR400-AN-0017]"));
-        AuthTestCommon.waitForAccountLock();
+        // seccond authenticated.
+        for (int i = 0; i < TEST_ACCOUNTLOCK_COUNT - 1; i++) {
+            requestAuthorization(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
+        }
+        AuthTestCommon.waitForIntervalLock();
+        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
     }
 
+    /**
+     * request authorization.
+     * @param cellName cell name
+     * @param userName user name
+     * @param password password
+     * @param code expected status code
+     * @return http response
+     */
     private TResponse requestAuthorization(String cellName, String userName, String password, int code) {
-        TResponse passRes =
-                Http.request("authn/password-cl-c0.txt")
-                        .with("remoteCell", cellName)
-                        .with("username", userName)
-                        .with("password", password)
-                        .returns()
-                        .statusCode(code);
+        TResponse passRes = Http.request("authn/password-cl-c0.txt")
+                .with("remoteCell", cellName)
+                .with("username", userName)
+                .with("password", password)
+                .returns()
+                .statusCode(code);
         return passRes;
     }
-
 }

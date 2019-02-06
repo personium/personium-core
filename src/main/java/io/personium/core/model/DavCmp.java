@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,10 @@ public interface DavCmp {
      */
     String TYPE_COL_SVC = "col.svc";
     /**
+     * Type representing a WebDAV Collection extended as Stream.
+     */
+    String TYPE_COL_STREAM = "col.stream";
+    /**
      * Type representing a WebDAV file.
      */
     String TYPE_DAV_FILE = "dav.file";
@@ -103,6 +107,14 @@ public interface DavCmp {
      * @throws SAXException If any parse errors occur
      */
     String getProperty(String propertyName, String propertyNamespace) throws IOException, SAXException;
+
+    /**
+     * Get property as raw string.
+     * @param propertyName property name
+     * @param propertyNamespace property namespace
+     * @return property property value
+     */
+    String getPropertyAsRawString(String propertyName, String propertyNamespace);
 
     /**
      * @return properties
@@ -177,6 +189,18 @@ public interface DavCmp {
      * @return chilrdren DavCmp in the form of Map<path, DavCmp>
      */
     Map<String, DavCmp> getChildren();
+
+    /**
+     * Returns the cellId.
+     * @return cellId
+     */
+    String getCellId();
+
+    /**
+     * Returns the fs path.
+     * @return FsPath
+     */
+    String getFsPath();
 
     /**
      * Returns the part responsible for the parent path.

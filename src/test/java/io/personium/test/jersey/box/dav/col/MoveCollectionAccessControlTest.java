@@ -153,7 +153,7 @@ public class MoveCollectionAccessControlTest extends PersoniumTest {
                     HttpStatus.SC_UNAUTHORIZED);
             PersoniumCoreException expectedException = PersoniumCoreAuthzException.TOKEN_PARSE_ERROR;
             ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         } finally {
             DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, SRC_COL_NAME + "/" + COL_NAME, MASTER_TOKEN, -1);
         }

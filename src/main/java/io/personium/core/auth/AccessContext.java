@@ -658,19 +658,19 @@ public class AccessContext {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthFormat);
         }
 
-        //Account lock check
+        //Check valid authentication interval
         String accountId = oew.getUuid();
         Boolean isLock = AuthResourceUtils.isLockedAccount(accountId);
         if (isLock) {
             //Update lock time of memcached
-            AuthResourceUtils.registAccountLock(accountId);
+            AuthResourceUtils.registIntervalLock(accountId);
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthErrorInAccountLock);
         }
 
         boolean authnSuccess = cell.authenticateAccount(oew, password);
         if (!authnSuccess) {
             //Make lock on memcached
-            AuthResourceUtils.registAccountLock(accountId);
+            AuthResourceUtils.registIntervalLock(accountId);
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthError);
         }
         //If authentication succeeds

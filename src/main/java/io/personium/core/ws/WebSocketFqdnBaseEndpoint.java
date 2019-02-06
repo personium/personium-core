@@ -17,8 +17,10 @@
 package io.personium.core.ws;
 
 import javax.websocket.OnClose;
+import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
+import javax.websocket.PongMessage;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
@@ -70,4 +72,25 @@ public class WebSocketFqdnBaseEndpoint {
     public void onMessage(String text, Session session) {
         webSocketService.onMessage(text, session);
     }
+
+    /**
+     * On returning pong message.
+     * @param pongMessage pong
+     * @param session session
+     */
+    @OnMessage
+    public void onMessage(PongMessage pongMessage, Session session) {
+        webSocketService.onMessage(pongMessage, session);
+    }
+
+    /**
+     * Error occurred.
+     * @param session session info
+     * @param e Throwable Error Information
+     */
+    @OnError
+    public void onError(Session session, Throwable e) {
+        webSocketService.onError(session, e);
+    }
+
 }

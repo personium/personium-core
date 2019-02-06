@@ -8,3 +8,5 @@ target
 src/test/resources/testoauth.properties
 personium-core.log
 personium-core.log.*
+.idea
+*.iml

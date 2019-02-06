@@ -43,8 +43,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
-import org.odata4j.core.OEntityKey;
-import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,16 +67,15 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
-import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.OEntityWrapper;
-import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.plugin.PluginInfo;
 import io.personium.core.plugin.PluginManager;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -105,6 +102,7 @@ public class TokenEndPointResource {
     private UriInfo requestURIInfo;
     //The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
     private String accountId;
+    private String ipaddress;
 
     /**
      * constructor.
@@ -125,12 +123,14 @@ public class TokenEndPointResource {
      * @param uriInfo  URI information
      * @param authzHeader Authorization Header
      * @param formParams Body parameters
+     * @param xForwardedFor X-Forwarded-For Header
      * @return JAX-RS Response Object
      */
     @POST
     public final Response token(@Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
-            MultivaluedMap<String, String> formParams) {
+            MultivaluedMap<String, String> formParams,
+            @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
         // Using @FormParam will cause a closed error on the library side in case of an incorrect body.
         // Since we can not catch Exception, retrieve the value after receiving it with MultivaluedMap.
         String grantType = formParams.getFirst(Key.GRANT_TYPE);
@@ -158,6 +158,8 @@ public class TokenEndPointResource {
             requestURIInfo = uriInfo;
         }
 
+        this.ipaddress = xForwardedFor;
+
         String schema = null;
         //First, check if you want to authenticate Client
         //If neither Scope nor authzHeader nor clientId exists, it is assumed that Client authentication is not performed.
@@ -169,21 +171,6 @@ public class TokenEndPointResource {
             //Regular password authentication
             Response response = this.handlePassword(target, pOwner,
                     schema, username, password);
-
-            //When the password authentication succeeds, the last login time of the account is updated
-            //It passes only here if password authentication succeeds (exceptions will be thrown if an error occurs in handlePassword)
-            if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()) {
-                //Obtain schema information of Account
-                PersoniumODataProducer producer = ModelFactory.ODataCtl
-                        .cellCtl(cell);
-                EdmEntitySet esetAccount = producer.getMetadata()
-                        .getEdmEntitySet(Account.EDM_TYPE_NAME);
-                OEntityKey originalKey = OEntityKey.parse("('" + username
-                        + "')");
-                //Ask Producer to change the last login time (Get / release lock within this method)
-                producer.updateLastAuthenticated(esetAccount, originalKey,
-                        accountId);
-            }
             return response;
         } else if (OAuth2Helper.GrantType.SAML2_BEARER.equals(grantType)) {
             return this.receiveSaml2(target, pOwner, schema, assertion);
@@ -662,6 +649,19 @@ public class TokenEndPointResource {
             //Return "p_cookie_peer" of the response body
             resp.put("p_cookie_peer", pCookiePeer);
         }
+
+        if (accountId != null && !accountId.isEmpty()) {
+            // get last auth history.
+            AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
+                    davRsCmp.getDavCmp().getFsPath(), accountId);
+            resp.put(OAuth2Helper.Key.LAST_AUTHENTICATED, last.getLastAuthenticated());
+            resp.put(OAuth2Helper.Key.FAILED_COUNT, last.getFailedCount());
+            // update auth history.
+            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(davRsCmp.getDavCmp().getFsPath(), accountId);
+            // release account lock.
+            AuthResourceUtils.releaseAccountLock(accountId);
+        }
+
         return rb.entity(resp.toJSONString()).build();
     }
 
@@ -694,8 +694,9 @@ public class TokenEndPointResource {
 
         OEntityWrapper oew = cell.getAccount(username);
         if (oew == null) {
-            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell
-                    .getUrl());
+            PersoniumCoreLog.Auth.AUTHN_FAILED_NO_SUCH_ACCOUNT.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
         //Confirmation of Type value
@@ -709,19 +710,39 @@ public class TokenEndPointResource {
         //In order to update the last login time, keep UUID in class variable
         accountId = (String) oew.getUuid();
 
-        //Check lock
-        Boolean isLock = AuthResourceUtils.isLockedAccount(accountId);
+        //Check valid authentication interval
+        Boolean isLock = AuthResourceUtils.isLockedInterval(accountId);
         if (isLock) {
             //Update lock time of memcached
-            AuthResourceUtils.registAccountLock(accountId);
-            throw PersoniumCoreAuthnException.ACCOUNT_LOCK_ERROR.realm(this.cell.getUrl());
+            AuthResourceUtils.registIntervalLock(accountId);
+            AuthResourceUtils.countupFailedCount(accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            PersoniumCoreLog.Auth.AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+        }
+
+        //Check account lock
+        isLock = AuthResourceUtils.isLockedAccount(accountId);
+        if (isLock) {
+            //Update lock time of memcached
+            AuthResourceUtils.registIntervalLock(accountId);
+            AuthResourceUtils.countupFailedCount(accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            PersoniumCoreLog.Auth.AUTHN_FAILED_ACCOUNT_IS_LOCKED.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
         boolean authSuccess = cell.authenticateAccount(oew, password);
 
         if (!authSuccess) {
             //Make lock on memcached
-            AuthResourceUtils.registAccountLock(accountId);
+            AuthResourceUtils.registIntervalLock(accountId);
+            AuthResourceUtils.countupFailedCount(accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_PASSWORD.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 

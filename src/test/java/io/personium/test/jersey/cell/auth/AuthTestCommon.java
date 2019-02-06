@@ -18,7 +18,6 @@ package io.personium.test.jersey.cell.auth;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,10 +32,8 @@ import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumTest;
-import io.personium.test.jersey.box.odatacol.UserDataListFilterTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
-import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
@@ -940,129 +937,45 @@ public class AuthTestCommon extends PersoniumTest {
      */
     public static void accountAuth(String cell, HashMap<Integer, String> token, HashMap<Integer, String> refreshToken) {
         JSONObject json;
-        Long lastAuthenticatedTime;
         // account1 アクセス権無し
-        lastAuthenticatedTime = getAccountLastAuthenticated(cell, "account1");
         json = ResourceUtils.getLocalTokenByPassAuth(cell, "account1", "password1", -1);
         token.put(NO_PRIVILEGE, (String) json.get("access_token"));
         refreshToken.put(NO_PRIVILEGE, (String) json.get("refresh_token"));
-        accountLastAuthenticatedCheck(cell, "account1", lastAuthenticatedTime);
 
         // account2 読み込みのみ
-        lastAuthenticatedTime = getAccountLastAuthenticated(cell, "account2");
         json = ResourceUtils.getLocalTokenByPassAuth(cell, "account2", "password2", -1);
         token.put(READ, (String) json.get("access_token"));
         refreshToken.put(READ, (String) json.get("refresh_token"));
-        accountLastAuthenticatedCheck(cell, "account2", lastAuthenticatedTime);
 
         // account3 書き込みのみ
-        lastAuthenticatedTime = getAccountLastAuthenticated(cell, "account3");
         json = ResourceUtils.getLocalTokenByPassAuth(cell, "account3", "password3", -1);
         token.put(WRITE, (String) json.get("access_token"));
         refreshToken.put(WRITE, (String) json.get("refresh_token"));
-        accountLastAuthenticatedCheck(cell, "account3", lastAuthenticatedTime);
 
         // account4 読み書き
-        lastAuthenticatedTime = getAccountLastAuthenticated(cell, "account4");
         json = ResourceUtils.getLocalTokenByPassAuth(cell, "account4", "password4", -1);
         token.put(READ_WRITE, (String) json.get("access_token"));
         refreshToken.put(READ_WRITE, (String) json.get("refresh_token"));
-        accountLastAuthenticatedCheck(cell, "account4", lastAuthenticatedTime);
 
         // account6 ACL読み込みのみ
-        lastAuthenticatedTime = getAccountLastAuthenticated(cell, "account6");
         json = ResourceUtils.getLocalTokenByPassAuth(cell, "account6", "password6", -1);
         token.put(READ_ACL, (String) json.get("access_token"));
         refreshToken.put(READ_ACL, (String) json.get("refresh_token"));
-        accountLastAuthenticatedCheck(cell, "account6", lastAuthenticatedTime);
 
         // account7 ACL書き込みのみ
-        lastAuthenticatedTime = getAccountLastAuthenticated(cell, "account7");
         json = ResourceUtils.getLocalTokenByPassAuth(cell, "account7", "password7", -1);
         token.put(WRITE_ACL, (String) json.get("access_token"));
         refreshToken.put(WRITE_ACL, (String) json.get("refresh_token"));
-        accountLastAuthenticatedCheck(cell, "account7", lastAuthenticatedTime);
 
         // account8 PROPPACTH書き込みのみ
-        lastAuthenticatedTime = getAccountLastAuthenticated(cell, "account8");
         json = ResourceUtils.getLocalTokenByPassAuth(cell, "account8", "password8", -1);
         token.put(WRITE_PROP, (String) json.get("access_token"));
         refreshToken.put(WRITE_PROP, (String) json.get("refresh_token"));
-        accountLastAuthenticatedCheck(cell, "account8", lastAuthenticatedTime);
 
         // account9 PROPFIND読み込みのみ
-        lastAuthenticatedTime = getAccountLastAuthenticated(cell, "account9");
         json = ResourceUtils.getLocalTokenByPassAuth(cell, "account9", "password9", -1);
         token.put(READ_PROP, (String) json.get("access_token"));
         refreshToken.put(READ_PROP, (String) json.get("refresh_token"));
-        accountLastAuthenticatedCheck(cell, "account9", lastAuthenticatedTime);
-    }
-
-    /**
-     * アカウントの最終ログイン時刻が更新されたかどうかをチェックする.
-     * @param cell Cell名
-     * @param account Account名
-     * @param time 比較対象とする更新時刻(更新前の最終ログイン時刻等を指定)
-     */
-    public static void accountLastAuthenticatedCheck(String cell, String account,
-            Long time) {
-        TResponse response = AccountUtils.get(MASTER_TOKEN, HttpStatus.SC_OK, cell, account);
-        JSONObject json = response.bodyAsJson();
-        if (null == time) {
-            time = 0L;
-        }
-
-        String lastAuthenticatedString = (String) ((JSONObject) ((JSONObject) json.get("d")).get("results"))
-                .get("LastAuthenticated");
-        String updatedString = (String) ((JSONObject) ((JSONObject) json.get("d")).get("results"))
-                .get("__updated");
-        Long lastAuthenticatedValue = 0L;
-        if (null != lastAuthenticatedString) {
-            lastAuthenticatedValue = UserDataListFilterTest.parseDateStringToLong(lastAuthenticatedString);
-        }
-        // 比較対象とする更新時刻よりも新しいことをチェック
-        assertTrue(String.format("LastAuthenticatedが更新されていない。 lastAuthenticatedValue: %d 更新前のLastAuthenticaed: %d",
-                lastAuthenticatedValue, time), lastAuthenticatedValue > time);
-        // 現在時刻よりも古いことをチェック(不当に大きな値となっていないことの確認)
-        assertTrue(String.format("LastAuthenticatedが現在時刻よりも新しい。 lastAuthenticatedValue: %d", lastAuthenticatedValue),
-                lastAuthenticatedValue < System.currentTimeMillis());
-        Long updatedValue = UserDataListFilterTest.parseDateStringToLong(updatedString);
-        // __updatedが更新されていないことをチェック
-        assertTrue(String.format("__updateが更新されている。 lastAuthenticatedValue: %d __updated: %d", lastAuthenticatedValue,
-                updatedValue), lastAuthenticatedValue > updatedValue);
-    }
-
-    /**
-     * アカウントの最終ログイン時刻が更新されたかどうかをチェックする.
-     * @param cell Cell名
-     * @param account Account名
-     * @param time 比較対象とする更新時刻(更新前の最終ログイン時刻等を指定)
-     */
-    public static void accountLastAuthenticatedNotUpdatedCheck(String cell, String account,
-            Long time) {
-        if (null == time) {
-            time = 0L;
-        }
-        // 比較対象とする更新時刻と同じであることをチェック
-        assertTrue(getAccountLastAuthenticated(cell, account).equals(time));
-    }
-
-    /**
-     * アカウントの最終ログイン時刻を取得する.
-     * @param cell Cell名
-     * @param account Account名
-     * @return time アカウントの最終ログイン時刻
-     */
-    public static Long getAccountLastAuthenticated(String cell, String account) {
-        TResponse response = AccountUtils.get(MASTER_TOKEN, HttpStatus.SC_OK, cell, account);
-        JSONObject json = response.bodyAsJson();
-        String lastAuthenticatedString = (String) ((JSONObject) ((JSONObject) json.get("d")).get("results"))
-                .get("LastAuthenticated");
-        Long lastAuthenticatedValue = 0L;
-        if (null != lastAuthenticatedString) {
-            lastAuthenticatedValue = UserDataListFilterTest.parseDateStringToLong(lastAuthenticatedString);
-        }
-        return lastAuthenticatedValue;
     }
 
     /**
@@ -1131,11 +1044,9 @@ public class AuthTestCommon extends PersoniumTest {
             HashMap<Integer, String> refreshToken) {
         JSONObject json;
         // account1 アクセス権無し
-        Long lastAuthenticatedTime = getAccountLastAuthenticated(cell, "account1");
         json = transCellToken(cell, "account1", "password1", UrlUtils.cellRoot(targetCell));
         token.put(NO_PRIVILEGE, (String) json.get("access_token"));
         refreshToken.put(NO_PRIVILEGE, (String) json.get("refresh_token"));
-        accountLastAuthenticatedCheck(cell, "account1", lastAuthenticatedTime);
 
         // account2 読み込みのみ
         json = transCellToken(cell, "account2", "password2", UrlUtils.cellRoot(targetCell));
@@ -1387,11 +1298,11 @@ public class AuthTestCommon extends PersoniumTest {
     }
 
     /**
-     * Accountロックが解放されるのを待つ.
+     * wait for interval lock.
      */
-    public static void waitForAccountLock() {
+    public static void waitForIntervalLock() {
         try {
-            Thread.sleep(Long.parseLong(PersoniumUnitConfig.getAccountLockLifetime()) * SLEEP_MILLES);
+            Thread.sleep(PersoniumUnitConfig.getAccountValidAuthnInterval() * SLEEP_MILLES);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

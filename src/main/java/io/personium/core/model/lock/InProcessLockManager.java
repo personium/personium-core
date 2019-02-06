@@ -49,6 +49,7 @@ class InProcessLockManager extends LockManager {
     @Override
     synchronized void doDeleteAllLocks() {
         inProcessLock.clear();
+        inProcessAccountLock.clear();
     }
 
     @Override
@@ -67,7 +68,7 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    synchronized String doGetAccountLock(String fullKey) {
+    synchronized Integer doGetAccountLock(String fullKey) {
         AccountLock lock = inProcessAccountLock.get(fullKey);
         if (lock == null) {
             return null;
@@ -76,9 +77,14 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    synchronized Boolean doPutAccountLock(String fullKey, String value, int expired) {
+    synchronized Boolean doPutAccountLock(String fullKey, Integer value, int expired) {
         inProcessAccountLock.put(fullKey, new AccountLock(value, expired));
         return Boolean.TRUE;
+    }
+
+    @Override
+    synchronized void doReleaseAccountLock(String fullKey) {
+        inProcessAccountLock.remove(fullKey);
     }
 
     @Override
@@ -165,7 +171,7 @@ class InProcessLockManager extends LockManager {
     static class AccountLock {
 
         private static final int TIME_MILLIS = 1000;
-        private String value;
+        private Integer value;
         private int expiredInSeconds;
         private long createdAt;
 
@@ -174,7 +180,7 @@ class InProcessLockManager extends LockManager {
          * @param value value
          * @param expired Lock retention period (seconds)
          */
-        AccountLock(String value, int expired) {
+        AccountLock(Integer value, int expired) {
             this.value = value;
             this.expiredInSeconds = expired;
             this.createdAt = System.currentTimeMillis();
@@ -185,7 +191,7 @@ class InProcessLockManager extends LockManager {
          * If expired is exceeded, return null.
          * @return The value corresponding to the specified key (or null if it does not exist, if it exceeds expired)
          */
-        public String value() {
+        public Integer value() {
             long now = System.currentTimeMillis();
 
             //If expired is exceeded, return null
