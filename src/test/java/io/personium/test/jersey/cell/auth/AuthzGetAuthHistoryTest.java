@@ -49,7 +49,7 @@ import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 
 /**
- * test auth history.
+ * test auth history for authorization.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
@@ -153,7 +153,7 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
     }
 
     /**
-     * request authorization for authz.
+     * request authorization.
      * @param cellName cell name
      * @param userName user name
      * @param password password

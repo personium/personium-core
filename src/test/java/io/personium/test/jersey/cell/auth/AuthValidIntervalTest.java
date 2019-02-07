@@ -87,13 +87,13 @@ public class AuthValidIntervalTest extends PersoniumTest {
     @Ignore
     public final void パスワード認証失敗後1秒以内に成功する認証をリクエストした場合400が返却されること() {
         // パスワード認証1回目_ 不正なパスワード指定(400エラー(PR400-AN-0017))
-        TResponse passRes = requestAuthorization(TEST_CELL1, "account1",
+        TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
                 "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
         // 1秒以内にパスワード認証(400エラー(PR400-AN-0017))
-        passRes = requestAuthorization(TEST_CELL1, "account1", "password1", HttpStatus.SC_BAD_REQUEST);
+        passRes = requestAuthentication(TEST_CELL1, "account1", "password1", HttpStatus.SC_BAD_REQUEST);
         body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
@@ -108,13 +108,13 @@ public class AuthValidIntervalTest extends PersoniumTest {
     @Ignore
     public final void パスワード認証失敗後1秒以内に失敗する認証をリクエストした場合400が返却されること() {
         // パスワード認証1回目_ 不正なパスワード指定(400エラー(PR400-AN-0017))
-        TResponse passRes = requestAuthorization(TEST_CELL1, "account1",
+        TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
                 "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
         // 1秒以内にパスワード認証(400エラー(PR400-AN-0017))
-        passRes = requestAuthorization(TEST_CELL1, "account1", "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+        passRes = requestAuthentication(TEST_CELL1, "account1", "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
@@ -127,7 +127,7 @@ public class AuthValidIntervalTest extends PersoniumTest {
     @Test
     public final void パスワード認証失敗後1秒後に成功する認証をリクエストした場合200が返却されること() {
         // パスワード認証1回目_ 不正なパスワード指定(400エラー(PR400-AN-0017))
-        TResponse passRes = requestAuthorization(TEST_CELL1, "account1",
+        TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
                 "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
@@ -138,7 +138,7 @@ public class AuthValidIntervalTest extends PersoniumTest {
             log.debug("");
         }
         // 1秒後にパスワード認証(認証成功)
-        passRes = requestAuthorization(TEST_CELL1, "account1", "password1", HttpStatus.SC_OK);
+        passRes = requestAuthentication(TEST_CELL1, "account1", "password1", HttpStatus.SC_OK);
         body = (String) passRes.bodyAsJson().get("access_token");
         assertNotNull(body);
     }
@@ -149,7 +149,7 @@ public class AuthValidIntervalTest extends PersoniumTest {
     @Test
     public final void パスワード認証失敗後1秒後に失敗する認証をリクエストした場合400が返却されること() {
         // パスワード認証1回目_ 不正なパスワード指定(400エラー(PR400-AN-0017))
-        TResponse passRes = requestAuthorization(TEST_CELL1, "account1",
+        TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
                 "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
@@ -161,13 +161,13 @@ public class AuthValidIntervalTest extends PersoniumTest {
         }
 
         // 1秒後にパスワード認証(400エラー(PR400-AN-0017))
-        passRes = requestAuthorization(TEST_CELL1, "account1", "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+        passRes = requestAuthentication(TEST_CELL1, "account1", "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
         AuthTestCommon.waitForIntervalLock();
     }
 
-    private TResponse requestAuthorization(String cellName, String userName, String password, int code) {
+    private TResponse requestAuthentication(String cellName, String userName, String password, int code) {
         TResponse passRes =
                 Http.request("authn/password-cl-c0.txt")
                         .with("remoteCell", cellName)
