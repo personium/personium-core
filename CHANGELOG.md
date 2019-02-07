@@ -1,3 +1,7 @@
+## 1.6.18
+BUG FIXES:
+* bug fix.([#317](https://github.com/personium/personium-core/issues/317))
+
 ## 1.6.17
 BUG FIXES:
 * Resolve "issuer does not match" error.([#279](https://github.com/personium/personium-core/issues/279))
