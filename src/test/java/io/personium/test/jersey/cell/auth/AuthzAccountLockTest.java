@@ -54,7 +54,7 @@ import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 
 /**
- * account lock test for authz.
+ * account lock test for authorization.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })

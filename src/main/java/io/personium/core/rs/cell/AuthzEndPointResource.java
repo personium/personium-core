@@ -320,7 +320,7 @@ public class AuthzEndPointResource {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
+                PersoniumCoreLog.Authn.FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
@@ -332,7 +332,7 @@ public class AuthzEndPointResource {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_ACCOUNT_IS_LOCKED.params(
+                PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_LOCKED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
@@ -344,7 +344,7 @@ public class AuthzEndPointResource {
                 //Make lock on memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_PASSWORD.params(
+                PersoniumCoreLog.Authn.FAILED_INCORRECT_PASSWORD.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);

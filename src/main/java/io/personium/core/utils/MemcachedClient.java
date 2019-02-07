@@ -186,8 +186,19 @@ public class MemcachedClient implements CacheClient {
      * @return Returns true if creation succeeded or already exists, false if it fails
      */
     public Boolean createLongValue(String key, long initValue) {
+        return createLongValue(key, initValue, 0);
+    }
+
+    /**
+     * Create a new object with the specified key.
+     * @param key Cache key
+     * @param initValue Initial value
+     * @param expiresIn lifetime
+     * @return Returns true if creation succeeded or already exists, false if it fails
+     */
+    public Boolean createLongValue(String key, long initValue, int expiresIn) {
         try {
-            long count = this.spyClient.incr(key, 0, initValue);
+            long count = this.spyClient.incr(key, 0, initValue, expiresIn);
             return count == initValue;
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
@@ -216,8 +227,18 @@ public class MemcachedClient implements CacheClient {
      * @return Value after increment
      */
     public long incrementLongValue(String key) {
+        return incrementLongValue(key, 0);
+    }
+
+    /**
+     * Increment the value of the specified key.
+     * @param key Cache key
+     * @param expiresIn lifetime
+     * @return Value after increment
+     */
+    public long incrementLongValue(String key, int expiresIn) {
         try {
-            return this.spyClient.incr(key, 1, 1);
+            return this.spyClient.incr(key, 1, 1, expiresIn);
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
             throw new MemcachedClientException(e);
