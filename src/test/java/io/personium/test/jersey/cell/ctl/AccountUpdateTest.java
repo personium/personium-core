@@ -128,7 +128,7 @@ public class AccountUpdateTest extends ODataCommon {
     @Test
     public final void パスワードとアカウント名を更新して204が返却されること() {
         String newUserName = "account999";
-        String newPassword = "new_password0";
+        String newPassword = "new_password0!";
         // 認証可能を確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);
 
@@ -176,7 +176,7 @@ public class AccountUpdateTest extends ODataCommon {
      */
     @Test
     public final void パスワードのみを更新して204が返却されること() {
-        String newPassword = "new_password0";
+        String newPassword = "new_p@ssword0";
         // 認証可能を確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);
 

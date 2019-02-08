@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -150,6 +152,9 @@ public class PersoniumUnitConfig {
 
         /** The secret key used when encrypting the token.*/
         public static final String AUTH_PASSWORD_SALT = KEY_ROOT + "security.auth.password.salt";
+
+        /** The regex pattern of the password to use for authentication. */
+        public static final String AUTH_PASSWORD_REGEX = KEY_ROOT + "security.auth.password.regex";
 
         /** Encrypt the DAV file (true: enabled false: disabled (default)). */
         public static final String DAV_ENCRYPT_ENABLED = KEY_ROOT + "security.dav.encrypt.enabled";
@@ -590,8 +595,25 @@ public class PersoniumUnitConfig {
      * check a properties.
      */
     private synchronized void doCheckProperties() {
+        checkRequired(Authn.ACCOUNT_LOCK_COUNT);
         checkNumber(Authn.ACCOUNT_LOCK_COUNT, Authn.ACCOUNT_LOCK_COUNT_MIN, Authn.ACCOUNT_LOCK_COUNT_MAX);
+        checkRequired(Authn.ACCOUNT_LOCK_TIME);
         checkNumber(Authn.ACCOUNT_LOCK_TIME, Authn.ACCOUNT_LOCK_TIME_MIN, Authn.ACCOUNT_LOCK_TIME_MAX);
+        checkRequired(Security.AUTH_PASSWORD_REGEX);
+        checkRegex(Security.AUTH_PASSWORD_REGEX);
+    }
+
+    /**
+     * check parameter is required.
+     *
+     * @param key properity key
+     */
+    private void checkRequired(String key) {
+        // required.
+        String value = this.props.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            throw new RuntimeException("illegal parameter. " + key + " required.");
+        }
     }
 
     /**
@@ -610,6 +632,21 @@ public class PersoniumUnitConfig {
             }
         } catch (NumberFormatException e) {
             throw new RuntimeException("illegal parameter. " + key + " number format error.", e);
+        }
+    }
+
+    /**
+     * check parameter is regex pattern.
+     *
+     * @param key properity key
+     */
+    private void checkRegex(String key) {
+        // check is regex pattern.
+        try {
+            String regex = this.props.getProperty(key);
+            Pattern.compile(regex);
+        } catch (PatternSyntaxException e) {
+            throw new RuntimeException("illegal parameter. " + key + " syntax error.", e);
         }
     }
 
@@ -1237,6 +1274,14 @@ public class PersoniumUnitConfig {
      */
     public static String getAuthPasswordSalt() {
         return get(Security.AUTH_PASSWORD_SALT);
+    }
+
+    /**
+     * The regex pattern of the password to use for authentication.
+     * @return regex pattern of the password
+     */
+    public static String getAuthPasswordRegex() {
+        return get(Security.AUTH_PASSWORD_REGEX);
     }
 
     /**

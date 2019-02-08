@@ -27,6 +27,7 @@ import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -364,30 +365,77 @@ public class AccountCreateTest extends ODataCommon {
     }
 
     /**
-     * Account新規登録時に不正なパスワード文字列を指定して400になること.
+     * Test that specifies an incorrect password string to 400.
+     * (Default password regex pattern.)
      */
     @Test
-    public final void Account新規登録時に不正なパスワード文字列を指定して400になること() {
+    public final void invalid_password() {
         ArrayList<String> invalidStrings = new ArrayList<String>();
-        invalidStrings.add("password=");
         invalidStrings.add("");
-        invalidStrings.add("!aa");
         invalidStrings.add("pass%word");
         invalidStrings.add("%E3%81%82");
         invalidStrings.add("あ");
         invalidStrings.add("123456789012345678901234567890123");
 
         String testAccountName = "account_badpassword";
-        String accLocHeader = null;
 
         try {
             for (String value : invalidStrings) {
-                accLocHeader = createAccount(testAccountName, value, HttpStatus.SC_BAD_REQUEST);
+                createAccount(testAccountName, value, HttpStatus.SC_BAD_REQUEST);
             }
         } finally {
-            if (accLocHeader != null) {
-                deleteAccount(accLocHeader);
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+        }
+    }
+
+    /**
+     * Test when change password regex pattern.
+     */
+    @Test
+    public final void change_password_regex_pattern() {
+        String defaultPasswordRegex = PersoniumUnitConfig.getAuthPasswordRegex();
+
+        // chang password regex pattern.
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Security.AUTH_PASSWORD_REGEX,
+                "(?=.*[A-Z])(?!^(?i)password(?-i)$)^.*[a-zA-Z0-9]$");
+
+        String testAccountName = "account_testpasswordregex";
+
+        ArrayList<String> normalPasswordList = new ArrayList<String>();
+        normalPasswordList.add("A");
+        normalPasswordList.add("ABC");
+        normalPasswordList.add("ABCXYZabcxyz0123456789");
+        normalPasswordList.add("12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "ABCDEF");
+
+        ArrayList<String> invalidPasswordList = new ArrayList<String>();
+        invalidPasswordList.add("");
+        invalidPasswordList.add("TEST=");
+        invalidPasswordList.add("abcxyz09");
+        invalidPasswordList.add("PASSWORD");
+        invalidPasswordList.add("PaSsWoRd");
+        invalidPasswordList.add("12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "ABCDEFG");
+
+        try {
+            for (String value : normalPasswordList) {
+                createAccount(testAccountName, value, HttpStatus.SC_CREATED);
+                AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
             }
+            for (String value : invalidPasswordList) {
+                createAccount(testAccountName, value, HttpStatus.SC_BAD_REQUEST);
+            }
+        } finally {
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+            PersoniumUnitConfig.set(PersoniumUnitConfig.Security.AUTH_PASSWORD_REGEX, defaultPasswordRegex);
         }
     }
 

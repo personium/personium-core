@@ -44,9 +44,9 @@ import io.personium.plugin.base.auth.AuthPlugin;
 public final class AuthUtils {
     private static final String MD_ALGORITHM = "SHA-256";
     /** Password minimum length.*/
-    private static final int MIN_PASSWORD_LENGTH = 6;
+    private static final int MIN_PASSWORD_LENGTH = 1;
     /** Password maximum length.*/
-    private static final int MAX_PASSWORD_LENGTH = 32;
+    private static final int MAX_PASSWORD_LENGTH = 256;
 
     private AuthUtils() {
     }
@@ -158,7 +158,7 @@ public final class AuthUtils {
         }
         if (pCredHeader.length() >= MIN_PASSWORD_LENGTH
                 && pCredHeader.length() <= MAX_PASSWORD_LENGTH) {
-            String regex = "^[a-zA-Z0-9-_]{0,}$";
+            String regex = PersoniumUnitConfig.getAuthPasswordRegex();
             Pattern pattern = Pattern.compile(regex);
             Matcher m = pattern.matcher(pCredHeader);
             if (!m.find()) {
