@@ -377,7 +377,7 @@ public class AuthzEndPointResource {
             } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
                 List<Role> roleList = cell.getRoleListForAccount(username);
                 CellLocalAccessToken aToken = new CellLocalAccessToken(
-                        issuedAt, getIssuerUrl(), username, roleList, schema);
+                        issuedAt, CellLocalAccessToken.CODE_EXPIRES, getIssuerUrl(), username, roleList, schema, scope);
                 paramMap.put(OAuth2Helper.Key.CODE, aToken.toCodeString());
             }
         } else {
@@ -470,7 +470,8 @@ public class AuthzEndPointResource {
             //Regenerate AccessToken from received Token
             List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
             CellLocalAccessToken aToken = new CellLocalAccessToken(
-                    issuedAt, token.getIssuer(), token.getSubject(), roleList, clientId);
+                    issuedAt, CellLocalAccessToken.CODE_EXPIRES,
+                    token.getIssuer(), token.getSubject(), roleList, clientId, scope);
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
                 paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
                 paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
@@ -636,7 +637,7 @@ public class AuthzEndPointResource {
      */
     private Response returnHtmlForm(String responseType, String clientId, String redirectUri,
             String massage, String state, String scope) {
-        ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
+        ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML_TYPE.withCharset(CharEncoding.UTF_8));
         return rb.entity(this.createForm(responseType, clientId, redirectUri, massage, state, scope)).build();
     }
 

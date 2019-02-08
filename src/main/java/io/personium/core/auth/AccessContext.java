@@ -474,8 +474,7 @@ public class AccessContext {
         } else if (TYPE_ANONYMOUS.equals(this.getType())
                 || TYPE_BASIC.equals(this.getType())) {
             throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
-        } else if (!TYPE_ACCOUNT.equals(this.getType())
-                ||  !this.getCell().getName().equals(cellname.getName())) {
+        } else if (!TYPE_ACCOUNT.equals(this.getType())) {
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
     }
@@ -879,9 +878,20 @@ public class AccessContext {
             escapedBaseUri = baseUri.replaceFirst(cellName + "\\.", "");
         }
 
+        String issuer = tca.getIssuer();
+        if (!PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
+            try {
+                issuer = UriUtils.convertPathBaseToFqdnBase(issuer);
+            } catch (URISyntaxException e) {
+                // not normal issuer.
+                PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
+                return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.tokenParseError);
+            }
+        }
+
         if ((tca.getTarget().equals(baseUri) || tca.getTarget().equals(escapedBaseUri))
-                && (PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), baseUri)
-                        || PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), escapedBaseUri))) {
+                && (PersoniumUnitConfig.checkUnitUserIssuers(issuer, baseUri)
+                        || PersoniumUnitConfig.checkUnitUserIssuers(issuer, escapedBaseUri))) {
             //Processing unit user tokens
             ret.accessType = TYPE_UNIT_USER;
             ret.subject = tca.getSubject();
