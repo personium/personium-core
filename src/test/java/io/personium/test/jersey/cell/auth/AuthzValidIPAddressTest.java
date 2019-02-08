@@ -100,19 +100,19 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
                 "192.127.0.1", HttpStatus.SC_CREATED);
 
         // Authentication possible if set IP address.
-        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1");
+        PersoniumResponse res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
         Map<String, String> responseMap = parseResponse(res);
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // failure if other IP address.
-        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.2");
+        res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.2");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
         ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
 
         // failure if IP address is unknown.
         AuthTestCommon.waitForIntervalLock();
-        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, null);
+        res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, null);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
         ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
 
@@ -129,13 +129,13 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
                 "192.127.0.2,192.127.0.3,192.127.1.1", HttpStatus.SC_CREATED);
 
         // Authentication possible if set IP address.
-        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.3");
+        PersoniumResponse res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.3");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
         Map<String, String> responseMap = parseResponse(res);
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // failure if other IP address.
-        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1");
+        res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
         ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
     }
@@ -151,13 +151,13 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
                 "192.127.0.0/24", HttpStatus.SC_CREATED);
 
         // Authentication possible if set IP address.
-        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.127");
+        PersoniumResponse res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.127");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
         Map<String, String> responseMap = parseResponse(res);
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // failure if other IP address.
-        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.1");
+        res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.1");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
         ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
     }
@@ -173,13 +173,13 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
                 "192.127.1.0/24,192.127.2.0/24,192.127.3.1", HttpStatus.SC_CREATED);
 
         // Authentication possible if set IP address.
-        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.2.127");
+        PersoniumResponse res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.2.127");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
         Map<String, String> responseMap = parseResponse(res);
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // failure if other IP address.
-        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.127");
+        res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.127");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
         ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
     }
@@ -194,9 +194,9 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
         AccountUtils.create(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_CREATED);
 
         // Authentication possible for all IP addresses.
-        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1");
+        PersoniumResponse res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, null);
+        res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, null);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
     }
 
@@ -207,7 +207,8 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
      * @param password password
      * @return http response
      */
-    private PersoniumResponse requestAuthorization4Authz(String cellName, String userName, String password, String xForwardedFor)
+    private PersoniumResponse requestAuthorization(String cellName, String userName, String password,
+            String xForwardedFor)
             throws PersoniumException {
         HashMap<String, String> authorizationHeader = new HashMap<String, String>();
         if (xForwardedFor != null && !xForwardedFor.isEmpty()) {

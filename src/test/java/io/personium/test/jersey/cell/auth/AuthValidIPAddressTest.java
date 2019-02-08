@@ -90,17 +90,17 @@ public class AuthValidIPAddressTest extends PersoniumTest {
                 "192.127.0.1", HttpStatus.SC_CREATED);
 
         // Authentication possible if set IP address.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1", HttpStatus.SC_OK);
 
         // failure if other IP address.
-        TResponse passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.2",
+        TResponse passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.2",
                 HttpStatus.SC_BAD_REQUEST);
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
         // failure if IP address is unknown.
         AuthTestCommon.waitForIntervalLock();
-        passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, null, HttpStatus.SC_BAD_REQUEST);
+        passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, null, HttpStatus.SC_BAD_REQUEST);
         body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
@@ -116,12 +116,12 @@ public class AuthValidIPAddressTest extends PersoniumTest {
                 "192.127.0.2,192.127.0.3,192.127.1.1", HttpStatus.SC_CREATED);
 
         // Authentication possible if set IP address.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.2", HttpStatus.SC_OK);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.3", HttpStatus.SC_OK);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.1", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.2", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.3", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.1", HttpStatus.SC_OK);
 
         // failure if other IP address.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1", HttpStatus.SC_BAD_REQUEST);
     }
 
     /**
@@ -136,17 +136,17 @@ public class AuthValidIPAddressTest extends PersoniumTest {
         // Authentication possible if set IP address.
         //   192.127.0.0/24：192.127.0.1～192.127.0.254
         //                      exclude Network Address(192.127.0.0) and Broadcast Address(192.127.0.255)
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1", HttpStatus.SC_OK);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.2", HttpStatus.SC_OK);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.253", HttpStatus.SC_OK);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.254", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.2", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.253", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.254", HttpStatus.SC_OK);
 
         // failure if other IP address.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.1", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.1", HttpStatus.SC_BAD_REQUEST);
         AuthTestCommon.waitForIntervalLock();
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.0", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.0", HttpStatus.SC_BAD_REQUEST);
         AuthTestCommon.waitForIntervalLock();
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.255", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.255", HttpStatus.SC_BAD_REQUEST);
     }
 
     /**
@@ -159,16 +159,16 @@ public class AuthValidIPAddressTest extends PersoniumTest {
                 "192.127.1.0/24,192.127.2.0/24,192.127.3.1", HttpStatus.SC_CREATED);
 
         // Authentication possible if set IP address.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.1", HttpStatus.SC_OK);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.254", HttpStatus.SC_OK);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.2.1", HttpStatus.SC_OK);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.2.254", HttpStatus.SC_OK);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.3.1", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.1", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.254", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.2.1", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.2.254", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.3.1", HttpStatus.SC_OK);
 
         // failure if other IP address.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1", HttpStatus.SC_BAD_REQUEST);
         AuthTestCommon.waitForIntervalLock();
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.3.254", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.3.254", HttpStatus.SC_BAD_REQUEST);
     }
 
     /**
@@ -180,12 +180,12 @@ public class AuthValidIPAddressTest extends PersoniumTest {
         AccountUtils.create(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_CREATED);
 
         // Authentication possible for all IP addresses.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1", HttpStatus.SC_OK);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, null, HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1", HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, null, HttpStatus.SC_OK);
     }
 
     /**
-     * request authorization.
+     * request authentication.
      * @param cellName cell name
      * @param userName user name
      * @param pass password
@@ -193,7 +193,7 @@ public class AuthValidIPAddressTest extends PersoniumTest {
      * @param code expected status code
      * @return http response
      */
-    private TResponse requestAuthorization(String cellName, String userName, String pass, String xForwardedFor,
+    private TResponse requestAuthentication(String cellName, String userName, String pass, String xForwardedFor,
             int code) {
         Http request;
         if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
