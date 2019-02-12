@@ -245,8 +245,8 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account新規登録時にNameに半角記号を指定して登録できること() {
-        // エスケープする前のNameは、abcde12345-_!$*=^`{|}~.@
-        String testAccountName = "abcde12345\\-\\_\\!\\$\\*\\=\\^\\`\\{\\|\\}\\~.\\@";
+        // Before escaping is "abcde12345-_!$*=^`{|}~.@"
+        String testAccountName = "abcde12345-_!\\$*=^`{|}~.@";
         String encodedtestAccountName = "abcde12345-_%21%24%2A%3D%5E%60%7B%7C%7D%7E.%40";
 
         String testAccountPass = "password";
@@ -266,7 +266,7 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account新規登録時にPasswordなしでTypeにoidcコロンgoogleを指定して登録できること() {
-        String testAccountName = "personium.io\\@gmail.com";
+        String testAccountName = "personium.io@gmail.com";
         String testAccountType = "oidc:google";
         String accLocHeader = null;
 
@@ -284,7 +284,7 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account新規登録時にPasswordありでTypeにoidcコロンgoogleを指定して登録できること() {
-        String testAccountName = "personium.io\\@gmail.com";
+        String testAccountName = "personium.io@gmail.com";
         String testAccountType = "oidc:google";
         String testAccountPass = "password1234";
         String accLocHeader = null;
@@ -303,7 +303,7 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account新規登録時にパスワードなしでTypeにbasicスペースoidcコロンgoogleを指定して登録できること() {
-        String testAccountName = "personium.io\\@gmail.com";
+        String testAccountName = "personium.io@gmail.com";
         String testAccountType = "basic oidc:google";
         String accLocHeader = null;
 
@@ -321,7 +321,7 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account新規登録時にパスワードありでTypeにbasicスペースoidcコロンgoogleを指定して登録できること() {
-        String testAccountName = "personium.io\\@gmail.com";
+        String testAccountName = "personium.io@gmail.com";
         String testAccountType = "basic oidc:google";
         String testAccountPass = "password1234";
         String accLocHeader = null;
@@ -349,7 +349,7 @@ public class AccountCreateTest extends ODataCommon {
         invalidTypeStrings.add("あ");
         invalidTypeStrings.add("       ");
 
-        String testAccountName = "account_badpassword";
+        String testAccountName = "account_normalpassword";
         String testAccountPass = "password1234";
         String accLocHeader = null;
 
@@ -365,23 +365,48 @@ public class AccountCreateTest extends ODataCommon {
     }
 
     /**
-     * Test that specifies an incorrect password string to 400.
-     * (Default password regex pattern.)
+     * If you specify a normal password string at the time of new account registration, the account will be registered.
+     * (Password regex pattern is default.)
      */
     @Test
-    public final void invalid_password() {
-        ArrayList<String> invalidStrings = new ArrayList<String>();
-        invalidStrings.add("");
-        invalidStrings.add("pass%word");
-        invalidStrings.add("%E3%81%82");
-        invalidStrings.add("あ");
-        invalidStrings.add("123456789012345678901234567890123");
+    public final void password_normal() {
+        String testAccountName = "account_password";
+
+        ArrayList<String> normalPasswordList = new ArrayList<String>();
+        normalPasswordList.add("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        normalPasswordList.add("abcdefghijklmnopqrstuvwxyz");
+        normalPasswordList.add("123456");
+        normalPasswordList.add("12345678901234567890123456789012");
+        normalPasswordList.add("-_!\\$*=^`{|}~.@"); // Before escaping is "-_!$*=^`{|}~.@"
+
+        try {
+            for (String password : normalPasswordList) {
+                createAccount(testAccountName, password, HttpStatus.SC_CREATED);
+                AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+            }
+        } finally {
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+        }
+    }
+
+    /**
+     * If you specify an invalid password string at the time of new account registration, the response will be 400.
+     * (Password regex pattern is default.)
+     */
+    @Test
+    public final void password_invalid() {
+        ArrayList<String> invalidPasswordList = new ArrayList<String>();
+        invalidPasswordList.add("");
+        invalidPasswordList.add("pass%word");
+        invalidPasswordList.add("%E3%81%82");
+        invalidPasswordList.add("あ");
+        invalidPasswordList.add("123456789012345678901234567890123");
 
         String testAccountName = "account_badpassword";
 
         try {
-            for (String value : invalidStrings) {
-                createAccount(testAccountName, value, HttpStatus.SC_BAD_REQUEST);
+            for (String invalidPassword : invalidPasswordList) {
+                createAccount(testAccountName, invalidPassword, HttpStatus.SC_BAD_REQUEST);
             }
         } finally {
             AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
@@ -416,7 +441,6 @@ public class AccountCreateTest extends ODataCommon {
         invalidPasswordList.add("");
         invalidPasswordList.add("TEST=");
         invalidPasswordList.add("abcxyz09");
-        invalidPasswordList.add("PASSWORD");
         invalidPasswordList.add("PaSsWoRd");
         invalidPasswordList.add("12345678901234567890123456789012345678901234567890"
                 + "12345678901234567890123456789012345678901234567890"

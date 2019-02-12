@@ -113,7 +113,7 @@ public class MyPasswordTest extends PersoniumTest {
     @Test
     public final void 記号を含むアカウントの自分セルローカルトークン認証でパスワード変更を実行し204が返ること() throws TokenParseException {
         // エスケープする前のNameは、abcde12345-_!$*=^`{|}~.@
-        String testAccountName = "abcde12345\\-\\_\\!\\$\\*\\=\\^\\`\\{\\|\\}\\~.\\@";
+        String testAccountName = "abcde12345-_!\\$*=^`{|}~.@";
         String encodedtestAccountName = "abcde12345-_%21%24%2A%3D%5E%60%7B%7C%7D%7E.%40";
 
         try {
@@ -255,12 +255,11 @@ public class MyPasswordTest extends PersoniumTest {
     }
 
     /**
-     * If the new password is a normal password string, 204 is returned in the response.
-     * (Default password regex pattern)
+     * If the new password is a normal password string, the response will be 204.
      * @throws Exception Unexpected exception
      */
     @Test
-    public final void new_password_ok() throws Exception {
+    public final void new_password_normal() throws Exception {
         ArrayList<String> normalPasswordList = new ArrayList<String>();
         normalPasswordList.add("hoge@!");
         normalPasswordList.add("12345678901234567890123456789012");
@@ -295,8 +294,7 @@ public class MyPasswordTest extends PersoniumTest {
     }
 
     /**
-     * If the new password is an invalid password string, 400 is returned in the response.
-     * (Default password regex pattern)
+     * If the new password is an invalid password string, the response will be 400.
      * @throws Exception Unexpected exception
      */
     @Test
