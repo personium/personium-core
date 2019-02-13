@@ -131,13 +131,6 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Setting around Account.
-     */
-    public static final class Account {
-        // TODO add properties later.
-    }
-
-    /**
      * Setting around Dav.
      */
     public static final class Dav {

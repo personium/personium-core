@@ -53,13 +53,18 @@ class MemcachedLockManager extends LockManager {
     }
 
     @Override
-    Integer doGetAccountLock(String fullKey) {
-        return MemcachedClient.getLockClient().get(fullKey, Integer.class);
+    long doGetAccountLock(String fullKey) {
+        return MemcachedClient.getLockClient().getLongValue(fullKey);
     }
 
     @Override
-    Boolean doPutAccountLock(String fullKey, Integer value, int expired) {
-        return MemcachedClient.getLockClient().put(fullKey, expired, value);
+    Boolean doPutAccountLock(String fullKey, long value, int expired) {
+        return MemcachedClient.getLockClient().createLongValue(fullKey, value, expired);
+    }
+
+    @Override
+    long doIncrementAccountLock(String fullKey, int expired) {
+        return MemcachedClient.getLockClient().incrementLongValue(fullKey, expired);
     }
 
     @Override

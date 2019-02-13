@@ -30,8 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -52,8 +50,6 @@ import io.personium.test.utils.TResponse;
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
 public class AuthHistoryTest extends PersoniumTest {
-
-    private static Logger log = LoggerFactory.getLogger(AuthHistoryTest.class);
 
     /** test cell name. */
     private static final String TEST_CELL = "testcellauthhistory";
@@ -93,7 +89,7 @@ public class AuthHistoryTest extends PersoniumTest {
      */
     @Test
     public final void first_authenticated() {
-        TResponse passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
+        TResponse passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
 
         assertTrue(passRes.bodyAsJson().containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
         assertNull(passRes.bodyAsJson().get(OAuth2Helper.Key.LAST_AUTHENTICATED));
@@ -107,35 +103,35 @@ public class AuthHistoryTest extends PersoniumTest {
     @Test
     public final void get_last_authenticated() {
         // first get token. failed count = 3.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         AuthTestCommon.waitForIntervalLock();
-        Long beforeFirstAuthenticatedTime = new Date().getTime();
-        TResponse passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
-        Long afterFirstAuthenticatedTime = new Date().getTime();
+        Long before1stAuthnTime = new Date().getTime();
+        TResponse passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
+        Long after1stAuthnTime = new Date().getTime();
 
         assertTrue(passRes.bodyAsJson().containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
         assertNull(passRes.bodyAsJson().get(OAuth2Helper.Key.LAST_AUTHENTICATED));
         assertThat(passRes.bodyAsJson().get(OAuth2Helper.Key.FAILED_COUNT), is(3L));
 
         // second get token. failed count = 0.
-        passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
-        Long afterSecondAuthenticatedTime = new Date().getTime();
+        passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
+        Long after2ndAuthnTime = new Date().getTime();
 
         assertTrue(passRes.bodyAsJson().containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
         Long lastAuthenticated = (Long) passRes.bodyAsJson().get(OAuth2Helper.Key.LAST_AUTHENTICATED);
-        assertTrue(beforeFirstAuthenticatedTime <= lastAuthenticated && lastAuthenticated <= afterFirstAuthenticatedTime);
+        assertTrue(before1stAuthnTime <= lastAuthenticated && lastAuthenticated <= after1stAuthnTime);
         assertThat(passRes.bodyAsJson().get(OAuth2Helper.Key.FAILED_COUNT), is(0L));
 
         // third get token. failed count = 1.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         AuthTestCommon.waitForIntervalLock();
-        passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
+        passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
 
         assertTrue(passRes.bodyAsJson().containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
         lastAuthenticated = (Long) passRes.bodyAsJson().get(OAuth2Helper.Key.LAST_AUTHENTICATED);
-        assertTrue(afterFirstAuthenticatedTime <= lastAuthenticated && lastAuthenticated <= afterSecondAuthenticatedTime);
+        assertTrue(after1stAuthnTime <= lastAuthenticated && lastAuthenticated <= after2ndAuthnTime);
         assertTrue(passRes.bodyAsJson().containsKey(OAuth2Helper.Key.FAILED_COUNT));
         assertThat(passRes.bodyAsJson().get(OAuth2Helper.Key.FAILED_COUNT), is(1L));
     }
@@ -148,11 +144,11 @@ public class AuthHistoryTest extends PersoniumTest {
     public final void token_refresh() {
         // first get token.
         Long beforeAuthenticatedTime = new Date().getTime();
-        TResponse passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
+        TResponse passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
         Long afterFirstAuthenticatedTime = new Date().getTime();
 
         // failed get token after first get token.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
 
         // token refresh.
         String refreshToken = (String) passRes.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
@@ -166,21 +162,21 @@ public class AuthHistoryTest extends PersoniumTest {
 
         // get token after refreshed. check last authenticated and failed count.
         AuthTestCommon.waitForIntervalLock();
-        passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
+        passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
         Long lastAuthenticated = (Long) passRes.bodyAsJson().get(OAuth2Helper.Key.LAST_AUTHENTICATED);
         assertTrue(beforeAuthenticatedTime <= lastAuthenticated && lastAuthenticated <= afterFirstAuthenticatedTime);
         assertThat(passRes.bodyAsJson().get(OAuth2Helper.Key.FAILED_COUNT), is(1L));
     }
 
     /**
-     * request authorization.（__token)
+     * request authentication.
      * @param cellName cell name
      * @param userName user name
      * @param password password
      * @param code expected status code
      * @return http response
      */
-    private TResponse requestAuthorization(String cellName, String userName, String password, int code) {
+    private TResponse requestAuthentication(String cellName, String userName, String password, int code) {
         TResponse passRes = Http.request("authn/password-cl-c0.txt")
                 .with("remoteCell", cellName)
                 .with("username", userName)
