@@ -22,6 +22,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
+import org.json.simple.JSONObject;
 
 /**
  * Httpリクエストドキュメントを利用するユーティリティ.
@@ -68,6 +69,30 @@ public class AccountUtils {
                 .with("password", pass)
                 .returns()
                 .statusCode(code);
+        return tresponse;
+    }
+
+    /**
+     * Utility to create account with IPAddressRenge.
+     * @param token token
+     * @param cellName cell name
+     * @param userName user name
+     * @param pass password
+     * @param ipAddressRange IP address range
+     * @param code Expected response code
+     * @return responese
+     */
+    public static TResponse createWithIPAddressRange(final String token, final String cellName, final String userName,
+            final String pass, String ipAddressRange, int code) {
+        TResponse tresponse = Http.request("account-create-with-IPAddressRange.txt")
+                .with("token", token)
+                .with("cellPath", cellName)
+                .with("username", userName)
+                .with("password", pass)
+                .with("IPAddressRange", ipAddressRange)
+                .returns()
+                .debug();
+        tresponse.statusCode(code);
         return tresponse;
     }
 
@@ -186,6 +211,34 @@ public class AccountUtils {
                 .with("username", userName)
                 .with("password", newPassword)
                 .with("newUsername", newUsername)
+                .returns().debug();
+        res.statusCode(sc);
+        return res;
+    }
+
+    /**
+     * アカウント更新 IPアドレス範囲付き.
+     * @param token 認証トークン
+     * @param cellName セル名
+     * @param userName 旧ユーザ名
+     * @param newUsername アカウント名
+     * @param newPassword パスワード
+     * @param newIPAddressRange IPアドレス範囲
+     * @param sc ステータスコード
+     * @return レスポンス
+     */
+    @SuppressWarnings("unchecked")
+    public static TResponse updateWithIPAddressRange(String token, String cellName, String userName, String newUsername,
+            String newPassword, String newIPAddressRange, int sc) {
+        JSONObject updateBody = new JSONObject();
+        updateBody.put("Name", newUsername);
+        updateBody.put("IPAddressRange", newIPAddressRange);
+        TResponse res = Http.request("account-update-without-body.txt")
+                .with("token", token)
+                .with("cellPath", cellName)
+                .with("username", userName)
+                .with("password", newPassword)
+                .with("body", updateBody.toJSONString())
                 .returns().debug();
         res.statusCode(sc);
         return res;

@@ -138,6 +138,13 @@ public final class PersoniumCoreLog {
          * {2}: User ID(username)
          */
         public static final PersoniumCoreLog FAILED_INCORRECT_PASSWORD = create("PL-AN-0004");
+        /**
+         * Authentication failed. Authentication trial from outside the IP address range.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog FAILED_OUTSIDE_IP_ADDRESS_RANGE = create("PL-AN-0005");
     }
 
     /**
