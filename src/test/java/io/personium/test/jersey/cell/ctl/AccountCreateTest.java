@@ -27,6 +27,7 @@ import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -244,8 +245,8 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account新規登録時にNameに半角記号を指定して登録できること() {
-        // エスケープする前のNameは、abcde12345-_!$*=^`{|}~.@
-        String testAccountName = "abcde12345\\-\\_\\!\\$\\*\\=\\^\\`\\{\\|\\}\\~.\\@";
+        // Before escaping is "abcde12345-_!$*=^`{|}~.@"
+        String testAccountName = "abcde12345-_!\\$*=^`{|}~.@";
         String encodedtestAccountName = "abcde12345-_%21%24%2A%3D%5E%60%7B%7C%7D%7E.%40";
 
         String testAccountPass = "password";
@@ -265,7 +266,7 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account新規登録時にPasswordなしでTypeにoidcコロンgoogleを指定して登録できること() {
-        String testAccountName = "personium.io\\@gmail.com";
+        String testAccountName = "personium.io@gmail.com";
         String testAccountType = "oidc:google";
         String accLocHeader = null;
 
@@ -283,7 +284,7 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account新規登録時にPasswordありでTypeにoidcコロンgoogleを指定して登録できること() {
-        String testAccountName = "personium.io\\@gmail.com";
+        String testAccountName = "personium.io@gmail.com";
         String testAccountType = "oidc:google";
         String testAccountPass = "password1234";
         String accLocHeader = null;
@@ -302,7 +303,7 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account新規登録時にパスワードなしでTypeにbasicスペースoidcコロンgoogleを指定して登録できること() {
-        String testAccountName = "personium.io\\@gmail.com";
+        String testAccountName = "personium.io@gmail.com";
         String testAccountType = "basic oidc:google";
         String accLocHeader = null;
 
@@ -320,7 +321,7 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account新規登録時にパスワードありでTypeにbasicスペースoidcコロンgoogleを指定して登録できること() {
-        String testAccountName = "personium.io\\@gmail.com";
+        String testAccountName = "personium.io@gmail.com";
         String testAccountType = "basic oidc:google";
         String testAccountPass = "password1234";
         String accLocHeader = null;
@@ -348,7 +349,7 @@ public class AccountCreateTest extends ODataCommon {
         invalidTypeStrings.add("あ");
         invalidTypeStrings.add("       ");
 
-        String testAccountName = "account_badpassword";
+        String testAccountName = "account_normalpassword";
         String testAccountPass = "password1234";
         String accLocHeader = null;
 
@@ -364,30 +365,101 @@ public class AccountCreateTest extends ODataCommon {
     }
 
     /**
-     * Account新規登録時に不正なパスワード文字列を指定して400になること.
+     * If you specify a normal password string at the time of new account registration, the account will be registered.
+     * (Password regex pattern is default.)
      */
     @Test
-    public final void Account新規登録時に不正なパスワード文字列を指定して400になること() {
-        ArrayList<String> invalidStrings = new ArrayList<String>();
-        invalidStrings.add("password=");
-        invalidStrings.add("");
-        invalidStrings.add("!aa");
-        invalidStrings.add("pass%word");
-        invalidStrings.add("%E3%81%82");
-        invalidStrings.add("あ");
-        invalidStrings.add("123456789012345678901234567890123");
+    public final void password_normal() {
+        String testAccountName = "account_password";
 
-        String testAccountName = "account_badpassword";
-        String accLocHeader = null;
+        ArrayList<String> normalPasswordList = new ArrayList<String>();
+        normalPasswordList.add("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        normalPasswordList.add("abcdefghijklmnopqrstuvwxyz");
+        normalPasswordList.add("123456");
+        normalPasswordList.add("12345678901234567890123456789012");
+        normalPasswordList.add("-_!\\$*=^`{|}~.@"); // Before escaping is "-_!$*=^`{|}~.@"
 
         try {
-            for (String value : invalidStrings) {
-                accLocHeader = createAccount(testAccountName, value, HttpStatus.SC_BAD_REQUEST);
+            for (String password : normalPasswordList) {
+                createAccount(testAccountName, password, HttpStatus.SC_CREATED);
+                AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
             }
         } finally {
-            if (accLocHeader != null) {
-                deleteAccount(accLocHeader);
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+        }
+    }
+
+    /**
+     * If you specify an invalid password string at the time of new account registration, the response will be 400.
+     * (Password regex pattern is default.)
+     */
+    @Test
+    public final void password_invalid() {
+        ArrayList<String> invalidPasswordList = new ArrayList<String>();
+        invalidPasswordList.add("");
+        invalidPasswordList.add("pass%word");
+        invalidPasswordList.add("%E3%81%82");
+        invalidPasswordList.add("あ");
+        invalidPasswordList.add("123456789012345678901234567890123");
+
+        String testAccountName = "account_badpassword";
+
+        try {
+            for (String invalidPassword : invalidPasswordList) {
+                createAccount(testAccountName, invalidPassword, HttpStatus.SC_BAD_REQUEST);
             }
+        } finally {
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+        }
+    }
+
+    /**
+     * Test when change password regex pattern.
+     */
+    @Test
+    public final void change_password_regex_pattern() {
+        String defaultPasswordRegex = PersoniumUnitConfig.getAuthPasswordRegex();
+
+        // chang password regex pattern.
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Security.AUTH_PASSWORD_REGEX,
+                "(?=.*[A-Z])(?!^(?i)password(?-i)$)^.*[a-zA-Z0-9]$");
+
+        String testAccountName = "account_testpasswordregex";
+
+        ArrayList<String> normalPasswordList = new ArrayList<String>();
+        normalPasswordList.add("A");
+        normalPasswordList.add("ABC");
+        normalPasswordList.add("ABCXYZabcxyz0123456789");
+        normalPasswordList.add("12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "ABCDEF");
+
+        ArrayList<String> invalidPasswordList = new ArrayList<String>();
+        invalidPasswordList.add("");
+        invalidPasswordList.add("TEST=");
+        invalidPasswordList.add("abcxyz09");
+        invalidPasswordList.add("PaSsWoRd");
+        invalidPasswordList.add("12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "ABCDEFG");
+
+        try {
+            for (String value : normalPasswordList) {
+                createAccount(testAccountName, value, HttpStatus.SC_CREATED);
+                AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+            }
+            for (String value : invalidPasswordList) {
+                createAccount(testAccountName, value, HttpStatus.SC_BAD_REQUEST);
+            }
+        } finally {
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+            PersoniumUnitConfig.set(PersoniumUnitConfig.Security.AUTH_PASSWORD_REGEX, defaultPasswordRegex);
         }
     }
 
