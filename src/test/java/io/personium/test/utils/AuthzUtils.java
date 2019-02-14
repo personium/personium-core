@@ -26,6 +26,7 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.model.Box;
 import io.personium.core.rs.cell.AuthResourceUtils;
+import io.personium.test.setup.Setup;
 
 /**
  * Util for calling authz endpoint.
@@ -36,6 +37,18 @@ public class AuthzUtils {
      * Constructor.
      */
     private AuthzUtils() {
+    }
+
+    /**
+     * Exec certs endpoint GET API.
+     * @param cellName Target cell name
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse certsGet(String cellName, int statusCode) {
+        return Http.request("cell/certs-get.txt")
+                .with("cell", Setup.TEST_CELL1)
+                .returns().debug().statusCode(statusCode);
     }
 
     /**
@@ -67,12 +80,33 @@ public class AuthzUtils {
      */
     public static TResponse get(String cellName, String responseType, String redirectUri,
             String clientId, String state, int statusCode) {
+        return get(cellName, responseType, redirectUri, clientId, state, null, statusCode);
+    }
+
+    /**
+     * Exec GET API.
+     * This method that can also specify optional params.
+     * Parameters that specify null are ignored.
+     * @param cellName Target cell name
+     * @param responseType response_type
+     * @param redirectUri redirect_uri
+     * @param clientId client_id
+     * @param state state
+     * @param scope scope
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse get(String cellName, String responseType, String redirectUri,
+            String clientId, String state, String scope, int statusCode) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("response_type=").append(responseType)
                     .append("&redirect_uri=").append(redirectUri)
                     .append("&client_id=").append(clientId);
         if (state != null) {
             queryBuilder.append("&state=").append(state);
+        }
+        if (scope != null) {
+            queryBuilder.append("&scope=").append(scope);
         }
         return get(cellName, queryBuilder.toString(), statusCode);
     }
@@ -87,6 +121,69 @@ public class AuthzUtils {
     public static TResponse get(String cellName, String query, int statusCode) {
         return Http.request("authz/authz-get.txt")
                 .with("cellName", cellName)
+                .with("query", query)
+                .returns().statusCode(statusCode).debug();
+    }
+
+    /**
+     * Exec GET API.
+     * This method that can also specify optional params.
+     * Parameters that specify null are ignored.
+     * @param cellName Target cell name
+     * @param responseType response_type
+     * @param redirectUri redirect_uri
+     * @param clientId client_id
+     * @param state state
+     * @param pCookie p_cookie
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse getPCookie(String cellName, String responseType, String redirectUri,
+            String clientId, String state, String pCookie, int statusCode) {
+        return getPCookie(cellName, responseType, redirectUri, clientId, state, null, pCookie, statusCode);
+    }
+
+    /**
+     * Exec GET API.
+     * This method that can also specify optional params.
+     * Parameters that specify null are ignored.
+     * @param cellName Target cell name
+     * @param responseType response_type
+     * @param redirectUri redirect_uri
+     * @param clientId client_id
+     * @param state state
+     * @param scope scope
+     * @param pCookie p_cookie
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse getPCookie(String cellName, String responseType, String redirectUri,
+            String clientId, String state, String scope, String pCookie, int statusCode) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("response_type=").append(responseType)
+                    .append("&redirect_uri=").append(redirectUri)
+                    .append("&client_id=").append(clientId);
+        if (state != null) {
+            queryBuilder.append("&state=").append(state);
+        }
+        if (scope != null) {
+            queryBuilder.append("&scope=").append(scope);
+        }
+        return getPCookie(cellName, queryBuilder.toString(), pCookie, statusCode);
+    }
+
+    /**
+     * Exec GET API for p_cookie authentication.
+     * @param cellName Target cell name
+     * @param query Query string
+     * @param pCookie p_cookie
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse getPCookie(String cellName, String query, String pCookie, int statusCode) {
+        return Http.request("authz/authz-get-pcookie.txt")
+                .with("cellName", cellName)
+                .with("pCookie", pCookie)
                 .with("query", query)
                 .returns().statusCode(statusCode).debug();
     }
@@ -124,6 +221,26 @@ public class AuthzUtils {
      */
     public static TResponse postPassword(String cellName, String responseType, String redirectUri,
             String clientId, String state, String username, String password, int statusCode) {
+        return postPassword(cellName, responseType, redirectUri, clientId, state, null, username, password, statusCode);
+    }
+
+    /**
+     * Exec POST API for password authentication.
+     * This method that can also specify optional params.
+     * Parameters that specify null are ignored.
+     * @param cellName Target cell name
+     * @param responseType response_type
+     * @param redirectUri redirect_uri
+     * @param clientId client_id
+     * @param state state
+     * @param scope scope
+     * @param username username
+     * @param password password
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse postPassword(String cellName, String responseType, String redirectUri,
+            String clientId, String state, String scope, String username, String password, int statusCode) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append("response_type=").append(responseType)
                    .append("&redirect_uri=").append(redirectUri)
@@ -132,6 +249,9 @@ public class AuthzUtils {
                    .append("&password=").append(password);
         if (state != null) {
             bodyBuilder.append("&state=").append(state);
+        }
+        if (scope != null) {
+            bodyBuilder.append("&scope=").append(scope);
         }
         return post(cellName, bodyBuilder.toString(), statusCode);
     }

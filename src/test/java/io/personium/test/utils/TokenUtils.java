@@ -29,11 +29,29 @@ public class TokenUtils {
     private TokenUtils() {
     }
 
+    /**
+     * Exec token API for password authentication.
+     * @param cellName Target cell name
+     * @param username username
+     * @param password password
+     * @param statusCode Expected response code
+     * @return API response
+     */
     public static TResponse getTokenPassword(String cellName, String username, String password, int statusCode) {
         return getTokenPassword(cellName, username, password, null, statusCode);
     }
 
-    public static TResponse getTokenPassword(String cellName, String username, String password, String pTarget, int statusCode) {
+    /**
+     * Exec token API for password authentication.
+     * @param cellName Target cell name
+     * @param username username
+     * @param password password
+     * @param pTarget p_target
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse getTokenPassword(String cellName, String username, String password,
+            String pTarget, int statusCode) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append("grant_type=").append(OAuth2Helper.GrantType.PASSWORD)
                    .append("&username=").append(username)
@@ -44,10 +62,43 @@ public class TokenUtils {
         return getToken(cellName, bodyBuilder.toString(), statusCode);
     }
 
+    /**
+     * Exec token API for password authentication.
+     * p_cookie=true.
+     * @param cellName Target cell name
+     * @param username username
+     * @param password password
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse getTokenPasswordPCookie(String cellName, String username, String password, int statusCode) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append("grant_type=").append(OAuth2Helper.GrantType.PASSWORD)
+                   .append("&username=").append(username)
+                   .append("&password=").append(password)
+                   .append("&p_cookie=true");
+        return getToken(cellName, bodyBuilder.toString(), statusCode);
+    }
+
+    /**
+     * Exec token API for token refresh.
+     * @param cellName Target cell name
+     * @param refreshToken refreshtoken
+     * @param statusCode Expected response code
+     * @return API response
+     */
     public static TResponse getTokenRefresh(String cellName, String refreshToken, int statusCode) {
         return getTokenRefresh(cellName, refreshToken, null, statusCode);
     }
 
+    /**
+     * Exec token API for token refresh.
+     * @param cellName Target cell name
+     * @param refreshToken refreshtoken
+     * @param pTarget p_target
+     * @param statusCode Expected response code
+     * @return API response
+     */
     public static TResponse getTokenRefresh(String cellName, String refreshToken, String pTarget, int statusCode) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append("grant_type=").append(OAuth2Helper.GrantType.REFRESH_TOKEN)
@@ -58,7 +109,17 @@ public class TokenUtils {
         return getToken(cellName, bodyBuilder.toString(), statusCode);
     }
 
-    public static TResponse getTokenCode(String cellName, String code, String clientId, String clientSecret, int statusCode) {
+    /**
+     * Exec token API for code authentication.
+     * @param cellName Target cell name
+     * @param code code
+     * @param clientId client_id
+     * @param clientSecret client_secret
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse getTokenCode(String cellName, String code,
+            String clientId, String clientSecret, int statusCode) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append("grant_type=").append(OAuth2Helper.GrantType.AUTHORIZATION_CODE)
                    .append("&code=").append(code)
@@ -67,6 +128,13 @@ public class TokenUtils {
         return getToken(cellName, bodyBuilder.toString(), statusCode);
     }
 
+    /**
+     * Exec token API.
+     * @param cellName Target cell name
+     * @param body body string
+     * @param statusCode Expected response code
+     * @return API response
+     */
     public static TResponse getToken(String cellName, String body, int statusCode) {
         return Http.request("authn/auth.txt")
                 .with("remoteCell", cellName)
