@@ -242,7 +242,7 @@ public class AccessContextTest {
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
         when(cell.getOwner()).thenReturn("cellowner");
-        when(cell.getPathBaseUrl()).thenReturn(UrlUtils.getBaseUrl() + "/cellowner");
+        when(cell.getUrl()).thenReturn(UrlUtils.getBaseUrl() + "/cellowner");
         when(cell.getUnitUrl()).thenReturn(UrlUtils.getBaseUrl());
 
         UriInfo uriInfo =  new TestUriInfo();
@@ -276,8 +276,7 @@ public class AccessContextTest {
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
         when(cell.getOwner()).thenReturn("cellowner");
-        when(cell.getUrl()).thenReturn(UrlUtils.getBaseUrl());
-        when(cell.getPathBaseUrl()).thenReturn(UrlUtils.getBaseUrl() + "/cellowner");
+        when(cell.getUrl()).thenReturn(UrlUtils.getBaseUrl() + "/cellowner");
         when(cell.getUnitUrl()).thenReturn(UrlUtils.getBaseUrl());
 
         // Token発行処理

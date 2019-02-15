@@ -205,7 +205,7 @@ public class AuthzEndPointResource {
      * @return url of "issuer"
      */
     private String getIssuerUrl() {
-        return cell.getPathBaseUrl();
+        return cell.getUrl();
     }
 
     /**

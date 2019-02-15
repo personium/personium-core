@@ -194,7 +194,7 @@ public class TokenEndPointResource {
      * @return url of "issuer"
      */
     private String getIssuerUrl() {
-        return cell.getPathBaseUrl();
+        return cell.getUrl();
     }
 
     /**
@@ -444,7 +444,7 @@ public class TokenEndPointResource {
         } else {
             List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
             aToken = new TransCellAccessToken(issuedAt, getIssuerUrl(),
-                    cell.getPathBaseUrl() + "#" + token.getSubject(), target, roleList, schema);
+                    getIssuerUrl() + "#" + token.getSubject(), target, roleList, schema);
         }
 
         // If scope is openid it returns id_token.
@@ -616,7 +616,7 @@ public class TokenEndPointResource {
             if (rToken instanceof CellLocalRefreshToken) {
                 String subject = rToken.getSubject();
                 List<Role> roleList = cell.getRoleListForAccount(subject);
-                aToken = rToken.refreshAccessToken(issuedAt, target, cell.getPathBaseUrl(), roleList, schema);
+                aToken = rToken.refreshAccessToken(issuedAt, target, getIssuerUrl(), roleList, schema);
             } else {
                 //Ask CELL to determine the role of you from the role of the token issuer.
                 List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
@@ -825,8 +825,7 @@ public class TokenEndPointResource {
             List<Role> roleList = cell.getRoleListForAccount(username);
 
             TransCellAccessToken tcToken = new TransCellAccessToken(
-                    getIssuerUrl(), cell.getPathBaseUrl() + "#" + username, target,
-                    roleList, schema);
+                    getIssuerUrl(), getIssuerUrl() + "#" + username, target, roleList, schema);
             return this.responseAuthSuccess(tcToken, rToken);
         }
     }
