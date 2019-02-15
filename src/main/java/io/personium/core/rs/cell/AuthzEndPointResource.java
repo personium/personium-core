@@ -396,12 +396,11 @@ public class AuthzEndPointResource {
         } else {
             CellCmp cellCmp = (CellCmp) cellRsCmp.getDavCmp();
             CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
-            String subject = getIssuerUrl() + SEPARATOR_FRAGMENT + username;
             long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
             long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_A_HOUR;
             IdToken idToken = new IdToken(
                     cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
-                    subject, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
+                    username, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
             paramMap.put(OAuth2Helper.Key.ID_TOKEN, idToken.toTokenString());
         }
         if (StringUtils.isNotEmpty(state)) {
@@ -512,7 +511,7 @@ public class AuthzEndPointResource {
     }
 
     private Response returnSuccessRedirect(String responseType, String redirectUri,
-            Map<String, String> paramMap, String keepLogin) {
+            Map<String, String> paramMap, String keepLogin) { //NOPMD add p_cookie
         //Respond with 302 and return the Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER).type(MediaType.APPLICATION_JSON_TYPE);
         StringBuilder sbuf = new StringBuilder();

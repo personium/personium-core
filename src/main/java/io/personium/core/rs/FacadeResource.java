@@ -55,55 +55,6 @@ public class FacadeResource {
     /** The key specified in the query parameter during cookie authentication. */
     public static final String COOKIE_PEER_QUERY_KEY = "p_cookie_peer";
 
-//    /**
-//     * @param cookieAuthValue クッキー内の p_cookieキーに指定された値
-//     * @param cookiePeer p_cookie_peerクエリに指定された値
-//     * @param authzHeaderValue Authorization ヘッダ
-//     * @param host Host ヘッダ
-//     * @param uriInfo UriInfo
-//     * @param xPersoniumUnitUser X-Personium-UnitUser header
-//     * @param xPersoniumRequestKey X-Personium-RequestKey header
-//     * @param xPersoniumEventId X-Personium-EventId header
-//     * @param xPersoniumRuleChain X-Personium-RuleChain header
-//     * @param xPersoniumVia X-Personium-Via header
-//     * @param httpServletRequest HttpServletRequest
-//     * @return CellResourceオブジェクトまたはResponseオブジェクト
-//     */
-//    @Path("{path1}")
-//    public final Object facade(
-//            @CookieParam(P_COOKIE_KEY) final String cookieAuthValue,
-//            @QueryParam(COOKIE_PEER_QUERY_KEY) final String cookiePeer,
-//            @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
-//            @HeaderParam(HttpHeaders.HOST) final String host,
-//            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String xPersoniumUnitUser,
-//            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) final String xPersoniumRequestKey,
-//            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_EVENTID) final String xPersoniumEventId,
-//            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RULECHAIN) final String xPersoniumRuleChain,
-//            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA) final String xPersoniumVia,
-//            @Context final UriInfo uriInfo,
-//            @Context HttpServletRequest httpServletRequest) {
-//        Cell cell = ModelFactory.cell(uriInfo);
-//        AccessContext ac = AccessContext.create(authzHeaderValue,
-//                uriInfo, cookiePeer, cookieAuthValue, cell, uriInfo.getBaseUri().toString(),
-//                host, xPersoniumUnitUser);
-//        if (cell == null) {
-//            throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
-//        }
-//
-//        CellLockManager.STATUS cellStatus = CellLockManager.getCellStatus(cell.getId());
-//        if (CellLockManager.STATUS.BULK_DELETION.equals(cellStatus)) {
-//            throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
-//        }
-//
-//        CellLockManager.incrementReferenceCount(cell.getId());
-//        httpServletRequest.setAttribute("cellId", cell.getId());
-//        if (xPersoniumRequestKey != null) {
-//            ResourceUtils.validateXPersoniumRequestKey(xPersoniumRequestKey);
-//        }
-//        return new CellResource(ac, xPersoniumRequestKey,
-//                xPersoniumEventId, xPersoniumRuleChain, xPersoniumVia, httpServletRequest);
-//    }
-
     /**
      * @param cookieAuthValue The value specified for the p_cookie key in the cookie
      * @param cookiePeer p_cookie_peer Value specified in the query
@@ -166,56 +117,4 @@ public class FacadeResource {
                     headerPersoniumEventId, headerPersoniumRuleChain, headerPersoniumVia, httpServletRequest);
         }
     }
-
-//    /**
-//     * @param cookieAuthValue The value specified for the p_cookie key in the cookie
-//     * @param cookiePeer p_cookie_peer Value specified in the query
-//     * @param authzHeaderValue Authorization header
-//     * @param host Host header
-//     * @param xPersoniumUnitUser header
-//     * @param uriInfo UriInfo
-//     * @return UnitCtlResource object
-//     */
-//    @Path("__ctl")
-//    public final UnitCtlResource ctl(
-//            @CookieParam(P_COOKIE_KEY) final String cookieAuthValue,
-//            @QueryParam(COOKIE_PEER_QUERY_KEY) final String cookiePeer,
-//            @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
-//            @HeaderParam(HttpHeaders.HOST) final String host,
-//            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String xPersoniumUnitUser,
-//            @Context final UriInfo uriInfo) {
-//        AccessContext ac = AccessContext.create(authzHeaderValue,
-//                uriInfo, cookiePeer, cookieAuthValue, null, uriInfo.getBaseUri().toString(),
-//                host, xPersoniumUnitUser);
-//        return new UnitCtlResource(ac, uriInfo);
-//    }
-//
-//    /**
-//     * @param authzHeaderValue Authorization header
-//     * @param host Host header
-//     * @param xPersoniumUnitUser header
-//     * @param uriInfo UriInfo
-//     * @return UnitCtlResource object
-//     */
-//    @Path("__status")
-//    public final StatusResource status(
-//            @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
-//            @HeaderParam(HttpHeaders.HOST) final String host,
-//            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String xPersoniumUnitUser,
-//            @Context final UriInfo uriInfo) {
-//        return new StatusResource();
-//    }
-//
-//    static final String CROSSDOMAIN_XML = PersoniumCoreUtils.readStringResource("crossdomain.xml", CharEncoding.UTF_8);
-//
-//    /**
-//     * Returns Crossdomain.xml.
-//     * @return String of Crossdomain.xml.
-//     */
-//    @Path("crossdomain.xml")
-//    @Produces(MediaType.APPLICATION_XML)
-//    @GET
-//    public final String crosdomainXml() {
-//        return CROSSDOMAIN_XML;
-//    }
 }
