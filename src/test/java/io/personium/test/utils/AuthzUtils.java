@@ -26,7 +26,6 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.model.Box;
 import io.personium.core.rs.cell.AuthResourceUtils;
-import io.personium.test.setup.Setup;
 
 /**
  * Util for calling authz endpoint.
@@ -47,7 +46,7 @@ public class AuthzUtils {
      */
     public static TResponse certsGet(String cellName, int statusCode) {
         return Http.request("cell/certs-get.txt")
-                .with("cell", Setup.TEST_CELL1)
+                .with("cell", cellName)
                 .returns().debug().statusCode(statusCode);
     }
 
