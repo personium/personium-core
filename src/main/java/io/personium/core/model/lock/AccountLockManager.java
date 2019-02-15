@@ -39,16 +39,15 @@ public abstract class AccountLockManager extends LockManager {
      * @param accountId Account ID that failed authentication
      */
     public static void countupFailedCount(final String accountId) {
-        if (accountLockCount <= 0 || accountLockTime <= 0) {
+        if (accountLockCount == 0 || accountLockTime == 0) {
             return;
         }
 
-        int failedCount = getFailedCount(accountId);
-        failedCount++;
-
-        // put failed count to memcached.
+        // increment failed count to memcached.
         String key = CATEGORY_ACCOUNT_LOCK + accountId;
-        if (!singleton.doPutAccountLock(key, failedCount, accountLockTime)) {
+        try {
+            singleton.doIncrementAccountLock(key, accountLockTime);
+        } catch (MemcachedClientException e) {
             throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }
     }
@@ -59,11 +58,11 @@ public abstract class AccountLockManager extends LockManager {
      * @return TRUE: Lock / FALSE: Unlock
      */
     public static boolean isLockedAccount(final String accountId) {
-        if (accountLockCount <= 0 || accountLockTime <= 0) {
+        if (accountLockCount == 0 || accountLockTime == 0) {
             return false;
         }
 
-        int failedCount = getFailedCount(accountId);
+        long failedCount = getFailedCount(accountId);
         if (failedCount >= accountLockCount) {
             return true;
         }
@@ -75,7 +74,7 @@ public abstract class AccountLockManager extends LockManager {
      * @param accountId account ID
      */
     public static void releaseAccountLock(final String accountId) {
-        if (accountLockCount <= 0 || accountLockTime <= 0) {
+        if (accountLockCount == 0 || accountLockTime == 0) {
             return;
         }
 
@@ -92,19 +91,15 @@ public abstract class AccountLockManager extends LockManager {
      * @param accountId account ID
      * @return failed count
      */
-    public static int getFailedCount(final String accountId) {
-        if (accountLockCount <= 0 || accountLockTime <= 0) {
+    public static long getFailedCount(final String accountId) {
+        if (accountLockCount == 0 || accountLockTime == 0) {
             return 0;
         }
 
         String key = CATEGORY_ACCOUNT_LOCK + accountId;
         try {
-            Integer failedCount = singleton.doGetAccountLock(key);
-            if (failedCount != null) {
-                return failedCount.intValue();
-            } else {
-                return 0;
-            }
+            long failedCount = singleton.doGetAccountLock(key);
+            return failedCount;
         } catch (MemcachedClientException e) {
             throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }

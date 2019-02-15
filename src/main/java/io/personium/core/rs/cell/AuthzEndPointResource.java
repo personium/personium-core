@@ -72,6 +72,7 @@ import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthHistoryLastFile;
+import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
@@ -320,7 +321,7 @@ public class AuthzEndPointResource {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
+                PersoniumCoreLog.Authn.FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
@@ -332,10 +333,22 @@ public class AuthzEndPointResource {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_ACCOUNT_IS_LOCKED.params(
+                PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_LOCKED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
+            }
+
+            // Check valid IP address
+            if (!AuthUtils.isValidIPAddress(oew, this.ipaddress)) {
+                //Update lock time of memcached
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
+                PersoniumCoreLog.Authn.FAILED_OUTSIDE_IP_ADDRESS_RANGE.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
+
             }
 
             //Check user ID and password
@@ -344,7 +357,7 @@ public class AuthzEndPointResource {
                 //Make lock on memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_PASSWORD.params(
+                PersoniumCoreLog.Authn.FAILED_INCORRECT_PASSWORD.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);

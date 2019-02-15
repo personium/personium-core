@@ -137,19 +137,19 @@ public class AuthAccountLockTest extends PersoniumTest {
     @Test
     public final void lock_and_unlock() {
         // before account lock.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
 
         // authentication failed repeatedly, account is locked.
         for (int i = 0; i < TEST_ACCOUNTLOCK_COUNT; i++) {
-            requestAuthorization(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
+            requestAuthentication(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
         }
         AuthTestCommon.waitForIntervalLock();
-        TResponse passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_BAD_REQUEST);
+        TResponse passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_BAD_REQUEST);
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
         // other account not locked.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD, HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD, HttpStatus.SC_OK);
 
         // wait account lock expiration time (s). accountlock is released .
         try {
@@ -157,7 +157,7 @@ public class AuthAccountLockTest extends PersoniumTest {
         } catch (InterruptedException e) {
             log.debug("");
         }
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
     }
 
     /**
@@ -167,28 +167,28 @@ public class AuthAccountLockTest extends PersoniumTest {
     public final void reset_failed_count() {
         // first authenticated.
         for (int i = 0; i < TEST_ACCOUNTLOCK_COUNT - 1; i++) {
-            requestAuthorization(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
+            requestAuthentication(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
         }
         AuthTestCommon.waitForIntervalLock();
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
 
         // seccond authenticated.
         for (int i = 0; i < TEST_ACCOUNTLOCK_COUNT - 1; i++) {
-            requestAuthorization(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
+            requestAuthentication(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
         }
         AuthTestCommon.waitForIntervalLock();
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
     }
 
     /**
-     * request authorization.
+     * request authentication.
      * @param cellName cell name
      * @param userName user name
      * @param password password
      * @param code expected status code
      * @return http response
      */
-    private TResponse requestAuthorization(String cellName, String userName, String password, int code) {
+    private TResponse requestAuthentication(String cellName, String userName, String password, int code) {
         TResponse passRes = Http.request("authn/password-cl-c0.txt")
                 .with("remoteCell", cellName)
                 .with("username", userName)

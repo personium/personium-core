@@ -52,6 +52,21 @@ public class PersoniumCoreApplication extends Application {
             PersoniumThread.start(PersoniumUnitConfig.getThreadPoolNumForCellIO(),
                     PersoniumUnitConfig.getThreadPoolNumForBoxIO(),
                     PersoniumUnitConfig.getThreadPoolNumForMisc());
+
+            // Set SystemProperties for lib-es-adapter.
+            // To guarantee switching between the Es2 library and the Es5 library.
+            String numberOfShards = String.valueOf(PersoniumUnitConfig.getESIndexNumberOfShards());
+            String numberOfReplicas = String.valueOf(PersoniumUnitConfig.getESIndexNumberOfReplicas());
+            String maxResultWindow = String.valueOf(PersoniumUnitConfig.getESIndexMaxResultWindow());
+            System.setProperty("io.personium.es.index.numberOfShards", numberOfShards);
+            System.setProperty("io.personium.es.index.numberOfReplicas", numberOfReplicas);
+            System.setProperty("io.personium.es.index.maxResultWindow", maxResultWindow);
+            Integer mergeSchedulerMaxThreadCount = PersoniumUnitConfig.getESIndexMergeSchedulerMaxThreadCount();
+            if (mergeSchedulerMaxThreadCount != null) {
+                System.setProperty("io.personium.es.index.merge.scheduler.maxThreadCount",
+                        String.valueOf(mergeSchedulerMaxThreadCount));
+            }
+
             pm = new PluginManager();
         } catch (Exception e) {
             PersoniumCoreLog.Server.FAILED_TO_START_SERVER.reason(e).writeLog();

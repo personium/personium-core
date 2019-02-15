@@ -59,9 +59,11 @@ public abstract class LockManager {
 
     abstract Boolean doPutReferenceOnlyLock(String fullKey, String value);
 
-    abstract Integer doGetAccountLock(String fullKey);
+    abstract long doGetAccountLock(String fullKey);
 
-    abstract Boolean doPutAccountLock(String fullKey, Integer value, int expired);
+    abstract Boolean doPutAccountLock(String fullKey, long value, int expired);
+
+    abstract long doIncrementAccountLock(String fullKey, int expired);
 
     abstract void doReleaseAccountLock(String fullKey);
 

@@ -76,6 +76,7 @@ public final class PersoniumCoreLog {
 
     /**
      * Authentication related.
+     * Common for authentication and authorization.
      */
     public static class Auth {
         /**
@@ -103,34 +104,47 @@ public final class PersoniumCoreLog {
          * {0}: Detailed message
          */
         public static final PersoniumCoreLog UNSUPPORTED_ACCOUNT_GRANT_TYPE = create("PL-AU-0005");
+    }
+
+    /**
+     * Authentication.
+     */
+    public static class Authn {
         /**
          * Authentication failed. No such account.
          * {0}: URL
          * {1}: IP address
          * {2}: User ID(username)
          */
-        public static final PersoniumCoreLog AUTHN_FAILED_NO_SUCH_ACCOUNT = create("PL-AU-0006");
+        public static final PersoniumCoreLog FAILED_NO_SUCH_ACCOUNT = create("PL-AN-0001");
         /**
          * Authentication failed. Consequtive authentication trial before valid authentication interval.
          * {0}: URL
          * {1}: IP address
          * {2}: User ID(username)
          */
-        public static final PersoniumCoreLog AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL = create("PL-AU-0007");
+        public static final PersoniumCoreLog FAILED_BEFORE_AUTHENTICATION_INTERVAL = create("PL-AN-0002");
         /**
          * Authentication failed. Account is locked.
          * {0}: URL
          * {1}: IP address
          * {2}: User ID(username)
          */
-        public static final PersoniumCoreLog AUTHN_FAILED_ACCOUNT_IS_LOCKED = create("PL-AU-0008");
+        public static final PersoniumCoreLog FAILED_ACCOUNT_IS_LOCKED = create("PL-AN-0003");
         /**
          * Authentication failed. Incorrect password.
          * {0}: URL
          * {1}: IP address
          * {2}: User ID(username)
          */
-        public static final PersoniumCoreLog AUTHN_FAILED_INCORRECT_PASSWORD = create("PL-AU-0009");
+        public static final PersoniumCoreLog FAILED_INCORRECT_PASSWORD = create("PL-AN-0004");
+        /**
+         * Authentication failed. Authentication trial from outside the IP address range.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog FAILED_OUTSIDE_IP_ADDRESS_RANGE = create("PL-AN-0005");
     }
 
     /**

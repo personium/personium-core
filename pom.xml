@@ -37,7 +37,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-es-adapter</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
@@ -140,6 +140,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
