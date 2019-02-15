@@ -714,7 +714,7 @@ public class AccessContext {
             String issuer = null;
             String unitHost = host;
             if (cell != null) {
-                issuer = cell.getPathBaseUrl();
+                issuer = cell.getUrl();
                 unitHost = cell.getUnitUrl();
             }
             tk = AbstractOAuth2Token.parse(accessToken, issuer, unitHost);
