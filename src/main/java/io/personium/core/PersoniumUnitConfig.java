@@ -232,6 +232,16 @@ public class PersoniumUnitConfig {
 
         /** Retry interval at error occurrence.*/
         public static final String RETRY_INTERVAL = KEY_ROOT + "es.retryInterval";
+
+        // for elasticsearch v5.x or later.
+        /** Es index settings. number_of_shards. */
+        public static final String INDEX_NUMBER_OF_SHARDS = KEY_ROOT + "es.index.numberOfShards";
+        /** Es index settings. number_of_replicas. */
+        public static final String INDEX_NUMBER_OF_REPLICAS = KEY_ROOT + "es.index.numberOfReplicas";
+        /** Es index settings. max_result_window. */
+        public static final String INDEX_MAX_RESULT_WINDOW = KEY_ROOT + "es.index.maxResultWindow";
+        /** Es index settings. merge.scheduler.max_thread_count. */
+        public static final String INDEX_MERGE_SCHEDULER_MAX_THREAD_COUNT = KEY_ROOT + "es.index.merge.scheduler.maxThreadCount"; // CHECKSTYLE IGNORE
     }
 
     /**
@@ -1058,7 +1068,8 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Get the set value of search result output upper limit of @return Es.
+     * Get the set value of search result output upper limit of Es.
+     * @return search result output upper limit of Es
      */
     public static int getEsTopNum() {
         return Integer.parseInt(get(ES.TOP_NUM));
@@ -1104,17 +1115,53 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * The number of retries when an error occurred in @return ES.
+     * The number of retries when an error occurred in ES.
+     * @return The number of retries
      */
     public static String getESRetryTimes() {
         return get(ES.RETRY_TIMES);
     }
 
     /**
-     * Retry interval (milliseconds) at error occurrence in @return ES.
+     * Retry interval (milliseconds) at error occurrence in ES.
+     * @return Retry interval (milliseconds)
      */
     public static String getESRetryInterval() {
         return get(ES.RETRY_INTERVAL);
+    }
+
+    /**
+     * Get Es index settings. number_of_shards.
+     * @return number_of_shards
+     */
+    public static int getESIndexNumberOfShards() {
+        return Integer.parseInt(get(ES.INDEX_NUMBER_OF_SHARDS));
+    }
+
+    /**
+     * Get Es index settings. number_of_replicas.
+     * @return number_of_replicas
+     */
+    public static int getESIndexNumberOfReplicas() {
+        return Integer.parseInt(get(ES.INDEX_NUMBER_OF_REPLICAS));
+    }
+
+    /**
+     * Get Es index settings. max_result_window.
+     * @return max_result_window
+     */
+    public static long getESIndexMaxResultWindow() {
+        return Long.parseLong(get(ES.INDEX_MAX_RESULT_WINDOW));
+    }
+
+    /**
+     * Get Es index settings. merge.scheduler.max_thread_count.
+     * The returned value may be null.
+     * @return merge.scheduler.max_thread_count
+     */
+    public static Integer getESIndexMergeSchedulerMaxThreadCount() {
+        String value = get(ES.INDEX_MERGE_SCHEDULER_MAX_THREAD_COUNT);
+        return value != null ? Integer.parseInt(value) : null; // CHECKSTYLE IGNORE
     }
 
     /**
