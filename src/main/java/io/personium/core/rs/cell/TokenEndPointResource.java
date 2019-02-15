@@ -16,8 +16,6 @@
  */
 package io.personium.core.rs.cell;
 
-import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
-
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -147,6 +145,8 @@ public class TokenEndPointResource {
         String code = formParams.getFirst(Key.CODE);
         String clientId = formParams.getFirst(Key.CLIENT_ID);
         String clientSecret = formParams.getFirst(Key.CLIENT_SECRET);
+        String expiresInStr = formParams.getFirst(Key.EXPIRES_IN);
+        String rTokenExpiresInStr = formParams.getFirst(Key.REFRESH_TOKEN_EXPIRES_IN);
         String pCookie = formParams.getFirst("p_cookie");
 
         // Accept unit local scheme url.
@@ -171,21 +171,50 @@ public class TokenEndPointResource {
             schema = clientAuth(clientId, clientSecret, authzHeader, cell.getUrl());
         }
 
+        // Check value of expires_in
+        long expiresIn = AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS;
+        if (expiresInStr != null && !expiresInStr.isEmpty()) {
+            try {
+                expiresIn = Integer.parseInt(expiresInStr) * AbstractOAuth2Token.MILLISECS_IN_A_SEC;
+                if (expiresIn <= 0 || expiresIn > AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS) {
+                    throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(
+                            this.cell.getUrl()).params(Key.EXPIRES_IN);
+                }
+            } catch (NumberFormatException e) {
+                throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(
+                        this.cell.getUrl()).params(Key.EXPIRES_IN);
+            }
+        }
+        // Check value of refresh_token_expires_in
+        long rTokenExpiresIn = AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS;
+        if (rTokenExpiresInStr != null && !rTokenExpiresInStr.isEmpty()) {
+            try {
+                rTokenExpiresIn = Integer.parseInt(rTokenExpiresInStr) * AbstractOAuth2Token.MILLISECS_IN_A_SEC;
+                if (rTokenExpiresIn <= 0 || rTokenExpiresIn > AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS) {
+                    throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(
+                            this.cell.getUrl()).params(Key.REFRESH_TOKEN_EXPIRES_IN);
+                }
+            } catch (NumberFormatException e) {
+                throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(
+                        this.cell.getUrl()).params(Key.REFRESH_TOKEN_EXPIRES_IN);
+            }
+        }
+
         if (OAuth2Helper.GrantType.PASSWORD.equals(grantType)) {
             //Regular password authentication
             Response response = this.handlePassword(target, pOwner,
-                    schema, username, password);
+                    schema, username, password, expiresIn, rTokenExpiresIn);
             return response;
         } else if (OAuth2Helper.GrantType.SAML2_BEARER.equals(grantType)) {
-            return this.receiveSaml2(target, pOwner, schema, assertion);
+            return this.receiveSaml2(target, pOwner, schema, assertion, expiresIn, rTokenExpiresIn);
         } else if (OAuth2Helper.GrantType.REFRESH_TOKEN.equals(grantType)) {
-            return this.receiveRefresh(target, pOwner, schema, refreshToken);
+            return this.receiveRefresh(target, pOwner, schema, refreshToken, expiresIn, rTokenExpiresIn);
         } else if (OAuth2Helper.GrantType.AUTHORIZATION_CODE.equals(grantType)) {
-            return receiveCode(target, pOwner, schema, code);
+            return receiveCode(target, pOwner, schema, code, expiresIn, rTokenExpiresIn);
         } else {
             // Call Auth Plugins
             return this.callAuthPlugins(grantType, formParams, target, pOwner,
-                    schema);
+                    schema, expiresIn, rTokenExpiresIn);
         }
     }
 
@@ -204,11 +233,12 @@ public class TokenEndPointResource {
      * @param target
      * @param owner
      * @param schema
-     * @param username
+     * @param expiresIn accress token expires in time(ms).
+     * @param rTokenExpiresIn refresh token expires in time(ms).
      * @return Response
      */
     private Response callAuthPlugins(String grantType, MultivaluedMap<String, String> params,
-            String target, String owner, String schema) {
+            String target, String owner, String schema, long expiresIn, long rTokenExpiresIn) {
         // Plugin manager.
         PluginManager pm = PersoniumCoreApplication.getPluginManager();
         // Search target plugin.
@@ -264,7 +294,7 @@ public class TokenEndPointResource {
         }
 
         // When processing is normally completed, issue a token.
-        return this.issueToken(target, owner, schema, accountName);
+        return this.issueToken(target, owner, schema, accountName, expiresIn, rTokenExpiresIn);
     }
 
     /**
@@ -388,10 +418,12 @@ public class TokenEndPointResource {
      * @param owner p_owner
      * @param schema client_id
      * @param code code
+     * @param expiresIn accress token expires in time(ms).
+     * @param rTokenExpiresIn refresh token expires in time(ms).
      * @return API response
      */
     private Response receiveCode(final String target, String owner, String schema,
-            final String code) {
+            final String code, long expiresIn, long rTokenExpiresIn) {
         if (code == null) {
             //If code is not set, it is regarded as a parse error
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
@@ -437,13 +469,15 @@ public class TokenEndPointResource {
         long issuedAt = new Date().getTime();
 
         //Regenerate AccessToken and RefreshToken from the received Token
-        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, getIssuerUrl(), token.getSubject(), schema);
+        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, rTokenExpiresIn, getIssuerUrl(),
+                token.getSubject(), schema);
         IAccessToken aToken = null;
         if (target == null) {
-            aToken = new CellLocalAccessToken(issuedAt, getIssuerUrl(), token.getSubject(), token.getRoles(), schema);
+            aToken = new CellLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
+                    token.getSubject(), token.getRoles(), schema);
         } else {
             List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
-            aToken = new TransCellAccessToken(issuedAt, getIssuerUrl(),
+            aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
                     cell.getPathBaseUrl() + "#" + token.getSubject(), target, roleList, schema);
         }
 
@@ -464,7 +498,7 @@ public class TokenEndPointResource {
     }
 
     private Response receiveSaml2(final String target, final String owner,
-            final String schema, final String assertion) {
+            final String schema, final String assertion, long expiresIn, long rTokenExpiresIn) {
         if (Key.TRUE_STR.equals(owner)) {
             //Do not promote unit user in token authentication
             throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER
@@ -518,7 +552,7 @@ public class TokenEndPointResource {
         long issuedAt = new Date().getTime();
         TransCellRefreshToken rToken = new TransCellRefreshToken(
                 tcToken.getId(), //Save ID of received SAML
-                issuedAt, getIssuerUrl(), tcToken.getSubject(),
+                issuedAt, rTokenExpiresIn, getIssuerUrl(), tcToken.getSubject(),
                 tcToken.getIssuer(), //Save receipt of SAML's
                 tcToken.getRoles(), //Save receipt of SAML's
                 schema);
@@ -534,12 +568,11 @@ public class TokenEndPointResource {
         //The target can be freely decided.
         IAccessToken aToken = null;
         if (target == null) {
-            aToken = new CellLocalAccessToken(issuedAt, getIssuerUrl(),
+            aToken = new CellLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
                     tcToken.getSubject(), rolesHere, schemaVerified);
         } else {
-            aToken = new TransCellAccessToken(UUID.randomUUID().toString(),
-                    issuedAt, getIssuerUrl(), tcToken.getSubject(), target,
-                    rolesHere, schemaVerified);
+            aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
+                    tcToken.getSubject(), target, rolesHere, schemaVerified);
         }
         return this.responseAuthSuccess(aToken, rToken);
     }
@@ -550,10 +583,12 @@ public class TokenEndPointResource {
      * @param owner
      * @param schema
      * @param refreshToken
+     * @param expiresIn accress token expires in time(ms).
+     * @param rTokenExpiresIn refresh token expires in time(ms).
      * @return
      */
     private Response receiveRefresh(final String target, String owner, String schema,
-            final String refreshToken) {
+            final String refreshToken, long expiresIn, long rTokenExpiresIn) {
         if (refreshToken == null) {
             //If refreshToken is not set, it is regarded as a parse error
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
@@ -602,8 +637,7 @@ public class TokenEndPointResource {
             }
 
             //uluut issuance processing
-            UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt,
-                    UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
+            UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt, expiresIn,
                     cell.getOwner(), cell.getUnitUrl());
 
             return this.responseAuthSuccess(uluut, null);
@@ -708,7 +742,7 @@ public class TokenEndPointResource {
 
     private Response handlePassword(final String target, final String owner,
             final String schema, final String username,
-            final String password) {
+            final String password, long expiresIn, long rTokenExpiresIn) {
 
         //Password check processing
         if (username == null) {
@@ -783,11 +817,11 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
-        return issueToken(target, owner, schema, username);
+        return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn);
     }
 
     private Response issueToken(final String target, final String owner,
-            final String schema, final String username) {
+            final String schema, final String username, long expiresIn, long rTokenExpiresIn) {
         long issuedAt = new Date().getTime();
 
         if (Key.TRUE_STR.equals(owner)) {
@@ -802,21 +836,18 @@ public class TokenEndPointResource {
             }
 
             //uluut issuance processing
-            UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt,
-                    UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR
-                            * MILLISECS_IN_AN_HOUR, cell.getOwner(), cell.getUnitUrl());
+            UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt, expiresIn,
+                    cell.getOwner(), cell.getUnitUrl());
             return this.responseAuthSuccess(uluut, null);
         }
 
-        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt,
-                CellLocalRefreshToken.REFRESH_TOKEN_EXPIRES_HOUR
-                        * MILLISECS_IN_AN_HOUR, getIssuerUrl(), username, schema);
+        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, rTokenExpiresIn,
+                getIssuerUrl(), username, schema);
 
         //Create a response.
         if (target == null) {
-            AccountAccessToken localToken = new AccountAccessToken(issuedAt,
-                    AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR
-                            * MILLISECS_IN_AN_HOUR, getIssuerUrl(), username, schema);
+            AccountAccessToken localToken = new AccountAccessToken(issuedAt, expiresIn,
+                    getIssuerUrl(), username, schema);
             return this.responseAuthSuccess(localToken, rToken);
         } else {
             //Check that TODO SCHEMA is URL
@@ -824,7 +855,7 @@ public class TokenEndPointResource {
 
             List<Role> roleList = cell.getRoleListForAccount(username);
 
-            TransCellAccessToken tcToken = new TransCellAccessToken(
+            TransCellAccessToken tcToken = new TransCellAccessToken(issuedAt, expiresIn,
                     getIssuerUrl(), cell.getPathBaseUrl() + "#" + username, target,
                     roleList, schema);
             return this.responseAuthSuccess(tcToken, rToken);

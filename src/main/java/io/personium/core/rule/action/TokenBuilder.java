@@ -17,10 +17,9 @@
 package io.personium.core.rule.action;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 import io.personium.common.auth.token.AccountAccessToken;
@@ -118,8 +117,6 @@ public class TokenBuilder {
                 // AccountAccessToken
                 AccountAccessToken token =
                     new AccountAccessToken(new Date().getTime(),
-                                           AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR
-                                               * AccountAccessToken.MILLISECS_IN_AN_HOUR,
                                            cellUrl,
                                            subject,
                                            schema);
@@ -128,8 +125,6 @@ public class TokenBuilder {
                 // CellLocalAccessToken
                 CellLocalAccessToken token =
                     new CellLocalAccessToken(new Date().getTime(),
-                                             CellLocalAccessToken.ACCESS_TOKEN_EXPIRES_HOUR
-                                                 * CellLocalAccessToken.MILLISECS_IN_AN_HOUR,
                                              cellUrl,
                                              subject,
                                              roleList,
@@ -139,9 +134,7 @@ public class TokenBuilder {
         } else {
             // create transcell token
             TransCellAccessToken token =
-                new TransCellAccessToken(UUID.randomUUID().toString(),
-                                         new Date().getTime(),
-                                         TransCellAccessToken.LIFESPAN,
+                new TransCellAccessToken(new Date().getTime(),
                                          cellUrl,
                                          subject,
                                          targetCellUrl,
