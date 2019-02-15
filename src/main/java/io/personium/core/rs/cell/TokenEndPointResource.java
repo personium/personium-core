@@ -42,6 +42,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.rs.security.jose.jwa.AlgorithmUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,7 @@ import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.IRefreshToken;
+import io.personium.common.auth.token.IdToken;
 import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
@@ -73,8 +75,10 @@ import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
+import io.personium.core.model.CellCmp;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ctl.Account;
+import io.personium.core.model.impl.fs.CellKeysFile;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.plugin.PluginInfo;
 import io.personium.core.plugin.PluginManager;
@@ -155,16 +159,16 @@ public class TokenEndPointResource {
             issueCookie = false;
         } else {
             issueCookie = Boolean.parseBoolean(pCookie);
-            requestURIInfo = uriInfo;
         }
 
+        this.requestURIInfo = uriInfo;
         this.ipaddress = xForwardedFor;
 
         String schema = null;
         //First, check if you want to authenticate Client
         //If neither Scope nor authzHeader nor clientId exists, it is assumed that Client authentication is not performed.
         if (clientId != null || authzHeader != null) {
-            schema = this.clientAuth(clientId, clientSecret, authzHeader, cell.getUrl());
+            schema = clientAuth(clientId, clientSecret, authzHeader, cell.getUrl());
         }
 
         if (OAuth2Helper.GrantType.PASSWORD.equals(grantType)) {
@@ -191,72 +195,6 @@ public class TokenEndPointResource {
      */
     private String getIssuerUrl() {
         return cell.getPathBaseUrl();
-    }
-
-    //TODO temporary implementation
-    private Response receiveCode(final String target, String owner, String schema,
-            final String code) {
-        if (code == null) {
-            //If code is not set, it is regarded as a parse error
-            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
-        }
-        if (schema == null) {
-            throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(
-                    this.cell.getUrl()).params(Key.CLIENT_ID);
-        }
-        if (Key.TRUE_STR.equals(owner)) {
-            throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER
-                    .realm(this.cell.getUrl());
-        }
-        if (!code.startsWith(CellLocalAccessToken.PREFIX_CODE)) {
-            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
-        }
-
-        CellLocalAccessToken token;
-        try {
-            token = (CellLocalAccessToken) AbstractOAuth2Token.parse(code, getIssuerUrl(), cell.getUnitUrl());
-        } catch (TokenParseException e) {
-            //Because I failed in Perth
-            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl()).reason(e);
-        } catch (TokenDsigException e) {
-            //Because certificate validation failed
-            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
-            throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID.realm(this.cell.getUrl());
-        } catch (TokenRootCrtException e) {
-            //Error setting root CA certificate
-            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
-            throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
-        }
-
-        // Check if expired.
-        if (token.isRefreshExpired()) {
-            throw PersoniumCoreAuthnException.TOKEN_EXPIRED.realm(this.cell.getUrl());
-        }
-
-        if (!StringUtils.equals(schema, token.getSchema())) {
-            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
-        }
-
-        long issuedAt = new Date().getTime();
-
-        //Regenerate AccessToken and RefreshToken from the received Token
-        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, getIssuerUrl(), token.getSubject(), schema);
-        IAccessToken aToken = null;
-        if (target == null) {
-            aToken = new CellLocalAccessToken(issuedAt, getIssuerUrl(), token.getSubject(), token.getRoles(), schema);
-        } else {
-            List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
-            aToken = new TransCellAccessToken(issuedAt, getIssuerUrl(),
-                    cell.getPathBaseUrl() + "#" + token.getSubject(), target, roleList, schema);
-        }
-
-        if (aToken instanceof TransCellAccessToken) {
-            log.debug("reissuing TransCell Token");
-            // aToken.addRole("admin");
-            // return this.responseAuthSuccess(tcToken);
-        }
-        return this.responseAuthSuccess(aToken, rToken);
     }
 
     /**
@@ -444,6 +382,87 @@ public class TokenEndPointResource {
         return targetClientId;
     }
 
+    /**
+     * authorization_code process.
+     * @param target p_target
+     * @param owner p_owner
+     * @param schema client_id
+     * @param code code
+     * @return API response
+     */
+    private Response receiveCode(final String target, String owner, String schema,
+            final String code) {
+        if (code == null) {
+            //If code is not set, it is regarded as a parse error
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
+        }
+        if (schema == null) {
+            throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(
+                    this.cell.getUrl()).params(Key.CLIENT_ID);
+        }
+        if (Key.TRUE_STR.equals(owner)) {
+            throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER
+                    .realm(this.cell.getUrl());
+        }
+        if (!code.startsWith(CellLocalAccessToken.PREFIX_CODE)) {
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
+        }
+
+        CellLocalAccessToken token;
+        try {
+            token = (CellLocalAccessToken) AbstractOAuth2Token.parse(code, getIssuerUrl(), cell.getUnitUrl());
+        } catch (TokenParseException e) {
+            //Because I failed in Perth
+            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl()).reason(e);
+        } catch (TokenDsigException e) {
+            //Because certificate validation failed
+            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
+            throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID.realm(this.cell.getUrl());
+        } catch (TokenRootCrtException e) {
+            //Error setting root CA certificate
+            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
+            throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
+        }
+
+        // Check if expired.
+        if (token.isRefreshExpired()) {
+            throw PersoniumCoreAuthnException.TOKEN_EXPIRED.realm(this.cell.getUrl());
+        }
+
+        if (!StringUtils.equals(schema, token.getSchema())) {
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+        }
+
+        long issuedAt = new Date().getTime();
+
+        //Regenerate AccessToken and RefreshToken from the received Token
+        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, getIssuerUrl(), token.getSubject(), schema);
+        IAccessToken aToken = null;
+        if (target == null) {
+            aToken = new CellLocalAccessToken(issuedAt, getIssuerUrl(), token.getSubject(), token.getRoles(), schema);
+        } else {
+            List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
+            aToken = new TransCellAccessToken(issuedAt, getIssuerUrl(),
+                    cell.getPathBaseUrl() + "#" + token.getSubject(), target, roleList, schema);
+        }
+
+        // If scope is openid it returns id_token.
+        IdToken idToken = null;
+        if (OAuth2Helper.Scope.OPENID.equals(token.getScope())) {
+            CellCmp cellCmp = (CellCmp) davRsCmp.getDavCmp();
+            CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
+            String subject = token.getSubject();
+            long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
+            long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_A_HOUR;
+            idToken = new IdToken(
+                    cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
+                    subject, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
+        }
+
+        return this.responseAuthSuccess(aToken, rToken, idToken);
+    }
+
     private Response receiveSaml2(final String target, final String owner,
             final String schema, final String assertion) {
         if (Key.TRUE_STR.equals(owner)) {
@@ -613,14 +632,22 @@ public class TokenEndPointResource {
         }
     }
 
-    @SuppressWarnings("unchecked")
+
     private Response responseAuthSuccess(final IAccessToken accessToken, final IRefreshToken refreshToken) {
+        return responseAuthSuccess(accessToken, refreshToken, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Response responseAuthSuccess(IAccessToken accessToken, IRefreshToken refreshToken, IdToken idToken) {
         JSONObject resp = new JSONObject();
         resp.put(OAuth2Helper.Key.ACCESS_TOKEN, accessToken.toTokenString());
         resp.put(OAuth2Helper.Key.EXPIRES_IN, accessToken.expiresIn());
         if (refreshToken != null) {
             resp.put(OAuth2Helper.Key.REFRESH_TOKEN, refreshToken.toTokenString());
             resp.put(OAuth2Helper.Key.REFRESH_TOKEN_EXPIRES_IN, refreshToken.refreshExpiresIn());
+        }
+        if (idToken != null) {
+            resp.put(OAuth2Helper.Key.ID_TOKEN, idToken.toTokenString());
         }
         resp.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
         ResponseBuilder rb = Response.ok().type(MediaType.APPLICATION_JSON_TYPE);
@@ -694,7 +721,7 @@ public class TokenEndPointResource {
 
         OEntityWrapper oew = cell.getAccount(username);
         if (oew == null) {
-            PersoniumCoreLog.Auth.AUTHN_FAILED_NO_SUCH_ACCOUNT.params(
+            PersoniumCoreLog.Authn.FAILED_NO_SUCH_ACCOUNT.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
@@ -717,7 +744,7 @@ public class TokenEndPointResource {
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
             AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
-            PersoniumCoreLog.Auth.AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
+            PersoniumCoreLog.Authn.FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
@@ -729,7 +756,17 @@ public class TokenEndPointResource {
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
             AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
-            PersoniumCoreLog.Auth.AUTHN_FAILED_ACCOUNT_IS_LOCKED.params(
+            PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_LOCKED.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+        }
+
+        // Check valid IP address
+        if (!AuthUtils.isValidIPAddress(oew, this.ipaddress)) {
+            AuthResourceUtils.registIntervalLock(accountId);
+            AuthResourceUtils.countupFailedCount(accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            PersoniumCoreLog.Authn.FAILED_OUTSIDE_IP_ADDRESS_RANGE.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
@@ -741,7 +778,7 @@ public class TokenEndPointResource {
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
             AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
-            PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_PASSWORD.params(
+            PersoniumCoreLog.Authn.FAILED_INCORRECT_PASSWORD.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }

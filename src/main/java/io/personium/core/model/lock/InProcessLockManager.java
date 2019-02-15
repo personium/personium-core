@@ -68,18 +68,26 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    synchronized Integer doGetAccountLock(String fullKey) {
+    synchronized long doGetAccountLock(String fullKey) {
         AccountLock lock = inProcessAccountLock.get(fullKey);
         if (lock == null) {
-            return null;
+            return 0;
         }
         return lock.value();
     }
 
     @Override
-    synchronized Boolean doPutAccountLock(String fullKey, Integer value, int expired) {
+    synchronized Boolean doPutAccountLock(String fullKey, long value, int expired) {
         inProcessAccountLock.put(fullKey, new AccountLock(value, expired));
         return Boolean.TRUE;
+    }
+
+    @Override
+    synchronized long doIncrementAccountLock(String fullKey, int expired) {
+        Long value = doGetAccountLock(fullKey);
+        value++;
+        inProcessAccountLock.put(fullKey, new AccountLock(value, expired));
+        return value;
     }
 
     @Override
@@ -171,7 +179,7 @@ class InProcessLockManager extends LockManager {
     static class AccountLock {
 
         private static final int TIME_MILLIS = 1000;
-        private Integer value;
+        private long value;
         private int expiredInSeconds;
         private long createdAt;
 
@@ -180,7 +188,7 @@ class InProcessLockManager extends LockManager {
          * @param value value
          * @param expired Lock retention period (seconds)
          */
-        AccountLock(Integer value, int expired) {
+        AccountLock(long value, int expired) {
             this.value = value;
             this.expiredInSeconds = expired;
             this.createdAt = System.currentTimeMillis();
@@ -191,12 +199,12 @@ class InProcessLockManager extends LockManager {
          * If expired is exceeded, return null.
          * @return The value corresponding to the specified key (or null if it does not exist, if it exceeds expired)
          */
-        public Integer value() {
+        public long value() {
             long now = System.currentTimeMillis();
 
             //If expired is exceeded, return null
             if (now > this.createdAt + expiredInSeconds * TIME_MILLIS) {
-                return null;
+                return 0;
 
             }
             return this.value;

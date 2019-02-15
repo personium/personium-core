@@ -72,6 +72,7 @@ import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthHistoryLastFile;
+import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
@@ -320,7 +321,7 @@ public class AuthzEndPointResource {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
+                PersoniumCoreLog.Authn.FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
@@ -332,10 +333,22 @@ public class AuthzEndPointResource {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_ACCOUNT_IS_LOCKED.params(
+                PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_LOCKED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
+            }
+
+            // Check valid IP address
+            if (!AuthUtils.isValidIPAddress(oew, this.ipaddress)) {
+                //Update lock time of memcached
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
+                PersoniumCoreLog.Authn.FAILED_OUTSIDE_IP_ADDRESS_RANGE.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
+
             }
 
             //Check user ID and password
@@ -344,7 +357,7 @@ public class AuthzEndPointResource {
                 //Make lock on memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_PASSWORD.params(
+                PersoniumCoreLog.Authn.FAILED_INCORRECT_PASSWORD.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
@@ -377,18 +390,17 @@ public class AuthzEndPointResource {
             } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
                 List<Role> roleList = cell.getRoleListForAccount(username);
                 CellLocalAccessToken aToken = new CellLocalAccessToken(
-                        issuedAt, getIssuerUrl(), username, roleList, schema);
+                        issuedAt, CellLocalAccessToken.CODE_EXPIRES, getIssuerUrl(), username, roleList, schema, scope);
                 paramMap.put(OAuth2Helper.Key.CODE, aToken.toCodeString());
             }
         } else {
             CellCmp cellCmp = (CellCmp) cellRsCmp.getDavCmp();
             CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
-            String subject = getIssuerUrl() + SEPARATOR_FRAGMENT + username;
             long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
             long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_A_HOUR;
             IdToken idToken = new IdToken(
                     cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
-                    subject, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
+                    username, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
             paramMap.put(OAuth2Helper.Key.ID_TOKEN, idToken.toTokenString());
         }
         if (StringUtils.isNotEmpty(state)) {
@@ -470,7 +482,8 @@ public class AuthzEndPointResource {
             //Regenerate AccessToken from received Token
             List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
             CellLocalAccessToken aToken = new CellLocalAccessToken(
-                    issuedAt, token.getIssuer(), token.getSubject(), roleList, clientId);
+                    issuedAt, CellLocalAccessToken.CODE_EXPIRES,
+                    token.getIssuer(), token.getSubject(), roleList, clientId, scope);
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
                 paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
                 paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
@@ -498,7 +511,7 @@ public class AuthzEndPointResource {
     }
 
     private Response returnSuccessRedirect(String responseType, String redirectUri,
-            Map<String, String> paramMap, String keepLogin) {
+            Map<String, String> paramMap, String keepLogin) { //NOPMD add p_cookie
         //Respond with 302 and return the Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER).type(MediaType.APPLICATION_JSON_TYPE);
         StringBuilder sbuf = new StringBuilder();
@@ -636,7 +649,7 @@ public class AuthzEndPointResource {
      */
     private Response returnHtmlForm(String responseType, String clientId, String redirectUri,
             String massage, String state, String scope) {
-        ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
+        ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML_TYPE.withCharset(CharEncoding.UTF_8));
         return rb.entity(this.createForm(responseType, clientId, redirectUri, massage, state, scope)).build();
     }
 

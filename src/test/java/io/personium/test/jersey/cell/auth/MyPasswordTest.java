@@ -18,6 +18,7 @@ package io.personium.test.jersey.cell.auth;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -55,7 +56,7 @@ import io.personium.test.utils.TResponse;
  * パスワード変更APIのテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
-@Category({Unit.class, Integration.class, Regression.class })
+@Category({ Unit.class, Integration.class, Regression.class })
 public class MyPasswordTest extends PersoniumTest {
 
     private static final String MASTER_TOKEN = AbstractCase.MASTER_TOKEN_NAME;
@@ -89,8 +90,8 @@ public class MyPasswordTest extends PersoniumTest {
             // 確認
             // TODO 仕様の問題で変更前のトークンが有効となっているため確認未実施
             // 1.変更前のパスワードのセルローカルトークンを使用して403となること
-//            res = requesttoMypassword(tokenStr, "newPassword1", Setup.TEST_CELL1);
-//            assertEquals(403, res.getStatusCode());
+            //            res = requesttoMypassword(tokenStr, "newPassword1", Setup.TEST_CELL1);
+            //            assertEquals(403, res.getStatusCode());
 
             // 2.変更後のパスワードのセルローカルトークンでアカウントの取得を実行して200となること
             // 認証
@@ -101,7 +102,7 @@ public class MyPasswordTest extends PersoniumTest {
             res = requesttoMypassword(tokenStr, "newPassword1", Setup.TEST_CELL1);
             assertEquals(204, res.getStatusCode());
         } finally {
-             AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, "PasswordTest", 204);
+            AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, "PasswordTest", 204);
         }
     }
 
@@ -112,7 +113,7 @@ public class MyPasswordTest extends PersoniumTest {
     @Test
     public final void 記号を含むアカウントの自分セルローカルトークン認証でパスワード変更を実行し204が返ること() throws TokenParseException {
         // エスケープする前のNameは、abcde12345-_!$*=^`{|}~.@
-        String testAccountName = "abcde12345\\-\\_\\!\\$\\*\\=\\^\\`\\{\\|\\}\\~.\\@";
+        String testAccountName = "abcde12345-_!\\$*=^`{|}~.@";
         String encodedtestAccountName = "abcde12345-_%21%24%2A%3D%5E%60%7B%7C%7D%7E.%40";
 
         try {
@@ -153,14 +154,13 @@ public class MyPasswordTest extends PersoniumTest {
     @Test
     public final void 他人セルローカルトークン認証でパスワード変更を実行し403が返ること() throws TokenParseException {
         // 他人セルローカルトークン取得
-        TResponse res =
-                Http.request("authn/password-tc-c0.txt")
-                        .with("remoteCell", Setup.TEST_CELL1)
-                        .with("username", "account1")
-                        .with("password", "password1")
-                        .with("p_target", UrlUtils.cellRoot(Setup.TEST_CELL2))
-                        .returns()
-                        .statusCode(HttpStatus.SC_OK);
+        TResponse res = Http.request("authn/password-tc-c0.txt")
+                .with("remoteCell", Setup.TEST_CELL1)
+                .with("username", "account1")
+                .with("password", "password1")
+                .with("p_target", UrlUtils.cellRoot(Setup.TEST_CELL2))
+                .returns()
+                .statusCode(HttpStatus.SC_OK);
 
         JSONObject json = res.bodyAsJson();
         String transCellAccessToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
@@ -255,108 +255,69 @@ public class MyPasswordTest extends PersoniumTest {
     }
 
     /**
-     * 新しいパスワードが5文字の時にパスワード変更を実行し400が返却されること.
-     * @throws TokenParseException 認証用トークンのパースエラー
+     * If the new password is a normal password string, the response will be 204.
+     * @throws Exception Unexpected exception
      */
     @Test
-    public final void 新しいパスワードが5文字の時にパスワード変更を実行し400が返却されること() throws TokenParseException {
-        // 認証
-        JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
-                "account10", "password10", -1);
-        // セルローカルトークンを取得する
-        String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
+    public final void new_password_normal() throws Exception {
+        ArrayList<String> normalPasswordList = new ArrayList<String>();
+        normalPasswordList.add("hoge@!");
+        normalPasswordList.add("12345678901234567890123456789012");
 
-        PersoniumResponse res = requesttoMypassword(tokenStr, "hogea", Setup.TEST_CELL1);
-        assertEquals(400, res.getStatusCode());
-    }
+        for (String password : normalPasswordList) {
+            try {
+                // create account and get cell local token.
+                AccountUtils.create(MASTER_TOKEN, Setup.TEST_CELL1, "PasswordTest", "password", 201);
+                JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
+                        "PasswordTest", "password", -1);
+                String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-    /**
-     * 新しいパスワードが6文字の時にパスワード変更を実行し204が返却されること.
-     * @throws TokenParseException 認証用トークンのパースエラー
-     */
-    @Test
-    public final void 新しいパスワードが6文字の時にパスワード変更を実行し204が返却されること() throws TokenParseException {
-        try {
-            // Account作成
-            AccountUtils.create(MASTER_TOKEN, Setup.TEST_CELL1, "PasswordTest", "password", 201);
-            // 認証
-            JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
-                    "PasswordTest", "password", -1);
-            // セルローカルトークンを取得する
-            String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
+                // change password.
+                PersoniumResponse res = requesttoMypassword(tokenStr, password, Setup.TEST_CELL1);
+                assertEquals(204, res.getStatusCode());
 
-            PersoniumResponse res = requesttoMypassword(tokenStr, "hogeaa", Setup.TEST_CELL1);
-            assertEquals(204, res.getStatusCode());
-            // 確認
-            // TODO 仕様の問題で変更前のトークンが有効となっているため確認未実施
-            // 1.変更前のパスワードのセルローカルトークンを使用して403となること
-            // res = requesttoMypassword(tokenStr, "newPassword1", Setup.TEST_CELL1);
-            // assertEquals(403, res.getStatusCode());
+                // TODO 仕様の問題で変更前のトークンが有効となっているため確認未実施
+                // 1. Cell local token of password before change can't be used.
+                // res = requesttoMypassword(tokenStr, "newPassword1", Setup.TEST_CELL1);
+                // assertEquals(403, res.getStatusCode());
 
-            // 2.変更後のパスワードのセルローカルトークンでアカウントの取得を実行して200となること
-            // 認証
-            resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
-                    "PasswordTest", "hogeaa", -1);
-            // セルローカルトークンを取得する
-            tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
-            res = requesttoMypassword(tokenStr, "newPassword1", Setup.TEST_CELL1);
-            assertEquals(204, res.getStatusCode());
-        } finally {
-            AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, "PasswordTest", 204);
+                // 2. The cell local token of the changed password can be used
+                resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
+                        "PasswordTest", password, -1);
+                tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
+                res = requesttoMypassword(tokenStr, "newPassword1", Setup.TEST_CELL1);
+                assertEquals(204, res.getStatusCode());
+            } finally {
+                AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, "PasswordTest", 204);
+            }
         }
     }
 
     /**
-     * 新しいパスワードが32文字の時にパスワード変更を実行し204が返却されること.
-     * @throws TokenParseException 認証用トークンのパースエラー
+     * If the new password is an invalid password string, the response will be 400.
+     * @throws Exception Unexpected exception
      */
     @Test
-    public final void 新しいパスワードが32文字の時にパスワード変更を実行し204が返却されること() throws TokenParseException {
-        try {
-            // Account作成
-            AccountUtils.create(MASTER_TOKEN, Setup.TEST_CELL1, "PasswordTest", "password", 201);
-            // 認証
-            JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
-                    "PasswordTest", "password", -1);
-            // セルローカルトークンを取得する
-            String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
+    public final void new_password_invalid() throws Exception {
+        ArrayList<String> invalidPasswordList = new ArrayList<String>();
+        invalidPasswordList.add("hogea");
+        invalidPasswordList.add("123456789012345678901234567890123");
 
-            PersoniumResponse res = requesttoMypassword(tokenStr, "12345678901234567890123456789012", Setup.TEST_CELL1);
-            assertEquals(204, res.getStatusCode());
-            // 変更前のパスワードのセルローカルトークンを使用して403となること
-            // 確認
-            // TODO 仕様の問題で変更前のトークンが有効となっているため確認未実施
-            // 1.変更前のパスワードのセルローカルトークンを使用して403となること
-            // res = requesttoMypassword(tokenStr, "newPassword1", Setup.TEST_CELL1);
-            // assertEquals(403, res.getStatusCode());
+        for (String password : invalidPasswordList) {
+            try {
+                // create test account and get cell local token.
+                AccountUtils.create(MASTER_TOKEN, Setup.TEST_CELL1, "PasswordTest", "password", 201);
+                JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
+                        "PasswordTest", "password", -1);
+                String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-            // 2.変更後のパスワードのセルローカルトークンでアカウントの取得を実行して200となること
-            // 認証
-            resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
-                    "PasswordTest", "12345678901234567890123456789012", -1);
-            // セルローカルトークンを取得する
-            tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
-            res = requesttoMypassword(tokenStr, "newPassword1", Setup.TEST_CELL1);
-            assertEquals(204, res.getStatusCode());
-        } finally {
-            AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, "PasswordTest", 204);
+                // Failed to change password.
+                PersoniumResponse res = requesttoMypassword(tokenStr, password, Setup.TEST_CELL1);
+                assertEquals(400, res.getStatusCode());
+            } finally {
+                AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, "PasswordTest", 204);
+            }
         }
-    }
-
-    /**
-     * 新しいパスワードが33文字の時にパスワード変更を実行し400が返却されること.
-     * @throws TokenParseException 認証用トークンのパースエラー
-     */
-    @Test
-    public final void 新しいパスワードが33文字の時にパスワード変更を実行し400が返却されること() throws TokenParseException {
-        // 認証
-        JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
-                "account10", "password10", -1);
-        // セルローカルトークンを取得する
-        String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
-
-        PersoniumResponse res = requesttoMypassword(tokenStr, "123456789012345678901234567890123", Setup.TEST_CELL1);
-        assertEquals(400, res.getStatusCode());
     }
 
     /**
@@ -383,8 +344,8 @@ public class MyPasswordTest extends PersoniumTest {
             PersoniumResponse res = requesttoMypassword(tokenStr, "password1", cellName1);
             assertEquals(401, res.getStatusCode());
         } finally {
-            AccountUtils.delete(cellName1, MASTER_TOKEN, "PasswordTest", 204);
-            AccountUtils.delete(cellName2, MASTER_TOKEN, "PasswordTest", 204);
+            AccountUtils.delete(cellName1, MASTER_TOKEN, "PasswordTest", -1);
+            AccountUtils.delete(cellName2, MASTER_TOKEN, "PasswordTest", -1);
             CellUtils.delete(MASTER_TOKEN, cellName1);
             CellUtils.delete(MASTER_TOKEN, cellName2);
         }

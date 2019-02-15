@@ -19,14 +19,28 @@ package io.personium.test.jersey.cell.auth;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.cxf.rs.security.jose.jwa.AlgorithmUtils;
 import org.apache.http.HttpStatus;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -34,6 +48,8 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.lock.LockManager;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
@@ -91,6 +107,22 @@ public class CodeFlowTest extends PersoniumTest {
     }
 
     /**
+     * before.
+     */
+    @Before
+    public void before() {
+        LockManager.deleteAllLocks();
+    }
+
+    /**
+     * after.
+     */
+    @After
+    public void after() {
+        LockManager.deleteAllLocks();
+    }
+
+    /**
      * Authz successful with ID/Password.
      */
     @Test
@@ -113,10 +145,38 @@ public class CodeFlowTest extends PersoniumTest {
     }
 
     /**
+     * Authz successful with pCookie.
+     */
+    @Test
+    public void normal_pCookie() {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = STATE_1;
+        String username = ACCOUNT_1;
+        String password = PASSWORD_1;
+
+        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, username, password, HttpStatus.SC_OK);
+        String setCookie = tokenResponse.getHeader("Set-Cookie");
+        String pCookie = setCookie.split("=")[1];
+
+        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+                state, pCookie, HttpStatus.SC_SEE_OTHER);
+
+        String locationHeader = response.getLocationHeader();
+        String locationUri = getRedirectUri(locationHeader);
+        Map<String, String> locationQuery = parseQuery(locationHeader);
+
+        assertThat(locationUri, is(redirectUri));
+        assertNotNull(locationQuery.get("code"));
+        assertThat(locationQuery.get("state"), is(state));
+    }
+
+    /**
      * Token can be get from the acquired code.
      */
     @Test
-    public void normal_token_get_from_code() {
+    public void normal_token_get_from_code_from_password() {
         // authz endpoint.
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String redirectUri = clientId + "__/redirect.html";
@@ -138,6 +198,136 @@ public class CodeFlowTest extends PersoniumTest {
         TResponse tokenResponse = TokenUtils.getTokenCode(Setup.TEST_CELL1, code, clientId, appToken, HttpStatus.SC_OK);
         String accessToken = (String) tokenResponse.bodyAsJson().get("access_token");
         assertNotNull(accessToken);
+    }
+
+    /**
+     * Token can be get from the acquired code.
+     */
+    @Test
+    public void normal_token_get_from_code_from_pCookie() {
+        // token endpoint.
+        TResponse pCookieResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, ACCOUNT_1, PASSWORD_1, HttpStatus.SC_OK);
+        String setCookie = pCookieResponse.getHeader("Set-Cookie");
+        // Get p_cookie.
+        String pCookie = setCookie.split("=")[1];
+
+        // authz endpoint.
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+                STATE_1, pCookie, HttpStatus.SC_SEE_OTHER);
+
+        String locationHeader = response.getLocationHeader();
+        Map<String, String> locationQuery = parseQuery(locationHeader);
+        // Get code.
+        String code = locationQuery.get("code");
+
+        // Get app token.
+        TResponse appTokenResponse = TokenUtils.getTokenPassword(
+                Setup.TEST_CELL_SCHEMA1, "account0", "password0",
+                UrlUtils.cellRoot(Setup.TEST_CELL1), HttpStatus.SC_OK);
+        String appToken = (String) appTokenResponse.bodyAsJson().get("access_token");
+
+        // token endpoint.
+        TResponse tokenResponse = TokenUtils.getTokenCode(Setup.TEST_CELL1, code, clientId, appToken, HttpStatus.SC_OK);
+        String accessToken = (String) tokenResponse.bodyAsJson().get("access_token");
+        assertNotNull(accessToken);
+    }
+
+    /**
+     * Token and IDToken can be get from the acquired code.
+     * Verify that IDToken is correct content.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void normal_token_get_from_code_from_password_oidc() throws Exception {
+        // authz endpoint.
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        TResponse response = AuthzUtils.postPassword(Setup.TEST_CELL1, TYPE_CODE,
+                redirectUri, clientId, STATE_1, OAuth2Helper.Scope.OPENID,
+                ACCOUNT_1, PASSWORD_1, HttpStatus.SC_SEE_OTHER);
+        String locationHeader = response.getLocationHeader();
+        Map<String, String> locationQuery = parseQuery(locationHeader);
+        // Get code.
+        String code = locationQuery.get("code");
+
+        // token endpoint.
+        TResponse appTokenResponse = TokenUtils.getTokenPassword(
+                Setup.TEST_CELL_SCHEMA1, "account0", "password0",
+                UrlUtils.cellRoot(Setup.TEST_CELL1), HttpStatus.SC_OK);
+        // Get app token.
+        String appToken = (String) appTokenResponse.bodyAsJson().get("access_token");
+
+        // token endpoint.
+        TResponse tokenResponse = TokenUtils.getTokenCode(Setup.TEST_CELL1, code, clientId, appToken, HttpStatus.SC_OK);
+        String accessToken = (String) tokenResponse.bodyAsJson().get("access_token");
+        String idToken = (String) tokenResponse.bodyAsJson().get("id_token");
+
+        // certs endpoint.
+        TResponse certsResponse = AuthzUtils.certsGet(Setup.TEST_CELL1, HttpStatus.SC_OK);
+        JSONArray keys = (JSONArray) certsResponse.bodyAsJson().get("keys");
+        JSONObject jwk = (JSONObject) keys.get(0);
+        String modulus = (String) jwk.get("n");
+        String exponent = (String) jwk.get("e");
+
+        assertNotNull(accessToken);
+        // verify signature
+        verifySignatureIdToken(idToken, modulus, exponent);
+        // verify payload
+        verifyPayloadIdToken(idToken, UrlUtils.cellRoot(Setup.TEST_CELL1), UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
+    }
+
+    /**
+     * Token and IDToken can be get from the acquired code.
+     * Verify that IDToken is correct content.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void normal_token_get_from_code_from_pCookie_oidc() throws Exception {
+        // token endpoint.
+        TResponse pCookieResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, ACCOUNT_1, PASSWORD_1, HttpStatus.SC_OK);
+        String setCookie = pCookieResponse.getHeader("Set-Cookie");
+        // Get p_cookie.
+        String pCookie = setCookie.split("=")[1];
+
+        // authz endpoint.
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE,
+                redirectUri, clientId, STATE_1, OAuth2Helper.Scope.OPENID,
+                pCookie, HttpStatus.SC_SEE_OTHER);
+        String locationHeader = response.getLocationHeader();
+        Map<String, String> locationQuery = parseQuery(locationHeader);
+        // Get code.
+        String code = locationQuery.get("code");
+
+        // token endpoint.
+        TResponse appTokenResponse = TokenUtils.getTokenPassword(
+                Setup.TEST_CELL_SCHEMA1, "account0", "password0",
+                UrlUtils.cellRoot(Setup.TEST_CELL1), HttpStatus.SC_OK);
+        // Get app token.
+        String appToken = (String) appTokenResponse.bodyAsJson().get("access_token");
+
+        // token endpoint.
+        TResponse tokenResponse = TokenUtils.getTokenCode(Setup.TEST_CELL1, code, clientId, appToken, HttpStatus.SC_OK);
+        String accessToken = (String) tokenResponse.bodyAsJson().get("access_token");
+        String idToken = (String) tokenResponse.bodyAsJson().get("id_token");
+
+        // certs endpoint.
+        TResponse certsResponse = AuthzUtils.certsGet(Setup.TEST_CELL1, HttpStatus.SC_OK);
+        JSONArray keys = (JSONArray) certsResponse.bodyAsJson().get("keys");
+        JSONObject jwk = (JSONObject) keys.get(0);
+        String modulus = (String) jwk.get("n");
+        String exponent = (String) jwk.get("e");
+
+        assertNotNull(accessToken);
+        // verify signature
+        verifySignatureIdToken(idToken, modulus, exponent);
+        // verify payload
+        verifyPayloadIdToken(idToken, UrlUtils.cellRoot(Setup.TEST_CELL1), UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
     }
 
     /**
@@ -252,5 +442,91 @@ public class CodeFlowTest extends PersoniumTest {
             map.put(keyvalue[0], keyvalue[1]);
         }
         return map;
+    }
+
+    /**
+     * Verify signature of id_token.
+     * @param idToken id_token
+     * @param modulus RSA modulus
+     * @param exponent RSA exponent
+     * @throws Exception
+     */
+    private void verifySignatureIdToken(String idToken, String modulus, String exponent) throws Exception {
+        String[] idTokenParts = partIdToken(idToken);
+
+        byte[] data = (idTokenParts[0] + "." + idTokenParts[1]).getBytes(StandardCharsets.UTF_8);
+        byte[] idTokenSignature = base64UrlDecodeToBytes(idTokenParts[2]);
+        PublicKey publicKey = getPublicKey(modulus, exponent);
+
+        assertTrue(verifyUsingPublicKey(data, idTokenSignature, publicKey));
+    }
+
+    /**
+     * Create PublicKey object.
+     * @param modulus RSA modulus
+     * @param exponent RSA exponent
+     * @return PublicKey object
+     * @throws Exception
+     */
+    private PublicKey getPublicKey(String modulus, String exponent) throws Exception {
+        byte[] nb = base64UrlDecodeToBytes(modulus);
+        byte[] eb = base64UrlDecodeToBytes(exponent);
+        BigInteger n = new BigInteger(1, nb);
+        BigInteger e = new BigInteger(1, eb);
+
+        RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(n, e);
+        PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(rsaPublicKeySpec);
+        return publicKey;
+    }
+
+    /**
+     * Verify signature.
+     * @param data signed data
+     * @param signature signature
+     * @param pubKey public key
+     * @return true:correct false:error
+     * @throws Exception
+     */
+    private boolean verifyUsingPublicKey(byte[] data, byte[] signature, PublicKey pubKey) throws Exception {
+        Signature sig = Signature.getInstance(AlgorithmUtils.RS_SHA_256_JAVA);
+        sig.initVerify(pubKey);
+        sig.update(data);
+        return sig.verify(signature);
+    }
+
+    /**
+     * Verify payload of id_token.
+     * @param idToken
+     * @param iss
+     * @param aud
+     * @throws Exception
+     */
+    private void verifyPayloadIdToken(String idToken, String iss, String aud) throws Exception {
+        String[] idTokenParts = partIdToken(idToken);
+        String payload = new String(base64UrlDecodeToBytes(idTokenParts[1]), StandardCharsets.UTF_8);
+        JSONParser parser = new JSONParser();
+        JSONObject jwt = (JSONObject) parser.parse(payload);
+        assertThat((String) jwt.get("iss"), is(iss));
+        assertThat((String) jwt.get("aud"), is(aud));
+    }
+
+    /**
+     * Part id_token.
+     * @param idToken id_token
+     * @return parts
+     */
+    private String[] partIdToken(String idToken) {
+        return idToken.split("\\.");
+    }
+
+    /**
+     * Base64 URL Decode to bytedata.
+     * @param input input string
+     * @return decoded bytedata.
+     */
+    private byte[] base64UrlDecodeToBytes(String input) {
+        Base64 decoder = new Base64(-1, null, true);
+        byte[] decodedBytes = decoder.decode(input);
+        return decodedBytes;
     }
 }
