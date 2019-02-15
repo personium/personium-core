@@ -55,7 +55,7 @@ public abstract class AccountValidAuthnIntervalLockManager extends LockManager {
             String key = CATEGORY_ACCOUNT_VALID_AUTHENTICATION_INTERVAL + accountId;
             //Confirm Lock of target account
             long lockPublic = singleton.doGetAccountLock(key);
-            return lockPublic != 0;
+            return lockPublic >= 1;
         } catch (MemcachedClientException e) {
             throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }
