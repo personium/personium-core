@@ -1,3 +1,28 @@
+## 1.7.5
+NEW FEATURE:
+* ElasticSearch 5.x Support.([#254](https://github.com/personium/personium-core/issues/254))
+* Support OpenID Connect.([#287](https://github.com/personium/personium-core/issues/287))
+* Introduce Stream Collection and add new Action 'relay.data' to Rule.([#289](https://github.com/personium/personium-core/issues/289))
+* Subscribe topic of Stream Collection with WebSocket.([#290](https://github.com/personium/personium-core/issues/290))
+* Support account lock.([#308](https://github.com/personium/personium-core/issues/308))
+
+BUG FIXES:
+* External cells are doubly registered when roles/relations are given in messages([#301](https://github.com/personium/personium-core/issues/301))
+* Cannot get .error file that is generated when cell export fails.([#312](https://github.com/personium/personium-core/issues/312))
+* The heartbeat of websocket does not work.([#314](https://github.com/personium/personium-core/issues/314))
+
+IMPROVEMENTS:
+* Update "jackson-databind".([#302](https://github.com/personium/personium-core/issues/302))
+* Add Internal Events.([#305](https://github.com/personium/personium-core/issues/305))
+* Add information when issuing tokens.([#309](https://github.com/personium/personium-core/issues/309))
+* Enable to issue tokens only from specified IP address.([#310](https://github.com/personium/personium-core/issues/310))
+* Add password restriction to property.([#325](https://github.com/personium/personium-core/issues/325))
+* Quit converting Cell URL to path-base in the Issuer& Subject fields in Tokens.([#334](https://github.com/personium/personium-core/issues/334))
+
+## 1.6.18
+BUG FIXES:
+* bug fix.([#317](https://github.com/personium/personium-core/issues/317))
+
 ## 1.7.4
 BUG FIXES:
 * "Unknown Exception" has occurred on $select query for CellCtl object.([#56](https://github.com/personium/personium-core/issues/56))
