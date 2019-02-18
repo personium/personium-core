@@ -879,16 +879,6 @@ public class AccessContext {
         }
 
         String issuer = tca.getIssuer();
-        if (!PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
-            try {
-                issuer = UriUtils.convertPathBaseToFqdnBase(issuer);
-            } catch (URISyntaxException e) {
-                // not normal issuer.
-                PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-                return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.tokenParseError);
-            }
-        }
-
         if ((tca.getTarget().equals(baseUri) || tca.getTarget().equals(escapedBaseUri))
                 && (PersoniumUnitConfig.checkUnitUserIssuers(issuer, baseUri)
                         || PersoniumUnitConfig.checkUnitUserIssuers(issuer, escapedBaseUri))) {
