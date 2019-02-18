@@ -19,7 +19,6 @@ package io.personium.core.rs.cell;
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
@@ -351,15 +350,7 @@ public class TokenEndPointResource {
         }
 
         // Confirm that Issuer is equal to ID
-        // issuer is always pathbase.
-        String fqdnBaseIssuer;
-        try {
-            fqdnBaseIssuer = UriUtils.convertPathBaseToFqdnBase(tcToken.getIssuer());
-        } catch (URISyntaxException e) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
-        }
-        if (!targetClientId.equals(tcToken.getIssuer())
-                && !targetClientId.equals(fqdnBaseIssuer)) {
+        if (!targetClientId.equals(tcToken.getIssuer())) {
             throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
         }
 
