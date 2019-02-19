@@ -494,7 +494,7 @@ public class TokenEndPointResource {
                     subject, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
         }
 
-        return this.responseAuthSuccess(aToken, rToken, idToken);
+        return this.responseAuthSuccess(aToken, rToken, idToken, issuedAt);
     }
 
     private Response receiveSaml2(final String target, final String owner,
@@ -574,7 +574,7 @@ public class TokenEndPointResource {
             aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
                     tcToken.getSubject(), target, rolesHere, schemaVerified);
         }
-        return this.responseAuthSuccess(aToken, rToken);
+        return this.responseAuthSuccess(aToken, rToken, issuedAt);
     }
 
     /**
@@ -640,21 +640,23 @@ public class TokenEndPointResource {
             UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt, expiresIn,
                     cell.getOwner(), cell.getUnitUrl());
 
-            return this.responseAuthSuccess(uluut, null);
+            return this.responseAuthSuccess(uluut, null, issuedAt);
         } else {
             //Regenerate AccessToken and RefreshToken from received Refresh Token
             IRefreshToken rToken = (IRefreshToken) token;
-            rToken = rToken.refreshRefreshToken(issuedAt);
+            rToken = rToken.refreshRefreshToken(issuedAt, rTokenExpiresIn);
 
             IAccessToken aToken = null;
             if (rToken instanceof CellLocalRefreshToken) {
                 String subject = rToken.getSubject();
                 List<Role> roleList = cell.getRoleListForAccount(subject);
-                aToken = rToken.refreshAccessToken(issuedAt, target, cell.getPathBaseUrl(), roleList, schema);
+                aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target,
+                        cell.getPathBaseUrl(), roleList, schema);
             } else {
                 //Ask CELL to determine the role of you from the role of the token issuer.
                 List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
-                aToken = rToken.refreshAccessToken(issuedAt, target, getIssuerUrl(), rolesHere, schema);
+                aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target,
+                        getIssuerUrl(), rolesHere, schema);
             }
 
             if (aToken instanceof TransCellAccessToken) {
@@ -662,17 +664,18 @@ public class TokenEndPointResource {
                 // aToken.addRole("admin");
                 // return this.responseAuthSuccess(tcToken);
             }
-            return this.responseAuthSuccess(aToken, rToken);
+            return this.responseAuthSuccess(aToken, rToken, issuedAt);
         }
     }
 
-
-    private Response responseAuthSuccess(final IAccessToken accessToken, final IRefreshToken refreshToken) {
-        return responseAuthSuccess(accessToken, refreshToken, null);
+    private Response responseAuthSuccess(final IAccessToken accessToken, final IRefreshToken refreshToken,
+            long issuedAt) {
+        return responseAuthSuccess(accessToken, refreshToken, null, issuedAt);
     }
 
     @SuppressWarnings("unchecked")
-    private Response responseAuthSuccess(IAccessToken accessToken, IRefreshToken refreshToken, IdToken idToken) {
+    private Response responseAuthSuccess(IAccessToken accessToken, IRefreshToken refreshToken, IdToken idToken,
+            long issuedAt) {
         JSONObject resp = new JSONObject();
         resp.put(OAuth2Helper.Key.ACCESS_TOKEN, accessToken.toTokenString());
         resp.put(OAuth2Helper.Key.EXPIRES_IN, accessToken.expiresIn());
@@ -718,7 +721,8 @@ public class TokenEndPointResource {
             resp.put(OAuth2Helper.Key.LAST_AUTHENTICATED, last.getLastAuthenticated());
             resp.put(OAuth2Helper.Key.FAILED_COUNT, last.getFailedCount());
             // update auth history.
-            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(davRsCmp.getDavCmp().getFsPath(), accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(
+                    davRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
             // release account lock.
             AuthResourceUtils.releaseAccountLock(accountId);
         }
@@ -838,7 +842,7 @@ public class TokenEndPointResource {
             //uluut issuance processing
             UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt, expiresIn,
                     cell.getOwner(), cell.getUnitUrl());
-            return this.responseAuthSuccess(uluut, null);
+            return this.responseAuthSuccess(uluut, null, issuedAt);
         }
 
         CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, rTokenExpiresIn,
@@ -848,7 +852,7 @@ public class TokenEndPointResource {
         if (target == null) {
             AccountAccessToken localToken = new AccountAccessToken(issuedAt, expiresIn,
                     getIssuerUrl(), username, schema);
-            return this.responseAuthSuccess(localToken, rToken);
+            return this.responseAuthSuccess(localToken, rToken, issuedAt);
         } else {
             //Check that TODO SCHEMA is URL
             //Check that TODO TARGET is URL
@@ -858,7 +862,7 @@ public class TokenEndPointResource {
             TransCellAccessToken tcToken = new TransCellAccessToken(issuedAt, expiresIn,
                     getIssuerUrl(), cell.getPathBaseUrl() + "#" + username, target,
                     roleList, schema);
-            return this.responseAuthSuccess(tcToken, rToken);
+            return this.responseAuthSuccess(tcToken, rToken, issuedAt);
         }
     }
 

@@ -436,7 +436,7 @@ public class AuthzEndPointResource {
         paramMap.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
         paramMap.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
         // update auth history.
-        AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId);
+        AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
         // release account lock.
         AuthResourceUtils.releaseAccountLock(accountId);
 
@@ -502,15 +502,18 @@ public class AuthzEndPointResource {
 //            CellLocalRefreshToken rToken = new CellLocalRefreshToken(
 //                    issuedAt, token.getIssuer(), token.getSubject(), clientId);
             //Regenerate AccessToken from received Token
-            List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
-            CellLocalAccessToken aToken = new CellLocalAccessToken(
-                    issuedAt, CellLocalAccessToken.CODE_EXPIRES,
-                    token.getIssuer(), token.getSubject(), roleList, clientId, scope);
+            String username = token.getSubject();
+
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
+                AccountAccessToken aToken = new AccountAccessToken(issuedAt, expiresIn,
+                        getIssuerUrl(), username, clientId);
                 paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
                 paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
                 paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));
             } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
+                List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
+                CellLocalAccessToken aToken = new CellLocalAccessToken(issuedAt,
+                        CellLocalAccessToken.CODE_EXPIRES, getIssuerUrl(), username, roleList, clientId, scope);
                 paramMap.put(OAuth2Helper.Key.CODE, aToken.toCodeString());
             }
         } else {

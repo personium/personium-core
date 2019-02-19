@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,13 +154,14 @@ public class AuthResourceUtils {
      * update auth history last file with authentication success.
      * @param fsPath fs path
      * @param accountId account ID
+     * @param time current time (unixtime)
      */
-    public static void updateAuthHistoryLastFileWithSuccess(String fsPath, String accountId) {
+    public static void updateAuthHistoryLastFileWithSuccess(String fsPath, String accountId, long time) {
         Lock lock = LockManager.getLock(Lock.CATEGORY_AUTH_HISTORY, null, null, accountId);
         log.debug("lock auth history. accountId:" + accountId);
         try {
             AuthHistoryLastFile last = AuthHistoryLastFile.newInstance(fsPath, accountId);
-            last.setLastAuthenticated(new Date().getTime());
+            last.setLastAuthenticated(time);
             last.setFailedCount(0);
             last.save();
         } finally {
