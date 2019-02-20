@@ -53,7 +53,7 @@ import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TokenUtils;
 
 /**
- * account lock test.
+ * set token expires in test for authentication.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
@@ -170,7 +170,7 @@ public class AuthExpiresInTest extends PersoniumTest {
     public final void handlePassword_transCellToken() throws Exception {
         // get trans cell token.
         TResponse res = requestAuthn4Password(TEST_CELL1, "account1", "password1", UrlUtils.cellRoot(TEST_CELL2),
-               null, "3", "6", HttpStatus.SC_OK);
+                null, "3", "6", HttpStatus.SC_OK);
 
         JSONObject json = res.bodyAsJson();
         Long expiresIn = (Long) json.get(OAuth2Helper.Key.EXPIRES_IN);

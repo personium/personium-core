@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,16 +38,18 @@ import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumException;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.AuthzUtils;
+import io.personium.test.utils.TResponse;
+import io.personium.test.utils.TokenUtils;
 
 /**
- * valid ip address range test for authz.
+ * set token expires in test for authorization.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
@@ -81,8 +84,26 @@ public class AuthzExpiresInTest extends PersoniumTest {
      */
     @Test
     public final void test_handlePassword() throws Exception {
-        PersoniumResponse res = requestAuthz4Password(Setup.TEST_CELL1, "account1", "password1", "5");
-        Map<String, String> responseMap = parseResponse(res);
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append("response_type=").append("token")
+                .append("&client_id=").append(clientId)
+                .append("&redirect_uri=").append(redirectUri)
+                .append("&username=").append("account1")
+                .append("&password=").append("password1")
+                .append("&state=").append(ImplicitFlowTest.DEFAULT_STATE)
+                .append("&expires_in=").append("5");
+
+        // post authz handle password.
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
+        HashMap<String, String> requestheaders = new HashMap<String, String>();
+        requestheaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
+
+        PersoniumResponse res = rest.post(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz", bodyBuilder.toString(), requestheaders);
+
+        Map<String, String> responseMap = parseResponse(res.getFirstHeader(HttpHeaders.LOCATION));
         assertThat(responseMap.get(OAuth2Helper.Key.EXPIRES_IN), is("5"));
     }
 
@@ -92,42 +113,38 @@ public class AuthzExpiresInTest extends PersoniumTest {
      */
     @Test
     public final void test_handlePCookie() throws Exception {
-        // TODO ★Need to test "handlePCookie"
-    }
-
-    /**
-     * request authorization.
-     * @param cellName cell name
-     * @param userName user name
-     * @param password password
-     * @param expiresIn accress token expires in time(s).
-     * @return http response
-     */
-    private PersoniumResponse requestAuthz4Password(String cellName, String userName,
-            String password, String expiresIn) throws PersoniumException {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
-        String body = "response_type=token&client_id=" + clientId
-                + "&redirect_uri=" + clientId + "__/redirect.html"
-                + "&username=" + userName
-                + "&password=" + password
-                + "&state=" + ImplicitFlowTest.DEFAULT_STATE
-                + "&expires_in=" + expiresIn;
+        String redirectUri = clientId + "__/redirect.html";
+        String state = "state1";
+        String username = "account1";
+        String password = "password1";
 
-        PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        HashMap<String, String> requestheaders = new HashMap<String, String>();
-        requestheaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
+        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, username, password, HttpStatus.SC_OK);
+        String setCookie = tokenResponse.getHeader("Set-Cookie");
+        String pCookie = setCookie.split("=")[1];
 
-        return rest.post(UrlUtils.cellRoot(cellName) + "__authz", body, requestheaders);
+        // get authz handle password.
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("response_type=").append("token")
+                .append("&redirect_uri=").append(redirectUri)
+                .append("&client_id=").append(clientId)
+                .append("&state=").append(state)
+                .append("&expires_in=").append("5");
+
+        TResponse response = AuthzUtils.getPCookie(
+                Setup.TEST_CELL1, queryBuilder.toString(), pCookie, HttpStatus.SC_SEE_OTHER);
+
+        Map<String, String> locationQuery = parseResponse(response.getLocationHeader());
+        assertThat(locationQuery.get(OAuth2Helper.Key.EXPIRES_IN), is("5"));
     }
 
     /**
      * parse response.
-     * @param res the personium response
+     * @param location location
      * @return parse response.
      */
-    private Map<String, String> parseResponse(PersoniumResponse res) {
-        String location = res.getFirstHeader(HttpHeaders.LOCATION);
-        System.out.println(location);
+    private Map<String, String> parseResponse(String location) {
         String[] locations = location.split("#");
         String[] responses = locations[1].split("&");
         Map<String, String> map = new HashMap<String, String>();
