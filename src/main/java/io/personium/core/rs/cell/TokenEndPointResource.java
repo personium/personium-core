@@ -17,7 +17,6 @@
 package io.personium.core.rs.cell;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
@@ -223,7 +222,7 @@ public class TokenEndPointResource {
      * @return url of "issuer"
      */
     private String getIssuerUrl() {
-        return cell.getPathBaseUrl();
+        return cell.getUrl();
     }
 
     /**
@@ -381,15 +380,7 @@ public class TokenEndPointResource {
         }
 
         // Confirm that Issuer is equal to ID
-        // issuer is always pathbase.
-        String fqdnBaseIssuer;
-        try {
-            fqdnBaseIssuer = UriUtils.convertPathBaseToFqdnBase(tcToken.getIssuer());
-        } catch (URISyntaxException e) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
-        }
-        if (!targetClientId.equals(tcToken.getIssuer())
-                && !targetClientId.equals(fqdnBaseIssuer)) {
+        if (!targetClientId.equals(tcToken.getIssuer())) {
             throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
         }
 
@@ -478,7 +469,7 @@ public class TokenEndPointResource {
         } else {
             List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
             aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    cell.getPathBaseUrl() + "#" + token.getSubject(), target, roleList, schema);
+                    getIssuerUrl() + "#" + token.getSubject(), target, roleList, schema);
         }
 
         // If scope is openid it returns id_token.
@@ -650,8 +641,7 @@ public class TokenEndPointResource {
             if (rToken instanceof CellLocalRefreshToken) {
                 String subject = rToken.getSubject();
                 List<Role> roleList = cell.getRoleListForAccount(subject);
-                aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target,
-                        cell.getPathBaseUrl(), roleList, schema);
+                aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target, getIssuerUrl(), roleList, schema);
             } else {
                 //Ask CELL to determine the role of you from the role of the token issuer.
                 List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
@@ -860,8 +850,7 @@ public class TokenEndPointResource {
             List<Role> roleList = cell.getRoleListForAccount(username);
 
             TransCellAccessToken tcToken = new TransCellAccessToken(issuedAt, expiresIn,
-                    getIssuerUrl(), cell.getPathBaseUrl() + "#" + username, target,
-                    roleList, schema);
+                    getIssuerUrl(), getIssuerUrl() + "#" + username, target, roleList, schema);
             return this.responseAuthSuccess(tcToken, rToken, issuedAt);
         }
     }

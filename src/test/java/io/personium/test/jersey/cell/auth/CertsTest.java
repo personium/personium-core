@@ -33,7 +33,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
-import io.personium.test.utils.Http;
+import io.personium.test.utils.AuthzUtils;
 import io.personium.test.utils.TResponse;
 
 /**
@@ -56,9 +56,7 @@ public class CertsTest extends PersoniumTest {
      */
     @Test
     public void normal_get() {
-        TResponse res = Http.request("cell/certs-get.txt")
-                .with("cell", Setup.TEST_CELL1)
-                .returns().debug().statusCode(HttpStatus.SC_OK);
+        TResponse res = AuthzUtils.certsGet(Setup.TEST_CELL1, HttpStatus.SC_OK);
         JSONArray keys = (JSONArray) res.bodyAsJson().get("keys");
         JSONObject jwk = (JSONObject) keys.get(0);
 
@@ -77,16 +75,12 @@ public class CertsTest extends PersoniumTest {
     @Test
     public void normal_get_two_time() {
         // One time.
-        TResponse res = Http.request("cell/certs-get.txt")
-                .with("cell", Setup.TEST_CELL1)
-                .returns().debug().statusCode(HttpStatus.SC_OK);
+        TResponse res = AuthzUtils.certsGet(Setup.TEST_CELL1, HttpStatus.SC_OK);
         JSONArray keys1 = (JSONArray) res.bodyAsJson().get("keys");
         JSONObject jwk1 = (JSONObject) keys1.get(0);
 
         // Two time.
-        res = Http.request("cell/certs-get.txt")
-                .with("cell", Setup.TEST_CELL1)
-                .returns().debug().statusCode(HttpStatus.SC_OK);
+        res = AuthzUtils.certsGet(Setup.TEST_CELL1, HttpStatus.SC_OK);
         JSONArray keys2 = (JSONArray) res.bodyAsJson().get("keys");
         JSONObject jwk2 = (JSONObject) keys2.get(0);
 
@@ -105,16 +99,12 @@ public class CertsTest extends PersoniumTest {
     @Test
     public void normal_get_other_cell() {
         // Cell1.
-        TResponse res = Http.request("cell/certs-get.txt")
-                .with("cell", Setup.TEST_CELL1)
-                .returns().debug().statusCode(HttpStatus.SC_OK);
+        TResponse res = AuthzUtils.certsGet(Setup.TEST_CELL1, HttpStatus.SC_OK);
         JSONArray keys1 = (JSONArray) res.bodyAsJson().get("keys");
         JSONObject jwk1 = (JSONObject) keys1.get(0);
 
         // Cell2.
-        res = Http.request("cell/certs-get.txt")
-                .with("cell", Setup.TEST_CELL2)
-                .returns().debug().statusCode(HttpStatus.SC_OK);
+        res = AuthzUtils.certsGet(Setup.TEST_CELL2, HttpStatus.SC_OK);
         JSONArray keys2 = (JSONArray) res.bodyAsJson().get("keys");
         JSONObject jwk2 = (JSONObject) keys2.get(0);
 

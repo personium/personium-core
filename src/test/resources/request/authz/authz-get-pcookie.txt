@@ -1,5 +1,6 @@
 GET /${cellName}/__authz?${query} HTTP/1.1
 Host: ?
+Cookie: p_cookie=${pCookie}
 Content-Length: ?
 Connection: close
 
