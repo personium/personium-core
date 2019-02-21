@@ -48,6 +48,7 @@ import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AuthzUtils;
+import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TokenUtils;
@@ -170,13 +171,38 @@ public class AuthExpiresInTest extends PersoniumTest {
     public final void handlePassword_transCellToken() throws Exception {
         // get trans cell token.
         TResponse res = requestAuthn4Password(TEST_CELL1, "account1", "password1", UrlUtils.cellRoot(TEST_CELL2),
-                null, "3", "6", HttpStatus.SC_OK);
+                null, "2", "4", HttpStatus.SC_OK);
 
         JSONObject json = res.bodyAsJson();
         Long expiresIn = (Long) json.get(OAuth2Helper.Key.EXPIRES_IN);
         Long rTokenExpiresIn = (Long) json.get(OAuth2Helper.Key.REFRESH_TOKEN_EXPIRES_IN);
-        assertThat(expiresIn, is(3L));
-        assertThat(rTokenExpiresIn, is(6L));
+        assertThat(expiresIn, is(2L));
+        assertThat(rTokenExpiresIn, is(4L));
+
+        String aToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
+        String rToken = (String) json.get(OAuth2Helper.Key.REFRESH_TOKEN);
+
+        // Before access token expires in.
+        Http.request("authn/saml-tc-c0.txt")
+                .with("remoteCell", TEST_CELL2)
+                .with("assertion", aToken)
+                .with("p_target", "personium-localunit:/" + TEST_APP_CELL1 + "/")
+                .returns()
+                .statusCode(HttpStatus.SC_OK);
+
+        // After access token expires in.
+        Thread.sleep(2000);
+        Http.request("authn/saml-tc-c0.txt")
+                .with("remoteCell", TEST_CELL2)
+                .with("assertion", aToken)
+                .with("p_target", "personium-localunit:/" + TEST_APP_CELL1 + "/")
+                .returns()
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
+
+        // After refresh token expires in.
+        Thread.sleep(2000);
+        requestAuthn4Refresh(TEST_CELL1, rToken, UrlUtils.cellRoot(TEST_CELL2), null, null, HttpStatus.SC_BAD_REQUEST);
+
     }
 
     /**
