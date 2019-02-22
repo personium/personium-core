@@ -77,8 +77,10 @@ public class AccountLockManagerTest {
      */
     @Test
     public void countup_failed_count() {
+        // before coun up.(If there is no such parameter, it is -1)
+        assertThat(AccountLockManager.getFailedCount("account_1"), is(-1L));
+
         // countup.
-        assertThat(AccountLockManager.getFailedCount("account_1"), is(0L));
         AccountLockManager.countupFailedCount("account_1");
         assertThat(AccountLockManager.getFailedCount("account_1"), is(1L));
         AccountLockManager.countupFailedCount("account_1");
@@ -139,15 +141,15 @@ public class AccountLockManagerTest {
         // release account lock.
         AccountLockManager.releaseAccountLock("account_1");
         assertThat(AccountLockManager.isLockedAccount("account_1"), is(false));
-        assertThat(AccountLockManager.getFailedCount("account_1"), is(0L));
+        assertThat(AccountLockManager.getFailedCount("account_1"), is(-1L));
         assertThat(AccountLockManager.isLockedAccount("account_2"), is(false));
         assertThat(AccountLockManager.getFailedCount("account_2"), is(3L));
 
         AccountLockManager.releaseAccountLock("account_2");
         assertThat(AccountLockManager.isLockedAccount("account_1"), is(false));
-        assertThat(AccountLockManager.getFailedCount("account_1"), is(0L));
+        assertThat(AccountLockManager.getFailedCount("account_1"), is(-1L));
         assertThat(AccountLockManager.isLockedAccount("account_2"), is(false));
-        assertThat(AccountLockManager.getFailedCount("account_2"), is(0L));
+        assertThat(AccountLockManager.getFailedCount("account_2"), is(-1L));
     }
 
     /**

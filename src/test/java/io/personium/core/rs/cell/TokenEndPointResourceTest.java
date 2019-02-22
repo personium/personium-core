@@ -27,6 +27,7 @@ import static org.mockito.Mockito.spy;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -101,7 +102,7 @@ public class TokenEndPointResourceTest {
         PowerMockito.doReturn(false).when(mockOldRToken).isRefreshExpired();
 
         CellLocalRefreshToken mockNewRToken = PowerMockito.mock(CellLocalRefreshToken.class);
-        doReturn(mockNewRToken).when(mockOldRToken).refreshRefreshToken(anyLong());
+        doReturn(mockNewRToken).when(mockOldRToken).refreshRefreshToken(anyLong(), anyLong());
 
         PowerMockito.doReturn("subject").when(mockNewRToken).getSubject();
 
@@ -110,11 +111,11 @@ public class TokenEndPointResourceTest {
 
         CellLocalAccessToken mockNewAToken = mock(CellLocalAccessToken.class);
         PowerMockito.doReturn(mockNewAToken).when(mockNewRToken).refreshAccessToken(
-                anyLong(), anyString(), anyString(), anyList(), anyString());
+                anyLong(), anyLong(), anyString(), anyString(), anyList(), anyString());
 
         Response response = Response.ok().build();
         PowerMockito.doReturn(response).when(tokenEndPointResource, "responseAuthSuccess",
-                mockNewAToken, mockNewRToken);
+                mockNewAToken, mockNewRToken, new Date().getTime());
 
         // --------------------
         // Expected result
@@ -126,10 +127,12 @@ public class TokenEndPointResourceTest {
         // --------------------
         // Load methods for private
         Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh",
-                String.class, String.class, String.class, String.class);
+                String.class, String.class, String.class, String.class, long.class, long.class);
         method.setAccessible(true);
         // Run method
-        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema, refreshToken);
+        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema, refreshToken,
+                AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
+                AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS);
 
         // --------------------
         // Confirm result
@@ -171,18 +174,18 @@ public class TokenEndPointResourceTest {
         PowerMockito.doReturn(false).when(mockOldRToken).isRefreshExpired();
 
         TransCellRefreshToken mockNewRToken = PowerMockito.mock(TransCellRefreshToken.class);
-        doReturn(mockNewRToken).when(mockOldRToken).refreshRefreshToken(anyLong());
+        doReturn(mockNewRToken).when(mockOldRToken).refreshRefreshToken(anyLong(), anyLong());
 
         List<Role> roleList = new ArrayList<Role>();
         doReturn(roleList).when(mockCell).getRoleListHere(mockNewRToken);
 
         CellLocalAccessToken mockNewAToken = mock(CellLocalAccessToken.class);
         PowerMockito.doReturn(mockNewAToken).when(mockNewRToken).refreshAccessToken(
-                anyLong(), anyString(), anyString(), anyList(), anyString());
+                anyLong(), anyLong(), anyString(), anyString(), anyList(), anyString());
 
         Response response = Response.ok().build();
         PowerMockito.doReturn(response).when(tokenEndPointResource, "responseAuthSuccess",
-                mockNewAToken, mockNewRToken);
+                mockNewAToken, mockNewRToken, new Date().getTime());
 
         // --------------------
         // Expected result
@@ -194,10 +197,12 @@ public class TokenEndPointResourceTest {
         // --------------------
         // Load methods for private
         Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh",
-                String.class, String.class, String.class, String.class);
+                String.class, String.class, String.class, String.class, long.class, long.class);
         method.setAccessible(true);
         // Run method
-        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema, refreshToken);
+        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema, refreshToken,
+                AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
+                AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS);
 
         // --------------------
         // Confirm result

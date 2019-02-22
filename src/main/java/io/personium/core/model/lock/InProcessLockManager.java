@@ -69,11 +69,12 @@ class InProcessLockManager extends LockManager {
 
     @Override
     synchronized long doGetAccountLock(String fullKey) {
-        AccountLock lock = inProcessAccountLock.get(fullKey);
-        if (lock == null) {
-            return 0;
+        Long value = -1L;
+        if (inProcessAccountLock.containsKey(fullKey)) {
+            AccountLock lock = inProcessAccountLock.get(fullKey);
+            value = lock.value();
         }
-        return lock.value();
+        return value;
     }
 
     @Override
@@ -84,8 +85,12 @@ class InProcessLockManager extends LockManager {
 
     @Override
     synchronized long doIncrementAccountLock(String fullKey, int expired) {
-        Long value = doGetAccountLock(fullKey);
-        value++;
+        Long value = 1L;
+        if (inProcessAccountLock.containsKey(fullKey)) {
+            AccountLock lock = inProcessAccountLock.get(fullKey);
+            value = lock.value();
+            value++;
+        }
         inProcessAccountLock.put(fullKey, new AccountLock(value, expired));
         return value;
     }

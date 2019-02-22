@@ -146,6 +146,7 @@ public class AuthzEndPointResource {
      * @param scope query parameter
      * @param keepLogin query parameter
      * @param isCancel Cancel flag
+     * @param expiresInStr accress token expires in time(s).
      * @param uriInfo context
      * @param xForwardedFor X-Forwarded-For Header
      * @return JAX-RS Response Object
@@ -160,11 +161,12 @@ public class AuthzEndPointResource {
             @QueryParam(Key.SCOPE) final String scope,
             @QueryParam(Key.KEEPLOGIN) final String keepLogin,
             @QueryParam(Key.CANCEL_FLG) final String isCancel,
+            @QueryParam(Key.EXPIRES_IN) final String expiresInStr,
             @Context final UriInfo uriInfo,
             @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
 
         return auth(responseType, clientId, redirectUri, null, null,
-                pCookie, state, scope, keepLogin, isCancel, uriInfo, xForwardedFor);
+                pCookie, state, scope, keepLogin, isCancel, expiresInStr, uriInfo, xForwardedFor);
     }
 
     /**
@@ -195,9 +197,10 @@ public class AuthzEndPointResource {
         String scope = formParams.getFirst(Key.SCOPE);
         String keepLogin = formParams.getFirst(Key.KEEPLOGIN);
         String isCancel = formParams.getFirst(Key.CANCEL_FLG);
+        String expiresInStr = formParams.getFirst(Key.EXPIRES_IN);
 
         return auth(responseType, clientId, redirectUri, username, password,
-                pCookie, state, scope, keepLogin, isCancel, uriInfo, xForwardedFor);
+                pCookie, state, scope, keepLogin, isCancel, expiresInStr, uriInfo, xForwardedFor);
     }
 
     /**
@@ -220,6 +223,7 @@ public class AuthzEndPointResource {
      * @param scope scope
      * @param keepLogin keep_login
      * @param isCancel is_cancel
+     * @param expiresInStr accress token expires in time(s).
      * @param uriInfo uri_info
      * @return JAX-RS Response
      */
@@ -234,6 +238,7 @@ public class AuthzEndPointResource {
             final String scope,
             final String keepLogin,
             final String isCancel,
+            final String expiresInStr,
             final UriInfo uriInfo,
             final String xForwardedFor) {
 
@@ -254,6 +259,21 @@ public class AuthzEndPointResource {
             return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
                     OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0004");
         }
+        //Check value of expires_in
+        long expiresIn = AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS;
+        if (expiresInStr != null && !expiresInStr.isEmpty()) {
+            try {
+                expiresIn = Integer.parseInt(expiresInStr) * AbstractOAuth2Token.MILLISECS_IN_A_SEC;
+                if (expiresIn <= 0 || expiresIn > AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS) {
+                    return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
+                            OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0008");
+                }
+            } catch (NumberFormatException e) {
+                return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
+                        OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0008");
+            }
+        }
+
         // response_type = token || response_type = code || (response_type = id_token && scope = openid)
         if (!OAuth2Helper.ResponseType.TOKEN.equals(responseType)
                 && !OAuth2Helper.ResponseType.CODE.equals(responseType)
@@ -274,11 +294,11 @@ public class AuthzEndPointResource {
         if (username != null || password != null) {
             //When there is a setting in either user ID or password
             Response response = handlePassword(responseType, clientId, redirectUri,
-                    username, password, state, scope, keepLogin);
+                    username, password, state, scope, keepLogin, expiresIn);
             return response;
         } else if (pCookie != null) {
             return handlePCookie(responseType, clientId, redirectUri,
-                    pCookie, state, scope, keepLogin, uriInfo);
+                    pCookie, state, scope, keepLogin, expiresIn, uriInfo);
         } else {
             //If user ID, password, cookie are not specified, send form
             return returnHtmlForm(responseType, clientId, redirectUri, MSG_PASS_FORM, state, scope);
@@ -295,10 +315,11 @@ public class AuthzEndPointResource {
      * @param state state
      * @param scope scope
      * @param keepLogin keep_login
+     * @param expiresIn accress token expires in time(ms).
      * @return JAX-RS Response
      */
     private Response handlePassword(String responseType, String clientId, String redirectUri,
-            String username, String password, String state, String scope, String keepLogin) {
+            String username, String password, String state, String scope, String keepLogin, long expiresIn) {
         //If both user ID and password are unspecified, return login error
         boolean passCheck = true;
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
@@ -381,16 +402,15 @@ public class AuthzEndPointResource {
             //Respond with 303 and return Location header
             //Returning cell local token
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
-                AccountAccessToken aToken = new AccountAccessToken(issuedAt,
-                        AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * AccountAccessToken.MILLISECS_IN_AN_HOUR,
+                AccountAccessToken aToken = new AccountAccessToken(issuedAt, expiresIn,
                         getIssuerUrl(), username, schema);
                 paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
                 paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
                 paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));
             } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
                 List<Role> roleList = cell.getRoleListForAccount(username);
-                CellLocalAccessToken aToken = new CellLocalAccessToken(
-                        issuedAt, CellLocalAccessToken.CODE_EXPIRES, getIssuerUrl(), username, roleList, schema, scope);
+                CellLocalAccessToken aToken = new CellLocalAccessToken(issuedAt,
+                        CellLocalAccessToken.CODE_EXPIRES, getIssuerUrl(), username, roleList, schema, scope);
                 paramMap.put(OAuth2Helper.Key.CODE, aToken.toCodeString());
             }
         } else {
@@ -415,7 +435,7 @@ public class AuthzEndPointResource {
         paramMap.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
         paramMap.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
         // update auth history.
-        AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId);
+        AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
         // release account lock.
         AuthResourceUtils.releaseAccountLock(accountId);
 
@@ -431,11 +451,12 @@ public class AuthzEndPointResource {
      * @param state state
      * @param scope scope
      * @param keepLogin keep_login
+     * @param expiresIn accress token expires in time(ms).
      * @param uriInfo UriInfo
      * @return JAX-RS Response
      */
     private Response handlePCookie(String responseType, String clientId, String redirectUri,
-            String pCookie, String state, String scope, String keepLogin, UriInfo uriInfo) {
+            String pCookie, String state, String scope, String keepLogin, long expiresIn, UriInfo uriInfo) {
         //Cookie authentication
         //Get decrypted value of cookie value
         AbstractOAuth2Token token;
@@ -480,15 +501,18 @@ public class AuthzEndPointResource {
 //            CellLocalRefreshToken rToken = new CellLocalRefreshToken(
 //                    issuedAt, token.getIssuer(), token.getSubject(), clientId);
             //Regenerate AccessToken from received Token
-            List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
-            CellLocalAccessToken aToken = new CellLocalAccessToken(
-                    issuedAt, CellLocalAccessToken.CODE_EXPIRES,
-                    token.getIssuer(), token.getSubject(), roleList, clientId, scope);
+            String username = token.getSubject();
+
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
+                AccountAccessToken aToken = new AccountAccessToken(issuedAt, expiresIn,
+                        getIssuerUrl(), username, clientId);
                 paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
                 paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
                 paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));
             } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
+                List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
+                CellLocalAccessToken aToken = new CellLocalAccessToken(issuedAt,
+                        CellLocalAccessToken.CODE_EXPIRES, getIssuerUrl(), username, roleList, clientId, scope);
                 paramMap.put(OAuth2Helper.Key.CODE, aToken.toCodeString());
             }
         } else {
