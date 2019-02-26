@@ -39,6 +39,10 @@ public class Property {
      */
     public static final String COLLECTION_KIND_NONE = "None";
     /**
+     * CollectionKind None.
+     */
+    public static final String COLLECTION_KIND_LIST = "List";
+    /**
      * Definition field of Name property.
      */
     public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name").setType(EdmSimpleType.STRING)

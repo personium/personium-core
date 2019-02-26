@@ -35,7 +35,6 @@ import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmDataServices;
-import org.odata4j.edm.EdmProperty.CollectionKind;
 import org.odata4j.edm.EdmSimpleType;
 import org.odata4j.expression.BoolCommonExpression;
 import org.odata4j.format.xml.AtomServiceDocumentFormatWriter;
@@ -286,7 +285,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
                 //CollectionKind's Validate
                 // None / List
                 if (!propValue.equals(Property.COLLECTION_KIND_NONE)
-                        && !propValue.equals(CollectionKind.List.toString())) {
+                        && !propValue.equals(Property.COLLECTION_KIND_LIST)) {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
                 }
             } else if (propName.equals(Property.P_DEFAULT_VALUE.getName())) {
