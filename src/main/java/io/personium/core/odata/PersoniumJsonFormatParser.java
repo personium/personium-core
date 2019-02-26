@@ -334,7 +334,7 @@ public class PersoniumJsonFormatParser {
 
             //If the schema definition exists and CollectionKind is not None, parse it as an array
             EdmProperty eprop = entry.getEntityType().findProperty(name);
-            if (null != eprop && eprop.getCollectionKind() != CollectionKind.NONE) {
+            if (null != eprop && !CollectionKind.NONE.equals(eprop.getCollectionKind())) {
                 val.collectionType = new EdmCollectionType(eprop.getCollectionKind(), eprop.getType());
                 PersoniumJsonCollectionFormatParser cfp = new PersoniumJsonCollectionFormatParser(val.collectionType,
                         this.metadata, name);
