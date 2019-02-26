@@ -37,6 +37,15 @@ public class Account {
     private static final String P_FORMAT_PATTERN_IP_ADDRESS_RANGE = "ip-address-range";
     /** Annotations for IP address range. */
     private static final List<EdmAnnotation<?>> P_FORMAT_IP_ADDRESS_RANGE = new ArrayList<EdmAnnotation<?>>();
+    /** Annotations for status. */
+    private static final List<EdmAnnotation<?>> P_FORMAT_STATUS = new ArrayList<EdmAnnotation<?>>();
+
+    /** Account status active. */
+    public static final String STATUS_ACTIVE = "active";
+    /** Account status suspended. */
+    public static final String STATUS_SUSPENDED = "suspended";
+    /** Account statuses. */
+    public static final String[] STATUSES = {STATUS_ACTIVE, STATUS_SUSPENDED};
 
     /**
      * Type value basic.
@@ -56,6 +65,7 @@ public class Account {
      // Initialization of format annotation.
      static {
          P_FORMAT_IP_ADDRESS_RANGE.add(createFormatIPAddressRangeAnnotation());
+         P_FORMAT_STATUS.add(createFormatStatusAnnotation());
      }
 
      /**
@@ -67,6 +77,16 @@ public class Account {
                  Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
                  Common.P_FORMAT, P_FORMAT_PATTERN_IP_ADDRESS_RANGE);
      }
+
+     /**
+     * Create annotation for status.
+     * @return EdmAnnotation
+     */
+    private static EdmAnnotation<?> createFormatStatusAnnotation() {
+        return new EdmAnnotationAttribute(
+                Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
+                Common.P_FORMAT, Common.P_FORMAT_PATTERN_REGEX + "('^(" + String.join("|", STATUSES) + ")$')");
+    }
 
     /**
      * Definition field of Name property.
@@ -93,12 +113,21 @@ public class Account {
             .setType(EdmSimpleType.STRING).setNullable(true).setDefaultValue("null")
             .setAnnotations(P_FORMAT_IP_ADDRESS_RANGE);
 
+    // TODO ★パラメータ名について"Status"が現状使えないため"AccountStatus"に一旦変更。
+    // TODO ★ESのマッピング見直しが必要。それによって↑が解決する可能性あり。
+    /**
+     * Definition field of status.
+     */
+    public static final EdmProperty.Builder P_STATUS = EdmProperty.newBuilder("AccountStatus")
+            .setType(EdmSimpleType.STRING).setNullable(true).setDefaultValue(STATUS_ACTIVE)
+            .setAnnotations(P_FORMAT_STATUS);
+
     /**
      * EntityType Builder.
      */
     public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
             .setNamespace(Common.EDM_NS_CELL_CTL).setName(EDM_TYPE_NAME)
             .addProperties(Enumerable.create(P_NAME, P_TYPE, P_CELL, P_IP_ADDRESS_RANGE,
-                    Common.P_PUBLISHED, Common.P_UPDATED).toList())
+                    P_STATUS, Common.P_PUBLISHED, Common.P_UPDATED).toList())
             .addKeys(P_NAME.getName());
 }

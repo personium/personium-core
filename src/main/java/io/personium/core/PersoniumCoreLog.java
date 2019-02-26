@@ -145,6 +145,13 @@ public final class PersoniumCoreLog {
          * {2}: User ID(username)
          */
         public static final PersoniumCoreLog FAILED_OUTSIDE_IP_ADDRESS_RANGE = create("PL-AN-0005");
+        /**
+         * Authentication failed. Account is suspended.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog FAILED_ACCOUNT_IS_SUSPENDED = create("PL-AN-0006");
     }
 
     /**

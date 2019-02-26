@@ -383,6 +383,17 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
             }
+
+            //Check account status.
+            boolean accountActive = AuthUtils.isActive(oew);
+            if (!accountActive) {
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
+                PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_SUSPENDED.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
+            }
         } catch (PersoniumCoreException e) {
             return this.returnErrorRedirect(responseType, redirectUri, e.getMessage(),
                     e.getMessage(), state, e.getCode());

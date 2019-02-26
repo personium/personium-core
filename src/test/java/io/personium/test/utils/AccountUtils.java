@@ -97,6 +97,30 @@ public class AccountUtils {
     }
 
     /**
+     * Utility to create account with status.
+     * @param token token
+     * @param cellName cell name
+     * @param userName user name
+     * @param pass password
+     * @param status status
+     * @param code Expected response code
+     * @return responese
+     */
+    public static TResponse createWithStatus(final String token, final String cellName, final String userName,
+            final String pass, String status, int code) {
+        TResponse tresponse = Http.request("account-create-with-status.txt")
+                .with("token", token)
+                .with("cellPath", cellName)
+                .with("username", userName)
+                .with("password", pass)
+                .with("status", status)
+                .returns()
+                .debug();
+        tresponse.statusCode(code);
+        return tresponse;
+    }
+
+    /**
      * X-Personium-Credentialヘッダー有でTypeを指定してアカウントを作成するユーティリティ.
      * @param token トークン
      * @param typeName Type値
@@ -233,6 +257,34 @@ public class AccountUtils {
         JSONObject updateBody = new JSONObject();
         updateBody.put("Name", newUsername);
         updateBody.put("IPAddressRange", newIPAddressRange);
+        TResponse res = Http.request("account-update-without-body.txt")
+                .with("token", token)
+                .with("cellPath", cellName)
+                .with("username", userName)
+                .with("password", newPassword)
+                .with("body", updateBody.toJSONString())
+                .returns().debug();
+        res.statusCode(sc);
+        return res;
+    }
+
+    /**
+     * Account update with status.
+     * @param token token
+     * @param cellName cell name
+     * @param userName current user name
+     * @param newUsername new user name
+     * @param newPassword new password
+     * @param newStatus new status
+     * @param sc expected status code
+     * @return response
+     */
+    @SuppressWarnings("unchecked")
+    public static TResponse updateWithStatus(String token, String cellName, String userName, String newUsername,
+            String newPassword, String newStatus, int sc) {
+        JSONObject updateBody = new JSONObject();
+        updateBody.put("Name", newUsername);
+        updateBody.put("AccountStatus", newStatus);
         TResponse res = Http.request("account-update-without-body.txt")
                 .with("token", token)
                 .with("cellPath", cellName)

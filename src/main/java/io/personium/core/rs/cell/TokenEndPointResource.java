@@ -800,13 +800,23 @@ public class TokenEndPointResource {
         }
 
         boolean authSuccess = cell.authenticateAccount(oew, password);
-
         if (!authSuccess) {
             //Make lock on memcached
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
             AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             PersoniumCoreLog.Authn.FAILED_INCORRECT_PASSWORD.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+        }
+
+        //Check account status.
+        boolean accountActive = AuthUtils.isActive(oew);
+        if (!accountActive) {
+            AuthResourceUtils.registIntervalLock(accountId);
+            AuthResourceUtils.countupFailedCount(accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_SUSPENDED.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
