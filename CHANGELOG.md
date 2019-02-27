@@ -1,3 +1,15 @@
+## 1.7.6
+NEW FEATURE:
+* Enable to set expiration date of token.([#342](https://github.com/personium/personium-core/issues/342))
+* Change the default setting of personium to per-Cell-FQDN.([#348](https://github.com/personium/personium-core/issues/348))
+  * For setting up per-Cell-FQDN environment, please click [here](https://personium.io/docs/ja/server-operator/setup_percell.html).
+
+BUG FIXES:
+* BAR installation incorrectly assigns CollectionKind to "NONE".([#272](https://github.com/personium/personium-core/issues/272))
+
+IMPROVEMENTS:
+* Increase the default value of "odata.links.NtoN.maxnum".([#343](https://github.com/personium/personium-core/issues/343))
+
 ## 1.7.5
 NEW FEATURE:
 * ElasticSearch 5.x Support.([#254](https://github.com/personium/personium-core/issues/254))
