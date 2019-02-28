@@ -6,6 +6,7 @@ NEW FEATURE:
 
 BUG FIXES:
 * BAR installation incorrectly assigns CollectionKind to "NONE".([#272](https://github.com/personium/personium-core/issues/272))
+* When using transcell token in per-cell environment, privilege check fails.([#356](https://github.com/personium/personium-core/issues/356))
 
 IMPROVEMENTS:
 * Increase the default value of "odata.links.NtoN.maxnum".([#343](https://github.com/personium/personium-core/issues/343))
