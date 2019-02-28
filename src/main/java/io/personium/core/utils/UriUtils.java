@@ -94,11 +94,10 @@ public class UriUtils {
      */
     public static String getUrlSubstitute(String unitUrl, String url) {
         if (url != null && unitUrl != null) {
-            if (url.startsWith(unitUrl)) {
-                // FullHttpUrlOnThisUnit(personium-localunit:/)
-                url = url.replace(unitUrl, SCHEME_UNIT_URI);
-            } else {
+            if (url.startsWith(SCHEME_UNIT_URI)) {
                 url = convertSchemeFromLocalUnitToHttp(unitUrl, url);
+            } else {
+                url = convertSchemeFromHttpToLocalUnit(unitUrl, url);
             }
         }
         return url;
