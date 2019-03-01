@@ -56,6 +56,7 @@ import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.IRefreshToken;
 import io.personium.common.auth.token.IdToken;
 import io.personium.common.auth.token.LocalToken;
+import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.TransCellRefreshToken;
@@ -289,6 +290,14 @@ public class TokenEndPointResource {
             //In order not to be abused in checking the existence of the account, an error response only for failure
             PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(accountType,
                     accountName).writeLog();
+            throw PersoniumCoreAuthnException.AUTHN_FAILED;
+        }
+
+        // Check account is active.
+        boolean accountActive = AuthUtils.isActive(idTokenUserOew);
+        if (!accountActive) {
+            PersoniumCoreLog.OIDC.ACCOUNT_IS_DEACTIVATED.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, accountName).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED;
         }
 
@@ -812,16 +821,53 @@ public class TokenEndPointResource {
 
         //Check account status.
         boolean accountActive = AuthUtils.isActive(oew);
+        boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
         if (!accountActive) {
-            AuthResourceUtils.registIntervalLock(accountId);
-            AuthResourceUtils.countupFailedCount(accountId);
-            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
-            PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_SUSPENDED.params(
-                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
-            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+            if (passwordChangeRequired) {
+                // Issue password change.
+                issuePasswordChange(target, owner, schema, username, rTokenExpiresIn);
+            } else {
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+                PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_DEACTIVATED.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+            }
         }
 
         return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn);
+    }
+
+    /**
+     * Issue password change.
+     * Throws PersoniumCoreAuthnException for error handling.
+     *
+     *
+     * @param target target
+     * @param owner owner
+     * @param schema schema
+     * @param username user name
+     * @param expiresIn expires in
+     */
+    private void issuePasswordChange(final String target, final String owner,
+            final String schema, final String username, long expiresIn) {
+        // create account password change access token.
+        long issuedAt = new Date().getTime();
+        PasswordChangeAccessToken aToken = new PasswordChangeAccessToken(
+                issuedAt, expiresIn, getIssuerUrl(), username, schema);
+
+        // update auth history.
+        AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(
+                davRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
+        // release account lock.
+        AuthResourceUtils.releaseAccountLock(accountId);
+
+        // throws password change required.
+        PersoniumCoreAuthnException ex = PersoniumCoreAuthnException.PASSWORD_CHANGE_REQUIRED.realm(this.cell.getUrl());
+        ex.addErrorJsonParam("access_token", aToken.toTokenString());
+        ex.addErrorJsonParam("url", this.cell.getUrl() + "__mypassword");
+        throw ex;
     }
 
     private Response issueToken(final String target, final String owner,

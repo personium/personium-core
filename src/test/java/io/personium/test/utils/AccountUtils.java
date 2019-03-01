@@ -284,7 +284,7 @@ public class AccountUtils {
             String newPassword, String newStatus, int sc) {
         JSONObject updateBody = new JSONObject();
         updateBody.put("Name", newUsername);
-        updateBody.put("AccountStatus", newStatus);
+        updateBody.put("Status", newStatus);
         TResponse res = Http.request("account-update-without-body.txt")
                 .with("token", token)
                 .with("cellPath", cellName)

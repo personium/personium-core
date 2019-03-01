@@ -64,6 +64,7 @@ import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.IdToken;
 import io.personium.common.auth.token.LocalToken;
+import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
@@ -335,6 +336,7 @@ public class AuthzEndPointResource {
         String accountId = (String) oew.getUuid();
 
         Boolean isLock = true;
+        boolean passwordChangeRequired = false;
         try {
             //Check valid authentication interval
             isLock = AuthResourceUtils.isLockedInterval(accountId);
@@ -386,10 +388,11 @@ public class AuthzEndPointResource {
 
             //Check account status.
             boolean accountActive = AuthUtils.isActive(oew);
-            if (!accountActive) {
+            passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
+            if (!accountActive && !passwordChangeRequired) {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_SUSPENDED.params(
+                PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_DEACTIVATED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
@@ -403,48 +406,59 @@ public class AuthzEndPointResource {
         String schema = clientId;
         Map<String, String> paramMap = new HashMap<>();
 
-        if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)
-                || OAuth2Helper.ResponseType.CODE.equals(responseType)) {
-            // TODO add p_cookie
-//            //Generate Refresh Token
-//            CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt,
-//                    CellLocalRefreshToken.REFRESH_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
-//                    getIssuerUrl(), username, schema);
-            //Respond with 303 and return Location header
-            //Returning cell local token
-            if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
-                AccountAccessToken aToken = new AccountAccessToken(issuedAt, expiresIn,
-                        getIssuerUrl(), username, schema);
-                paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
-                paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
-                paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));
-            } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
-                List<Role> roleList = cell.getRoleListForAccount(username);
-                CellLocalAccessToken aToken = new CellLocalAccessToken(issuedAt,
-                        CellLocalAccessToken.CODE_EXPIRES, getIssuerUrl(), username, roleList, schema, scope);
-                paramMap.put(OAuth2Helper.Key.CODE, aToken.toCodeString());
-            }
+        if (passwordChangeRequired) {
+            // Issue password change.
+            PasswordChangeAccessToken aToken = new PasswordChangeAccessToken(issuedAt, expiresIn,
+                    getIssuerUrl(), username, schema);
+            paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
+            paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
+            paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));
         } else {
-            CellCmp cellCmp = (CellCmp) cellRsCmp.getDavCmp();
-            CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
-            long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
-            long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_A_HOUR;
-            IdToken idToken = new IdToken(
-                    cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
-                    username, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
-            paramMap.put(OAuth2Helper.Key.ID_TOKEN, idToken.toTokenString());
+            if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)
+                    || OAuth2Helper.ResponseType.CODE.equals(responseType)) {
+                // TODO add p_cookie
+//                //Generate Refresh Token
+//                CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt,
+//                        CellLocalRefreshToken.REFRESH_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
+//                        getIssuerUrl(), username, schema);
+                //Respond with 303 and return Location header
+                //Returning cell local token
+                if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
+                    AccountAccessToken aToken = new AccountAccessToken(issuedAt, expiresIn,
+                            getIssuerUrl(), username, schema);
+                    paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
+                    paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
+                    paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));
+                } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
+                    List<Role> roleList = cell.getRoleListForAccount(username);
+                    CellLocalAccessToken aToken = new CellLocalAccessToken(issuedAt,
+                            CellLocalAccessToken.CODE_EXPIRES, getIssuerUrl(), username, roleList, schema, scope);
+                    paramMap.put(OAuth2Helper.Key.CODE, aToken.toCodeString());
+                }
+            } else {
+                CellCmp cellCmp = (CellCmp) cellRsCmp.getDavCmp();
+                CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
+                long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
+                long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_A_HOUR;
+                IdToken idToken = new IdToken(
+                        cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
+                        username, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
+                paramMap.put(OAuth2Helper.Key.ID_TOKEN, idToken.toTokenString());
+            }
+
+            // get last auth history.
+            AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
+                    cellRsCmp.getDavCmp().getFsPath(), accountId);
+            String lastAuthenticated = last.getLastAuthenticated() != null ? last.getLastAuthenticated().toString() : null; //CHECKSTYLE IGNORE
+            String failedCount = last.getFailedCount() != null ? last.getFailedCount().toString() : null; //CHECKSTYLE IGNORE
+            paramMap.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
+            paramMap.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
         }
+
         if (StringUtils.isNotEmpty(state)) {
             paramMap.put(OAuth2Helper.Key.STATE, state);
         }
 
-        // get last auth history.
-        AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
-                cellRsCmp.getDavCmp().getFsPath(), accountId);
-        String lastAuthenticated = last.getLastAuthenticated() != null ? last.getLastAuthenticated().toString() : null; //CHECKSTYLE IGNORE
-        String failedCount = last.getFailedCount() != null ? last.getFailedCount().toString() : null; //CHECKSTYLE IGNORE
-        paramMap.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
-        paramMap.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
         // update auth history.
         AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
         // release account lock.

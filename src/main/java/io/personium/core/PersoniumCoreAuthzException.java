@@ -16,17 +16,17 @@
  */
 package io.personium.core;
 
-import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
-import io.personium.core.auth.OAuth2Helper.Scheme;
-import io.personium.core.exceptions.ODataErrorMessage;
-import io.personium.plugin.base.PluginMessageUtils.Severity;
-
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.http.HttpStatus;
+
+import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
+import io.personium.core.auth.OAuth2Helper.Scheme;
+import io.personium.core.exceptions.ODataErrorMessage;
+import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
  * Log output class when authentication error (PR401 - AU - xxxx) occurs.
@@ -78,6 +78,11 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
      * Basic authentication error.
      */
     public static final PersoniumCoreAuthzException BASIC_AUTHENTICATION_FAILED = create("PR401-AU-0011");
+
+    /**
+     * Access with password change token.
+     */
+    public static final PersoniumCoreAuthzException ACCESS_WITH_PASSWORD_CHANGE_ACCESS_TOKEN = create("PR401-AU-0012");
 
     /**
      * Force load inner class.

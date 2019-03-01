@@ -339,7 +339,7 @@ public class AccountUpdateTest extends ODataCommon {
         try {
             // Account作成
             AccountUtils.createWithStatus(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
-                    Account.STATUS_SUSPENDED, HttpStatus.SC_CREATED);
+                    Account.STATUS_DEACTIVATED, HttpStatus.SC_CREATED);
             // Account更新
             AccountUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updateUserName,
                     orgPass, HttpStatus.SC_NO_CONTENT);
@@ -348,7 +348,7 @@ public class AccountUpdateTest extends ODataCommon {
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
             String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
                     .get("results"))
-                    .get("AccountStatus");
+                    .get("Status");
             assertEquals(Account.STATUS_ACTIVE, status);
         } finally {
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
@@ -367,7 +367,7 @@ public class AccountUpdateTest extends ODataCommon {
         try {
             // Account作成
             AccountUtils.createWithStatus(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
-                    Account.STATUS_SUSPENDED, HttpStatus.SC_CREATED);
+                    Account.STATUS_DEACTIVATED, HttpStatus.SC_CREATED);
             // Account更新
             AccountUtils.updateWithStatus(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
                     updateUserName, orgPass, updateStatus, HttpStatus.SC_NO_CONTENT);
@@ -376,7 +376,7 @@ public class AccountUpdateTest extends ODataCommon {
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
             String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
                     .get("results"))
-                    .get("AccountStatus");
+                    .get("Status");
             assertEquals(Account.STATUS_ACTIVE, status);
         } finally {
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
@@ -390,7 +390,7 @@ public class AccountUpdateTest extends ODataCommon {
     public final void update_status_is_set_value() {
         String updateUserName = "account1999";
         String updatePass = "password19999";
-        String updateStatus = Account.STATUS_SUSPENDED;
+        String updateStatus = Account.STATUS_DEACTIVATED;
 
         try {
             // Account作成
@@ -404,7 +404,7 @@ public class AccountUpdateTest extends ODataCommon {
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
             String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
                     .get("results"))
-                    .get("AccountStatus");
+                    .get("Status");
             assertThat(status, is(updateStatus));
         } finally {
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
@@ -429,7 +429,7 @@ public class AccountUpdateTest extends ODataCommon {
                 .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, this.orgUserName);
         String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
                 .get("results"))
-                .get("AccountStatus");
+                .get("Status");
         assertThat(status, is(Account.STATUS_ACTIVE));
     }
 

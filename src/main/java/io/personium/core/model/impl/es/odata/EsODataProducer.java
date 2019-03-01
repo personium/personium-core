@@ -72,6 +72,7 @@ import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.AssociationEnd;
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.ComplexTypeProperty;
@@ -2827,6 +2828,14 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             //Overwrite password and update date of acquired Account
             ODataProducerUtils.createRequestPassword(oedhNew, dcCredHeader);
 
+            //If the status is passwordChangeRequired, update the status to Active.
+            Map<String, Object> staticFields = oedhNew.getStaticFields();
+            if (Account.STATUS_PASSWORD_CHANGE_REQUIRED.equals(
+                    staticFields.get(Account.P_STATUS.getName()).toString())) {
+                staticFields.put(Account.P_STATUS.getName(), Account.STATUS_ACTIVE);
+                oedhNew.setStaticFields(staticFields);
+            }
+
             //Save esJson in ES
             //Retrieve version information of Account
             EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
@@ -2837,6 +2846,40 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             lock.release();
         }
     }
+
+//    /**
+//     * Update stats of Account.
+//     * @param entitySet entitySetName
+//     * @param originalKey Key to be updated
+//     * @param accountId Account ID
+//     * @param status status
+//     */
+//    public void updateStatus(final EdmEntitySet entitySet, final OEntityKey originalKey, String accountId,
+//            String status) {
+//        Lock lock = lock();
+//        try {
+//            //Acquire Account information to be changed from ES
+//            EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
+//            PersoniumGetResponse personiumGetResponseNew = esType.get(accountId);
+//            if (personiumGetResponseNew == null) {
+//                //When the Account is deleted from the authentication until the last login time update, since there is no update object, the process ends normally.
+//                PersoniumCoreLog.Auth.ACCOUNT_ALREADY_DELETED.params(originalKey.toKeyString()).writeLog();
+//                return;
+//            }
+//            EntitySetDocHandler oedhNew = new OEntityDocHandler(personiumGetResponseNew);
+//            Map<String, Object> staticFields = oedhNew.getStaticFields();
+//            staticFields.put("Status", status);
+//            oedhNew.setStaticFields(staticFields);
+//
+//            //Save esJson in ES
+//            //Retrieve version information of Account
+//            Long version = oedhNew.getVersion();
+//            esType.update(oedhNew.getId(), oedhNew, version);
+//        } finally {
+//            log.debug("unlock");
+//            lock.release();
+//        }
+//    }
 
     /**
      * Replaces an existing link between two entities.

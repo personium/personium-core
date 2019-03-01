@@ -16,12 +16,15 @@
  */
 package io.personium.test.jersey.cell.auth;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,23 +41,31 @@ import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
+import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.PersoniumException;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
+import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
+import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
-import io.personium.test.utils.Http;
-import io.personium.test.utils.TResponse;
 
 /**
- * account status test.
+ * account status test for authorization.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
-public class AuthAccountStatusTest extends PersoniumTest {
+public class AuthzAccountStatusTest extends PersoniumTest {
+
+    /** log. */
+    static Logger log = LoggerFactory.getLogger(AuthzAccountStatusTest.class);
 
     /** test cell name. */
-    private static final String TEST_CELL = "testcellstatus";
+    private static final String TEST_CELL = "testcellauthzaccountstatus";
+    /** test box name. */
+    private static final String TEST_BOX = "testboxauthzaccountstatus";
     /** test account name. */
     private static final String TEST_ACCOUNT_ACTIVE = "account1";
     /** test account name. */
@@ -65,12 +76,21 @@ public class AuthAccountStatusTest extends PersoniumTest {
     private static final String TEST_PASSWORD = "password";
 
     /**
+     * constructor.
+     */
+    public AuthzAccountStatusTest() {
+        super(new PersoniumCoreApplication());
+    }
+
+    /**
      * before.
      */
     @Before
     public void before() {
         LockManager.deleteAllLocks();
         CellUtils.create(TEST_CELL, Setup.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+        BoxUtils.createWithSchema(TEST_CELL, TEST_BOX, AbstractCase.MASTER_TOKEN_NAME,
+                UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
         AccountUtils.createWithStatus(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT_ACTIVE, TEST_PASSWORD,
                 Account.STATUS_ACTIVE, HttpStatus.SC_CREATED);
         AccountUtils.createWithStatus(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT_SUSPENDED, TEST_PASSWORD,
@@ -84,67 +104,73 @@ public class AuthAccountStatusTest extends PersoniumTest {
      */
     @After
     public void after() {
+        LockManager.deleteAllLocks();
         AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT_ACTIVE, -1);
         AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT_SUSPENDED, -1);
         AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, -1);
+        BoxUtils.delete(TEST_CELL, AbstractCase.MASTER_TOKEN_NAME, TEST_BOX, -1);
         CellUtils.delete(Setup.MASTER_TOKEN_NAME, TEST_CELL, -1);
-        LockManager.deleteAllLocks();
-    }
-
-    /** log. */
-    static Logger log = LoggerFactory.getLogger(AuthAccountStatusTest.class);
-
-    /**
-     * constructor.
-     */
-    public AuthAccountStatusTest() {
-        super(new PersoniumCoreApplication());
     }
 
     /**
      * Test whether to authenticate by status.
+     * @throws Exception Unexpected exception
      */
     @Test
-    public final void test_handlePassword() {
+    public final void test_handlePassword() throws Exception {
         // account active.
-        requestAuthentication(TEST_CELL, TEST_ACCOUNT_ACTIVE, TEST_PASSWORD, HttpStatus.SC_OK);
+        PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_ACTIVE, TEST_PASSWORD);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        Map<String, String> responseMap = parseResponse(dcRes);
+        assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // account suspended.
-        TResponse passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT_SUSPENDED, TEST_PASSWORD,
-                HttpStatus.SC_BAD_REQUEST);
-        String body = (String) passRes.bodyAsJson().get("error_description");
-        assertTrue(body.startsWith("[PR400-AN-0017]"));
+        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_SUSPENDED, TEST_PASSWORD);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        ImplicitFlowTest.checkHtmlBody(dcRes, "PS-AU-0004", TEST_CELL);
 
         // account password change required.
-        passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, TEST_PASSWORD,
-                HttpStatus.SC_UNAUTHORIZED);
-        JSONObject responseBody = passRes.bodyAsJson();
-        String error = (String) responseBody.get("error");
-        String errorDescription = (String) responseBody.get("error_description");
-        String aToken = (String) responseBody.get("access_token");
-        String url = (String) responseBody.get("url");
-        assertThat(error, is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
-        assertThat(errorDescription,
-                is("[PR401-AN-0001] - This account is initialized and the password should be changed."));
-        assertTrue(aToken.startsWith(PasswordChangeAccessToken.PREFIX_ACCESS));
-        assertTrue(url.endsWith("/__mypassword"));
+        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, TEST_PASSWORD);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        responseMap = parseResponse(dcRes);
+        assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
+        assertTrue(responseMap.containsKey(OAuth2Helper.Key.ACCESS_TOKEN));
+        assertTrue(responseMap.get(OAuth2Helper.Key.ACCESS_TOKEN)
+                .startsWith(PasswordChangeAccessToken.PREFIX_ACCESS));
+        assertFalse(responseMap.containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
+        assertFalse(responseMap.containsKey(OAuth2Helper.Key.FAILED_COUNT));
     }
 
     /**
-     * request authentication.
+     * request authorization.
      * @param cellName cell name
      * @param userName user name
      * @param password password
-     * @param code expected status code
      * @return http response
      */
-    private TResponse requestAuthentication(String cellName, String userName, String password, int code) {
-        TResponse passRes = Http.request("authn/password-cl-c0.txt")
-                .with("remoteCell", cellName)
-                .with("username", userName)
-                .with("password", password)
-                .returns()
-                .statusCode(code);
-        return passRes;
+    private PersoniumResponse requestAuthorization4Authz(String cellName, String userName, String password)
+            throws PersoniumException {
+        PersoniumResponse dcRes = CellUtils.implicitflowAuthenticate(cellName, Setup.TEST_CELL_SCHEMA1, userName,
+                password, "__/redirect.html", ImplicitFlowTest.DEFAULT_STATE, null);
+        return dcRes;
+    }
+
+    /**
+     * parse response.
+     * @param res the personium response
+     * @return parse response.
+     */
+    private Map<String, String> parseResponse(PersoniumResponse res) {
+        String location = res.getFirstHeader(HttpHeaders.LOCATION);
+        System.out.println(location);
+        String[] locations = location.split("#");
+        String[] responses = locations[1].split("&");
+        Map<String, String> map = new HashMap<String, String>();
+        for (String response : responses) {
+            String[] value = response.split("=");
+            map.put(value[0], value[1]);
+        }
+
+        return map;
     }
 }

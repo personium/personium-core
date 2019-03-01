@@ -7,4 +7,4 @@ Content-Type: application/json
 Authorization: Bearer ${token}
 X-Personium-Credential: ${password}
 
-{"Name":"${username}", "AccountStatus":"${status}"}
+{"Name":"${username}", "Status":"${status}"}

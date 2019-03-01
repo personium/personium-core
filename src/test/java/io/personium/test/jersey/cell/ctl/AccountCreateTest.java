@@ -592,12 +592,12 @@ public class AccountCreateTest extends ODataCommon {
             accLocHeader = response.getLocationHeader();
 
             String status = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
-                    .get("results")).get("AccountStatus");
+                    .get("results")).get("Status");
             assertEquals(Account.STATUS_ACTIVE, status);
 
             response = AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, testAccountName);
             status = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
-                    .get("results")).get("AccountStatus");
+                    .get("results")).get("Status");
             assertEquals(Account.STATUS_ACTIVE, status);
         } finally {
             if (accLocHeader != null) {
@@ -613,7 +613,7 @@ public class AccountCreateTest extends ODataCommon {
     public final void Account_create_set_status() {
         String testAccountName = "account.create.test.status2";
         String testAccountPass = "password1234";
-        String testAccountStatus = Account.STATUS_SUSPENDED;
+        String testAccountStatus = Account.STATUS_DEACTIVATED;
         String accLocHeader = null;
 
         try {
@@ -621,14 +621,14 @@ public class AccountCreateTest extends ODataCommon {
                     testAccountName, testAccountPass, testAccountStatus, HttpStatus.SC_CREATED);
             accLocHeader = response.getLocationHeader();
 
-            String ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
-                    .get("results")).get("AccountStatus");
-            assertEquals(testAccountStatus, ipAddressRange);
+            String getStatus = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("Status");
+            assertEquals(testAccountStatus, getStatus);
 
             response = AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, testAccountName);
-            ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
-                    .get("results")).get("AccountStatus");
-            assertEquals(testAccountStatus, ipAddressRange);
+            getStatus = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("Status");
+            assertEquals(testAccountStatus, getStatus);
         } finally {
             if (accLocHeader != null) {
                 deleteAccount(accLocHeader);

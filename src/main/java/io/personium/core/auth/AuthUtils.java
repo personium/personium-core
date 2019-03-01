@@ -242,13 +242,26 @@ public final class AuthUtils {
     }
 
     /**
-     * Check is status active.
+     * Check is account status active.
      * @param oew oew
      * @return boolean Returns false if authentication failure.
      */
     public static boolean isActive(OEntityWrapper oew) {
         String status = getStatus(oew);
         if (status == null || status.isEmpty() || Account.STATUS_ACTIVE.equals(status)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check is password change required.
+     * @param oew oew
+     * @return boolean Returns false if authentication failure.
+     */
+    public static boolean isPasswordChangeReuired(OEntityWrapper oew) {
+        String status = getStatus(oew);
+        if (Account.STATUS_PASSWORD_CHANGE_REQUIRED.equals(status)) {
             return true;
         }
         return false;

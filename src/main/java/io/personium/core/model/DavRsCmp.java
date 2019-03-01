@@ -414,6 +414,12 @@ public class DavRsCmp {
             return;
         }
 
+        // if accessed with PasswordChangeAccessToken then invalid.
+        if (AccessContext.TYPE_PASSWORD_CHANGE.equals(ac.getType())) {
+            throw PersoniumCoreAuthzException.ACCESS_WITH_PASSWORD_CHANGE_ACCESS_TOKEN.realm(
+                    ac.getRealm(), getAcceptableAuthScheme());
+        }
+
         AcceptableAuthScheme allowedAuthScheme = getAcceptableAuthScheme();
 
         // check Schema Authn

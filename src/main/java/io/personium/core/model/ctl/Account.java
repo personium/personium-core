@@ -42,10 +42,12 @@ public class Account {
 
     /** Account status active. */
     public static final String STATUS_ACTIVE = "active";
-    /** Account status suspended. */
-    public static final String STATUS_SUSPENDED = "suspended";
+    /** Account status deactivated. */
+    public static final String STATUS_DEACTIVATED = "deactivated";
+    /** Account status passwordChangeRequired. */
+    public static final String STATUS_PASSWORD_CHANGE_REQUIRED = "passwordChangeRequired";
     /** Account statuses. */
-    public static final String[] STATUSES = {STATUS_ACTIVE, STATUS_SUSPENDED};
+    public static final String[] STATUSES = {STATUS_ACTIVE, STATUS_DEACTIVATED, STATUS_PASSWORD_CHANGE_REQUIRED};
 
     /**
      * Type value basic.
@@ -113,14 +115,11 @@ public class Account {
             .setType(EdmSimpleType.STRING).setNullable(true).setDefaultValue("null")
             .setAnnotations(P_FORMAT_IP_ADDRESS_RANGE);
 
-    // TODO ★パラメータ名について"Status"が現状使えないため"AccountStatus"に一旦変更。
-    // TODO ★ESのマッピング見直しが必要。それによって↑が解決する可能性あり。
     /**
      * Definition field of status.
      */
-    public static final EdmProperty.Builder P_STATUS = EdmProperty.newBuilder("AccountStatus")
-            .setType(EdmSimpleType.STRING).setNullable(true).setDefaultValue(STATUS_ACTIVE)
-            .setAnnotations(P_FORMAT_STATUS);
+    public static final EdmProperty.Builder P_STATUS = EdmProperty.newBuilder("Status").setType(EdmSimpleType.STRING)
+            .setNullable(true).setDefaultValue(STATUS_ACTIVE).setAnnotations(P_FORMAT_STATUS);
 
     /**
      * EntityType Builder.
