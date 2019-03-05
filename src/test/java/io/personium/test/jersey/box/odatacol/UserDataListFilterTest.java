@@ -2070,13 +2070,13 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
     }
 
     /**
-     * 前方一致検索クエリの値に4096文字の文字列を指定して対象のデータを取得できること.
+     * test a forward match max length.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 前方一致検索クエリの値に4096文字の文字列を指定して対象のデータを取得できること() {
+    public final void forward_match_max_length() {
         String userDataId = "userdata001";
-        int queryLength = 4096;
+        int queryLength = 1000;
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
@@ -2105,17 +2105,13 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
     }
 
     /**
-     * 前方一致検索クエリの値に4097文字の文字列を指定すると対象のデータを取得できないこと.<br />
-     * 0.19の既存IndexはMapping更新しない方針のため、ignore_above: 4096の設定が適用されない.<br />
-     * （4096文字より大きい文字列はIndexingしないという修正が適用されない。<br />
-     * このため、本テストがエラーとなるためIgnoreする。
+     * test a forward match max length over.
      */
-    @Ignore
     @SuppressWarnings("unchecked")
     @Test
-    public final void 前方一致検索クエリの値に4097文字の文字列を指定すると対象のデータを取得できないこと() {
+    public final void forward_match_max_length_over() {
         String userDataId = "userdata001";
-        int queryLength = 4097;
+        int queryLength = 1002;
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
@@ -2135,8 +2131,9 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             PersoniumResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
                     entityType,
                     "?$filter=startswith(dynamicProperty,%27" + value + "%27)&$inlinecount=allpages");
-            // ヒット数のチェック
-            ODataCommon.checkResponseBodyCount(response.bodyAsJson(), 0);
+            assertEquals(response.getStatusCode(), HttpStatus.SC_BAD_REQUEST);
+            JSONObject jsonResp = response.bodyAsJson();
+            assertEquals(jsonResp.get("code"), "PR400-OD-0051");
         } finally {
             UserDataUtils.delete(Setup.MASTER_TOKEN_NAME, -1, cellName, boxName, colName, entityType, userDataId);
             deleteDynamicProperty("dynamicProperty");
