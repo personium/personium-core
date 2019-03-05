@@ -295,10 +295,16 @@ public class TokenEndPointResource {
 
         // Check account is active.
         boolean accountActive = AuthUtils.isActive(idTokenUserOew);
+        boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(idTokenUserOew);
         if (!accountActive) {
-            PersoniumCoreLog.OIDC.ACCOUNT_IS_DEACTIVATED.params(
-                    requestURIInfo.getRequestUri().toString(), this.ipaddress, accountName).writeLog();
-            throw PersoniumCoreAuthnException.AUTHN_FAILED;
+            if (passwordChangeRequired) {
+                // Issue password change.
+                issuePasswordChange(target, owner, schema, accountName, rTokenExpiresIn);
+            } else {
+                PersoniumCoreLog.OIDC.ACCOUNT_IS_DEACTIVATED.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, accountName).writeLog();
+                throw PersoniumCoreAuthnException.AUTHN_FAILED;
+            }
         }
 
         // When processing is normally completed, issue a token.
