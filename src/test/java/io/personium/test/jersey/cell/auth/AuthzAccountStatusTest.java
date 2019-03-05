@@ -137,8 +137,8 @@ public class AuthzAccountStatusTest extends PersoniumTest {
         assertTrue(responseMap.containsKey(OAuth2Helper.Key.ACCESS_TOKEN));
         assertTrue(responseMap.get(OAuth2Helper.Key.ACCESS_TOKEN)
                 .startsWith(PasswordChangeAccessToken.PREFIX_ACCESS));
-        assertFalse(responseMap.containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
-        assertFalse(responseMap.containsKey(OAuth2Helper.Key.FAILED_COUNT));
+        assertTrue(responseMap.containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
+        assertTrue(responseMap.containsKey(OAuth2Helper.Key.FAILED_COUNT));
     }
 
     /**

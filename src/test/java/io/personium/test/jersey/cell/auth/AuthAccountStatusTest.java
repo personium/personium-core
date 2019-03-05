@@ -18,6 +18,7 @@ package io.personium.test.jersey.cell.auth;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.http.HttpStatus;
@@ -123,11 +124,15 @@ public class AuthAccountStatusTest extends PersoniumTest {
         String errorDescription = (String) responseBody.get("error_description");
         String aToken = (String) responseBody.get("access_token");
         String url = (String) responseBody.get("url");
+        String lastAuthenticated = (String) responseBody.get("last_authenticated");
+        Long failedCount = (Long) responseBody.get("failed_count");
         assertThat(error, is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
         assertThat(errorDescription,
                 is("[PR401-AN-0001] - This account is initialized and the password should be changed."));
         assertTrue(aToken.startsWith(PasswordChangeAccessToken.PREFIX_ACCESS));
         assertTrue(url.endsWith("/__mypassword"));
+        assertNull(lastAuthenticated);
+        assertThat(failedCount, is(0L));
     }
 
     /**

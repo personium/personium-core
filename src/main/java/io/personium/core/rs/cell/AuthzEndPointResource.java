@@ -445,19 +445,19 @@ public class AuthzEndPointResource {
                         username, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
                 paramMap.put(OAuth2Helper.Key.ID_TOKEN, idToken.toTokenString());
             }
-
-            // get last auth history.
-            AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
-                    cellRsCmp.getDavCmp().getFsPath(), accountId);
-            String lastAuthenticated = last.getLastAuthenticated() != null ? last.getLastAuthenticated().toString() : null; //CHECKSTYLE IGNORE
-            String failedCount = last.getFailedCount() != null ? last.getFailedCount().toString() : null; //CHECKSTYLE IGNORE
-            paramMap.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
-            paramMap.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
         }
 
         if (StringUtils.isNotEmpty(state)) {
             paramMap.put(OAuth2Helper.Key.STATE, state);
         }
+
+        // get last auth history.
+        AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
+                cellRsCmp.getDavCmp().getFsPath(), accountId);
+        String lastAuthenticated = last.getLastAuthenticated() != null ? last.getLastAuthenticated().toString() : null; //CHECKSTYLE IGNORE
+        String failedCount = last.getFailedCount() != null ? last.getFailedCount().toString() : null; //CHECKSTYLE IGNORE
+        paramMap.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
+        paramMap.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
 
         // update auth history.
         AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);

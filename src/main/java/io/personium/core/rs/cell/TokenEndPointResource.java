@@ -858,6 +858,8 @@ public class TokenEndPointResource {
                 issuedAt, expiresIn, getIssuerUrl(), username, schema);
 
         // update auth history.
+        AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
+                davRsCmp.getDavCmp().getFsPath(), accountId);
         AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(
                 davRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
         // release account lock.
@@ -865,8 +867,10 @@ public class TokenEndPointResource {
 
         // throws password change required.
         PersoniumCoreAuthnException ex = PersoniumCoreAuthnException.PASSWORD_CHANGE_REQUIRED.realm(this.cell.getUrl());
-        ex.addErrorJsonParam("access_token", aToken.toTokenString());
+        ex.addErrorJsonParam(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
         ex.addErrorJsonParam("url", this.cell.getUrl() + "__mypassword");
+        ex.addErrorJsonParam(OAuth2Helper.Key.LAST_AUTHENTICATED, last.getLastAuthenticated());
+        ex.addErrorJsonParam(OAuth2Helper.Key.FAILED_COUNT, last.getFailedCount());
         throw ex;
     }
 
