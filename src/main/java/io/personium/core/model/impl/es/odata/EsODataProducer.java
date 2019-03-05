@@ -26,6 +26,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.core4j.Enumerable;
+import org.elasticsearch.action.search.SearchPhaseExecutionException;
+import org.elasticsearch.rest.RestStatus;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityIds;
@@ -744,7 +746,12 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             res = esType.search(source);
         } catch (EsClientException ex) {
             if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
-                throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
+                SearchPhaseExecutionException speex = (SearchPhaseExecutionException)ex.getCause().getCause();
+                if (speex.status().equals(RestStatus.BAD_REQUEST)) {
+                    throw PersoniumCoreException.OData.SEARCH_QUERY_INVALID_ERROR.reason(ex);
+                } else {
+                    throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
+                }
             }
         }
         //Returns the number of hits only when the inlinecount specification is allpages
@@ -2915,7 +2922,12 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 tmpCount = esType.count(source);
             } catch (EsClientException ex) {
                 if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
-                    throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
+                    SearchPhaseExecutionException speex = (SearchPhaseExecutionException)ex.getCause().getCause();
+                    if (speex.status().equals(RestStatus.BAD_REQUEST)) {
+                        throw PersoniumCoreException.OData.SEARCH_QUERY_INVALID_ERROR.reason(ex);
+                    } else {
+                        throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
+                    }
                 }
             }
         }
