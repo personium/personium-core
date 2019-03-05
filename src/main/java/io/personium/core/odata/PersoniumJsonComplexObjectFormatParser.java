@@ -229,7 +229,7 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
             JsonObjectPropertyValue val = new JsonObjectPropertyValue();
 
             //If the schema definition exists and CollectionKind is not None, parse it as an array
-            if (null != ep && ep.getCollectionKind() != CollectionKind.NONE) {
+            if (null != ep && !CollectionKind.NONE.equals(ep.getCollectionKind())) {
                 val.collectionType = new EdmCollectionType(ep.getCollectionKind(), ep.getType());
                 PersoniumJsonCollectionFormatParser cfp = new PersoniumJsonCollectionFormatParser(val.collectionType,
                         getMetadata(), name);

@@ -738,7 +738,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
             json.put("Type", typeName);
             json.put("Nullable", property.isNullable());
             json.put("DefaultValue", property.getDefaultValue());
-            json.put("CollectionKind", property.getCollectionKind().toString());
+            json.put("CollectionKind", toStringFromCollectionKind(kind));
             StringReader stringReader = new StringReader(json.toJSONString());
             OEntityWrapper oew = entityResource.getOEntityWrapper(stringReader,
                     entityResource.getOdataResource(), userMetadata);
@@ -1127,6 +1127,19 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2001");
                 throw PersoniumBarException.INSTALLATION_FAILED.path(filename).detail(detail);
             }
+        }
+    }
+
+    /**
+     * Enum collection kind to string.
+     * @param collectionKind enum collection kind
+     * @return None or List
+     */
+    private String toStringFromCollectionKind(CollectionKind collectionKind) {
+        if (CollectionKind.List.equals(collectionKind)) {
+            return Property.COLLECTION_KIND_LIST;
+        } else {
+            return Property.COLLECTION_KIND_NONE;
         }
     }
 }

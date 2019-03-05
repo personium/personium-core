@@ -792,9 +792,11 @@ public class CellEsImpl implements Cell {
                             OEntityKey.create(extCellUrl),
                             "_" + Role.EDM_TYPE_NAME, qi);
                 } catch (PersoniumCoreException dce) {
-                    if (PersoniumCoreException.OData.NO_SUCH_ENTITY != dce) {
+                    if (!PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode().equals(dce.getCode())) {
                         throw dce;
                     }
+                    // Continue processing with log output only.
+                    log.debug("no such entity.");
                 }
                 if (response != null) {
                     break;
@@ -839,9 +841,11 @@ public class CellEsImpl implements Cell {
                         OEntityKey.create(extCellUrl),
                         "_" + Relation.EDM_TYPE_NAME, qi);
             } catch (PersoniumCoreException dce) {
-                if (PersoniumCoreException.OData.NO_SUCH_ENTITY != dce) {
+                if (!PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode().equals(dce.getCode())) {
                     throw dce;
                 }
+                // Continue processing with log output only.
+                log.debug("no such entity.");
             }
             if (response != null) {
                 break;

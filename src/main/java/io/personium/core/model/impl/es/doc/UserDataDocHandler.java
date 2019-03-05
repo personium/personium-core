@@ -174,7 +174,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
             } else {
                 //In the case of Complex type, further convert the element in
                 EdmComplexType edmComplexType = metadata.findEdmComplexType(prop.getType().getFullyQualifiedTypeName());
-                if (CollectionKind.List == prop.getCollectionKind()) {
+                if (CollectionKind.List.equals(prop.getCollectionKind())) {
                     List<Map<String, Object>> complexList = new ArrayList<Map<String, Object>>();
                     for (Map<String, Object> val : (List<Map<String, Object>>) value) {
                         Map<String, Object> complexMap = new HashMap<String, Object>();
@@ -210,7 +210,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
                 complexMap.put(key, value);
             } else {
                 //In the case of Complex type, further convert the element in
-                if (CollectionKind.List == prop.getCollectionKind()) {
+                if (CollectionKind.List.equals(prop.getCollectionKind())) {
                     List<Map<String, Object>> complexList = new ArrayList<Map<String, Object>>();
                     for (Map<String, Object> val : (List<Map<String, Object>>) value) {
                         Map<String, Object> newComplexMap = new HashMap<String, Object>();
