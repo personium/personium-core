@@ -2111,7 +2111,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
     @Test
     public final void forward_match_max_length_over() {
         String userDataId = "userdata001";
-        int queryLength = 1002;
+        int queryLength = 1001;
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
