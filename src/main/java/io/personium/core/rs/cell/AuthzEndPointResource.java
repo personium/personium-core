@@ -258,7 +258,7 @@ public class AuthzEndPointResource {
         if (StringUtils.isEmpty(responseType)) {
             //Redirect to redirect_uri
             return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
-                    OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0004");
+                    PersoniumCoreMessageUtils.getMessage("PR400-AZ-0004"), state, "PR400-AZ-0004");
         }
         //Check value of expires_in
         long expiresIn = AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS;
@@ -267,11 +267,11 @@ public class AuthzEndPointResource {
                 expiresIn = Integer.parseInt(expiresInStr) * AbstractOAuth2Token.MILLISECS_IN_A_SEC;
                 if (expiresIn <= 0 || expiresIn > AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS) {
                     return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
-                            OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0008");
+                            PersoniumCoreMessageUtils.getMessage("PR400-AZ-0008"), state, "PR400-AZ-0008");
                 }
             } catch (NumberFormatException e) {
                 return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
-                        OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0008");
+                        PersoniumCoreMessageUtils.getMessage("PR400-AZ-0008"), state, "PR400-AZ-0008");
             }
         }
 
@@ -282,7 +282,7 @@ public class AuthzEndPointResource {
                         || OAuth2Helper.ResponseType.ID_TOKEN.equals(responseType)
                         && !OAuth2Helper.Scope.OPENID.equals(scope))) {
             return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE,
-                    OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE, state, "PR400-AZ-0001");
+                    PersoniumCoreMessageUtils.getMessage("PR400-AZ-0001"), state, "PR400-AZ-0001");
         }
 
         if ("1".equals(isCancel)) {
@@ -398,7 +398,7 @@ public class AuthzEndPointResource {
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
             }
         } catch (PersoniumCoreException e) {
-            return this.returnErrorRedirect(responseType, redirectUri, e.getMessage(),
+            return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.SERVER_ERROR,
                     e.getMessage(), state, e.getCode());
         }
 
