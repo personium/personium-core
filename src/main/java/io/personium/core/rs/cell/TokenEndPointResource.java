@@ -299,7 +299,7 @@ public class TokenEndPointResource {
         if (!accountActive) {
             if (passwordChangeRequired) {
                 // Issue password change.
-                issuePasswordChange(target, owner, schema, accountName, rTokenExpiresIn);
+                issuePasswordChange(schema, accountName, rTokenExpiresIn);
             } else {
                 PersoniumCoreLog.OIDC.ACCOUNT_IS_DEACTIVATED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, accountName).writeLog();
@@ -831,7 +831,7 @@ public class TokenEndPointResource {
         if (!accountActive) {
             if (passwordChangeRequired) {
                 // Issue password change.
-                issuePasswordChange(target, owner, schema, username, rTokenExpiresIn);
+                issuePasswordChange(schema, username, rTokenExpiresIn);
             } else {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
@@ -848,16 +848,11 @@ public class TokenEndPointResource {
     /**
      * Issue password change.
      * Throws PersoniumCoreAuthnException for error handling.
-     *
-     *
-     * @param target target
-     * @param owner owner
      * @param schema schema
      * @param username user name
      * @param expiresIn expires in
      */
-    private void issuePasswordChange(final String target, final String owner,
-            final String schema, final String username, long expiresIn) {
+    private void issuePasswordChange(final String schema, final String username, long expiresIn) {
         // create account password change access token.
         long issuedAt = new Date().getTime();
         PasswordChangeAccessToken aToken = new PasswordChangeAccessToken(

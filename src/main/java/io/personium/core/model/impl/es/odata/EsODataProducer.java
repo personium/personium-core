@@ -746,7 +746,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             res = esType.search(source);
         } catch (EsClientException ex) {
             if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
-                SearchPhaseExecutionException speex = (SearchPhaseExecutionException)ex.getCause().getCause();
+                SearchPhaseExecutionException speex = (SearchPhaseExecutionException) ex.getCause().getCause();
                 if (speex.status().equals(RestStatus.BAD_REQUEST)) {
                     throw PersoniumCoreException.OData.SEARCH_QUERY_INVALID_ERROR.reason(ex);
                 } else {
@@ -2922,7 +2922,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 tmpCount = esType.count(source);
             } catch (EsClientException ex) {
                 if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
-                    SearchPhaseExecutionException speex = (SearchPhaseExecutionException)ex.getCause().getCause();
+                    SearchPhaseExecutionException speex = (SearchPhaseExecutionException) ex.getCause().getCause();
                     if (speex.status().equals(RestStatus.BAD_REQUEST)) {
                         throw PersoniumCoreException.OData.SEARCH_QUERY_INVALID_ERROR.reason(ex);
                     } else {
