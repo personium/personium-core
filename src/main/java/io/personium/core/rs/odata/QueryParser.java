@@ -182,6 +182,8 @@ public class QueryParser {
         BoolCommonExpression filter = null;
         try {
             filter = PersoniumOptionsQueryParser.parseFilter(query);
+        } catch (PersoniumCoreException e) {
+            throw e;
         } catch (Exception e) {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR.reason(e);
         }

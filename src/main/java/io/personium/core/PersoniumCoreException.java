@@ -273,6 +273,10 @@ public class PersoniumCoreException extends RuntimeException {
          * {0} property name
          */
         public static final PersoniumCoreException SCHEMA_URI_FORMAT_ERROR = create("PR400-OD-0050");
+        /**
+         * search query invalid error.
+         */
+        public static final PersoniumCoreException SEARCH_QUERY_INVALID_ERROR = create("PR400-OD-0051");
 
         /**
          * The corresponding EntitySet does not exist.
