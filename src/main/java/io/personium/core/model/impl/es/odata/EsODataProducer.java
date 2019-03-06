@@ -2854,40 +2854,6 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         }
     }
 
-//    /**
-//     * Update stats of Account.
-//     * @param entitySet entitySetName
-//     * @param originalKey Key to be updated
-//     * @param accountId Account ID
-//     * @param status status
-//     */
-//    public void updateStatus(final EdmEntitySet entitySet, final OEntityKey originalKey, String accountId,
-//            String status) {
-//        Lock lock = lock();
-//        try {
-//            //Acquire Account information to be changed from ES
-//            EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
-//            PersoniumGetResponse personiumGetResponseNew = esType.get(accountId);
-//            if (personiumGetResponseNew == null) {
-//                //When the Account is deleted from the authentication until the last login time update, since there is no update object, the process ends normally.
-//                PersoniumCoreLog.Auth.ACCOUNT_ALREADY_DELETED.params(originalKey.toKeyString()).writeLog();
-//                return;
-//            }
-//            EntitySetDocHandler oedhNew = new OEntityDocHandler(personiumGetResponseNew);
-//            Map<String, Object> staticFields = oedhNew.getStaticFields();
-//            staticFields.put("Status", status);
-//            oedhNew.setStaticFields(staticFields);
-//
-//            //Save esJson in ES
-//            //Retrieve version information of Account
-//            Long version = oedhNew.getVersion();
-//            esType.update(oedhNew.getId(), oedhNew, version);
-//        } finally {
-//            log.debug("unlock");
-//            lock.release();
-//        }
-//    }
-
     /**
      * Replaces an existing link between two entities.
      * @param sourceEntity an entity with at least one navigation property
