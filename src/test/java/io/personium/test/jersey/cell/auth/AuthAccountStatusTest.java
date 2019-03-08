@@ -59,7 +59,7 @@ public class AuthAccountStatusTest extends PersoniumTest {
     /** test account name. */
     private static final String TEST_ACCOUNT_ACTIVE = "account1";
     /** test account name. */
-    private static final String TEST_ACCOUNT_SUSPENDED = "account2";
+    private static final String TEST_ACCOUNT_DEACTIVATED = "account2";
     /** test account name. */
     private static final String TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED = "account3";
     /** test account password. */
@@ -74,7 +74,7 @@ public class AuthAccountStatusTest extends PersoniumTest {
         CellUtils.create(TEST_CELL, Setup.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
         AccountUtils.createWithStatus(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT_ACTIVE, TEST_PASSWORD,
                 Account.STATUS_ACTIVE, HttpStatus.SC_CREATED);
-        AccountUtils.createWithStatus(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT_SUSPENDED, TEST_PASSWORD,
+        AccountUtils.createWithStatus(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT_DEACTIVATED, TEST_PASSWORD,
                 Account.STATUS_DEACTIVATED, HttpStatus.SC_CREATED);
         AccountUtils.createWithStatus(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED,
                 TEST_PASSWORD, Account.STATUS_PASSWORD_CHANGE_REQUIRED, HttpStatus.SC_CREATED);
@@ -86,7 +86,7 @@ public class AuthAccountStatusTest extends PersoniumTest {
     @After
     public void after() {
         AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT_ACTIVE, -1);
-        AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT_SUSPENDED, -1);
+        AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT_DEACTIVATED, -1);
         AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, -1);
         CellUtils.delete(Setup.MASTER_TOKEN_NAME, TEST_CELL, -1);
         LockManager.deleteAllLocks();
@@ -111,12 +111,14 @@ public class AuthAccountStatusTest extends PersoniumTest {
         requestAuthentication(TEST_CELL, TEST_ACCOUNT_ACTIVE, TEST_PASSWORD, HttpStatus.SC_OK);
 
         // account suspended.
-        TResponse passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT_SUSPENDED, TEST_PASSWORD,
+        TResponse passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT_DEACTIVATED, TEST_PASSWORD,
                 HttpStatus.SC_BAD_REQUEST);
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
         // account password change required.
+        requestAuthentication(TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, "error", HttpStatus.SC_BAD_REQUEST);
+        AuthTestCommon.waitForIntervalLock();
         passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, TEST_PASSWORD,
                 HttpStatus.SC_UNAUTHORIZED);
         JSONObject responseBody = passRes.bodyAsJson();
@@ -128,11 +130,15 @@ public class AuthAccountStatusTest extends PersoniumTest {
         Long failedCount = (Long) responseBody.get("failed_count");
         assertThat(error, is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
         assertThat(errorDescription,
-                is("[PR401-AN-0001] - This account is initialized and the password should be changed."));
+                is("[PR401-AN-0001] - The password should be changed."));
         assertTrue(aToken.startsWith(PasswordChangeAccessToken.PREFIX_ACCESS));
         assertTrue(url.endsWith("/__mypassword"));
         assertNull(lastAuthenticated);
-        assertThat(failedCount, is(0L));
+        assertThat(failedCount, is(1L));
+        passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, TEST_PASSWORD,
+                HttpStatus.SC_UNAUTHORIZED);
+        assertNull(lastAuthenticated);
+        assertThat(failedCount, is(1L));
     }
 
     /**

@@ -272,6 +272,10 @@ public final class OAuth2Helper {
          */
         public static final String EXPIRES_IN = "expires_in";
         /**
+         * password change access token.
+         */
+        public static final String AP_TOKEN = "ap_token";
+        /**
          * scope.
          */
         public static final String SCOPE = "scope";

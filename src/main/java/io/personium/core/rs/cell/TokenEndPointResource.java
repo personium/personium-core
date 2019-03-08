@@ -858,13 +858,9 @@ public class TokenEndPointResource {
         PasswordChangeAccessToken aToken = new PasswordChangeAccessToken(
                 issuedAt, expiresIn, getIssuerUrl(), username, schema);
 
-        // update auth history.
+        // get auth history. (non update auth history)
         AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
                 davRsCmp.getDavCmp().getFsPath(), accountId);
-        AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(
-                davRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
-        // release account lock.
-        AuthResourceUtils.releaseAccountLock(accountId);
 
         // throws password change required.
         PersoniumCoreAuthnException ex = PersoniumCoreAuthnException.PASSWORD_CHANGE_REQUIRED.realm(this.cell.getUrl());

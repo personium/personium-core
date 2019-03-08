@@ -18,8 +18,11 @@ package io.personium.test.jersey.cell.auth;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +35,14 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-import io.personium.common.auth.token.PasswordChangeAccessToken;
+import com.sun.org.apache.xerces.internal.parsers.DOMParser;
+
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.lock.LockManager;
@@ -55,6 +64,7 @@ import io.personium.test.utils.CellUtils;
 /**
  * account status test for authorization.
  */
+@SuppressWarnings("restriction")
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
 public class AuthzAccountStatusTest extends PersoniumTest {
@@ -119,26 +129,97 @@ public class AuthzAccountStatusTest extends PersoniumTest {
     @Test
     public final void test_handlePassword() throws Exception {
         // account active.
-        PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_ACTIVE, TEST_PASSWORD);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        Map<String, String> responseMap = parseResponse(dcRes);
+        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_ACTIVE, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        Map<String, String> responseMap = parseResponse(res);
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // account suspended.
-        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_SUSPENDED, TEST_PASSWORD);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-        ImplicitFlowTest.checkHtmlBody(dcRes, "PS-AU-0004", TEST_CELL);
+        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_SUSPENDED, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
 
         // account password change required.
-        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, TEST_PASSWORD);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        responseMap = parseResponse(dcRes);
+        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0006", TEST_CELL);
+    }
+
+    /**
+     * Test handle password change.
+     * @throws Exception Unexpected exception
+     */
+    @Test
+    public final void test_handlePasswordChange() throws Exception {
+        // First authorization, Get password change access token.
+        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED,
+                TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        String apTokenStr = getPasswordChangeAccessTokenStr(res);
+        assertNotNull(apTokenStr);
+
+        // Password change failed, No pass.
+        res = requestAuthorizationPasswordChange(TEST_CELL, apTokenStr, "");
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0007", TEST_CELL);
+
+        // Password change failed, Password invalid format.
+        res = requestAuthorizationPasswordChange(TEST_CELL, apTokenStr, "error");
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0008", TEST_CELL);
+
+        // Password change failed, invalid token.
+        res = requestAuthorizationPasswordChange(TEST_CELL, "dummy_token", "newpassword");
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0002", TEST_CELL);
+
+        // Password change success.
+        String newPassword = "newpassword";
+        res = requestAuthorizationPasswordChange(TEST_CELL, apTokenStr, newPassword);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        Map<String, String> responseMap = parseResponse(res);
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
         assertTrue(responseMap.containsKey(OAuth2Helper.Key.ACCESS_TOKEN));
-        assertTrue(responseMap.get(OAuth2Helper.Key.ACCESS_TOKEN)
-                .startsWith(PasswordChangeAccessToken.PREFIX_ACCESS));
-        assertTrue(responseMap.containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
-        assertTrue(responseMap.containsKey(OAuth2Helper.Key.FAILED_COUNT));
+
+        // Authentication can be performed with the changed password.
+        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, newPassword);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        responseMap = parseResponse(res);
+        assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
+        assertTrue(responseMap.containsKey(OAuth2Helper.Key.ACCESS_TOKEN));
+
+        // It can not be authenticated with the password before change
+        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT_PASSWORD_CHANGE_REQUIRED, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
+    }
+
+    /**
+     * get password change access token string.
+     * @param res PersoniumResponse
+     * @return password change access token string
+     */
+    public String getPasswordChangeAccessTokenStr(PersoniumResponse res) {
+        DOMParser parser = new DOMParser();
+        InputSource body = null;
+        body = new InputSource(res.bodyAsStream());
+        try {
+            parser.parse(body);
+        } catch (SAXException e) {
+            fail(e.getMessage());
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+        Document document = parser.getDocument();
+        NodeList nodeList = document.getElementsByTagName("input");
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Element element = (Element) nodeList.item(i);
+            String id = element.getAttribute("id");
+            if ("ap_token".equals(id)) {
+                return element.getAttribute("value");
+            }
+        }
+        return null;
     }
 
     /**
@@ -152,6 +233,20 @@ public class AuthzAccountStatusTest extends PersoniumTest {
             throws PersoniumException {
         PersoniumResponse dcRes = CellUtils.implicitflowAuthenticate(cellName, Setup.TEST_CELL_SCHEMA1, userName,
                 password, "__/redirect.html", ImplicitFlowTest.DEFAULT_STATE, null);
+        return dcRes;
+    }
+
+    /**
+     * request authorization password change.
+     * @param cellName cell name
+     * @param apTokenStr password change access token string
+     * @param password password
+     * @return http response
+     */
+    private PersoniumResponse requestAuthorizationPasswordChange(String cellName, String apTokenStr, String password)
+            throws PersoniumException {
+        PersoniumResponse dcRes = CellUtils.implicitflowAuthenticatePasswordChange(cellName, Setup.TEST_CELL_SCHEMA1,
+                apTokenStr, password, "__/redirect.html", ImplicitFlowTest.DEFAULT_STATE, null);
         return dcRes;
     }
 
