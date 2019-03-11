@@ -614,7 +614,7 @@ public class ImplicitFlowTest extends PersoniumTest {
 
         // #error={error}&error_description={error_description}&state={state}&code={code}
         assertEquals(UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                + "#error=unsupported_response_type&error_description=unsupported+response_type.&state=" + DEFAULT_STATE
+                + "#error=unsupported_response_type&error_description=Unsupported+response_type.&state=" + DEFAULT_STATE
                 + "&code=PR400-AZ-0001",
                 res.getFirstHeader(HttpHeaders.LOCATION));
     }
@@ -720,7 +720,7 @@ public class ImplicitFlowTest extends PersoniumTest {
 
         // {redirect_uri}#error={error}&error_description={error_description}&state={state}&code={code}
         assertEquals(UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                + "#error=invalid_request&error_description=Request parameter+is+invalid+[response_type].&state="
+                + "#error=invalid_request&error_description=Request+parameter+is+invalid+%5Bresponse_type%5D.&state="
                 + DEFAULT_STATE + "&code=PR400-AZ-0004",
                 res.getFirstHeader(HttpHeaders.LOCATION));
     }
