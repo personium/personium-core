@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="alter-schema" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="read-properties" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="write-properties" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="write-content" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="read-acl" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="write-acl" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="bind" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -56,6 +57,7 @@ import javax.xml.bind.annotation.XmlType;
         "alterSchema",
         "readProperties",
         "writeProperties",
+        "writeContent",
         "readAcl",
         "writeAcl",
         "bind",
@@ -74,6 +76,8 @@ public class Privilege {
     String readProperties;
     @XmlElement(name = "write-properties")
     String writeProperties;
+    @XmlElement(name = "write-content")
+    String writeContent;
     @XmlElement(name = "read-acl")
     String readAcl;
     @XmlElement(name = "write-acl")
@@ -171,6 +175,24 @@ public class Privilege {
      */
     public void setWriteProperties(String value) {
         this.writeProperties = value;
+    }
+
+    /**
+     * Gets the value of the writeContent property.
+     * @return
+     *         possible object is {@link String }
+     */
+    public String getWriteContent() {
+        return writeContent;
+    }
+
+    /**
+     * Sets the value of the writeContent property.
+     * @param value
+     *        allowed object is {@link String }
+     */
+    public void setWriteContent(String value) {
+        this.writeContent = value;
     }
 
     /**

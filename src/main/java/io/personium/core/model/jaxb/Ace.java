@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  * D: JAXB object corresponding to ace tag.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(namespace = "DAV:", name = "ace", propOrder = {"principal", "grant" })
+@XmlType(namespace = "DAV:", name = "ace", propOrder = {"principal", "grant", "inherited"})
 public final class Ace {
     /**
      * Principal.
@@ -40,6 +40,11 @@ public final class Ace {
      */
     @XmlElement(namespace = "DAV:", name = "grant")
     Grant grant;
+    /**
+     * Grant.
+     */
+    @XmlElement(namespace = "DAV:", name = "inherited")
+    Inherited inherited;
 
     /**
      * @return Principal/href
@@ -86,4 +91,29 @@ public final class Ace {
         return ret;
     }
 
+    /**
+     * get inherited href.
+     * @return inherited href
+     */
+    public String getInheritedHref() {
+        if (this.inherited == null) {
+            return null;
+        }
+        return this.inherited.href;
+    }
+
+    /**
+     * set inherited href.
+     * @param href href
+     */
+    public void setInheritedHref(String href) {
+        if (href != null) {
+            if (this.inherited == null) {
+                this.inherited = new Inherited();
+            }
+            this.inherited.setHref(href);
+        } else {
+            this.inherited = null;
+        }
+    }
 }

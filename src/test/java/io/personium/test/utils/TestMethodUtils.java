@@ -17,6 +17,7 @@
 package io.personium.test.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -49,6 +50,21 @@ public class TestMethodUtils {
      */
     public static void aclResponseTest(Element doc, String resorce,
             List<Map<String, List<String>>> list, int responseIndex, String baseUrl, String requireSchamaAuthz) {
+        aclResponseTest(doc, resorce, list, null, responseIndex, baseUrl, requireSchamaAuthz);
+    }
+
+    /**
+     * ACL後のPROPFINDの返却値のチェック関数.
+     * @param doc 解析するXMLオブジェクト
+     * @param resorce aclを設定したリソースパス
+     * @param list 設定したACLのMap
+     * @param inheritedHrefList ace inherit href. If it's null it is check omitted.
+     * @param responseIndex responseタグ要素数
+     * @param baseUrl ACLのbase:xml
+     * @param requireSchamaAuthz チェックするrequireSchamaAuthzのレベル。nullだとチェック省略
+     */
+    public static void aclResponseTest(Element doc, String resorce, List<Map<String, List<String>>> list,
+            List<String> inheritedHrefList, int responseIndex, String baseUrl, String requireSchamaAuthz) {
         NodeList response = doc.getElementsByTagName("response");
         assertEquals(responseIndex, response.getLength());
         Element node = (Element) response.item(0);
@@ -94,6 +110,16 @@ public class TestMethodUtils {
                     for (int grantIndex = 0; grantIndex < grantList.size(); grantIndex++) {
                         // grantの確認
                         assertEquals(grantList.get(grantIndex), ace.getGrantedPrivilegeList().get(grantIndex));
+                    }
+                }
+                if (inheritedHrefList != null) {
+                    // check inherited href.
+                    assertEquals(aceList.size(), inheritedHrefList.size());
+                    String inheritedHref = inheritedHrefList.get(aceIndex);
+                    if (inheritedHref != null) {
+                        assertEquals(inheritedHref, ace.getInheritedHref());
+                    } else {
+                        assertNull(ace.getInheritedHref());
                     }
                 }
             }

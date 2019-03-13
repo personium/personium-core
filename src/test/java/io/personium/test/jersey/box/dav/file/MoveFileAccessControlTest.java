@@ -16,12 +16,15 @@
  */
 package io.personium.test.jersey.box.dav.file;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
 
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
@@ -41,6 +44,8 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.box.acl.jaxb.Acl;
 import io.personium.test.jersey.cell.auth.AuthTestCommon;
@@ -71,16 +76,22 @@ public class MoveFileAccessControlTest extends PersoniumTest {
     private static final String MASTER_TOKEN = AbstractCase.MASTER_TOKEN_NAME;
 
     private static final String ACCOUNT_READ = "read-account";
+    private static final String ACCOUNT_BIND = "bind-account";
+    private static final String ACCOUNT_UNBIND = "unbind-account";
     private static final String ACCOUNT_WRITE = "write-account";
     private static final String ACCOUNT_NO_PRIVILEGE = "no-privilege-account";
     private static final String ACCOUNT_ALL_PRIVILEGE = "all-account";
     private static final String ACCOUNT_COMB_PRIVILEGE = "comb-account";
+    private static final String ACCOUNT_BIND_AND_UNBIND_PRIVILEGE = "bind-and-unbind-account";
 
     private static final String ROLE_READ = "role-read";
+    private static final String ROLE_BIND = "role-bind";
+    private static final String ROLE_UNBIND = "role-unbind";
     private static final String ROLE_WRITE = "role-write";
     private static final String ROLE_NO_PRIVILEGE = "role-no-privilege";
     private static final String ROLE_ALL_PRIVILEGE = "role-all-privilege";
     private static final String ROLE_COMB_PRIVILEGE = "role-comb-privilege";
+    private static final String ROLE_BIND_AND_UNBIND_PREVILEGE = "role-bind-and-unbind-privilege";
 
     /**
      * コンストラクタ.
@@ -188,6 +199,63 @@ public class MoveFileAccessControlTest extends PersoniumTest {
 
         } finally {
             DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * If you move a file with an account that has bind permission to the move source collection, 403 error occurs.
+     * @throws JAXBException Advance preparation
+     */
+    @Test
+    public void MOVE_source_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, FILE_NAME);
+
+        try {
+            // Advance preparation
+            setDefaultAcl(SRC_COL_NAME);
+            setPrincipalAllAcl(DST_COL_NAME);
+
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // bind authority
+            token = getToken(ACCOUNT_BIND);
+            TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination,
+                    HttpStatus.SC_FORBIDDEN);
+            PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * If you move the file with an account that has unbind permission to the move source Collection, it will be 201.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_source_has_unbind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, FILE_NAME);
+
+        try {
+            // Advance preparation
+            setDefaultAcl(SRC_COL_NAME);
+            setPrincipalAllAcl(DST_COL_NAME);
+
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // unbind authority
+            token = getToken(ACCOUNT_UNBIND);
+            DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_CREATED);
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, DST_COL_NAME + "/" + FILE_NAME);
         }
     }
 
@@ -322,6 +390,63 @@ public class MoveFileAccessControlTest extends PersoniumTest {
 
             // read権限→403
             token = getToken(ACCOUNT_READ);
+            TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination,
+                    HttpStatus.SC_FORBIDDEN);
+            PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * If you move the file with an account that has bind permission to the move destination Collection, it will be 201.
+     * @throws JAXBException Advance preparation
+     */
+    @Test
+    public void MOVE_destination_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, FILE_NAME);
+
+        try {
+            // Advance preparation
+            setPrincipalAllAcl(SRC_COL_NAME);
+            setDefaultAcl(DST_COL_NAME);
+
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // bind authority
+            token = getToken(ACCOUNT_BIND);
+            DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_CREATED);
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, DST_COL_NAME + "/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * If you move a file with an account that has unbind permission to the move destination Collection, 403 error occurs.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_destination_has_unbind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, FILE_NAME);
+
+        try {
+            // Advance preparation
+            setPrincipalAllAcl(SRC_COL_NAME);
+            setDefaultAcl(DST_COL_NAME);
+
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // unbind authority
+            token = getToken(ACCOUNT_UNBIND);
             TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination,
                     HttpStatus.SC_FORBIDDEN);
             PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
@@ -576,6 +701,154 @@ public class MoveFileAccessControlTest extends PersoniumTest {
     }
 
     /**
+     * An error 403 results if the file is overwritten with an account that has bind permission for the move destination Collection.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MoveOverwrite_destination_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destFilePath = String.format("%s/%s/%s", BOX_NAME, DST_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, FILE_NAME);
+
+        try {
+            // Advance preparation
+            setPrincipalAllAcl(SRC_COL_NAME);
+            setDefaultAcl(DST_COL_NAME);
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, destFilePath, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // bind authority
+            token = getToken(ACCOUNT_BIND);
+
+            String url = UrlUtils.box(CELL_NAME, BOX_NAME, SRC_COL_NAME, FILE_NAME);
+            PersoniumRequest req = PersoniumRequest.move(url);
+            req.header(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+            req.header(HttpHeaders.DESTINATION, destination);
+            req.header(HttpHeaders.OVERWRITE, "T");
+            PersoniumResponse response = AbstractCase.request(req);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/" + FILE_NAME);
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, DST_COL_NAME + "/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * An error 403 results if the file MOVE is overwritten with an account that has unbind permission on the move destination Collection.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MoveOverwrite_destination_has_unbind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destFilePath = String.format("%s/%s/%s", BOX_NAME, DST_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, FILE_NAME);
+
+        try {
+            // Advance preparation
+            setPrincipalAllAcl(SRC_COL_NAME);
+            setDefaultAcl(DST_COL_NAME);
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, destFilePath, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // unbind authority
+            token = getToken(ACCOUNT_UNBIND);
+
+            String url = UrlUtils.box(CELL_NAME, BOX_NAME, SRC_COL_NAME, FILE_NAME);
+            PersoniumRequest req = PersoniumRequest.move(url);
+            req.header(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+            req.header(HttpHeaders.DESTINATION, destination);
+            req.header(HttpHeaders.OVERWRITE, "T");
+            PersoniumResponse response = AbstractCase.request(req);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/" + FILE_NAME);
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, DST_COL_NAME + "/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * If you overwrite the file by MOVE with an account that has both bind and unbind permissions for the move destination Collection, it will be 204.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MoveOverwrite_destination_has_bind_and_unbind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destFilePath = String.format("%s/%s/%s", BOX_NAME, DST_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, FILE_NAME);
+
+        try {
+            // Advance preparation
+            setPrincipalAllAcl(SRC_COL_NAME);
+            setDefaultAcl(DST_COL_NAME);
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, destFilePath, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // bind and unbind authority
+            token = getToken(ACCOUNT_BIND_AND_UNBIND_PRIVILEGE);
+
+            String url = UrlUtils.box(CELL_NAME, BOX_NAME, SRC_COL_NAME, FILE_NAME);
+            PersoniumRequest req = PersoniumRequest.move(url);
+            req.header(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+            req.header(HttpHeaders.DESTINATION, destination);
+            req.header(HttpHeaders.OVERWRITE, "T");
+            PersoniumResponse response = AbstractCase.request(req);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/" + FILE_NAME);
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, DST_COL_NAME + "/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * It becomes 204 when it overwrites with MOVE of the file with the account which has write authority to move destination Collection.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MoveOverwrite_destination_has_write_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destFilePath = String.format("%s/%s/%s", BOX_NAME, DST_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, FILE_NAME);
+
+        try {
+            // Advance preparation
+            setPrincipalAllAcl(SRC_COL_NAME);
+            setDefaultAcl(DST_COL_NAME);
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, destFilePath, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // write authority
+            token = getToken(ACCOUNT_WRITE);
+
+            String url = UrlUtils.box(CELL_NAME, BOX_NAME, SRC_COL_NAME, FILE_NAME);
+            PersoniumRequest req = PersoniumRequest.move(url);
+            req.header(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+            req.header(HttpHeaders.DESTINATION, destination);
+            req.header(HttpHeaders.OVERWRITE, "T");
+            PersoniumResponse response = AbstractCase.request(req);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/" + FILE_NAME);
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, DST_COL_NAME + "/" + FILE_NAME);
+        }
+    }
+
+    /**
      * Accountの自分セルローカルトークンを取得する.
      * @param account Account名
      * @return トークン
@@ -598,19 +871,30 @@ public class MoveFileAccessControlTest extends PersoniumTest {
 
         // Role作成
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_READ, HttpStatus.SC_CREATED);
+        RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_BIND, HttpStatus.SC_CREATED);
+        RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_UNBIND, HttpStatus.SC_CREATED);
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_WRITE, HttpStatus.SC_CREATED);
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_NO_PRIVILEGE, HttpStatus.SC_CREATED);
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_ALL_PRIVILEGE, HttpStatus.SC_CREATED);
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_COMB_PRIVILEGE, HttpStatus.SC_CREATED);
+        RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_BIND_AND_UNBIND_PREVILEGE, HttpStatus.SC_CREATED);
 
         // Account作成
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_READ, PASSWORD, HttpStatus.SC_CREATED);
+        AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_BIND, PASSWORD, HttpStatus.SC_CREATED);
+        AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_UNBIND, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_WRITE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_NO_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_ALL_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_COMB_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
+        AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_BIND_AND_UNBIND_PRIVILEGE, PASSWORD,
+                HttpStatus.SC_CREATED);
         LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_READ, null,
                 Role.EDM_TYPE_NAME, ROLE_READ, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_BIND, null,
+                Role.EDM_TYPE_NAME, ROLE_BIND, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_UNBIND, null,
+                Role.EDM_TYPE_NAME, ROLE_UNBIND, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
         LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_WRITE, null,
                 Role.EDM_TYPE_NAME, ROLE_WRITE, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
         LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_NO_PRIVILEGE, null,
@@ -619,6 +903,8 @@ public class MoveFileAccessControlTest extends PersoniumTest {
                 Role.EDM_TYPE_NAME, ROLE_ALL_PRIVILEGE, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
         LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_COMB_PRIVILEGE, null,
                 Role.EDM_TYPE_NAME, ROLE_COMB_PRIVILEGE, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_BIND_AND_UNBIND_PRIVILEGE, null,
+                Role.EDM_TYPE_NAME, ROLE_BIND_AND_UNBIND_PREVILEGE, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
     }
 
     /**
@@ -629,12 +915,18 @@ public class MoveFileAccessControlTest extends PersoniumTest {
     private void setDefaultAcl(String collection) throws JAXBException {
         Acl acl = new Acl();
         acl.getAce().add(DavResourceUtils.createAce(false, ROLE_READ, "read"));
+        acl.getAce().add(DavResourceUtils.createAce(false, ROLE_BIND, "bind"));
+        acl.getAce().add(DavResourceUtils.createAce(false, ROLE_UNBIND, "unbind"));
         acl.getAce().add(DavResourceUtils.createAce(false, ROLE_WRITE, "write"));
         acl.getAce().add(DavResourceUtils.createAce(false, ROLE_ALL_PRIVILEGE, "all"));
         List<String> privileges = new ArrayList<String>();
         privileges.add("read");
         privileges.add("write");
         acl.getAce().add(DavResourceUtils.createAce(false, ROLE_COMB_PRIVILEGE, privileges));
+        privileges = new ArrayList<String>();
+        privileges.add("bind");
+        privileges.add("unbind");
+        acl.getAce().add(DavResourceUtils.createAce(false, ROLE_BIND_AND_UNBIND_PREVILEGE, privileges));
         acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.DEFAULT_BOX_NAME));
 
         DavResourceUtils.setAcl(MASTER_TOKEN, CELL_NAME, BOX_NAME, collection, acl, HttpStatus.SC_OK);

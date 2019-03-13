@@ -214,6 +214,26 @@ public class FileAccessControlTest extends PersoniumTest {
     }
 
     /**
+     * Make the file 201 with an account that has bind authority to the parent collection.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void PUT_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s", PARENT_COL_NAME, TARGET_FILE_NAME + "new");
+
+        // ACL設定
+        setAcl(PARENT_COL_NAME, ROLE, "bind");
+
+        // アクセストークン取得
+        token = getToken(ACCOUNT);
+
+        // リクエスト実行
+        DavResourceUtils.createWebDavFile(token, CELL_NAME, BOX_NAME + "/" + path, "testFileBody",
+                MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
+    }
+
+    /**
      * 親コレクションに権限がない_かつ_対象ファイルに権限がないアカウントでファイルの更新を行い403になること.
      * @throws JAXBException ACLのパース失敗
      */
@@ -233,6 +253,48 @@ public class FileAccessControlTest extends PersoniumTest {
     }
 
     /**
+     * Update the file with an account that has bind permission for the target file and become 403.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void PUT_update_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s", PARENT_COL_NAME, TARGET_FILE_NAME);
+
+        // set ACL
+        setAcl(path, ROLE, "bind");
+
+        // get token
+        token = getToken(ACCOUNT);
+
+        // execute
+        TResponse res = DavResourceUtils.createWebDavFile(token, CELL_NAME, BOX_NAME + "/" + path, "testFileBody",
+                MediaType.TEXT_PLAIN, HttpStatus.SC_FORBIDDEN);
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
+    }
+
+    /**
+     * The file can be updated with an account that has write-content permission for the target file.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void PUT_update_has_writeContent_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s", PARENT_COL_NAME, TARGET_FILE_NAME);
+
+        // set ACL
+        setAcl(path, ROLE, "write-content");
+
+        // get token
+        token = getToken(ACCOUNT);
+
+        // execute
+        DavResourceUtils.createWebDavFile(token, CELL_NAME, BOX_NAME + "/" + path, "testFileBody",
+                MediaType.TEXT_PLAIN, HttpStatus.SC_NO_CONTENT);
+    }
+
+    /**
      * 親コレクションに権限がない_かつ_対象ファイルにwrite権限があるアカウントでファイルの更新ができること.
      * @throws JAXBException ACLのパース失敗
      */
@@ -248,6 +310,26 @@ public class FileAccessControlTest extends PersoniumTest {
         token = getToken(ACCOUNT);
 
         // リクエスト実行
+        DavResourceUtils.createWebDavFile(token, CELL_NAME, BOX_NAME + "/" + path, "testFileBody",
+                MediaType.TEXT_PLAIN, HttpStatus.SC_NO_CONTENT);
+    }
+
+    /**
+     * Can update files with an account that has write-content permission in the parent collection.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void PUT_update_parent_has_writeContent_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s", PARENT_COL_NAME, TARGET_FILE_NAME);
+
+        // set ACL
+        setAcl(PARENT_COL_NAME, ROLE, "write-content");
+
+        // get token
+        token = getToken(ACCOUNT);
+
+        // execute
         DavResourceUtils.createWebDavFile(token, CELL_NAME, BOX_NAME + "/" + path, "testFileBody",
                 MediaType.TEXT_PLAIN, HttpStatus.SC_NO_CONTENT);
     }

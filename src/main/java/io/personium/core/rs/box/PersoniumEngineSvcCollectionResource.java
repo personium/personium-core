@@ -157,7 +157,7 @@ public class PersoniumEngineSvcCollectionResource {
         boolean recursive = Boolean.valueOf(recursiveHeader);
         // Check acl.(Parent acl check)
         // Since DavCollectionResource always has a parent, result of this.davRsCmp.getParent() will never be null.
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
 
         if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
             throw PersoniumCoreException.Dav.HAS_CHILDREN;
@@ -190,8 +190,7 @@ public class PersoniumEngineSvcCollectionResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
-        this.davRsCmp.checkAccessContext(
-                this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
         Response response = this.davRsCmp.doProppatch(requestBodyXml);
 
         // post event to EventBus
@@ -569,7 +568,7 @@ public class PersoniumEngineSvcCollectionResource {
     public Response move(
             @Context HttpHeaders headers) {
         //Access control to move source (check parent's authority)
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }
 }

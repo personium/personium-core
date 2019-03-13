@@ -66,6 +66,7 @@ import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
+import io.personium.core.model.jaxb.Ace;
 import io.personium.core.model.jaxb.Acl;
 import io.personium.core.model.jaxb.ObjectIo;
 import io.personium.core.rs.box.DavCollectionResource;
@@ -363,19 +364,30 @@ public class DavRsCmp {
     /**
      * merging with ancestorial ACL, and check if it is accessible.
      * @param ac AccessContext
-     * @param privilege ACL Privilege (read/write)
+     * @param privilege ACL Privilege (read/write/bind/unbind)
      * @return boolean
      */
     public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
+        return hasPrivilege(ac, privilege, privilege);
+    }
+
+    /**
+     * merging with ancestorial ACL, and check if it is accessible.
+     * @param ac AccessContext
+     * @param privilege ACL Privilege (read/write/bind/unbind) If it is null, it does not refer to the current's authority.
+     * @param parentPrivilege parent ACL Privilege (read/write/bind/unbind) If it is null, it does not refer to the parent's authority.
+     * @return boolean
+     */
+    public boolean hasPrivilege(AccessContext ac, Privilege privilege, Privilege parentPrivilege) {
         // skip ACL check if davCmp does not exist.
         // (nonexistent resource is specified)
-        if (this.davCmp != null
+        if (privilege != null && this.davCmp != null
                 && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege, this.getCell().getUrl())) {
             return true;
         }
 
         // check parent (recursively)
-        if (this.parent != null && this.parent.hasPrivilege(ac, privilege)) {
+        if (parentPrivilege != null && this.parent != null && this.parent.hasPrivilege(ac, parentPrivilege)) {
             return true;
         }
 
@@ -409,6 +421,17 @@ public class DavRsCmp {
      * @param privilege Privilege to check if it is given
      */
     public void checkAccessContext(final AccessContext ac, Privilege privilege) {
+        checkAccessContext(ac, privilege, privilege);
+    }
+
+    /**
+     * Check Access Control.
+     * Exceptions are thrown if it does not have the privilege
+     * @param ac AccessContext
+     * @param privilege Privilege to check if it is given
+     * @param parentPrivilege parent ACL Privilege
+     */
+    public void checkAccessContext(final AccessContext ac, Privilege privilege, Privilege parentPrivilege) {
         // if accessed with valid UnitUserToken then fine.
         if (ac.isUnitUserToken(privilege)) {
             return;
@@ -423,7 +446,7 @@ public class DavRsCmp {
         ac.updateBasicAuthenticationStateForResource(this.getBox());
 
         // check Access Privilege
-        if (!this.hasPrivilege(ac, privilege)) {
+        if (!this.hasPrivilege(ac, privilege, parentPrivilege)) {
             // check token validity
             // check here because access should be allowed when Privilege "all" is configured
             // even if the token is invalid
@@ -602,13 +625,22 @@ public class DavRsCmp {
         Acl acl = dCmp.getAcl();
         if (isAclRead && acl != null) {
 
+            Acl outputAcl = new Acl();
+            outputAcl.setBase(acl.getBase());
+            outputAcl.setRequireSchemaAuthz(acl.getRequireSchemaAuthz());
+
+            // Get ace list including parents.
+            List<Ace> aces = getAces(dCmp, true);
+            outputAcl.getAceList().addAll(aces);
+
+            // Convert to Element.
             Document aclDoc = null;
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             try {
                 aclDoc = dbf.newDocumentBuilder().newDocument();
-                ObjectIo.marshal(acl, aclDoc);
+                ObjectIo.marshal(outputAcl, aclDoc);
             } catch (Exception e) {
                 throw new WebApplicationException(e);
             }
@@ -655,6 +687,31 @@ public class DavRsCmp {
         }
         Element e = doc.getDocumentElement();
         return e;
+    }
+
+    /**
+     * Get ACEs.
+     * @param dCmp JaxRS Resources handling DAV
+     * @param isCurrent is current
+     * @return Ace list
+     */
+    private static List<Ace> getAces(final DavCmp dCmp, boolean isCurrent) {
+        List<Ace> aces = new ArrayList<>();
+        Acl acl = dCmp.getAcl();
+        if (acl != null) {
+            if (isCurrent) {
+                aces.addAll(acl.getAceList());
+            } else {
+                for (Ace parentAce : acl.getAceList()) {
+                    parentAce.setInheritedHref(dCmp.getUrl());
+                    aces.add(parentAce);
+                }
+            }
+        }
+        if (dCmp.getParent() != null) {
+            aces.addAll(getAces(dCmp.getParent(), false));
+        }
+        return aces;
     }
 
     /**

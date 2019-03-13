@@ -75,7 +75,7 @@ public class DavFileResource {
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
             final InputStream inputStream) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_CONTENT);
 
         ResponseBuilder rb = this.davRsCmp.getDavCmp().putForUpdate(contentType, inputStream, ifMatch);
         Response res = rb.build();
@@ -141,7 +141,7 @@ public class DavFileResource {
     public Response delete(@HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
         // Access Control
         //The result of this.davRsCmp.getParent () is never null since DavFileResource always has a parent (the top is Box)
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
 
         ResponseBuilder rb = this.davRsCmp.getDavCmp().delete(ifMatch, false);
         Response res = rb.build();
@@ -172,8 +172,7 @@ public class DavFileResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         // Access Control
-        this.davRsCmp.checkAccessContext(
-                this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
         Response response = this.davRsCmp.doProppatch(requestBodyXml);
 
         // post event to EventBus
@@ -271,7 +270,8 @@ public class DavFileResource {
             @Context HttpHeaders headers) {
         // Access Control against the move source
         //The result of this.davRsCmp.getParent () is never null since DavFileResource always has a parent (the top is Box)
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }
 
