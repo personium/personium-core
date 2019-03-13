@@ -515,7 +515,7 @@ public class BarInstallTest extends PersoniumTest {
             assertEquals(expected, location);
 
             BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.COMPLETED);
-            checkRegistData(); // TODO ★
+            checkRegistData();
         } finally {
             deleteAllData(reqCell, reqPath, user, testCell, odataColName);
         }

@@ -229,9 +229,8 @@ public class ServiceSourceAccessControlTest extends PersoniumTest {
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
-    // TODO ★ファイル更新について、自身と親の権限による可否の組み合わせを再度確認する　ここから
     /**
-     * 親コレクションにwrite権限があるアカウントでファイルの更新を行い403になること.
+     * 親コレクションにwrite権限があるアカウントでファイルの更新を行い201となること.
      * @throws JAXBException ACLのパース失敗
      */
     @Test
@@ -247,9 +246,8 @@ public class ServiceSourceAccessControlTest extends PersoniumTest {
 
         // リクエスト実行
         DavResourceUtils.createWebDavFile(token, CELL_NAME, BOX_NAME + "/" + path, "testFileBody",
-                MediaType.TEXT_PLAIN, HttpStatus.SC_FORBIDDEN);
+                MediaType.TEXT_PLAIN, HttpStatus.SC_NO_CONTENT);
     }
-    // TODO ★ファイル更新について、自身と親の権限による可否の組み合わせを再度確認する　ここまで
 
     /**
      * 親コレクションに権限がないアカウントでファイルの取得を行い403になること.
