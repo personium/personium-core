@@ -119,6 +119,13 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
     }
 
     /**
+     * @return URL string of this Cell node.
+     */
+    public String getUrl() {
+        return this.cell.getUrl();
+    }
+
+    /**
      * checks if this cmp is Cell level.
      * @return true if Cell level
      */
