@@ -79,7 +79,7 @@ public abstract class Privilege {
     /**
      * Returns whether this Privilege contains the Privilege specified by its argument.
      * @param priv Targets Privilege
-     * True if it contains the Privilege specified by the @return argument
+     * @return True if it contains the Privilege specified by the argument
      */
     public boolean includes(final Privilege priv) {
         if (this == priv) {

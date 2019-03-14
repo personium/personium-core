@@ -101,7 +101,7 @@ public abstract class ODataResource extends ODataCtlResource {
 
     /**
      * Obtain Auth Scheme that can be used for authentication.
-     * Autret Scheme that can be used for @return authentication
+     * @return Autret Scheme that can be used for authentication
      */
     public abstract AcceptableAuthScheme getAcceptableAuthScheme();
 
@@ -327,20 +327,20 @@ public abstract class ODataResource extends ODataCtlResource {
     /**
      * Returns the privileges required for reading from the level of the class to be processed and the entity set name.
      * @param entitySetNameStr target entity set
-     * Privileges required for @return processing
+     * @return Privileges required for processing
      */
     public abstract Privilege getNecessaryReadPrivilege(String entitySetNameStr);
 
     /**
      * Returns the authority required for writing from the level of the class to be processed and the entity set name.
      * @param entitySetNameStr target entity set
-     * Privileges required for @return processing
+     * @return Privileges required for processing
      */
     public abstract Privilege getNecessaryWritePrivilege(String entitySetNameStr);
 
     /**
      * Returns the necessary authority for OPTIONS from the level of the class to be processed and the entity set name.
-     * Privileges required for @return processing
+     * @return Privileges required for processing
      */
     public abstract Privilege getNecessaryOptionsPrivilege();
 

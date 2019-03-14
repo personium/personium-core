@@ -219,7 +219,7 @@ public class PersoniumExpressionParser {
 
     /**
      * Parse of filter.
-     * Value of @param value filter
+     * @param value Value of filter
      * @return Perth result
      */
     public static CommonExpression parse(String value) {

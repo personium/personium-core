@@ -122,7 +122,7 @@ public class RangeHeaderHandler {
 
     /**
      * Returns the number of byte-range-specs specified in the Range header.
-     * Number of @return Ranges
+     * @return Number of Ranges
      */
     public int getByteRangeSpecCount() {
         return this.byteRangeSpecList.size();

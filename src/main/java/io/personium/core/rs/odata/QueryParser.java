@@ -46,7 +46,7 @@ public class QueryParser {
     /**
      * skip Parse the query and return the value.
      * @param query query string ("$ skip = VALUE")
-     * The value specified in the @return query
+     * @return The value specified in the query
      */
     public static Integer parseSkipQuery(String query) {
         Integer skip = null;
@@ -65,7 +65,7 @@ public class QueryParser {
     /**
      * top Parse the query and return the value.
      * @param query query string ("$ top = VALUE")
-     * The value specified in the @return query
+     * @return The value specified in the query
      */
     public static Integer parseTopQuery(String query) {
         Integer top = null;
@@ -84,7 +84,7 @@ public class QueryParser {
     /**
      * Parse the orderby query and return the value.
      * @param query query string ("$ orderby = VALUE")
-     * The value specified in the @return query
+     * @return The value specified in the query
      */
     public static List<OrderByExpression> parseOderByQuery(String query) {
         List<OrderByExpression> orderBy = null;
@@ -102,7 +102,7 @@ public class QueryParser {
     /**
      * Parse the skiptoken query and return the value.
      * @param query Query string ("$ skiptoken = VALUE")
-     * The value specified in the @return query
+     * @return The value specified in the query
      */
     public static String parseSkipTokenQuery(String query) {
         String skipToken = null;
@@ -117,7 +117,7 @@ public class QueryParser {
     /**
      * Inlinecount Parse the query and return the value.
      * @param query query string ("$ inlinecount = VALUE")
-     * The value specified in the @return query
+     * @return The value specified in the query
      */
     public static InlineCount parseInlinecountQuery(String query) {
         InlineCount inlineCount = null;
@@ -137,7 +137,7 @@ public class QueryParser {
     /**
      * expand Parse the query and return the value.
      * @param query query string ("$ expand = VALUE")
-     * The value specified in the @return query
+     * @return The value specified in the query
      */
     public static List<EntitySimpleProperty> parseExpandQuery(String query) {
         List<EntitySimpleProperty> expand = null;
@@ -156,7 +156,7 @@ public class QueryParser {
     /**
      * Parse the select query and return the value.
      * @param query query string ("$ select = VALUE")
-     * The value specified in the @return query
+     * @return The value specified in the query
      */
     public static List<EntitySimpleProperty> parseSelectQuery(String query) {
         List<EntitySimpleProperty> select = null;
@@ -176,7 +176,7 @@ public class QueryParser {
     /**
      * filter Parse the query and return the value.
      * @param query query string ("$ filter = VALUE")
-     * The value specified in the @return query
+     * @return The value specified in the query
      */
     public static BoolCommonExpression parseFilterQuery(String query) {
         BoolCommonExpression filter = null;
