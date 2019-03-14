@@ -536,10 +536,39 @@ public class AuthTestCommon extends PersoniumTest {
         DavResourceUtils.setProppatch(tokens.get(WRITE_PROP), HttpStatus.SC_MULTI_STATUS, path);
         DavResourceUtils.setProppatch(tokens.get(READ_PROP), HttpStatus.SC_FORBIDDEN, path);
 
-        // PUT
+        // PUT (no target exists)
         path = "setdavcol/dav1.txt";
+        DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
+                path, -1, TEST_BOX);
         DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(WRITE), "box/dav-put.txt",
                 fileBody, TEST_BOX, path, HttpStatus.SC_CREATED);
+        DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
+                path, HttpStatus.SC_NO_CONTENT, TEST_BOX);
+        DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(NO_PRIVILEGE), "box/dav-put.txt",
+                fileBody, TEST_BOX, path, HttpStatus.SC_FORBIDDEN);
+        DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(READ), "box/dav-put.txt",
+                fileBody, TEST_BOX, path, HttpStatus.SC_FORBIDDEN);
+        DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(WRITE), "box/dav-put.txt",
+                fileBody, TEST_BOX, path, HttpStatus.SC_CREATED);
+        DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
+                path, HttpStatus.SC_NO_CONTENT, TEST_BOX);
+        DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(READ_WRITE), "box/dav-put.txt",
+                fileBody, TEST_BOX, path, HttpStatus.SC_CREATED);
+        DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
+                path, HttpStatus.SC_NO_CONTENT, TEST_BOX);
+        DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(READ_ACL), "box/dav-put.txt",
+                fileBody, TEST_BOX, path, HttpStatus.SC_FORBIDDEN);
+        DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(WRITE_ACL), "box/dav-put.txt",
+                fileBody, TEST_BOX, path, HttpStatus.SC_FORBIDDEN);
+        DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(WRITE_PROP), "box/dav-put.txt",
+                fileBody, TEST_BOX, path, HttpStatus.SC_FORBIDDEN);
+        DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(READ_PROP), "box/dav-put.txt",
+                fileBody, TEST_BOX, path, HttpStatus.SC_FORBIDDEN);
+        // PUT (target exists)
+        DavResourceUtils.createWebDavFile(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "box/dav-put.txt",
+                fileBody, TEST_BOX, path, HttpStatus.SC_CREATED);
+        DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(WRITE), "box/dav-put.txt",
+                fileBody, TEST_BOX, path, HttpStatus.SC_NO_CONTENT);
         DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(NO_PRIVILEGE), "box/dav-put.txt",
                 fileBody, TEST_BOX, path, HttpStatus.SC_FORBIDDEN);
         DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(READ), "box/dav-put.txt",
@@ -556,11 +585,7 @@ public class AuthTestCommon extends PersoniumTest {
                 fileBody, TEST_BOX, path, HttpStatus.SC_FORBIDDEN);
         DavResourceUtils.createWebDavFile(TEST_CELL1, tokens.get(READ_PROP), "box/dav-put.txt",
                 fileBody, TEST_BOX, path, HttpStatus.SC_FORBIDDEN);
-        DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
-                path, HttpStatus.SC_NO_CONTENT, TEST_BOX);
         // DELETE
-        DavResourceUtils.createWebDavFile(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "box/dav-put.txt",
-                fileBody, TEST_BOX, path, HttpStatus.SC_CREATED);
         ResourceUtils.delete(DEL_COL_FILE, TEST_CELL1, tokens.get(NO_PRIVILEGE),
                 HttpStatus.SC_FORBIDDEN, path);
         ResourceUtils.delete(DEL_COL_FILE, TEST_CELL1, tokens.get(READ),
@@ -666,18 +691,8 @@ public class AuthTestCommon extends PersoniumTest {
         DavResourceUtils.setProppatch(tokens.get(WRITE_ACL), HttpStatus.SC_FORBIDDEN, path);
         DavResourceUtils.setProppatch(tokens.get(WRITE_PROP), HttpStatus.SC_MULTI_STATUS, path);
         DavResourceUtils.setProppatch(tokens.get(READ_PROP), HttpStatus.SC_FORBIDDEN, path);
-        // DELETE
-        ResourceUtils.delete(DEL_COL_FILE, TEST_CELL1, tokens.get(NO_PRIVILEGE), HttpStatus.SC_FORBIDDEN, path);
-        ResourceUtils.delete(DEL_COL_FILE, TEST_CELL1, tokens.get(READ), HttpStatus.SC_FORBIDDEN, path);
-        ResourceUtils.delete(DEL_COL_FILE, TEST_CELL1, tokens.get(WRITE), HttpStatus.SC_NO_CONTENT, path);
-        createSvcCollection(path);
-        ResourceUtils.delete(DEL_COL_FILE, TEST_CELL1, tokens.get(READ_WRITE), HttpStatus.SC_NO_CONTENT, path);
-        createSvcCollection(path);
-        ResourceUtils.delete(DEL_COL_FILE, TEST_CELL1, tokens.get(READ_ACL), HttpStatus.SC_FORBIDDEN, path);
-        ResourceUtils.delete(DEL_COL_FILE, TEST_CELL1, tokens.get(WRITE_ACL), HttpStatus.SC_FORBIDDEN, path);
-        ResourceUtils.delete(DEL_COL_FILE, TEST_CELL1, tokens.get(WRITE_PROP), HttpStatus.SC_FORBIDDEN, path);
-        ResourceUtils.delete(DEL_COL_FILE, TEST_CELL1, tokens.get(READ_PROP), HttpStatus.SC_FORBIDDEN, path);
         // OPTIONS
+        createSvcCollection(path);
         UserDataUtils.options(tokens.get(NO_PRIVILEGE), HttpStatus.SC_FORBIDDEN, "/" + allPath);
         UserDataUtils.options(tokens.get(READ), HttpStatus.SC_OK, "/" + allPath);
         UserDataUtils.options(tokens.get(WRITE), HttpStatus.SC_FORBIDDEN, "/" + allPath);

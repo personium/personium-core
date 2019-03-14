@@ -112,6 +112,26 @@ public class ServiceSourceAccessControlTest extends PersoniumTest {
     }
 
     /**
+     * Delete the file with an account that has unbind permission on the parent collection and become 204.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void DELETE_parent_has_unbind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s", PARENT_COL_NAME, TARGET_SOURCE_FILE_PATH);
+
+        // set ACL
+        setAcl(PARENT_COL_NAME, ROLE, "write");
+
+        // get token
+        token = getToken(ACCOUNT);
+
+        // execute
+        TResponse res = DavResourceUtils.deleteWebDavFile(CELL_NAME, token, BOX_NAME, path);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+
+    /**
      * 親コレクションにwrite権限があるアカウントでファイルのDELETEを行い204となること.
      * @throws JAXBException ACLのパース失敗
      */
@@ -148,6 +168,26 @@ public class ServiceSourceAccessControlTest extends PersoniumTest {
                 MediaType.TEXT_PLAIN, HttpStatus.SC_FORBIDDEN);
         PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
+    }
+
+    /**
+     * Make the file 201 with an account that has bind authority to the parent collection.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void PUT_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s", PARENT_COL_NAME, TARGET_SOURCE_FILE_PATH + "new");
+
+        // set ACL
+        setAcl(PARENT_COL_NAME, ROLE, "bind");
+
+        // get token
+        token = getToken(ACCOUNT);
+
+        // execute
+        DavResourceUtils.createWebDavFile(token, CELL_NAME, BOX_NAME + "/" + path, "testFileBody",
+                MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
     }
 
     /**
@@ -190,11 +230,11 @@ public class ServiceSourceAccessControlTest extends PersoniumTest {
     }
 
     /**
-     * 親コレクションにwrite権限があるアカウントでファイルの更新ができること.
+     * 親コレクションにwrite権限があるアカウントでファイルの更新を行い201となること.
      * @throws JAXBException ACLのパース失敗
      */
     @Test
-    public void 親コレクションにwrite権限があるアカウントでファイルの更新ができること() throws JAXBException {
+    public void 親コレクションにwrite権限があるアカウントでファイルの更新を行い403になること() throws JAXBException {
         String token;
         String path = String.format("%s/%s", PARENT_COL_NAME, TARGET_SOURCE_FILE_PATH);
 
@@ -270,6 +310,32 @@ public class ServiceSourceAccessControlTest extends PersoniumTest {
                 HttpStatus.SC_FORBIDDEN);
         PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
+    }
+
+    /**
+     * Can move files with an account that has unbind permission on the parent collection of the move source.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_source_has_unbind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s", PARENT_COL_NAME, TARGET_SOURCE_FILE_PATH);
+        String dstColName = "dstColName";
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, dstColName, "destFile.js");
+
+        // 移動先コレクション作成
+        DavResourceUtils.createWebDavCollection(MASTER_TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME,
+                dstColName);
+        setAcl(dstColName, ROLE, "write");
+
+        // ACL設定
+        setAcl(PARENT_COL_NAME, ROLE, "unbind");
+
+        // アクセストークン取得
+        token = getToken(ACCOUNT);
+
+        // リクエスト実行
+        DavResourceUtils.moveWebDav(token, CELL_NAME, BOX_NAME + "/" + path, destination, HttpStatus.SC_CREATED);
     }
 
     /**

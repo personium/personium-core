@@ -1175,10 +1175,16 @@ public class CollectionTest extends PersoniumTest {
         Element resourcetype = null;
         for (int c = 0; c < nodeList.getLength(); c++) {
             resourcetype = (Element) nodeList.item(c);
-            NodeList hrefchildren = resourcetype.getElementsByTagName("href");
-            assertNotNull(hrefchildren);
-            assertEquals(1, hrefchildren.getLength());
-            String hrefResult = (hrefchildren.item(0)).getFirstChild().getNodeValue();
+            List<Node> hrefNodeList = new ArrayList<>();
+            NodeList resourceChildren = resourcetype.getChildNodes();
+            assertNotNull(resourceChildren);
+            for (int i = 0; i < resourceChildren.getLength(); i++) {
+                if ("href".equals(resourceChildren.item(i).getNodeName())) {
+                    hrefNodeList.add(resourceChildren.item(i));
+                }
+            }
+            assertEquals(1, hrefNodeList.size());
+            String hrefResult = (hrefNodeList.get(0)).getFirstChild().getNodeValue();
             if (hrefResult.equals(resorce)) {
                 NodeList statuschild = resourcetype.getElementsByTagName("status");
                 assertNotNull(statuschild);
@@ -1433,10 +1439,10 @@ public class CollectionTest extends PersoniumTest {
     }
 
     /**
-     * WebDAV_ACLのテスト.
+     * WebDAV ACL test.
      */
     @Test
-    public final void WebDAV_ACLのテスト() {
+    public final void WebDAV_ACL_test() {
         String path = "aclcol1";
         String testcell = "testcell1";
         String boxName = "box1";
@@ -1444,7 +1450,7 @@ public class CollectionTest extends PersoniumTest {
         try {
             // コレクションの作成
             Http.request("box/mkcol-normal.txt")
-                    .with("cellPath", "testcell1")
+                    .with("cellPath", testcell)
                     .with("path", path)
                     .with("token", TOKEN)
                     .returns()
@@ -1471,25 +1477,219 @@ public class CollectionTest extends PersoniumTest {
             String resorce = UrlUtils.box(testcell, boxName, path);
             Element root2 = tresponseWebDav.bodyAsXml().getDocumentElement();
             List<Map<String, List<String>>> list = new ArrayList<Map<String, List<String>>>();
-            Map<String, List<String>> map = new HashMap<String, List<String>>();
+
             List<String> rolList = new ArrayList<String>();
+            Map<String, List<String>> map = new HashMap<String, List<String>>();
             rolList.add("read");
             rolList.add("write");
             map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
             list.add(map);
 
-            List<String> rolList2 = new ArrayList<String>();
-            Map<String, List<String>> map2 = new HashMap<String, List<String>>();
-            rolList2.add("read");
-            map2.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role2"), rolList2);
-            list.add(map2);
+            rolList = new ArrayList<String>();
+            map = new HashMap<String, List<String>>();
+            rolList.add("read");
+            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role2"), rolList);
+            list.add(map);
 
-            TestMethodUtils.aclResponseTest(root2, resorce, list, 1,
+            list.addAll(createDefaultBoxAceMapList());
+
+            List<String> inheritedHrefList = new ArrayList<>();
+            inheritedHrefList.add(null);
+            inheritedHrefList.add(null);
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+
+            TestMethodUtils.aclResponseTest(root2, resorce, list, inheritedHrefList, 1,
                     UrlUtils.roleResource(testcell, boxName, ""), null);
 
         } finally {
             deleteTest(path, -1);
         }
+    }
+
+    /**
+     * WebDAV ACL parent authority test.
+     */
+    @Test
+    public final void WebDAV_ACL_parent_authority_test() {
+        String topColPath = "aclcol1";
+        String secondColPath = topColPath + "/aclcol2";
+        String currentColPath = secondColPath + "/aclcol3";
+        String testcell = "testcell1";
+        String boxName = "box1";
+
+        try {
+            // コレクションの作成
+            Http.request("box/mkcol-normal.txt")
+                    .with("cellPath", "testcell1")
+                    .with("path", topColPath)
+                    .with("token", TOKEN)
+                    .returns()
+                    .statusCode(HttpStatus.SC_CREATED);
+            Http.request("box/mkcol-normal.txt")
+                    .with("cellPath", "testcell1")
+                    .with("path", secondColPath)
+                    .with("token", TOKEN)
+                    .returns()
+                    .statusCode(HttpStatus.SC_CREATED);
+            Http.request("box/mkcol-normal.txt")
+                    .with("cellPath", "testcell1")
+                    .with("path", currentColPath)
+                    .with("token", TOKEN)
+                    .returns()
+                    .statusCode(HttpStatus.SC_CREATED);
+
+            // ACLの設定
+            Http.request("box/acl.txt")
+                    .with("colname", topColPath)
+                    .with("token", TOKEN)
+                    .with("roleBaseUrl", UrlUtils.roleResource(testcell, null, ""))
+                    .with("level", "none")
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+            Http.request("box/acl-setting.txt")
+                    .with("cellPath", "testcell1")
+                    .with("box", "box1")
+                    .with("colname", secondColPath)
+                    .with("token", TOKEN)
+                    .with("roleBaseUrl", UrlUtils.roleResource(testcell, null, ""))
+                    .with("role", UrlUtils.roleResource(testcell, null, "role1"))
+                    .with("level", "none")
+                    .with("privilege", "<D:write/>")
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            // ACLの確認
+            TResponse tresponseWebDav = Http.request("box/propfind-col-allprop.txt")
+                    .with("path", currentColPath)
+                    .with("depth", "1")
+                    .with("token", TOKEN)
+                    .returns();
+            tresponseWebDav.statusCode(HttpStatus.SC_MULTI_STATUS);
+
+            // PROPFOINDレスポンスボディの確認
+            String resorce = UrlUtils.box(testcell, boxName, currentColPath);
+            Element root2 = tresponseWebDav.bodyAsXml().getDocumentElement();
+            List<Map<String, List<String>>> list = new ArrayList<Map<String, List<String>>>();
+
+            // sub collection ace.
+            Map<String, List<String>> map = new HashMap<String, List<String>>();
+            List<String> rolList = new ArrayList<String>();
+            rolList.add("write");
+            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
+            list.add(map);
+
+            // top collection ace.
+            rolList = new ArrayList<String>();
+            map = new HashMap<String, List<String>>();
+            rolList.add("read");
+            rolList.add("write");
+            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
+            list.add(map);
+
+            rolList = new ArrayList<String>();
+            map = new HashMap<String, List<String>>();
+            rolList.add("read");
+            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role2"), rolList);
+            list.add(map);
+
+            // box ace.
+            list.addAll(createDefaultBoxAceMapList());
+
+            List<String> inheritedHrefList = new ArrayList<>();
+            inheritedHrefList.add(UrlUtils.box(testcell, boxName, secondColPath));
+            inheritedHrefList.add(UrlUtils.box(testcell, boxName, topColPath));
+            inheritedHrefList.add(UrlUtils.box(testcell, boxName, topColPath));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+            inheritedHrefList.add(UrlUtils.boxRoot(testcell, boxName));
+
+            TestMethodUtils.aclResponseTest(root2, resorce, list, inheritedHrefList, 1,
+                    UrlUtils.roleResource(testcell, boxName, ""), null);
+
+        } finally {
+            deleteTest(currentColPath, -1);
+            deleteTest(secondColPath, -1);
+            deleteTest(topColPath, -1);
+        }
+    }
+
+    /**
+     * create default box ace map list.
+     * @return default box ace map list
+     */
+    protected List<Map<String, List<String>>> createDefaultBoxAceMapList() {
+        List<Map<String, List<String>>> list = new ArrayList<Map<String, List<String>>>();
+
+        // role2
+        List<String> rolList = new ArrayList<String>();
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        rolList.add("read");
+        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role2"), rolList);
+        list.add(map);
+
+        // role3
+        rolList = new ArrayList<String>();
+        map = new HashMap<String, List<String>>();
+        rolList.add("write");
+        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role3"), rolList);
+        list.add(map);
+
+        // role4
+        rolList = new ArrayList<String>();
+        map = new HashMap<String, List<String>>();
+        rolList.add("read");
+        rolList.add("write");
+        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role4"), rolList);
+        list.add(map);
+
+        // role5
+        rolList = new ArrayList<String>();
+        map = new HashMap<String, List<String>>();
+        rolList.add("exec");
+        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role5"), rolList);
+        list.add(map);
+
+        // role6
+        rolList = new ArrayList<String>();
+        map = new HashMap<String, List<String>>();
+        rolList.add("read-acl");
+        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role6"), rolList);
+        list.add(map);
+
+        // role7
+        rolList = new ArrayList<String>();
+        map = new HashMap<String, List<String>>();
+        rolList.add("write-acl");
+        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role7"), rolList);
+        list.add(map);
+
+        // role8
+        rolList = new ArrayList<String>();
+        map = new HashMap<String, List<String>>();
+        rolList.add("write-properties");
+        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role8"), rolList);
+        list.add(map);
+
+        // role9
+        rolList = new ArrayList<String>();
+        map = new HashMap<String, List<String>>();
+        rolList.add("read-properties");
+        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role9"), rolList);
+        list.add(map);
+
+        return list;
     }
 
     /**
@@ -1524,6 +1724,8 @@ public class CollectionTest extends PersoniumTest {
             rolList.add("read");
             map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
             list.add(map);
+
+            list.addAll(createDefaultBoxAceMapList());
 
             TestMethodUtils.aclResponseTest(root2, resorce, list, 1,
                     UrlUtils.roleResource(testcell, boxName, ""), null);
@@ -1577,6 +1779,8 @@ public class CollectionTest extends PersoniumTest {
             rolList.add("exec");
             map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
             list.add(map);
+
+            list.addAll(createDefaultBoxAceMapList());
 
             TestMethodUtils.aclResponseTest(root2, resorce, list, 2,
                     UrlUtils.roleResource(testcell, boxName, ""), null);
@@ -1639,6 +1843,8 @@ public class CollectionTest extends PersoniumTest {
             rolList2.add("read");
             map2.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role2"), rolList2);
             list.add(map2);
+
+            list.addAll(createDefaultBoxAceMapList());
 
             TestMethodUtils.aclResponseTest(root2, resorce, list, 1,
                     UrlUtils.roleResource(testcell, boxName, ""), null);

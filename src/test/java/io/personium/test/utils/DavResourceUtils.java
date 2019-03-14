@@ -807,6 +807,8 @@ public class DavResourceUtils {
             privilege.setReadProperties("");
         } else if ("write-properties".equals(type)) {
             privilege.setWriteProperties("");
+        } else if ("write-content".equals(type)) {
+            privilege.setWriteContent("");
         } else if ("read-acl".equals(type)) {
             privilege.setReadAcl("");
         } else if ("write-acl".equals(type)) {

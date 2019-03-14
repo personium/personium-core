@@ -70,12 +70,16 @@ public class MoveServiceCollectionAclTest extends PersoniumTest {
     private static final String BEARER_MASTER_TOKEN = AbstractCase.BEARER_MASTER_TOKEN;
 
     private static final String ACCOUNT_READ = "read-account";
+    private static final String ACCOUNT_BIND = "bind-account";
+    private static final String ACCOUNT_UNBIND = "unbind-account";
     private static final String ACCOUNT_WRITE = "write-account";
     private static final String ACCOUNT_NO_PRIVILEGE = "no-privilege-account";
     private static final String ACCOUNT_ALL_PRIVILEGE = "all-account";
     private static final String ACCOUNT_COMB_PRIVILEGE = "comb-account";
 
     private static final String ROLE_READ = "role-read";
+    private static final String ROLE_BIND = "role-bind";
+    private static final String ROLE_UNBIND = "role-unbind";
     private static final String ROLE_WRITE = "role-write";
     private static final String ROLE_NO_PRIVILEGE = "role-no-privilege";
     private static final String ROLE_ALL_PRIVILEGE = "role-all-privilege";
@@ -176,6 +180,53 @@ public class MoveServiceCollectionAclTest extends PersoniumTest {
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_FORBIDDEN);
         PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
+    }
+
+    /**
+     * If the parent of the move source moves the Service collection with an account with bind privileges, it will result in 403 error.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_source_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, COL_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, COL_NAME);
+        String srcColPath = SRC_COL_NAME + "/" + COL_NAME;
+
+        // Advance preparation
+        setDefaultAcl(SRC_COL_NAME);
+        setPrincipalAllAcl(DST_COL_NAME);
+        DavResourceUtils.createServiceCollection(
+                BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, srcColPath);
+
+        // bind authority
+        token = getToken(ACCOUNT_BIND);
+        TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_FORBIDDEN);
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
+    }
+
+    /**
+     * If the parent of the move source moves the Service collection with an account with unbind privileges, it will be 201.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_source_has_unbind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, COL_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, COL_NAME);
+        String srcColPath = SRC_COL_NAME + "/" + COL_NAME;
+
+        // Advance preparation
+        setDefaultAcl(SRC_COL_NAME);
+        setPrincipalAllAcl(DST_COL_NAME);
+
+        DavResourceUtils.createServiceCollection(
+                BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, srcColPath);
+
+        // unbind authority
+        token = getToken(ACCOUNT_UNBIND);
+        DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_CREATED);
     }
 
     /**
@@ -408,7 +459,7 @@ public class MoveServiceCollectionAclTest extends PersoniumTest {
     }
 
     /**
-     * 移動元の親にread権限を持つ_かつ_移動対象にread権限を持つアカウントでServiceコレクションのMOVEをした場合403となること.
+     * 移動元の親にwrite権限を持つ_かつ_移動対象にread権限を持つアカウントでServiceコレクションのMOVEをした場合403となること.
      * @throws JAXBException ACLのパース失敗
      */
     @Test
@@ -434,6 +485,53 @@ public class MoveServiceCollectionAclTest extends PersoniumTest {
     }
 
     /**
+     * If you move the Service collection with an account that has the write permission for the parent of the move source and the bind permission for the move target, it will be 403.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_destination_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, COL_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, COL_NAME);
+        String srcColPath = SRC_COL_NAME + "/" + COL_NAME;
+
+        // Advance preparation
+        setDefaultAcl(SRC_COL_NAME);
+        setAcl(DST_COL_NAME, ROLE_WRITE, "bind");
+
+        DavResourceUtils.createServiceCollection(
+                BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, srcColPath);
+
+        token = getToken(ACCOUNT_WRITE);
+        DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_CREATED);
+    }
+
+    /**
+     * If you move the Service collection with an account that has the write permission for the parent of the move source and the unbind permission for the move target, it will be 403.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_destination_has_unbind_authority()
+            throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/%s", BOX_NAME, SRC_COL_NAME, COL_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, COL_NAME);
+        String srcColPath = SRC_COL_NAME + "/" + COL_NAME;
+
+        // Advance preparation
+        setDefaultAcl(SRC_COL_NAME);
+        setAcl(DST_COL_NAME, ROLE_WRITE, "unbind");
+
+        DavResourceUtils.createServiceCollection(
+                BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, srcColPath);
+
+        token = getToken(ACCOUNT_WRITE);
+        TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_FORBIDDEN);
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
+    }
+
+    /**
      * 移動元の親にwrite権限を持つ_かつ_移動先の親にwrite権限を持つアカウントでServiceコレクションのMOVEをした場合201となること.
      * @throws JAXBException ACLのパース失敗
      */
@@ -452,7 +550,7 @@ public class MoveServiceCollectionAclTest extends PersoniumTest {
         DavResourceUtils.createServiceCollection(
                 BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, srcColPath);
 
-        // 親にwrite権限+移動先の親にread権限→403
+        // 親にwrite権限+移動先の親にwrite権限→201
         token = getToken(ACCOUNT_WRITE);
         DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_CREATED);
     }
@@ -532,6 +630,8 @@ public class MoveServiceCollectionAclTest extends PersoniumTest {
 
         // Role作成
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_READ, HttpStatus.SC_CREATED);
+        RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_BIND, HttpStatus.SC_CREATED);
+        RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_UNBIND, HttpStatus.SC_CREATED);
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_WRITE, HttpStatus.SC_CREATED);
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_NO_PRIVILEGE, HttpStatus.SC_CREATED);
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_ALL_PRIVILEGE, HttpStatus.SC_CREATED);
@@ -539,12 +639,18 @@ public class MoveServiceCollectionAclTest extends PersoniumTest {
 
         // Account作成
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_READ, PASSWORD, HttpStatus.SC_CREATED);
+        AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_BIND, PASSWORD, HttpStatus.SC_CREATED);
+        AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_UNBIND, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_WRITE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_NO_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_ALL_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_COMB_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_READ, null,
                 Role.EDM_TYPE_NAME, ROLE_READ, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_BIND, null,
+                Role.EDM_TYPE_NAME, ROLE_BIND, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_UNBIND, null,
+                Role.EDM_TYPE_NAME, ROLE_UNBIND, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
         LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_WRITE, null,
                 Role.EDM_TYPE_NAME, ROLE_WRITE, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
         LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_NO_PRIVILEGE, null,
@@ -561,23 +667,12 @@ public class MoveServiceCollectionAclTest extends PersoniumTest {
      * @throws JAXBException ACLのパースに失敗
      */
     private void setDefaultAcl(String collection) throws JAXBException {
-        setDefaultAcl(collection, ROLE_READ, ROLE_WRITE, ROLE_ALL_PRIVILEGE);
-    }
-
-    /**
-     * 指定されたコレクションに対し、Role毎に対応するPrivilegeを設定.
-     * @param collection コレクション名
-     * @param roleRead read権限を設定するRole名
-     * @param roleWrite writed権限を設定するRole名
-     * @param roleAll all権限を設定するRole名
-     * @throws JAXBException ACLのパースに失敗
-     */
-    private void setDefaultAcl(String collection, String roleRead, String roleWrite, String roleAll)
-            throws JAXBException {
         Acl acl = new Acl();
-        acl.getAce().add(DavResourceUtils.createAce(false, roleRead, "read"));
-        acl.getAce().add(DavResourceUtils.createAce(false, roleWrite, "write"));
-        acl.getAce().add(DavResourceUtils.createAce(false, roleAll, "all"));
+        acl.getAce().add(DavResourceUtils.createAce(false, ROLE_READ, "read"));
+        acl.getAce().add(DavResourceUtils.createAce(false, ROLE_BIND, "bind"));
+        acl.getAce().add(DavResourceUtils.createAce(false, ROLE_UNBIND, "unbind"));
+        acl.getAce().add(DavResourceUtils.createAce(false, ROLE_WRITE, "write"));
+        acl.getAce().add(DavResourceUtils.createAce(false, ROLE_ALL_PRIVILEGE, "all"));
         List<String> privileges = new ArrayList<String>();
         privileges.add("read");
         privileges.add("write");

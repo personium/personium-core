@@ -892,17 +892,19 @@ public class DavCmpFsImpl implements DavCmp {
             //Even if you acquire the access context of the source, you can get the same Object
             //Therefore, we use the access context of the move destination
             AccessContext ac = davDestination.getDestinationRsCmp().getAccessContext();
+
             //Access control to the destination
             //For the following reasons, access is controlled to the destination after locking.
             //1. Since access to the ES does not occur in the access control, influence on the length of the lock period is small even if executed during locking.
             //2. When performing access control of the move destination before locking, it is necessary to acquire the information of the move destination, and a request to the ES occurs.
-            davDestination.getDestinationRsCmp().getParent().checkAccessContext(ac, BoxPrivilege.WRITE);
-
             File destDir = ((DavCmpFsImpl) davDestination.getDestinationCmp()).fsDir;
             if (!davDestination.getDestinationCmp().exists()) {
+                davDestination.getDestinationRsCmp().getParent().checkAccessContext(ac, BoxPrivilege.BIND);
                 Files.move(this.fsDir.toPath(), destDir.toPath());
                 res = javax.ws.rs.core.Response.status(HttpStatus.SC_CREATED);
             } else {
+                davDestination.getDestinationRsCmp().getParent().checkAccessContext(ac, BoxPrivilege.BIND);
+                davDestination.getDestinationRsCmp().getParent().checkAccessContext(ac, BoxPrivilege.UNBIND);
                 FileUtils.deleteDirectory(destDir);
                 Files.move(this.fsDir.toPath(), destDir.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 res = javax.ws.rs.core.Response.status(HttpStatus.SC_NO_CONTENT);

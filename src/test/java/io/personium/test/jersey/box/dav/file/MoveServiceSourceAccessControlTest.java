@@ -71,12 +71,16 @@ public class MoveServiceSourceAccessControlTest extends PersoniumTest {
     private static final String MASTER_TOKEN = AbstractCase.MASTER_TOKEN_NAME;
 
     private static final String ACCOUNT_READ = "read-account";
+    private static final String ACCOUNT_BIND = "bind-account";
+    private static final String ACCOUNT_UNBIND = "unbind-account";
     private static final String ACCOUNT_WRITE = "write-account";
     private static final String ACCOUNT_NO_PRIVILEGE = "no-privilege-account";
     private static final String ACCOUNT_ALL_PRIVILEGE = "all-account";
     private static final String ACCOUNT_COMB_PRIVILEGE = "comb-account";
 
     private static final String ROLE_READ = "role-read";
+    private static final String ROLE_BIND = "role-bind";
+    private static final String ROLE_UNBIND = "role-unbind";
     private static final String ROLE_WRITE = "role-write";
     private static final String ROLE_NO_PRIVILEGE = "role-no-privilege";
     private static final String ROLE_ALL_PRIVILEGE = "role-all-privilege";
@@ -188,6 +192,63 @@ public class MoveServiceSourceAccessControlTest extends PersoniumTest {
 
         } finally {
             DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/__src/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * If you move ServiceSource with an account that has bind permission to the move source collection, 403 error occurs.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_source_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/__src/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, "__src", FILE_NAME);
+
+        try {
+            // Advance preparation
+            setDefaultAcl(SRC_COL_NAME);
+            setPrincipalAllAcl(DST_COL_NAME);
+
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // bind authority
+            token = getToken(ACCOUNT_BIND);
+            TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination,
+                    HttpStatus.SC_FORBIDDEN);
+            PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/__src/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * If you use MOVE of ServiceSource with an account that has unbind authority to the move source Collection, it will be 201.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_source_has_unbind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/__src/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, "__src", FILE_NAME);
+
+        try {
+            // Advance preparation
+            setDefaultAcl(SRC_COL_NAME);
+            setPrincipalAllAcl(DST_COL_NAME);
+
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // unbind authority
+            token = getToken(ACCOUNT_UNBIND);
+            DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_CREATED);
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, DST_COL_NAME + "/__src/" + FILE_NAME);
         }
     }
 
@@ -322,6 +383,63 @@ public class MoveServiceSourceAccessControlTest extends PersoniumTest {
 
             // read権限→403
             token = getToken(ACCOUNT_READ);
+            TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination,
+                    HttpStatus.SC_FORBIDDEN);
+            PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/__src/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * If you use MOVE of ServiceSource with an account that has bind permission for move destination Collection, it will be 201.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_destination_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/__src/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, "__src", FILE_NAME);
+
+        try {
+            // Advance preparation
+            setPrincipalAllAcl(SRC_COL_NAME);
+            setDefaultAcl(DST_COL_NAME);
+
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // bind authority
+            token = getToken(ACCOUNT_BIND);
+            DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_CREATED);
+
+        } finally {
+            DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, DST_COL_NAME + "/__src/" + FILE_NAME);
+        }
+    }
+
+    /**
+     * If you move ServiceSource with an account that has unbind permission to the destination Collection, a 403 error occurs.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MOVE_destination_has_unbind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s/__src/%s", BOX_NAME, SRC_COL_NAME, FILE_NAME);
+        String destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, "__src", FILE_NAME);
+
+        try {
+            // Advance preparation
+            setPrincipalAllAcl(SRC_COL_NAME);
+            setDefaultAcl(DST_COL_NAME);
+
+            DavResourceUtils.createWebDavFile(MASTER_TOKEN, CELL_NAME, path, FILE_BODY, MediaType.TEXT_PLAIN,
+                    HttpStatus.SC_CREATED);
+
+            // unbind authority
+            token = getToken(ACCOUNT_UNBIND);
             TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination,
                     HttpStatus.SC_FORBIDDEN);
             PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
@@ -612,6 +730,8 @@ public class MoveServiceSourceAccessControlTest extends PersoniumTest {
 
         // Role作成
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_READ, HttpStatus.SC_CREATED);
+        RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_BIND, HttpStatus.SC_CREATED);
+        RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_UNBIND, HttpStatus.SC_CREATED);
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_WRITE, HttpStatus.SC_CREATED);
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_NO_PRIVILEGE, HttpStatus.SC_CREATED);
         RoleUtils.create(CELL_NAME, MASTER_TOKEN, ROLE_ALL_PRIVILEGE, HttpStatus.SC_CREATED);
@@ -619,12 +739,18 @@ public class MoveServiceSourceAccessControlTest extends PersoniumTest {
 
         // Account作成
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_READ, PASSWORD, HttpStatus.SC_CREATED);
+        AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_BIND, PASSWORD, HttpStatus.SC_CREATED);
+        AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_UNBIND, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_WRITE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_NO_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_ALL_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_COMB_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_READ, null,
                 Role.EDM_TYPE_NAME, ROLE_READ, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_BIND, null,
+                Role.EDM_TYPE_NAME, ROLE_BIND, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_UNBIND, null,
+                Role.EDM_TYPE_NAME, ROLE_UNBIND, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
         LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_WRITE, null,
                 Role.EDM_TYPE_NAME, ROLE_WRITE, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
         LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_NO_PRIVILEGE, null,
@@ -643,6 +769,8 @@ public class MoveServiceSourceAccessControlTest extends PersoniumTest {
     private void setDefaultAcl(String collection) throws JAXBException {
         Acl acl = new Acl();
         acl.getAce().add(DavResourceUtils.createAce(false, ROLE_READ, "read"));
+        acl.getAce().add(DavResourceUtils.createAce(false, ROLE_BIND, "bind"));
+        acl.getAce().add(DavResourceUtils.createAce(false, ROLE_UNBIND, "unbind"));
         acl.getAce().add(DavResourceUtils.createAce(false, ROLE_WRITE, "write"));
         acl.getAce().add(DavResourceUtils.createAce(false, ROLE_ALL_PRIVILEGE, "all"));
         List<String> privileges = new ArrayList<String>();

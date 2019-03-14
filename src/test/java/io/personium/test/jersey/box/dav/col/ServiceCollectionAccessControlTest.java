@@ -152,6 +152,25 @@ public class ServiceCollectionAccessControlTest extends PersoniumTest {
     }
 
     /**
+     * Delete the collection with an account that has _ and _ the target collection with unbind permission on the parent collection, and become 204.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void DELETE_parent_has_unbind_authority_and_current_has_not_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s", PARENT_COL_NAME, TARGET_COL_NAME);
+
+        // set ACL
+        setAcl(PARENT_COL_NAME, ROLE, "unbind");
+
+        // get token
+        token = getToken(ACCOUNT);
+
+        // execute
+        DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, path, token, HttpStatus.SC_NO_CONTENT);
+    }
+
+    /**
      * 親コレクションにwrite権限がある_かつ_対象コレクションにwrite権限があるアカウントでコレクションのDELETEを行い204となること.
      * @throws JAXBException ACLのパース失敗
      */
@@ -206,6 +225,25 @@ public class ServiceCollectionAccessControlTest extends PersoniumTest {
         token = getToken(ACCOUNT);
 
         // リクエスト実行
+        DavResourceUtils.createODataCollection(token, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, path);
+    }
+
+    /**
+     * Make MKCOL of the collection with an account that has bind authority to the parent collection and become 201.
+     * @throws JAXBException ACL parse failure
+     */
+    @Test
+    public void MKCOL_has_bind_authority() throws JAXBException {
+        String token;
+        String path = String.format("%s/%s", PARENT_COL_NAME, COL_NAME);
+
+        // set ACL
+        setAcl(PARENT_COL_NAME, ROLE, "bind");
+
+        // get token
+        token = getToken(ACCOUNT);
+
+        // execute
         DavResourceUtils.createODataCollection(token, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, path);
     }
 

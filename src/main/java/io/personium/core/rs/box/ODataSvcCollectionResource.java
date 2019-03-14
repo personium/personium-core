@@ -116,8 +116,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
-        this.checkAccessContext(
-                this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
 
         Response response = this.davRsCmp.doProppatch(requestBodyXml);
 
@@ -186,7 +185,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
         boolean recursive = Boolean.valueOf(recursiveHeader);
         // Check acl.
         // Since ODataSvcCollectionResource always has a parent, result of this.davRsCmp.getParent() will never be null.
-        this.davRsCmp.getParent().checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE);
+        this.davRsCmp.getParent().checkAccessContext(this.getAccessContext(), BoxPrivilege.UNBIND);
 
         // If OData schema/data already exists, an error
         if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
@@ -240,7 +239,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
     public Response move(
             @Context HttpHeaders headers) {
         //Access control to move source (check parent's authority)
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }
 

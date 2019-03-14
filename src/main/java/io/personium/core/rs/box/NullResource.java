@@ -112,7 +112,9 @@ public class NullResource {
             final InputStream inputStream) {
 
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        if (!this.isParentNull) {
+            this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.BIND);
+        }
 
         //If there is no intermediate path 409 error
         /*
@@ -188,7 +190,9 @@ public class NullResource {
             final InputStream inputStream) {
 
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        if (!this.isParentNull) {
+            this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.BIND);
+        }
 
         //If there is no intermediate path 409 error
         /*
@@ -279,7 +283,9 @@ public class NullResource {
     @DELETE
     public final Response delete() {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        if (!this.isParentNull) {
+            this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        }
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
@@ -351,7 +357,9 @@ public class NullResource {
     @MOVE
     public final Response move() {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        if (!this.isParentNull) {
+            this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        }
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }

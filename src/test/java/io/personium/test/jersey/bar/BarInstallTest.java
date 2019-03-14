@@ -741,7 +741,7 @@ public class BarInstallTest extends PersoniumTest {
                 HttpStatus.SC_MULTI_STATUS);
         Element root = res.bodyAsXml().getDocumentElement();
         // DavCollectionのACLチェック
-        checkAcl(root, rolList, roleName, boxUrl + "/" + colName);
+        checkAcl(root, rolList, rolList, roleName, boxUrl + "/" + colName);
 
         // DavCollection
         DavResourceUtils.getWebDavFile(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "box/dav-get.txt",
@@ -752,7 +752,7 @@ public class BarInstallTest extends PersoniumTest {
                 HttpStatus.SC_MULTI_STATUS);
         root = res.bodyAsXml().getDocumentElement();
         // DavCollectionのACLチェック
-        checkAcl(root, rolList, roleName, boxUrl + "/webdavcol1");
+        checkAcl(root, rolList, rolList, roleName, boxUrl + "/webdavcol1");
         // DavCollectionのAuthorチェック
         String author = root.getElementsByTagNameNS(nameSpace, "Author").item(0).getFirstChild().getNodeValue();
         assertEquals("Test User2", author);
@@ -774,18 +774,27 @@ public class BarInstallTest extends PersoniumTest {
                 token, HttpStatus.SC_MULTI_STATUS, INSTALL_TARGET);
         root = res.bodyAsXml().getDocumentElement();
         // BOXのACLチェック
-        checkAcl(root, rolList, roleName, boxUrl);
+        checkAcl(root, rolList, null, roleName, boxUrl);
         // Box Authorのチェック
         author = root.getElementsByTagNameNS(nameSpace, "Author").item(0).getFirstChild().getNodeValue();
         assertEquals("Test User1", author);
     }
 
     // BOX ACLのチェック
-    private void checkAcl(Element root, List<String> rolList, String roleName, String resourceUrl) {
+    private void checkAcl(Element root, List<String> rolList, List<String> installBoxRolList, String roleName,
+            String resourceUrl) {
         List<Map<String, List<String>>> list = new ArrayList<Map<String, List<String>>>();
         Map<String, List<String>> map = new HashMap<String, List<String>>();
-        list.add(map);
         map.put(roleName, rolList);
+        list.add(map);
+
+        // installBox acl
+        if (installBoxRolList != null) {
+            map = new HashMap<String, List<String>>();
+            map.put("role1", installBoxRolList);
+            list.add(map);
+        }
+
         TestMethodUtils.aclResponseTest(root, resourceUrl, list, 1,
                 UrlUtils.roleResource(Setup.TEST_CELL1, INSTALL_TARGET, ""), null);
     }
