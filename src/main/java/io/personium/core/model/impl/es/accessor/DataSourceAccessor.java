@@ -257,7 +257,7 @@ public class DataSourceAccessor {
         }
 
         if (!requestQuery.containsKey("size")) {
-            requestQuery.put("size", this.count(query));
+            requestQuery.put("size", PersoniumUnitConfig.getESIndexMaxResultWindow());
         }
         try {
             return this.type.search(requestQuery);
