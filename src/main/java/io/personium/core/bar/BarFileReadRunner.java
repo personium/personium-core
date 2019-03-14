@@ -904,7 +904,7 @@ public class BarFileReadRunner implements Runnable {
      * Analyze 90_rootprops_xml and perform registration processing such as Collectoin / ACL / WebDAV.
      * @param rootPropsName Path name in bar file of 90_rootprops_xml
      * @param inputStream Input stream
-     * URL of @param boxUrl box
+     * @param boxUrl URL of box
      * @return true if successful
      */
     protected boolean registXmlEntry(String rootPropsName, InputStream inputStream, String boxUrl) {
