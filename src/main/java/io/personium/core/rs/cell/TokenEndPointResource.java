@@ -56,6 +56,7 @@ import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.IRefreshToken;
 import io.personium.common.auth.token.IdToken;
 import io.personium.common.auth.token.LocalToken;
+import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.TransCellRefreshToken;
@@ -290,6 +291,20 @@ public class TokenEndPointResource {
             PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(accountType,
                     accountName).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED;
+        }
+
+        // Check account is active.
+        boolean accountActive = AuthUtils.isActive(idTokenUserOew);
+        boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(idTokenUserOew);
+        if (!accountActive) {
+            if (passwordChangeRequired) {
+                // Issue password change.
+                issuePasswordChange(schema, accountName, rTokenExpiresIn);
+            } else {
+                PersoniumCoreLog.OIDC.ACCOUNT_IS_DEACTIVATED.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, accountName).writeLog();
+                throw PersoniumCoreAuthnException.AUTHN_FAILED;
+            }
         }
 
         // When processing is normally completed, issue a token.
@@ -800,7 +815,6 @@ public class TokenEndPointResource {
         }
 
         boolean authSuccess = cell.authenticateAccount(oew, password);
-
         if (!authSuccess) {
             //Make lock on memcached
             AuthResourceUtils.registIntervalLock(accountId);
@@ -811,7 +825,50 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
+        //Check account status.
+        boolean accountActive = AuthUtils.isActive(oew);
+        boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
+        if (!accountActive) {
+            if (passwordChangeRequired) {
+                // Issue password change.
+                issuePasswordChange(schema, username, rTokenExpiresIn);
+            } else {
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+                PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_DEACTIVATED.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+            }
+        }
+
         return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn);
+    }
+
+    /**
+     * Issue password change.
+     * Throws PersoniumCoreAuthnException for error handling.
+     * @param schema schema
+     * @param username user name
+     * @param expiresIn expires in
+     */
+    private void issuePasswordChange(final String schema, final String username, long expiresIn) {
+        // create account password change access token.
+        long issuedAt = new Date().getTime();
+        PasswordChangeAccessToken aToken = new PasswordChangeAccessToken(
+                issuedAt, expiresIn, getIssuerUrl(), username, schema);
+
+        // get auth history. (non update auth history)
+        AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
+                davRsCmp.getDavCmp().getFsPath(), accountId);
+
+        // throws password change required.
+        PersoniumCoreAuthnException ex = PersoniumCoreAuthnException.PASSWORD_CHANGE_REQUIRED.realm(this.cell.getUrl());
+        ex.addErrorJsonParam(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
+        ex.addErrorJsonParam("url", this.cell.getUrl() + "__mypassword");
+        ex.addErrorJsonParam(OAuth2Helper.Key.LAST_AUTHENTICATED, last.getLastAuthenticated());
+        ex.addErrorJsonParam(OAuth2Helper.Key.FAILED_COUNT, last.getFailedCount());
+        throw ex;
     }
 
     private Response issueToken(final String target, final String owner,

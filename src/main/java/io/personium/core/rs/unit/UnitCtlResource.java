@@ -100,6 +100,9 @@ public class UnitCtlResource extends ODataResource {
             ac.throwInvalidTokenException(getAcceptableAuthScheme());
         } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
             throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(), getAcceptableAuthScheme());
+        } else if (AccessContext.TYPE_PASSWORD_CHANGE.equals(ac.getType())) {
+            throw PersoniumCoreAuthzException.ACCESS_WITH_PASSWORD_CHANGE_ACCESS_TOKEN.realm(
+                    ac.getRealm(), getAcceptableAuthScheme());
         }
         throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
     }

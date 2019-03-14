@@ -31,6 +31,7 @@ import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AccountAccessToken;
 import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.CellLocalRefreshToken;
+import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.TransCellRefreshToken;
@@ -303,5 +304,25 @@ public class TokenTest extends PersoniumTest {
         // データアクセス
         ResourceUtils.retrieve(invalidToken.toTokenString(),
                 DAV_COLLECTION + DAV_RESOURCE, HttpStatus.SC_UNAUTHORIZED, TEST_CELL2, Setup.TEST_BOX1);
+    }
+
+    /**
+     * Access by password change access token.
+     */
+    @Test
+    public final void access_by_password_change_access_token() {
+        long issuedAt = new Date().getTime();
+        String issuer = UrlUtils.cellRoot(TEST_CELL1);
+        String subject = "account2";
+        String schema = "";
+
+        // Create password change access token.
+        PasswordChangeAccessToken validToken = new PasswordChangeAccessToken(
+                issuedAt,
+                issuer, subject, schema);
+
+        // Password change access token can not access data.
+        ResourceUtils.retrieve(validToken.toTokenString(),
+                DAV_COLLECTION + DAV_RESOURCE, HttpStatus.SC_UNAUTHORIZED, TEST_CELL1, Setup.TEST_BOX1);
     }
 }

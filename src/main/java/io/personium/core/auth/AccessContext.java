@@ -35,6 +35,7 @@ import io.personium.common.auth.token.AccountAccessToken;
 import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.LocalToken;
+import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.TransCellRefreshToken;
@@ -74,6 +75,8 @@ public class AccessContext {
     public static final String TYPE_BASIC = "basic";
     /** Access by account access token. */
     public static final String TYPE_ACCOUNT = "account";
+    /** Access by password change access token. */
+    public static final String TYPE_PASSWORD_CHANGE = "password-change";
     /** Access by cell local access token. */
     public static final String TYPE_LOCAL = "local";
     /** Access by TransCell Access Token. */
@@ -462,11 +465,11 @@ public class AccessContext {
     }
 
     /**
-     * Make sure the token is your local cell token.
+     * Make sure the token is your local cell token or your password change token.
      * @param cellname cell
      * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
-    public void checkMyLocalToken(Cell cellname, AcceptableAuthScheme acceptableAuthScheme) {
+    public void checkMyLocalOrPasswordChangeToken(Cell cellname, AcceptableAuthScheme acceptableAuthScheme) {
         //Returning 401 if there is no illegal token or token designation
         //Returning 403 for a token other than your own cell local token
         if (TYPE_INVALID.equals(this.getType())) {
@@ -474,7 +477,7 @@ public class AccessContext {
         } else if (TYPE_ANONYMOUS.equals(this.getType())
                 || TYPE_BASIC.equals(this.getType())) {
             throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
-        } else if (!TYPE_ACCOUNT.equals(this.getType())) {
+        } else if (!TYPE_ACCOUNT.equals(this.getType()) && !TYPE_PASSWORD_CHANGE.equals(this.getType())) {
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
     }
@@ -754,6 +757,10 @@ public class AccessContext {
                         AcceptableAuthScheme.BEARER);
             }
             //In AccessContext, Subject is normalized to URL.
+            ret.subject = cell.getUrl() + "#" + tk.getSubject();
+            ret.issuer = tk.getIssuer();
+        } else if (tk instanceof PasswordChangeAccessToken) {
+            ret.accessType = TYPE_PASSWORD_CHANGE;
             ret.subject = cell.getUrl() + "#" + tk.getSubject();
             ret.issuer = tk.getIssuer();
         } else if (tk instanceof CellLocalAccessToken) {

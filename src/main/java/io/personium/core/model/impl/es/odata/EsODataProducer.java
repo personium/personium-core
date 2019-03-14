@@ -74,6 +74,7 @@ import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.AssociationEnd;
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.ComplexTypeProperty;
@@ -745,7 +746,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             res = esType.search(source);
         } catch (EsClientException ex) {
             if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
-                SearchPhaseExecutionException speex = (SearchPhaseExecutionException)ex.getCause().getCause();
+                SearchPhaseExecutionException speex = (SearchPhaseExecutionException) ex.getCause().getCause();
                 if (speex.status().equals(RestStatus.BAD_REQUEST)) {
                     throw PersoniumCoreException.OData.SEARCH_QUERY_INVALID_ERROR.reason(ex);
                 } else {
@@ -2834,6 +2835,14 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             //Overwrite password and update date of acquired Account
             ODataProducerUtils.createRequestPassword(oedhNew, dcCredHeader);
 
+            //If the status is passwordChangeRequired, update the status to Active.
+            Map<String, Object> staticFields = oedhNew.getStaticFields();
+            if (Account.STATUS_PASSWORD_CHANGE_REQUIRED.equals(
+                    staticFields.get(Account.P_STATUS.getName()).toString())) {
+                staticFields.put(Account.P_STATUS.getName(), Account.STATUS_ACTIVE);
+                oedhNew.setStaticFields(staticFields);
+            }
+
             //Save esJson in ES
             //Retrieve version information of Account
             EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
@@ -2879,7 +2888,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 tmpCount = esType.count(source);
             } catch (EsClientException ex) {
                 if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
-                    SearchPhaseExecutionException speex = (SearchPhaseExecutionException)ex.getCause().getCause();
+                    SearchPhaseExecutionException speex = (SearchPhaseExecutionException) ex.getCause().getCause();
                     if (speex.status().equals(RestStatus.BAD_REQUEST)) {
                         throw PersoniumCoreException.OData.SEARCH_QUERY_INVALID_ERROR.reason(ex);
                     } else {

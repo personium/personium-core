@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -65,15 +66,15 @@ public class AccountCreateTest extends ODataCommon {
         try {
             TResponse res = AccountUtils.create(MASTER_TOKEN_NAME, cellName, testAccountName,
                     testAccountPass, HttpStatus.SC_CREATED);
-            String lastAuthenticated = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d")).get("results"))
-                    .get("LastAuthenticated");
-            assertEquals(null, lastAuthenticated);
+            String name = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d")).get("results"))
+                    .get("Name");
+            assertEquals(testAccountName, name);
 
             res = AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, testAccountName);
-            String getLastAuthenticated = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
+            String getName = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
                     .get("results"))
-                    .get("LastAuthenticated");
-            assertEquals(lastAuthenticated, getLastAuthenticated);
+                    .get("Name");
+            assertEquals(testAccountName, getName);
 
         } finally {
             AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
@@ -570,6 +571,86 @@ public class AccountCreateTest extends ODataCommon {
             for (String invalidIPAddress : invalidIPAddressList) {
                 AccountUtils.createWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName,
                         testAccountName, testAccountPass, invalidIPAddress, HttpStatus.SC_BAD_REQUEST);
+            }
+        } finally {
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+        }
+    }
+
+    /**
+     * Test that default status in account creation.
+     */
+    @Test
+    public final void Account_create_default_status() {
+        String testAccountName = "account.create.test.status1";
+        String testAccountPass = "password1234";
+        String accLocHeader = null;
+
+        try {
+            TResponse response = AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName,
+                    testAccountName, testAccountPass, HttpStatus.SC_CREATED);
+            accLocHeader = response.getLocationHeader();
+
+            String status = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("Status");
+            assertEquals(Account.STATUS_ACTIVE, status);
+
+            response = AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, testAccountName);
+            status = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("Status");
+            assertEquals(Account.STATUS_ACTIVE, status);
+        } finally {
+            if (accLocHeader != null) {
+                deleteAccount(accLocHeader);
+            }
+        }
+    }
+
+    /**
+     * Test that designates a status in account creation.
+     */
+    @Test
+    public final void Account_create_set_status() {
+        String testAccountName = "account.create.test.status2";
+        String testAccountPass = "password1234";
+        String testAccountStatus = Account.STATUS_DEACTIVATED;
+        String accLocHeader = null;
+
+        try {
+            TResponse response = AccountUtils.createWithStatus(AbstractCase.MASTER_TOKEN_NAME, cellName,
+                    testAccountName, testAccountPass, testAccountStatus, HttpStatus.SC_CREATED);
+            accLocHeader = response.getLocationHeader();
+
+            String getStatus = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("Status");
+            assertEquals(testAccountStatus, getStatus);
+
+            response = AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, testAccountName);
+            getStatus = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("Status");
+            assertEquals(testAccountStatus, getStatus);
+        } finally {
+            if (accLocHeader != null) {
+                deleteAccount(accLocHeader);
+            }
+        }
+    }
+
+    /**
+     * Test that designates a illegal status in account creation.
+     */
+    @Test
+    public final void Account_create_set_status_illegal() {
+        String testAccountName = "account.create.test.status3";
+        String testAccountPass = "password1234";
+
+        ArrayList<String> invalidStatusList = new ArrayList<String>();
+        invalidStatusList.add("illegal");
+
+        try {
+            for (String invalidStatus : invalidStatusList) {
+                AccountUtils.createWithStatus(AbstractCase.MASTER_TOKEN_NAME, cellName,
+                        testAccountName, testAccountPass, invalidStatus, HttpStatus.SC_BAD_REQUEST);
             }
         } finally {
             AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);

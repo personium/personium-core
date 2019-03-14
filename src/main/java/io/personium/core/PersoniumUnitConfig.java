@@ -85,6 +85,9 @@ public class PersoniumUnitConfig {
         public static final String RELAYHTMLURL_DEFAULT = KEY_ROOT + "cell.relayhtmlurl.default";
         /** Default value of authorizationhtmlurl. */
         public static final String AUTHORIZATIONHTMLURL_DEFAULT = KEY_ROOT + "cell.authorizationhtmlurl.default";
+        /** Default value of authorization password change html url. */
+        public static final String AUTHORIZATION_PASSWORD_CHANGE_HTM_LURL_DEFAULT =
+                KEY_ROOT + "cell.authorizationpasswordchangehtmlurl.default";
     }
 
     /**
@@ -814,6 +817,14 @@ public class PersoniumUnitConfig {
      */
     public static String getAuthorizationhtmlurlDefault() {
         return get(Cell.AUTHORIZATIONHTMLURL_DEFAULT);
+    }
+
+    /**
+     * Get default value of authorization html url.
+     * @return Default value of authorization html url
+     */
+    public static String getAuthorizationPasswordChangeHtmlUrlDefault() {
+        return get(Cell.AUTHORIZATION_PASSWORD_CHANGE_HTM_LURL_DEFAULT);
     }
 
     /**

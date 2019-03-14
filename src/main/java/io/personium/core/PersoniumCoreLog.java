@@ -145,6 +145,13 @@ public final class PersoniumCoreLog {
          * {2}: User ID(username)
          */
         public static final PersoniumCoreLog FAILED_OUTSIDE_IP_ADDRESS_RANGE = create("PL-AN-0005");
+        /**
+         * Authentication failed. Account is deactivated.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog FAILED_ACCOUNT_IS_DEACTIVATED = create("PL-AN-0006");
     }
 
     /**
@@ -171,6 +178,13 @@ public final class PersoniumCoreLog {
          * {0}: Detailed message
          */
         public static final PersoniumCoreLog INVALID_ISSUER = create("PL-OI-0004");
+        /**
+         * Account is deactivated.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog ACCOUNT_IS_DEACTIVATED = create("PL-OI-0005");
     }
 
     /**

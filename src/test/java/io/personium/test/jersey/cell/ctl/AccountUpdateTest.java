@@ -18,6 +18,7 @@ package io.personium.test.jersey.cell.ctl;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.apache.http.HttpStatus;
@@ -29,6 +30,7 @@ import org.junit.experimental.categories.Category;
 import org.odata4j.core.ODataConstants;
 import org.odata4j.core.ODataVersion;
 
+import io.personium.core.model.ctl.Account;
 import io.personium.core.model.lock.LockManager;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
@@ -313,20 +315,149 @@ public class AccountUpdateTest extends ODataCommon {
         String newPassword = "new_password0";
         String newIPAddressRange = "illegal_format";
 
-        // 認証可能を確認
-        this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);
-
         // Account更新
         AccountUtils.updateWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName, userName, newUserName,
                 newPassword, newIPAddressRange, HttpStatus.SC_BAD_REQUEST);
 
-        // 更新失敗したAccountでは認証不可であることを確認
-        this.auth(newUserName, newPassword, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
-
-        // 元のユーザパスワードで認証可能であることを確認
-        this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);
+        // Confirm that the IPAddressRange is not updated
+        TResponse res = AccountUtils
+                .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, this.orgUserName);
+        String ipAddressRange = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
+                .get("results"))
+                .get("IPAddressRange");
+        assertNull(ipAddressRange);
     }
+
+    /**
+     * When status is omitted, it is updated with "active".
+     */
+    @Test
+    public final void update_status_not_set() {
+        String updateUserName = "account1999";
+        String updatePass = "password19999";
+
+        try {
+            // Account作成
+            AccountUtils.createWithStatus(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
+                    Account.STATUS_DEACTIVATED, HttpStatus.SC_CREATED);
+            // Account更新
+            AccountUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updateUserName,
+                    orgPass, HttpStatus.SC_NO_CONTENT);
+            // Account取得
+            TResponse res = AccountUtils
+                    .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
+            String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
+                    .get("results"))
+                    .get("Status");
+            assertEquals(Account.STATUS_ACTIVE, status);
+        } finally {
+            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
+        }
+    }
+
+    /**
+     * When status is set null It is updated with "active".
+     */
+    @Test
+    public final void update_status_is_null() {
+        String updateUserName = "account1999";
+        String updatePass = "password19999";
+        String updateStatus = null;
+
+        try {
+            // Account作成
+            AccountUtils.createWithStatus(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
+                    Account.STATUS_DEACTIVATED, HttpStatus.SC_CREATED);
+            // Account更新
+            AccountUtils.updateWithStatus(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updateUserName, orgPass, updateStatus, HttpStatus.SC_NO_CONTENT);
+            // Account取得
+            TResponse res = AccountUtils
+                    .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
+            String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
+                    .get("results"))
+                    .get("Status");
+            assertEquals(Account.STATUS_ACTIVE, status);
+        } finally {
+            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
+        }
+    }
+
+    /**
+     * When status is set It is updated with that value.
+     */
+    @Test
+    public final void update_status_is_set_value() {
+        String updateUserName = "account1999";
+        String updatePass = "password19999";
+        String updateStatus = Account.STATUS_DEACTIVATED;
+
+        try {
+            // Account作成
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
+                    HttpStatus.SC_CREATED);
+            // Account更新
+            AccountUtils.updateWithStatus(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updateUserName, orgPass, updateStatus, HttpStatus.SC_NO_CONTENT);
+            // Account取得
+            TResponse res = AccountUtils
+                    .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
+            String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
+                    .get("results"))
+                    .get("Status");
+            assertThat(status, is(updateStatus));
+        } finally {
+            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
+        }
+    }
+
+    /**
+     * When status is set illegal format It is result in 400 error.
+     */
+    @Test
+    public final void update_status_is_set_illgal_format() {
+        String newUserName = "account999";
+        String newPassword = "new_password0";
+        String newStatus = "illegal_format";
+
+        // Account update filled.
+        AccountUtils.updateWithStatus(AbstractCase.MASTER_TOKEN_NAME, cellName, userName, newUserName,
+                newPassword, newStatus, HttpStatus.SC_BAD_REQUEST);
+
+        // Confirm that the status is not updated
+        TResponse res = AccountUtils
+                .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, this.orgUserName);
+        String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
+                .get("results"))
+                .get("Status");
+        assertThat(status, is(Account.STATUS_ACTIVE));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * アカウント更新のリクエストボディに管理情報__publishedを指定してレスポンスコード400が返却されること.

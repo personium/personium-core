@@ -209,7 +209,7 @@ class InProcessLockManager extends LockManager {
 
             //If expired is exceeded, return null
             if (now > this.createdAt + expiredInSeconds * TIME_MILLIS) {
-                return 0;
+                return -1;
 
             }
             return this.value;

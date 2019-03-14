@@ -176,8 +176,8 @@ public class AccountLockManagerTest {
 
         // check ralease account lock and reset failed count.
         assertThat(AccountLockManager.isLockedAccount("account_1"), is(false));
-        assertThat(AccountLockManager.getFailedCount("account_1"), is(0L));
+        assertThat(AccountLockManager.getFailedCount("account_1"), is(-1L));
         assertThat(AccountLockManager.isLockedAccount("account_2"), is(false));
-        assertThat(AccountLockManager.getFailedCount("account_2"), is(0L));
+        assertThat(AccountLockManager.getFailedCount("account_2"), is(-1L));
     }
 }

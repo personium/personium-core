@@ -242,6 +242,32 @@ public final class AuthUtils {
     }
 
     /**
+     * Check is account status active.
+     * @param oew oew
+     * @return boolean Returns false if authentication failure.
+     */
+    public static boolean isActive(OEntityWrapper oew) {
+        String status = getStatus(oew);
+        if (status == null || status.isEmpty() || Account.STATUS_ACTIVE.equals(status)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check is password change required.
+     * @param oew oew
+     * @return boolean Returns false if authentication failure.
+     */
+    public static boolean isPasswordChangeReuired(OEntityWrapper oew) {
+        String status = getStatus(oew);
+        if (Account.STATUS_PASSWORD_CHANGE_REQUIRED.equals(status)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * get ip address renge list .
      * @param oew oew
      * @return List<String>
@@ -253,5 +279,15 @@ public final class AuthUtils {
         }
         String[] addrAry = addrStr.split(",");
         return Arrays.asList(addrAry);
+    }
+
+    /**
+     * get status.
+     * @param oew oew
+     * @return status
+     */
+    public static String getStatus(OEntityWrapper oew) {
+        String status =  (String) oew.getProperty(Account.P_STATUS.getName()).getValue();
+        return status;
     }
 }

@@ -52,6 +52,8 @@ import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwa.AlgorithmUtils;
 import org.apache.http.HttpResponse;
+import org.odata4j.core.OEntityKey;
+import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +66,7 @@ import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.IdToken;
 import io.personium.common.auth.token.LocalToken;
+import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
@@ -79,12 +82,15 @@ import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellRsCmp;
+import io.personium.core.model.ModelFactory;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.fs.CellKeysFile;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.FacadeResource;
 import io.personium.core.utils.ResourceUtils;
 
@@ -122,6 +128,15 @@ public class AuthzEndPointResource {
     private static final String MSG_INCORRECT_ID_PASS = PersoniumCoreMessageUtils.getMessage("PS-AU-0004");
     /** Message when cookie authentication failed. */
     private static final String MSG_MISS_COOKIE = PersoniumCoreMessageUtils.getMessage("PS-AU-0005");
+
+    /** Password change form _ The password should be changed. */
+    private static final String MSG_PASSWORD_CHANGE_REQUIRED = PersoniumCoreMessageUtils.getMessage("PS-AU-0006");
+    /** Password change form _ Please input password. */
+    private static final String MSG_PASSWORD_CHANGE_NO_PASS = PersoniumCoreMessageUtils.getMessage("PS-AU-0007");
+    /** Password change form _ Password format is invalid. */
+    private static final String MSG_PASSWORD_CHANGE_PASSWORD_FORMAT_INVALID =
+            PersoniumCoreMessageUtils.getMessage("PS-AU-0008");
+    private static final String MSG_PASSWORD_CHANGE_FAILED = PersoniumCoreMessageUtils.getMessage("PS-AU-0009");
 
     /**
      * constructor.
@@ -166,7 +181,7 @@ public class AuthzEndPointResource {
             @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
 
         return auth(responseType, clientId, redirectUri, null, null,
-                pCookie, state, scope, keepLogin, isCancel, expiresInStr, uriInfo, xForwardedFor);
+                pCookie, state, scope, keepLogin, isCancel, expiresInStr, uriInfo, xForwardedFor, null);
     }
 
     /**
@@ -198,9 +213,10 @@ public class AuthzEndPointResource {
         String keepLogin = formParams.getFirst(Key.KEEPLOGIN);
         String isCancel = formParams.getFirst(Key.CANCEL_FLG);
         String expiresInStr = formParams.getFirst(Key.EXPIRES_IN);
+        String apTokenStr = formParams.getFirst(Key.AP_TOKEN);
 
         return auth(responseType, clientId, redirectUri, username, password,
-                pCookie, state, scope, keepLogin, isCancel, expiresInStr, uriInfo, xForwardedFor);
+                pCookie, state, scope, keepLogin, isCancel, expiresInStr, uriInfo, xForwardedFor, apTokenStr);
     }
 
     /**
@@ -224,6 +240,7 @@ public class AuthzEndPointResource {
      * @param keepLogin keep_login
      * @param isCancel is_cancel
      * @param expiresInStr accress token expires in time(s).
+     * @param apTokenStr password change access token
      * @param uriInfo uri_info
      * @return JAX-RS Response
      */
@@ -240,7 +257,8 @@ public class AuthzEndPointResource {
             final String isCancel,
             final String expiresInStr,
             final UriInfo uriInfo,
-            final String xForwardedFor) {
+            final String xForwardedFor,
+            final String apTokenStr) {
 
         this.requestURIInfo = uriInfo;
         this.ipaddress = xForwardedFor;
@@ -257,7 +275,7 @@ public class AuthzEndPointResource {
         if (StringUtils.isEmpty(responseType)) {
             //Redirect to redirect_uri
             return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
-                    OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0004");
+                    PersoniumCoreMessageUtils.getMessage("PR400-AZ-0004"), state, "PR400-AZ-0004");
         }
         //Check value of expires_in
         long expiresIn = AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS;
@@ -266,11 +284,11 @@ public class AuthzEndPointResource {
                 expiresIn = Integer.parseInt(expiresInStr) * AbstractOAuth2Token.MILLISECS_IN_A_SEC;
                 if (expiresIn <= 0 || expiresIn > AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS) {
                     return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
-                            OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0008");
+                            PersoniumCoreMessageUtils.getMessage("PR400-AZ-0008"), state, "PR400-AZ-0008");
                 }
             } catch (NumberFormatException e) {
                 return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
-                        OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0008");
+                        PersoniumCoreMessageUtils.getMessage("PR400-AZ-0008"), state, "PR400-AZ-0008");
             }
         }
 
@@ -281,7 +299,7 @@ public class AuthzEndPointResource {
                         || OAuth2Helper.ResponseType.ID_TOKEN.equals(responseType)
                         && !OAuth2Helper.Scope.OPENID.equals(scope))) {
             return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE,
-                    OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE, state, "PR400-AZ-0001");
+                    PersoniumCoreMessageUtils.getMessage("PR400-AZ-0001"), state, "PR400-AZ-0001");
         }
 
         if ("1".equals(isCancel)) {
@@ -290,8 +308,12 @@ public class AuthzEndPointResource {
                     PersoniumCoreMessageUtils.getMessage("PR401-AZ-0001"), state, "PR401-AZ-0001");
         }
 
-        //Password authentication / Transcel token authentication / Cookie authentication separation
-        if (username != null || password != null) {
+        //Password change and authentication/ Password authentication / Transcel token authentication / Cookie authentication separation
+        if (apTokenStr != null && !apTokenStr.isEmpty()) {
+            //password change and authentication
+            return handlePasswordChange(responseType, clientId, redirectUri, apTokenStr,
+                    password, state, scope, keepLogin, expiresIn);
+        } else if (username != null || password != null) {
             //When there is a setting in either user ID or password
             Response response = handlePassword(responseType, clientId, redirectUri,
                     username, password, state, scope, keepLogin, expiresIn);
@@ -303,6 +325,78 @@ public class AuthzEndPointResource {
             //If user ID, password, cookie are not specified, send form
             return returnHtmlForm(responseType, clientId, redirectUri, MSG_PASS_FORM, state, scope);
         }
+    }
+
+    /**
+     * Authorization password change.
+     * @param responseType response_type
+     * @param clientId client_id
+     * @param redirectUri redirect_uri
+     * @param apTokenStr password change access token string
+     * @param password password
+     * @param state state
+     * @param scope scope
+     * @param keepLogin keep_login
+     * @param expiresIn accress token expires in time(ms).
+     * @return JAX-RS Response
+     */
+    private Response handlePasswordChange(String responseType, String clientId, String redirectUri, String apTokenStr,
+            String newPassword, String state, String scope, String keepLogin, long expiresIn) {
+        if (newPassword == null || StringUtils.isEmpty(newPassword)) {
+            return returnPasswordChangeHtmlForm(responseType, clientId, redirectUri,
+                    MSG_PASSWORD_CHANGE_NO_PASS, state, scope, apTokenStr);
+        }
+
+        // token parse.
+        AbstractOAuth2Token token = null;
+        try {
+            token = AbstractOAuth2Token.parse(apTokenStr, getIssuerUrl(), cell.getUnitUrl());
+        } catch (TokenParseException e) {
+            //Because I failed in Perth
+            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
+            return returnHtmlForm(responseType, clientId, redirectUri, MSG_PASS_FORM, state, scope);
+        } catch (TokenDsigException e) {
+            //Because certificate validation failed
+            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
+            return returnHtmlForm(responseType, clientId, redirectUri, MSG_PASS_FORM, state, scope);
+        } catch (TokenRootCrtException e) {
+            //Error setting root CA certificate
+            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
+            return returnHtmlForm(responseType, clientId, redirectUri, MSG_PASS_FORM, state, scope);
+        }
+        if (!(token instanceof PasswordChangeAccessToken)) {
+            return returnHtmlForm(responseType, clientId, redirectUri, MSG_PASS_FORM, state, scope);
+        }
+        if (token.isExpired()) {
+            return returnHtmlForm(responseType, clientId, redirectUri, MSG_MISS_COOKIE, state, scope);
+        }
+
+        // Get account.
+        String username = token.getSubject();
+        OEntityWrapper oew = cell.getAccount(username);
+        if (oew == null) {
+            // It transits when mainly deleted.
+            return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
+        }
+
+        // Password change.
+        try {
+            PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(cell);
+            EdmEntitySet esetAccount = producer.getMetadata().getEdmEntitySet(Account.EDM_TYPE_NAME);
+            OEntityKey oEntityKey = OEntityKey.parse("('" + username + "')");
+            producer.updatePassword(esetAccount, oEntityKey, newPassword);
+        } catch (PersoniumCoreException e) {
+            if (e.getCode().equals(PersoniumCoreException.Auth.PASSWORD_INVALID.getCode())) {
+                return returnPasswordChangeHtmlForm(responseType, clientId, redirectUri,
+                        MSG_PASSWORD_CHANGE_PASSWORD_FORMAT_INVALID, state, scope, apTokenStr);
+            } else {
+                return returnHtmlForm(responseType, clientId, redirectUri, MSG_PASSWORD_CHANGE_FAILED, state, scope);
+            }
+        }
+
+        // Authorize with handlePassword again.
+        return handlePassword(responseType, clientId, redirectUri,
+                username, newPassword, state, scope, keepLogin, expiresIn);
     }
 
     /**
@@ -335,6 +429,7 @@ public class AuthzEndPointResource {
         String accountId = (String) oew.getUuid();
 
         Boolean isLock = true;
+        boolean passwordChangeRequired = false;
         try {
             //Check valid authentication interval
             isLock = AuthResourceUtils.isLockedInterval(accountId);
@@ -383,8 +478,20 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
             }
+
+            //Check account status.
+            boolean accountActive = AuthUtils.isActive(oew);
+            passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
+            if (!accountActive && !passwordChangeRequired) {
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
+                PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_DEACTIVATED.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
+            }
         } catch (PersoniumCoreException e) {
-            return this.returnErrorRedirect(responseType, redirectUri, e.getMessage(),
+            return this.returnErrorRedirect(responseType, redirectUri, OAuth2Helper.Error.SERVER_ERROR,
                     e.getMessage(), state, e.getCode());
         }
 
@@ -392,13 +499,21 @@ public class AuthzEndPointResource {
         String schema = clientId;
         Map<String, String> paramMap = new HashMap<>();
 
+        if (passwordChangeRequired) {
+            //Issue password change.
+            PasswordChangeAccessToken apToken = new PasswordChangeAccessToken(
+                    issuedAt, expiresIn, getIssuerUrl(), username, schema);
+            return returnPasswordChangeHtmlForm(responseType, clientId, redirectUri,
+                    MSG_PASSWORD_CHANGE_REQUIRED, state, scope, apToken.toTokenString());
+        }
+
         if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)
                 || OAuth2Helper.ResponseType.CODE.equals(responseType)) {
             // TODO add p_cookie
-//            //Generate Refresh Token
-//            CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt,
-//                    CellLocalRefreshToken.REFRESH_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
-//                    getIssuerUrl(), username, schema);
+//                //Generate Refresh Token
+//                CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt,
+//                        CellLocalRefreshToken.REFRESH_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
+//                        getIssuerUrl(), username, schema);
             //Respond with 303 and return Location header
             //Returning cell local token
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
@@ -423,6 +538,7 @@ public class AuthzEndPointResource {
                     username, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
             paramMap.put(OAuth2Helper.Key.ID_TOKEN, idToken.toTokenString());
         }
+
         if (StringUtils.isNotEmpty(state)) {
             paramMap.put(OAuth2Helper.Key.STATE, state);
         }
@@ -434,6 +550,7 @@ public class AuthzEndPointResource {
         String failedCount = last.getFailedCount() != null ? last.getFailedCount().toString() : null; //CHECKSTYLE IGNORE
         paramMap.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
         paramMap.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
+
         // update auth history.
         AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
         // release account lock.
@@ -736,6 +853,89 @@ public class AuthzEndPointResource {
             Object[] params = paramsList.toArray();
 
             String html = PersoniumCoreUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
+            html = MessageFormat.format(html, params);
+
+            return html;
+        }
+    }
+
+    /**
+     * Return authorization password change form html.
+     * @param responseType response type
+     * @param clientId client id
+     * @param redirectUri redirect uri
+     * @param state state
+     * @param scope scope
+     * @param massagae message
+     * @param apTokenStr password change access token string
+     * @return response
+     */
+    private Response returnPasswordChangeHtmlForm(String responseType, String clientId, String redirectUri,
+            String massage, String state, String scope, String apTokenStr) {
+        ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML_TYPE.withCharset(CharEncoding.UTF_8));
+        return rb.entity(this.createPasswordChangeForm(
+                responseType, clientId, redirectUri, massage, state, scope, apTokenStr)).build();
+    }
+
+    /**
+     * Password change authentication form.
+     * @param responseType responseType
+     * @param clientId clientId
+     * @param redirectUri redirectUri
+     * @param message String to be output to message display area
+     * @param state state
+     * @param scope scope
+     * @param apTokenStr password change access token string
+     * @return HTML
+     */
+    private String createPasswordChangeForm(String responseType, String clientId, String redirectUri,
+            String message, String state, String scope, String apTokenStr) {
+
+        try {
+            HttpResponse response = cellRsCmp.requestGetAuthorizationHtml();
+            StringBuilder builder = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent(), CharEncoding.UTF_8))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    builder.append(line);
+                }
+            }
+            return builder.toString();
+        } catch (PersoniumCoreException | IOException e) {
+            // If processing fails, return system default html.
+            List<Object> paramsList = new ArrayList<Object>();
+
+            //Presence / absence of trailing "/"
+            if (!"".equals(clientId) && !clientId.endsWith("/")) {
+                clientId = clientId + "/";
+            }
+
+            paramsList.add(AuthResourceUtils.getJavascript(AJAX_FILE_NAME));
+            //title
+            paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
+            //Ansel's profile.json
+            paramsList.add(clientId + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
+            //Data cell profile.json
+            paramsList.add(cell.getUrl() + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
+            //title
+            paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
+            //Callee
+            paramsList.add(cell.getUrl() + "__authz");
+            //Message display area
+            paramsList.add(message);
+            //hidden item
+            paramsList.add(state != null ? state : ""); // CHECKSTYLE IGNORE
+            paramsList.add(responseType);
+            paramsList.add(clientId);
+            paramsList.add(redirectUri);
+            paramsList.add(scope != null ? scope : ""); // CHECKSTYLE IGNORE
+            paramsList.add(apTokenStr);
+
+            Object[] params = paramsList.toArray();
+
+            String html = PersoniumCoreUtils.readStringResource("html/authform_passwordchange.html",
+                    CharEncoding.UTF_8);
             html = MessageFormat.format(html, params);
 
             return html;

@@ -17,6 +17,8 @@
 package io.personium.core;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -127,6 +129,11 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      */
     public static final PersoniumCoreAuthnException AUTH_HEADER_IS_INVALID =
             create("PR400-AN-0018", Error.INVALID_CLIENT);
+    /**
+     * Password change required.
+     */
+    public static final PersoniumCoreAuthnException PASSWORD_CHANGE_REQUIRED =
+            create("PR401-AN-0001", Error.UNAUTHORIZED_CLIENT);
 
     /**
      * NetWork related error.
@@ -153,6 +160,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
     String error;
     String realm;
+    private Map<String, Object> errorJsonOptionParams = new HashMap<>();
 
     /**
      * constructor.
@@ -185,6 +193,15 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
                 this.error, realm2set);
     }
 
+    /**
+     * add option param.
+     * @param key key
+     * @param value value
+     */
+    public void addErrorJsonParam(String key, Object value) {
+        this.errorJsonOptionParams.put(key, value);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Response createResponse() {
@@ -194,6 +211,12 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
         String errDesc = String.format("[%s] - %s", this.code, this.message);
         errorJson.put(Key.ERROR_DESCRIPTION, errDesc);
+
+        if (!this.errorJsonOptionParams.isEmpty()) {
+            for (Map.Entry<String, Object> entry : this.errorJsonOptionParams.entrySet()) {
+                errorJson.put(entry.getKey(), entry.getValue());
+            }
+        }
 
         int statusCode = parseCode(this.code);
         ResponseBuilder rb = Response.status(statusCode)

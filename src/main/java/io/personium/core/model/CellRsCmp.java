@@ -50,6 +50,8 @@ public class CellRsCmp extends DavRsCmp {
     private static final String RELAY_HTML_URL = "relayhtmlurl";
     /** Name of property in which the URL of the authorization html. */
     private static final String AUTHORIZATION_HTML_URL = "authorizationhtmlurl";
+    /** Name of property in which the URL of the authorization html. */
+    private static final String AUTHORIZATION_PASSWORD_CHANGE_HTML_URL = "authorizationpasswordchangehtmlurl";
 
     Cell cell;
     AccessContext accessContext;
@@ -232,6 +234,37 @@ public class CellRsCmp extends DavRsCmp {
 
         // GET html.
         return requestGetHtml(authorizationHtmlUrl);
+    }
+
+    /**
+     * Request http get to AuthorizationPasswordChangeHtmlUrl.
+     * @return Http response
+     */
+    public HttpResponse requestGetAuthorizationPasswordChangeHtml() {
+        // Get authorizationhtmlurl property.
+        String authorizationPasswordHtmlUrl;
+        try {
+            authorizationPasswordHtmlUrl = getDavCmp().getProperty(
+                    AUTHORIZATION_PASSWORD_CHANGE_HTML_URL, "urn:x-personium:xmlns");
+        } catch (IOException | SAXException e1) {
+            throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(AUTHORIZATION_PASSWORD_CHANGE_HTML_URL);
+        }
+
+        if (StringUtils.isEmpty(authorizationPasswordHtmlUrl)) {
+            authorizationPasswordHtmlUrl = PersoniumUnitConfig.getAuthorizationPasswordChangeHtmlUrlDefault();
+        }
+
+        // Convert personium-localunit and personium-localcell.
+        authorizationPasswordHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(),
+                authorizationPasswordHtmlUrl);
+        authorizationPasswordHtmlUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(),
+                authorizationPasswordHtmlUrl);
+
+        // Validate relayHtmlUrl.
+        validateRequestHtmlUrl(authorizationPasswordHtmlUrl, AUTHORIZATION_PASSWORD_CHANGE_HTML_URL);
+
+        // GET html.
+        return requestGetHtml(authorizationPasswordHtmlUrl);
     }
 
     /**

@@ -17,6 +17,7 @@
 package io.personium.test.jersey.cell.auth;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,8 +32,11 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
+import io.personium.common.auth.token.AccountAccessToken;
+import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -103,6 +107,36 @@ public class MyPasswordTest extends PersoniumTest {
             assertEquals(204, res.getStatusCode());
         } finally {
             AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, "PasswordTest", 204);
+        }
+    }
+
+    /**
+     * Test that my password change token authentication can be change the password.
+     * @throws TokenParseException token parse exception.
+     */
+    @Test
+    public final void test_my_password_change_token() throws TokenParseException {
+        String account = "TestPasswordChangeToken1";
+        try {
+            // Create test account.
+            AccountUtils.createWithStatus(Setup.MASTER_TOKEN_NAME, Setup.TEST_CELL1, account, account,
+                    Account.STATUS_PASSWORD_CHANGE_REQUIRED, HttpStatus.SC_CREATED);
+            // Authenticate
+            JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
+                    account, account, -1);
+            String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
+            assertTrue(tokenStr.startsWith(PasswordChangeAccessToken.PREFIX_ACCESS));
+
+            // Change my password.
+            PersoniumResponse res = requesttoMypassword(tokenStr, "newPassword", Setup.TEST_CELL1);
+            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
+
+            // Authenticate again.
+            resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1, account, "newPassword", -1);
+            tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
+            assertTrue(tokenStr.startsWith(AccountAccessToken.PREFIX_ACCESS));
+        } finally {
+            AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, account, -1);
         }
     }
 

@@ -734,6 +734,48 @@ public class CellUtils {
     }
 
     /**
+     * ImplicitFlow password change util.
+     * @param cellName cell name
+     * @param schemaCell schema cell name
+     * @param apTokenStr password change access token string
+     * @param schemaPassword password
+     * @param redirectPath redirect path
+     * @param state status
+     * @param addHeader header
+     * @return response
+     * @throws PersoniumException failed
+     */
+    public static PersoniumResponse implicitflowAuthenticatePasswordChange(String cellName,
+            String schemaCell,
+            String apTokenStr,
+            String schemaPassword,
+            String redirectPath,
+            String state,
+            HashMap<String, String> addHeader) throws PersoniumException {
+        String clientId = UrlUtils.cellRoot(schemaCell);
+        if (null == redirectPath) {
+            redirectPath = "__/redirect.html";
+        }
+
+        String body = "response_type=token&client_id=" + clientId
+                + "&redirect_uri=" + clientId + redirectPath
+                + "&ap_token=" + apTokenStr
+                + "&password=" + schemaPassword
+                + "&state=" + state;
+
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
+
+        // リクエストヘッダをセット
+        HashMap<String, String> requestheaders = new HashMap<String, String>();
+        if (addHeader != null) {
+            requestheaders.putAll(addHeader);
+        }
+        requestheaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
+
+        return rest.post(UrlUtils.cellRoot(cellName) + "__authz", body, requestheaders);
+    }
+
+    /**
      * Box URL取得ユーティリティ.
      * @param cellName Cell名
      * @param schemaCell schemaCell名
