@@ -502,17 +502,7 @@ public class CellEsImpl implements Cell {
 
     @Override
     public boolean authenticateAccount(final OEntityWrapper oew, final String password) {
-        //In order to cope with the TODO time exploiting attack (name has been forgotten), even if an ID is not found, processing is done uselessly.
-        String cred = null;
-        if (oew != null) {
-            cred = (String) oew.get("HashedCredential");
-        }
-        String hCred = AuthUtils.hashPassword(password);
-        if (hCred.equals(cred)) {
-            return true;
-        }
-
-        return false;
+        return AuthUtils.isMatchePassword(oew, password);
     }
 
     @SuppressWarnings("unchecked")

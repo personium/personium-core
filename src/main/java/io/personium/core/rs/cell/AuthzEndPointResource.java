@@ -412,28 +412,38 @@ public class AuthzEndPointResource {
      * @param expiresIn accress token expires in time(ms).
      * @return JAX-RS Response
      */
-    private Response handlePassword(String responseType, String clientId, String redirectUri,
+    private Response handlePassword(String responseType, String clientId, String redirectUri, // CHECKSTYLE IGNORE
             String username, String password, String state, String scope, String keepLogin, long expiresIn) {
         //If both user ID and password are unspecified, return login error
-        boolean passCheck = true;
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             return returnHtmlForm(responseType, clientId, redirectUri, MSG_NO_ID_PASS, state, scope);
         }
 
-        OEntityWrapper oew = cell.getAccount(username);
-        if (oew == null) {
-            log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
-            return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
-        }
-        //In order to update the last login time, keep UUID in class variable
-        String accountId = (String) oew.getUuid();
-
-        Boolean isLock = true;
+        String accountId = null;
+        boolean passCheck = true;
         boolean passwordChangeRequired = false;
         try {
+            // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
+            OEntityWrapper oew = cell.getAccount(username);
+            passCheck = cell.authenticateAccount(oew, password);
+
+            //In order to update the last login time, keep UUID in class variable
+            if (oew != null) {
+                accountId = (String) oew.getUuid();
+            }
+            Boolean isLockedInterval = AuthResourceUtils.isLockedInterval(accountId);
+            Boolean isLockedAccount = AuthResourceUtils.isLockedAccount(accountId);
+            Boolean isValidIPAddress = AuthUtils.isValidIPAddress(oew, this.ipaddress);
+            boolean accountActive = AuthUtils.isActive(oew);
+            passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
+
+            if (oew == null) {
+                log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
+                return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
+            }
+
             //Check valid authentication interval
-            isLock = AuthResourceUtils.isLockedInterval(accountId);
-            if (isLock) {
+            if (isLockedInterval) {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
@@ -444,8 +454,7 @@ public class AuthzEndPointResource {
             }
 
             //Check account lock
-            isLock = AuthResourceUtils.isLockedAccount(accountId);
-            if (isLock) {
+            if (isLockedAccount) {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
@@ -456,7 +465,7 @@ public class AuthzEndPointResource {
             }
 
             // Check valid IP address
-            if (!AuthUtils.isValidIPAddress(oew, this.ipaddress)) {
+            if (!isValidIPAddress) {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
@@ -468,7 +477,6 @@ public class AuthzEndPointResource {
             }
 
             //Check user ID and password
-            passCheck = cell.authenticateAccount(oew, password);
             if (!passCheck) {
                 //Make lock on memcached
                 AuthResourceUtils.registIntervalLock(accountId);
@@ -480,8 +488,6 @@ public class AuthzEndPointResource {
             }
 
             //Check account status.
-            boolean accountActive = AuthUtils.isActive(oew);
-            passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
             if (!accountActive && !passwordChangeRequired) {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);

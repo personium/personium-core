@@ -59,6 +59,13 @@ public class Account {
      */
     public static final String EDM_TYPE_NAME = "Account";
 
+    /** Hashed credential. */
+    public static final String HASHED_CREDENTIAL = "HashedCredential";
+    /** Hashed algorithm. */
+    public static final String HASHED_ALGORITHM = "HashedAlgorithm";
+    /** Hashed arguments. */
+    public static final String HASHED_ATTRIBUTES = "HashedAttributes";
+
     /**
      * NavigationProperty name with ReceivedMessage.
      */
@@ -80,7 +87,7 @@ public class Account {
                  Common.P_FORMAT, P_FORMAT_PATTERN_IP_ADDRESS_RANGE);
      }
 
-     /**
+    /**
      * Create annotation for status.
      * @return EdmAnnotation
      */

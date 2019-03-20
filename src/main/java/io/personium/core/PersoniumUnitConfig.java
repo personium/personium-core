@@ -31,8 +31,11 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.auth.AuthUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
@@ -158,6 +161,30 @@ public class PersoniumUnitConfig {
 
         /** The regex pattern of the password to use for authentication. */
         public static final String AUTH_PASSWORD_REGEX = KEY_ROOT + "security.auth.password.regex";
+
+        /** The hash algorithm of the password to use for authentication. */
+        public static final String AUTH_PASSWORD_HASH_ALGORITHM =
+                KEY_ROOT + "security.auth.password.hashAlgorithm";
+
+        /** SCrypt CPU cost. */
+        public static final String AUTH_PASSWORD_SCRYPT_CPUCOST =
+                KEY_ROOT + "security.auth.password.scrypt.cpuCost";
+
+        /** SCrypt Memory Cost. */
+        public static final String AUTH_PASSWORD_SCRYPT_MEMORYCOST =
+                KEY_ROOT + "security.auth.password.scrypt.memoryCost";
+
+        /** SCrypt parallelization. */
+        public static final String AUTH_PASSWORD_SCRYPT_PARALLELIZATION =
+                KEY_ROOT + "security.auth.password.scrypt.parallelization";
+
+        /** SCrypt keyLength. */
+        public static final String AUTH_PASSWORD_SCRYPT_KEYLENGTH =
+                KEY_ROOT + "security.auth.password.scrypt.keyLength";
+
+        /** SCrypt saltLength. */
+        public static final String AUTH_PASSWORD_SCRYPT_SALTLENGTH =
+                KEY_ROOT + "security.auth.password.scrypt.saltLength";
 
         /** Encrypt the DAV file (true: enabled false: disabled (default)). */
         public static final String DAV_ENCRYPT_ENABLED = KEY_ROOT + "security.dav.encrypt.enabled";
@@ -608,12 +635,39 @@ public class PersoniumUnitConfig {
      * check a properties.
      */
     private synchronized void doCheckProperties() {
+        // authn.account
         checkRequired(Authn.ACCOUNT_LOCK_COUNT);
         checkNumber(Authn.ACCOUNT_LOCK_COUNT, Authn.ACCOUNT_LOCK_COUNT_MIN, Authn.ACCOUNT_LOCK_COUNT_MAX);
         checkRequired(Authn.ACCOUNT_LOCK_TIME);
         checkNumber(Authn.ACCOUNT_LOCK_TIME, Authn.ACCOUNT_LOCK_TIME_MIN, Authn.ACCOUNT_LOCK_TIME_MAX);
+
+        // security.auth.password
         checkRequired(Security.AUTH_PASSWORD_REGEX);
         checkRegex(Security.AUTH_PASSWORD_REGEX);
+        checkRequired(Security.AUTH_PASSWORD_HASH_ALGORITHM);
+        checkContains(Security.AUTH_PASSWORD_HASH_ALGORITHM, AuthUtils.HASH_ALGORITHM_NAMES);
+        checkRequired(Security.AUTH_PASSWORD_SCRYPT_CPUCOST);
+        checkNumber(Security.AUTH_PASSWORD_SCRYPT_CPUCOST, 1L, (long) Integer.MAX_VALUE);
+        checkRequired(Security.AUTH_PASSWORD_SCRYPT_MEMORYCOST);
+        checkNumber(Security.AUTH_PASSWORD_SCRYPT_MEMORYCOST, 1L, (long) Integer.MAX_VALUE);
+        checkRequired(Security.AUTH_PASSWORD_SCRYPT_PARALLELIZATION);
+        checkNumber(Security.AUTH_PASSWORD_SCRYPT_PARALLELIZATION, 1L, (long) Integer.MAX_VALUE);
+        checkRequired(Security.AUTH_PASSWORD_SCRYPT_KEYLENGTH);
+        checkNumber(Security.AUTH_PASSWORD_SCRYPT_KEYLENGTH, 1L, (long) Integer.MAX_VALUE);
+        checkRequired(Security.AUTH_PASSWORD_SCRYPT_SALTLENGTH);
+        checkNumber(Security.AUTH_PASSWORD_SCRYPT_SALTLENGTH, 1L, (long) Integer.MAX_VALUE);
+        try {
+            int cc = Integer.parseInt(this.props.getProperty(Security.AUTH_PASSWORD_SCRYPT_CPUCOST));
+            int mc = Integer.parseInt(this.props.getProperty(Security.AUTH_PASSWORD_SCRYPT_MEMORYCOST));
+            int p = Integer.parseInt(this.props.getProperty(Security.AUTH_PASSWORD_SCRYPT_PARALLELIZATION));
+            int klen = Integer.parseInt(this.props.getProperty(Security.AUTH_PASSWORD_SCRYPT_KEYLENGTH));
+            int slen = Integer.parseInt(this.props.getProperty(Security.AUTH_PASSWORD_SCRYPT_SALTLENGTH));
+            PasswordEncoder passwordEncoder = new SCryptPasswordEncoder(cc, mc, p, klen, slen);
+            passwordEncoder.encode("test");
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "illegal parameter. The parameter setting of scrypt is invalid. " + e.getMessage());
+        }
     }
 
     /**
@@ -660,6 +714,25 @@ public class PersoniumUnitConfig {
             Pattern.compile(regex);
         } catch (PatternSyntaxException e) {
             throw new RuntimeException("illegal parameter. " + key + " syntax error.", e);
+        }
+    }
+
+    /**
+     * check parameter is contains.
+     *
+     * @param key properity key
+     * @param expectedValues expected values
+     */
+    private void checkContains(String key, String... expectedValues) {
+        String value = this.props.getProperty(key);
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+
+        // check is included.
+        if (!Arrays.asList(expectedValues).contains(value)) {
+            throw new RuntimeException(
+                    "illegal parameter. " + key + " it is not '" + String.join("' or '", expectedValues) + "'.");
         }
     }
 
@@ -1340,6 +1413,55 @@ public class PersoniumUnitConfig {
      */
     public static String getAuthPasswordRegex() {
         return get(Security.AUTH_PASSWORD_REGEX);
+    }
+
+
+    /**
+     * The hash algorithm of the password to use for authentication.
+     * @return password algorithm name
+     */
+    public static String getAuthPasswordHashAlgorithm() {
+        return get(Security.AUTH_PASSWORD_HASH_ALGORITHM);
+    }
+
+    /**
+     * SCrypt CPU cost.
+     * @return CPU cost
+     */
+    public static int getSCryptCpuCost() {
+        return Integer.parseInt(get(Security.AUTH_PASSWORD_SCRYPT_CPUCOST));
+    }
+
+    /**
+     * SCrypt memory cost.
+     * @return memory cost
+     */
+    public static int getSCryptMemoryCost() {
+        return Integer.parseInt(get(Security.AUTH_PASSWORD_SCRYPT_MEMORYCOST));
+    }
+
+    /**
+     * SCrypt parallelization.
+     * @return parallelization
+     */
+    public static int getSCryptParallelization() {
+        return Integer.parseInt(get(Security.AUTH_PASSWORD_SCRYPT_PARALLELIZATION));
+    }
+
+    /**
+     * SCrypt key length.
+     * @return key length
+     */
+    public static int getSCryptKeyLength() {
+        return Integer.parseInt(get(Security.AUTH_PASSWORD_SCRYPT_KEYLENGTH));
+    }
+
+    /**
+     * SCrypt salt length.
+     * @return salt length
+     */
+    public static int getSCryptSaltLength() {
+        return Integer.parseInt(get(Security.AUTH_PASSWORD_SCRYPT_SALTLENGTH));
     }
 
     /**

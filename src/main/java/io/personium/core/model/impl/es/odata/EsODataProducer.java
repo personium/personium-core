@@ -2782,10 +2782,10 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
         //Update hidden fields information and UnitUser name.
         //However, in case of updating Account, it is necessary not to replace HashedCredential.
-        String hashedCredentialValue = (String) oedhNew.getHiddenFields().get("HashedCredential");
+        String hashedCredentialValue = (String) oedhNew.getHiddenFields().get(Account.HASHED_CREDENTIAL);
         oedhNew.getHiddenFields().putAll(oedhExisting.getHiddenFields());
         if (hashedCredentialValue != null) {
-            oedhNew.getHiddenFields().put("HashedCredential", hashedCredentialValue);
+            oedhNew.getHiddenFields().put(Account.HASHED_CREDENTIAL, hashedCredentialValue);
         }
         oedhNew.resolveUnitUserName(oedhExisting.getHiddenFields());
 

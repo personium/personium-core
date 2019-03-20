@@ -92,10 +92,12 @@ public abstract class AccountLockManager extends LockManager {
      * @return failed count
      */
     public static long getFailedCount(final String accountId) {
+        if (accountId == null || accountId.isEmpty()) {
+            return 0;
+        }
         if (accountLockCount == 0 || accountLockTime == 0) {
             return 0;
         }
-
         String key = CATEGORY_ACCOUNT_LOCK + accountId;
         try {
             long failedCount = singleton.doGetAccountLock(key);

@@ -51,6 +51,9 @@ public abstract class AccountValidAuthnIntervalLockManager extends LockManager {
      * @return TRUE: Lock / FALSE: Unlock
      */
     public static boolean hasLockObject(final String accountId) {
+        if (accountId == null || accountId.isEmpty()) {
+            return false;
+        }
         try {
             String key = CATEGORY_ACCOUNT_VALID_AUTHENTICATION_INTERVAL + accountId;
             //Confirm Lock of target account
