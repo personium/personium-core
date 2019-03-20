@@ -115,8 +115,7 @@ public class SCryptHashPasswordImpl implements HashPassword {
         if (cred != null && !cred.isEmpty()) {
             return passwordEncoder.matches(rawPasswd, cred);
         } else {
-            // In order to cope with the todo time exploiting attack,
-            // even if an ID is not found, processing is done uselessly.
+            // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
             if (dummyCred == null) {
                 dummyCred = passwordEncoder.encode("dummyCred");
             }

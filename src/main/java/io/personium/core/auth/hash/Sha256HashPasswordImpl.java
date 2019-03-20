@@ -80,8 +80,7 @@ public class Sha256HashPasswordImpl implements HashPassword {
      */
     @Override
     public boolean matches(OEntityWrapper oew, String rawPasswd) {
-        // In order to cope with the todo time exploiting attack,
-        // even if an ID is not found, processing is done uselessly.
+        // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
         String cred = null;
         if (oew != null) {
             cred = (String) oew.get(Account.HASHED_CREDENTIAL);
