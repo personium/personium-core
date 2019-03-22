@@ -1,3 +1,18 @@
+## 1.7.7
+NEW FEATURE:
+* Include "inherited" tag information in the response of PROPFIND.([#50](https://github.com/personium/personium-core/issues/50))
+* Elasticsearch 6.x support([#285](https://github.com/personium/personium-core/issues/285))
+* Support "bind" and "unbind" privileges([#315](https://github.com/personium/personium-core/issues/315))
+* Support Password Initialization flow([#341](https://github.com/personium/personium-core/issues/341))
+
+IMPROVEMENTS:
+* Introduce Status property to Account([#340](https://github.com/personium/personium-core/issues/340))
+* $filter Limit character strings that can be specified in the query to 1000 bytes.([#354](https://github.com/personium/personium-core/issues/354))
+* Make the value of maxResultWindow equal to NtoN.maxnum.([#363](https://github.com/personium/personium-core/issues/363))
+  * For those who upgrade their existing Personium environment.
+    * If you set maxResultWindow to the default value, please replace it with the previous value "110000".
+* Maintenance of checkstyle and PMD.([#365](https://github.com/personium/personium-core/issues/365))
+
 ## 1.7.6
 NEW FEATURE:
 * Enable to set expiration date of token.([#342](https://github.com/personium/personium-core/issues/342))

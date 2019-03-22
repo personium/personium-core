@@ -257,7 +257,7 @@ public class BatchBodyPart {
 
     /**
      * Return the URI up to the Collection.
-     * URI up to @return Collection
+     * @return URI up to Collection
      */
     public String getCollectionUri() {
         int index = this.uri.lastIndexOf('/');

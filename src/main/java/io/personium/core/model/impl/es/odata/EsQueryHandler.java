@@ -507,7 +507,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
      * Return the search key of elasticsearch.
      * @param expr CommonExpression
      * @param isUntouched isUntouched
-     * Search key for @return elasticsearch
+     * @return Search key for elasticsearch
      */
     protected String getSearchKey(CommonExpression expr, Boolean isUntouched) {
         //Set as search key

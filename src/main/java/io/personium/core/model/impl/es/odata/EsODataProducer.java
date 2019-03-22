@@ -170,7 +170,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
     /**
      * Implementation subclass If you want Producer to be associated with a specific Node, implement it to override here and return NodeId.
-     * Return @return NodeId
+     * @return NodeId
      */
     public String getNodeId() {
         return null;
@@ -179,7 +179,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     /**
      * Get key information of Links.
      * @param entityTypeName EntityType name
-     * Return key information of @return links
+     * @return Return key information of links
      */
     public String getLinkskey(String entityTypeName) {
         return entityTypeName;
@@ -644,7 +644,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
     /**
      * Get DocHandler.
-     * Type of @param type elasticsearch
+     * @param type Type of elasticsearch
      * @param oEntity OEntityWrapper
      * @return EntitySetDocHandler
      */
@@ -664,7 +664,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
     /**
      * Get a DocHandler for updating.
-     * Type of @param type elasticsearch
+     * @param type Type of elasticsearch
      * @param oEntityWrapper OEntityWrapper
      * @return EntitySetDocHandler
      */
@@ -884,7 +884,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     /**
      * Implementation subclass If you want Producer to be associated with a specific EntityType, implement it to override here and return EntityTypeId.
      * @param entityTypeName EntityType name
-     * Return @return EntityTypeId
+     * @return EntityTypeId
      */
     public String getEntityTypeId(final String entityTypeName) {
         return null;
@@ -2270,7 +2270,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
      * @param tgt Entity to be updated
      * @param esType ESAccessor to search for
      * @param termQuery link search query
-     * Search results for @return Es
+     * @return Search results for Es
      */
     protected long checkUniquenessEntityCount(final String entitySetName,
             final EntitySetDocHandler tgt,

@@ -364,7 +364,7 @@ public class UserDataODataProducer extends EsODataProducer {
     /**
      * Get key information of Links.
      * @param entityTypeName EntityType name
-     * Return key information of @return links
+     * @return Return key information of links
      */
     public String getLinkskey(String entityTypeName) {
         return this.getEntityTypeId(entityTypeName);

@@ -352,7 +352,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     /**
      * Returns a property value object converted to an appropriate type according to the property definition of the schema.
      * @param prop property object
-     * Property definition for @param edmType schema
+     * @param edmType Property definition for schema
      * @return Property value object converted to appropriate type
      */
     @SuppressWarnings("unchecked")
@@ -702,7 +702,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
      * @param properties Property summary
      * @param edmProp schema for additional properties
      * @param propValue Value of additional procedure
-     * Type information of type @param edmType type
+     * @param edmType Type information of type
      */
     @SuppressWarnings("unchecked")
     protected void addSimpleListProperty(List<OProperty<?>> properties,
@@ -731,7 +731,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
      * @param properties Property summary
      * @param edmProp schema for additional properties
      * @param propValue Value of additional procedure
-     * Type information of type @param edmType type
+     * @param edmType Type information of type
      */
     @SuppressWarnings("unchecked")
     protected void addComplexListProperty(EdmDataServices metadata,

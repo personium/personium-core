@@ -470,7 +470,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
 
     /**
      * Get DocHandler.
-     * Type of @param type elasticsearch
+     * @param type Type of elasticsearch
      * @param oEntity OEntityWrapper
      * @return EntitySetDocHandler
      */

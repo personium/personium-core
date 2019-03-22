@@ -865,7 +865,7 @@ public class ODataBatchResource extends AbstractODataResource {
 
         /**
          * Acquire the response body for Batch.
-         * Response body for @return Batch
+         * @return Response body for Batch
          */
         public BatchResponse getBatchResponse() {
             return this.res;

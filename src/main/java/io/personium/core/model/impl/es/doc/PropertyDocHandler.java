@@ -172,7 +172,7 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Get Name of Property.
-     * Name of @return Property
+     * @return Name of Property
      */
     public String getName() {
         return (String) this.staticFields.get("Name");
