@@ -37,7 +37,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-es-adapter</artifactId>
-            <version>1_es6.6.1_1</version>
+            <version>1_es6.6.1_2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
@@ -165,6 +165,16 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>${kafka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>5.1.4.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.61</version>
         </dependency>
         <dependency>
             <groupId>javax.websocket</groupId>
