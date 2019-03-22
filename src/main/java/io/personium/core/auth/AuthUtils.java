@@ -82,13 +82,13 @@ public final class AuthUtils {
         // create hash password
         String hashAlgorithmName = PersoniumUnitConfig.getAuthPasswordHashAlgorithm();
         HashPassword hpi = getHashPasswordInstance(hashAlgorithmName);
-        String hPassStr = hpi.hashPassword(pCredHeader);
+        String hPassStr = hpi.createHashPassword(pCredHeader);
 
         // return hashed parameters
         Map<String, String> hashedParams = new HashMap<>();
         hashedParams.put(Account.HASHED_CREDENTIAL, hPassStr);
-        hashedParams.put(Account.HASHED_ALGORITHM, hpi.algorithmName());
-        hashedParams.put(Account.HASHED_ATTRIBUTES, hpi.hashAttrbutes());
+        hashedParams.put(Account.HASH_ALGORITHM, hpi.getAlgorithmName());
+        hashedParams.put(Account.HASH_ATTRIBUTES, hpi.createHashAttrbutes());
         return hashedParams;
     }
 
@@ -102,7 +102,7 @@ public final class AuthUtils {
         // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
         String hashAlgorithmName = null;
         if (oew != null) {
-            hashAlgorithmName = (String) oew.get(Account.HASHED_ALGORITHM);
+            hashAlgorithmName = (String) oew.get(Account.HASH_ALGORITHM);
         }
         HashPassword hpi = getHashPasswordInstance(hashAlgorithmName);
         if (hpi == null) {

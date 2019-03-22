@@ -62,9 +62,9 @@ public class Account {
     /** Hashed credential. */
     public static final String HASHED_CREDENTIAL = "HashedCredential";
     /** Hashed algorithm. */
-    public static final String HASHED_ALGORITHM = "HashedAlgorithm";
+    public static final String HASH_ALGORITHM = "HashAlgorithm";
     /** Hashed arguments. */
-    public static final String HASHED_ATTRIBUTES = "HashedAttributes";
+    public static final String HASH_ATTRIBUTES = "HashAttributes";
 
     /**
      * NavigationProperty name with ReceivedMessage.

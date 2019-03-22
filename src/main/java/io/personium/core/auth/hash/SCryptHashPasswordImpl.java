@@ -36,7 +36,7 @@ public class SCryptHashPasswordImpl implements HashPassword {
     static Logger log = LoggerFactory.getLogger(SCryptHashPasswordImpl.class);
 
     /** hash algorithm name. */
-    public static final String HASH_ALGORITHM_NAME = "SCrypt";
+    public static final String HASH_ALGORITHM_NAME = "scrypt";
     /** hash attribute keyLength. */
     public static final String HASH_ATTRIBUTE_KEYLENGTH = "keyLength";
     /** dummy Hashed credential. */
@@ -46,7 +46,7 @@ public class SCryptHashPasswordImpl implements HashPassword {
      * {@inheritDoc}
      */
     @Override
-    public String algorithmName() {
+    public String getAlgorithmName() {
         return HASH_ALGORITHM_NAME;
     }
 
@@ -54,7 +54,7 @@ public class SCryptHashPasswordImpl implements HashPassword {
      * {@inheritDoc}
      */
     @Override
-    public String hashPassword(String passwd) {
+    public String createHashPassword(String passwd) {
         if (passwd == null) {
             return null;
         }
@@ -77,7 +77,7 @@ public class SCryptHashPasswordImpl implements HashPassword {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public String hashAttrbutes() {
+    public String createHashAttrbutes() {
         // Set attributes.
         JSONObject json = new JSONObject();
         json.put(HASH_ATTRIBUTE_KEYLENGTH, PersoniumUnitConfig.getSCryptKeyLength());
@@ -130,12 +130,12 @@ public class SCryptHashPasswordImpl implements HashPassword {
      * @return keyLength
      */
     private Integer getKeyLenghtFromOEntityWrapper(OEntityWrapper oew) {
-        if (oew == null || oew.get(Account.HASHED_ATTRIBUTES) == null) {
+        if (oew == null || oew.get(Account.HASH_ATTRIBUTES) == null) {
             return null;
         }
 
         Integer keyLength = null;
-        String attributesStr = (String) oew.get(Account.HASHED_ATTRIBUTES);
+        String attributesStr = (String) oew.get(Account.HASH_ATTRIBUTES);
         try {
             JSONParser parser = new JSONParser();
             JSONObject attributes;

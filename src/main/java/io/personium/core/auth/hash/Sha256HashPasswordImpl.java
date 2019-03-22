@@ -33,13 +33,13 @@ import io.personium.core.odata.OEntityWrapper;
 public class Sha256HashPasswordImpl implements HashPassword {
 
     /** hash algorithm name. */
-    public static final String HASH_ALGORITHM_NAME = "SHA-256";
+    public static final String HASH_ALGORITHM_NAME = "sha-256";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String algorithmName() {
+    public String getAlgorithmName() {
         return HASH_ALGORITHM_NAME;
     }
 
@@ -47,7 +47,7 @@ public class Sha256HashPasswordImpl implements HashPassword {
      * {@inheritDoc}
      */
     @Override
-    public String hashPassword(String passwd) {
+    public String createHashPassword(String passwd) {
         if (passwd == null) {
             return null;
         }
@@ -71,7 +71,7 @@ public class Sha256HashPasswordImpl implements HashPassword {
      * {@inheritDoc}
      */
     @Override
-    public String hashAttrbutes() {
+    public String createHashAttrbutes() {
         return null;
     }
 
@@ -85,7 +85,7 @@ public class Sha256HashPasswordImpl implements HashPassword {
         if (oew != null) {
             cred = (String) oew.get(Account.HASHED_CREDENTIAL);
         }
-        String hCred = this.hashPassword(rawPasswd);
+        String hCred = this.createHashPassword(rawPasswd);
         if (hCred.equals(cred)) {
             return true;
         }

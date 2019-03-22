@@ -208,12 +208,7 @@ public class AuthHashPasswordTest extends PersoniumTest {
         PersoniumUnitConfig.set(Security.AUTH_PASSWORD_SCRYPT_KEYLENGTH, kLen);
         PersoniumUnitConfig.set(Security.AUTH_PASSWORD_SCRYPT_SALTLENGTH, sLen);
     }
-    /**
-     * @param hashArgorithm hash argorithm
-     * @param name account name
-     * @param pass password
-     * @return map (key is "name" and "pass")
-     */
+
     /**
      * request authentication.
      * @param cellName cell name

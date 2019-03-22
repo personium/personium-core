@@ -27,20 +27,20 @@ public interface HashPassword {
      * get algorithm name.
      * @return algorithm name
      */
-    String algorithmName();
+    String getAlgorithmName();
 
     /**
      * Hash string of password string.
      * @param passwd raw password string
      * @return hashed password string
      */
-    String hashPassword(String passwd);
+    String createHashPassword(String passwd);
 
     /**
      * get hash attrbutes.
      * @return hash attrbutes.
      */
-    String hashAttrbutes();
+    String createHashAttrbutes();
 
     /**
      * matches password.
