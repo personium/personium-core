@@ -5,6 +5,9 @@ NEW FEATURE:
 * Support "bind" and "unbind" privileges([#315](https://github.com/personium/personium-core/issues/315))
 * Support Password Initialization flow([#341](https://github.com/personium/personium-core/issues/341))
 
+BUG FIXES:
+* ActiveMQ leaks memory.([#373](https://github.com/personium/personium-core/issues/373))
+
 IMPROVEMENTS:
 * Introduce Status property to Account([#340](https://github.com/personium/personium-core/issues/340))
 * $filter Limit character strings that can be specified in the query to 1000 bytes.([#354](https://github.com/personium/personium-core/issues/354))
