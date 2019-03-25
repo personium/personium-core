@@ -103,6 +103,8 @@ public final class AuthUtils {
         String hashAlgorithmName = null;
         if (oew != null) {
             hashAlgorithmName = (String) oew.get(Account.HASH_ALGORITHM);
+        } else {
+            hashAlgorithmName = PersoniumUnitConfig.getAuthPasswordHashAlgorithm();
         }
         HashPassword hpi = getHashPasswordInstance(hashAlgorithmName);
         if (hpi == null) {
