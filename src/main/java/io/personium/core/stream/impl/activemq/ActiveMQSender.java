@@ -18,11 +18,11 @@ package io.personium.core.stream.impl.activemq;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.JMSException;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
@@ -121,6 +121,17 @@ public class ActiveMQSender implements DataPublisher, DataSender, EventPublisher
             producer.send(msg);
         } catch (JMSException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (producer != null) {
+                    producer.close();
+                }
+                if (session != null) {
+                    session.close();
+                }
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -150,6 +161,17 @@ public class ActiveMQSender implements DataPublisher, DataSender, EventPublisher
             producer.send(msg);
         } catch (JMSException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (producer != null) {
+                    producer.close();
+                }
+                if (session != null) {
+                    session.close();
+                }
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -172,6 +194,17 @@ public class ActiveMQSender implements DataPublisher, DataSender, EventPublisher
             producer.send(msg);
         } catch (JMSException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (producer != null) {
+                    producer.close();
+                }
+                if (session != null) {
+                    session.close();
+                }
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -194,6 +227,17 @@ public class ActiveMQSender implements DataPublisher, DataSender, EventPublisher
             producer.send(msg);
         } catch (JMSException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (producer != null) {
+                    producer.close();
+                }
+                if (session != null) {
+                    session.close();
+                }
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
         }
     }
 
