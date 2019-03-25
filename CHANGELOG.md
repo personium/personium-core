@@ -1,3 +1,7 @@
+## 1.7.5a
+BUG FIXES:
+* ActiveMQ leaks memory.([#373](https://github.com/personium/personium-core/issues/373))
+
 ## 1.7.5
 NEW FEATURE:
 * ElasticSearch 5.x Support.([#254](https://github.com/personium/personium-core/issues/254))
