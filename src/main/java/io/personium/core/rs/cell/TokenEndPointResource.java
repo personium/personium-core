@@ -762,7 +762,20 @@ public class TokenEndPointResource {
                     this.cell.getUrl()).params(Key.PASSWORD);
         }
 
+        // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
         OEntityWrapper oew = cell.getAccount(username);
+        boolean passCheck = cell.authenticateAccount(oew, password);
+
+        //In order to update the last login time, keep UUID in class variable
+        if (oew != null) {
+            accountId = (String) oew.getUuid();
+        }
+        Boolean isLockedInterval = AuthResourceUtils.isLockedInterval(accountId);
+        Boolean isLockedAccount = AuthResourceUtils.isLockedAccount(accountId);
+        Boolean validIPAddress = AuthUtils.isValidIPAddress(oew, this.ipaddress);
+        boolean accountActive = AuthUtils.isActive(oew);
+        boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
+
         if (oew == null) {
             PersoniumCoreLog.Authn.FAILED_NO_SUCH_ACCOUNT.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
@@ -777,12 +790,8 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
-        //In order to update the last login time, keep UUID in class variable
-        accountId = (String) oew.getUuid();
-
         //Check valid authentication interval
-        Boolean isLock = AuthResourceUtils.isLockedInterval(accountId);
-        if (isLock) {
+        if (isLockedInterval) {
             //Update lock time of memcached
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
@@ -793,8 +802,7 @@ public class TokenEndPointResource {
         }
 
         //Check account lock
-        isLock = AuthResourceUtils.isLockedAccount(accountId);
-        if (isLock) {
+        if (isLockedAccount) {
             //Update lock time of memcached
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
@@ -805,7 +813,7 @@ public class TokenEndPointResource {
         }
 
         // Check valid IP address
-        if (!AuthUtils.isValidIPAddress(oew, this.ipaddress)) {
+        if (!validIPAddress) {
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
             AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
@@ -814,8 +822,7 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
-        boolean authSuccess = cell.authenticateAccount(oew, password);
-        if (!authSuccess) {
+        if (!passCheck) {
             //Make lock on memcached
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
@@ -826,8 +833,6 @@ public class TokenEndPointResource {
         }
 
         //Check account status.
-        boolean accountActive = AuthUtils.isActive(oew);
-        boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
         if (!accountActive) {
             if (passwordChangeRequired) {
                 // Issue password change.

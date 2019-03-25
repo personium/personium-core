@@ -17,6 +17,7 @@
 package io.personium.core.rs.cell;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
@@ -103,9 +104,11 @@ public final class CellCtlResource extends ODataResource {
         String entitySetName = oEntityWrapper.getEntitySet().getName();
         AuthUtils.validateAccountType(oEntityWrapper, entitySetName);
         AuthUtils.validateAccountIPAddressRange(oEntityWrapper, entitySetName);
-        String hPassStr = AuthUtils.hashPassword(pCredHeader, entitySetName);
-        if (hPassStr != null) {
-            oEntityWrapper.put("HashedCredential", hPassStr);
+        Map<String, String> hashed = AuthUtils.hashPassword(pCredHeader, entitySetName);
+        if (hashed != null) {
+            for (Map.Entry<String, String> hashedEntry : hashed.entrySet()) {
+                oEntityWrapper.put(hashedEntry.getKey(), hashedEntry.getValue());
+            }
         }
     }
 
@@ -114,9 +117,11 @@ public final class CellCtlResource extends ODataResource {
         String entitySetName = oEntityWrapper.getEntitySet().getName();
         AuthUtils.validateAccountType(oEntityWrapper, entitySetName);
         AuthUtils.validateAccountIPAddressRange(oEntityWrapper, entitySetName);
-        String hPassStr = AuthUtils.hashPassword(pCredHeader, entitySetName);
-        if (hPassStr != null) {
-            oEntityWrapper.put("HashedCredential", hPassStr);
+        Map<String, String> hashed = AuthUtils.hashPassword(pCredHeader, entitySetName);
+        if (hashed != null) {
+            for (Map.Entry<String, String> hashedEntry : hashed.entrySet()) {
+                oEntityWrapper.put(hashedEntry.getKey(), hashedEntry.getValue());
+            }
         }
     }
 

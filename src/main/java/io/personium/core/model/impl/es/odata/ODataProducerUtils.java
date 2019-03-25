@@ -226,13 +226,15 @@ public final class ODataProducerUtils {
      */
     public static void createRequestPassword(EntitySetDocHandler oedhNew, String dcCredHeader) {
         //Pre-update processing (obtain Hash string converted password)
-        String hPassStr = AuthUtils.hashPassword(dcCredHeader, oedhNew.getType());
+        Map<String, String> hashed = AuthUtils.hashPassword(dcCredHeader, oedhNew.getType());
         //Overwrite password to be changed to HashedCredential
         Map<String, Object> hiddenFields = oedhNew.getHiddenFields();
         //Put the value of X-Personium-Credential into the key of HashedCredential
         //If there is no designation, return 400 error
-        if (hPassStr != null) {
-            hiddenFields.put("HashedCredential", hPassStr);
+        if (hashed != null) {
+            for (Map.Entry<String, String> hashedEntry : hashed.entrySet()) {
+                hiddenFields.put(hashedEntry.getKey(), hashedEntry.getValue());
+            }
         } else {
             throw PersoniumCoreException.Auth.P_CREDENTIAL_REQUIRED;
         }

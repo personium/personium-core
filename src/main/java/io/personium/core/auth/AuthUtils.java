@@ -16,21 +16,21 @@
  */
 package io.personium.core.auth;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.net.util.SubnetUtils;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.auth.hash.HashPassword;
+import io.personium.core.auth.hash.SCryptHashPasswordImpl;
+import io.personium.core.auth.hash.Sha256HashPasswordImpl;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.OEntityWrapper;
@@ -44,7 +44,13 @@ import io.personium.plugin.base.auth.AuthPlugin;
  * Authentication related utilities.
  */
 public final class AuthUtils {
-    private static final String MD_ALGORITHM = "SHA-256";
+
+    /** hash algorithm name array. */
+    public static final String[] HASH_ALGORITHM_NAMES = {
+            Sha256HashPasswordImpl.HASH_ALGORITHM_NAME,
+            SCryptHashPasswordImpl.HASH_ALGORITHM_NAME
+    };
+
     /** Password minimum length.*/
     private static final int MIN_PASSWORD_LENGTH = 1;
     /** Password maximum length.*/
@@ -54,44 +60,76 @@ public final class AuthUtils {
     }
 
     /**
-     * Hash string of password string.
-     * @param passwd raw password string
-     * @return hashed password string
-     */
-    public static String hashPassword(final String passwd) {
-        if (passwd == null) {
-            return null;
-        }
-
-        // DC0 Ruby Code
-        // Digest::SHA256.hexdigest(pw + "Password hash salt value")
-        String str2hash = passwd + PersoniumUnitConfig.getAuthPasswordSalt();
-        try {
-            MessageDigest md = MessageDigest.getInstance(MD_ALGORITHM);
-            byte[] digestBytes = md.digest(str2hash.getBytes(CharEncoding.UTF_8));
-            //Although its data efficiency is better, this implementation is made for compatibility with DC 0.
-            return PersoniumCoreUtils.byteArray2HexString(digestBytes);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * Perform hashing of the password.
+     * Returns the value to be set in the hashed parameters.
      * Validate the password before hashing.
      * @param pCredHeader pCredHeader
      * @param entitySetName entitySetName
-     * @return hashing password
+     * @return hashed parameters
      */
-    public static String hashPassword(String pCredHeader, String entitySetName) {
+    public static Map<String, String> hashPassword(String pCredHeader, String entitySetName) {
         if (!Account.EDM_TYPE_NAME.equals(entitySetName)) {
             return null;
         }
+        //
+        if (pCredHeader == null) {
+            return null;
+        }
+
+        // validate password.
         validatePassword(pCredHeader);
-        String hPassStr = AuthUtils.hashPassword(pCredHeader);
-        return hPassStr;
+
+        // create hash password
+        String hashAlgorithmName = PersoniumUnitConfig.getAuthPasswordHashAlgorithm();
+        HashPassword hpi = getHashPasswordInstance(hashAlgorithmName);
+        String hPassStr = hpi.createHashPassword(pCredHeader);
+
+        // return hashed parameters
+        Map<String, String> hashedParams = new HashMap<>();
+        hashedParams.put(Account.HASHED_CREDENTIAL, hPassStr);
+        hashedParams.put(Account.HASH_ALGORITHM, hpi.getAlgorithmName());
+        hashedParams.put(Account.HASH_ATTRIBUTES, hpi.createHashAttrbutes());
+        return hashedParams;
+    }
+
+    /**
+     * check matche password.
+     * @param oew odata entity wrapper
+     * @param rawPasswd raw password string
+     * @return true if matches password.
+     */
+    public static boolean isMatchePassword(OEntityWrapper oew, String rawPasswd) {
+        // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
+        String hashAlgorithmName = null;
+        if (oew != null) {
+            hashAlgorithmName = (String) oew.get(Account.HASH_ALGORITHM);
+        } else {
+            hashAlgorithmName = PersoniumUnitConfig.getAuthPasswordHashAlgorithm();
+        }
+        HashPassword hpi = getHashPasswordInstance(hashAlgorithmName);
+        if (hpi == null) {
+            return false;
+        }
+        return hpi.matches(oew, rawPasswd);
+    }
+
+    /**
+     * get hash password instance.
+     * @param hashAlgorithmName hash algorithm name.
+     * @return hash password instance.
+     */
+    public static HashPassword getHashPasswordInstance(String hashAlgorithmName) {
+        if (SCryptHashPasswordImpl.HASH_ALGORITHM_NAME.equals(hashAlgorithmName)) {
+            return new SCryptHashPasswordImpl();
+        }
+        if (Sha256HashPasswordImpl.HASH_ALGORITHM_NAME.equals(hashAlgorithmName)) {
+            return new Sha256HashPasswordImpl();
+        }
+        if (hashAlgorithmName == null || hashAlgorithmName.isEmpty()) {
+            // If the hash algorithm is not set, it is determined as a legacy hash algorithm.
+            return new Sha256HashPasswordImpl();
+        }
+        return null;
     }
 
     /**
@@ -136,7 +174,7 @@ public final class AuthUtils {
      * @return List<String>
      */
     public static List<String> getAccountType(OEntityWrapper oew) {
-        String typeStr =  (String) oew.getProperty(Account.P_TYPE.getName()).getValue();
+        String typeStr = (String) oew.getProperty(Account.P_TYPE.getName()).getValue();
         String[] typeAry = typeStr.split(" ");
         return Arrays.asList(typeAry);
     }
@@ -147,6 +185,9 @@ public final class AuthUtils {
      * @return List<String>
     */
     public static boolean isAccountTypeBasic(OEntityWrapper oew) {
+        if (oew == null) {
+            return false;
+        }
         return getAccountType(oew).contains(Account.TYPE_VALUE_BASIC);
     }
 
@@ -273,7 +314,10 @@ public final class AuthUtils {
      * @return List<String>
      */
     private static List<String> getIPAddressRangeList(OEntityWrapper oew) {
-        String addrStr =  (String) oew.getProperty(Account.P_IP_ADDRESS_RANGE.getName()).getValue();
+        if (oew == null) {
+            return null;
+        }
+        String addrStr = (String) oew.getProperty(Account.P_IP_ADDRESS_RANGE.getName()).getValue();
         if (addrStr == null || addrStr.isEmpty()) {
             return null;
         }
@@ -287,7 +331,10 @@ public final class AuthUtils {
      * @return status
      */
     public static String getStatus(OEntityWrapper oew) {
-        String status =  (String) oew.getProperty(Account.P_STATUS.getName()).getValue();
+        if (oew == null) {
+            return null;
+        }
+        String status = (String) oew.getProperty(Account.P_STATUS.getName()).getValue();
         return status;
     }
 }
