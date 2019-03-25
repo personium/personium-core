@@ -1,3 +1,7 @@
+## 1.7.6a
+BUG FIXES:
+* ActiveMQ leaks memory.([#373](https://github.com/personium/personium-core/issues/373))
+
 ## 1.7.6
 NEW FEATURE:
 * Enable to set expiration date of token.([#342](https://github.com/personium/personium-core/issues/342))
