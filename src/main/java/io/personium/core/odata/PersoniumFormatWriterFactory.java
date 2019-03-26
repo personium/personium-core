@@ -51,8 +51,6 @@ import org.odata4j.format.json.JsonComplexObjectFormatWriter;
 import org.odata4j.format.json.JsonPropertyFormatWriter;
 import org.odata4j.format.json.JsonRequestEntryFormatWriter;
 import org.odata4j.format.json.JsonServiceDocumentFormatWriter;
-import org.odata4j.format.xml.AtomEntryFormatWriter;
-import org.odata4j.format.xml.AtomFeedFormatWriter;
 import org.odata4j.format.xml.AtomRequestEntryFormatWriter;
 import org.odata4j.format.xml.AtomServiceDocumentFormatWriter;
 import org.odata4j.format.xml.AtomSingleLinkFormatWriter;
@@ -255,12 +253,12 @@ public class PersoniumFormatWriterFactory {
 
         @Override
         public FormatWriter<EntitiesResponse> getFeedFormatWriter() {
-            return new AtomFeedFormatWriter();
+            return new PersoniumAtomFeedFormatWriter();
         }
 
         @Override
         public FormatWriter<EntityResponse> getEntryFormatWriter() {
-            return new AtomEntryFormatWriter();
+            return new PersoniumAtomEntryFormatWriter();
         }
 
         @Override

@@ -40,11 +40,43 @@ public class ExtCellUtils {
      */
     public static TResponse get(final String token, final String cellName,
             final String url, final int code) {
+        return get(token, cellName, url, "application/json", code);
+    }
+
+    /**
+     * ExtCellの取得.
+     * @param token トークン
+     * @param cellName セル名
+     * @param url URL
+     * @param accept accept
+     * @param code レスポンスコード
+     * @return レスポンス
+     */
+    public static TResponse get(final String token, final String cellName,
+            final String url, final String accept, final int code) {
         return Http.request("cell/extCell-get.txt")
                 .with("cellPath", cellName)
                 .with("token", token)
-                .with("accept", "application/xml")
+                .with("accept", accept)
                 .with("url", PersoniumCoreUtils.encodeUrlComp(url))
+                .returns()
+                .debug()
+                .statusCode(code);
+    }
+
+    /**
+     * get ExtCell list.
+     * @param token token
+     * @param cellName cell name
+     * @param code response code
+     * @param accept accept
+     * @return TResponse
+     */
+    public static TResponse list(final String token, final String cellName, final String accept, final int code) {
+        return Http.request("cell/extCell-list.txt")
+                .with("cellPath", cellName)
+                .with("token", token)
+                .with("accept", accept)
                 .returns()
                 .debug()
                 .statusCode(code);
@@ -60,7 +92,6 @@ public class ExtCellUtils {
         Http.request("cell/extCell-create.txt")
                 .with("cellPath", cellName)
                 .with("token", token)
-                .with("accept", "application/xml")
                 .with("url", url)
                 .returns();
     }
@@ -76,7 +107,6 @@ public class ExtCellUtils {
         Http.request("cell/extCell-create.txt")
                 .with("cellPath", cellName)
                 .with("token", token)
-                .with("accept", "application/xml")
                 .with("url", url)
                 .returns()
                 .statusCode(code);
@@ -143,8 +173,11 @@ public class ExtCellUtils {
      * @param url ExtCellのurl
      */
     public static void delete(final String token, final String cellName, final String url) {
-        Http.request("cell/extCell-delete.txt").with("cellPath", cellName).with("token", token)
-                .with("accept", "application/xml").with("url", PersoniumCoreUtils.encodeUrlComp(url)).returns();
+        Http.request("cell/extCell-delete.txt")
+                .with("cellPath", cellName)
+                .with("token", token)
+                .with("url", PersoniumCoreUtils.encodeUrlComp(url))
+                .returns();
     }
 
     /**
@@ -159,7 +192,6 @@ public class ExtCellUtils {
         Http.request("cell/extCell-delete.txt")
                 .with("cellPath", cellName)
                 .with("token", token)
-                .with("accept", "application/xml")
                 .with("url", PersoniumCoreUtils.encodeUrlComp(url))
                 .returns()
                 .statusCode(code);
@@ -175,7 +207,13 @@ public class ExtCellUtils {
      * @param code レスポンスコード
      */
     public static void extCellAccess(String method, String cellName, String url, String token, String body, int code) {
-        Http.request("cell/extCell-multi.txt").with("method", method).with("cellPath", cellName).with("token", token)
-                .with("url", PersoniumCoreUtils.encodeUrlComp(url)).with("body", body).returns().statusCode(code);
+        Http.request("cell/extCell-multi.txt")
+                .with("method", method)
+                .with("cellPath", cellName)
+                .with("token", token)
+                .with("url", PersoniumCoreUtils.encodeUrlComp(url))
+                .with("body", body)
+                .returns()
+                .statusCode(code);
     }
 }
