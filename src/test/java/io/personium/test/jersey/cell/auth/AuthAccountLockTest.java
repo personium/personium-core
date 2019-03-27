@@ -142,8 +142,12 @@ public class AuthAccountLockTest extends PersoniumTest {
         // authentication failed repeatedly, account is locked.
         for (int i = 0; i < TEST_ACCOUNTLOCK_COUNT; i++) {
             requestAuthentication(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
+            try {
+                Thread.sleep(1000 * TEST_ACCOUNTLOCK_TIME / 2);
+            } catch (InterruptedException e) {
+                log.debug("");
+            }
         }
-        AuthTestCommon.waitForIntervalLock();
         TResponse passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_BAD_REQUEST);
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
