@@ -425,9 +425,6 @@ public class AuthzEndPointResource {
         try {
             // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
             OEntityWrapper oew = cell.getAccount(username);
-            passCheck = cell.authenticateAccount(oew, password);
-
-            //In order to update the last login time, keep UUID in class variable
             if (oew != null) {
                 accountId = (String) oew.getUuid();
             }
@@ -436,6 +433,7 @@ public class AuthzEndPointResource {
             Boolean isValidIPAddress = AuthUtils.isValidIPAddress(oew, this.ipaddress);
             boolean accountActive = AuthUtils.isActive(oew);
             passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
+            passCheck = cell.authenticateAccount(oew, password);
 
             if (oew == null) {
                 log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
