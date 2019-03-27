@@ -764,9 +764,6 @@ public class TokenEndPointResource {
 
         // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
         OEntityWrapper oew = cell.getAccount(username);
-        boolean passCheck = cell.authenticateAccount(oew, password);
-
-        //In order to update the last login time, keep UUID in class variable
         if (oew != null) {
             accountId = (String) oew.getUuid();
         }
@@ -775,6 +772,7 @@ public class TokenEndPointResource {
         Boolean validIPAddress = AuthUtils.isValidIPAddress(oew, this.ipaddress);
         boolean accountActive = AuthUtils.isActive(oew);
         boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
+        boolean passCheck = cell.authenticateAccount(oew, password);
 
         if (oew == null) {
             PersoniumCoreLog.Authn.FAILED_NO_SUCH_ACCOUNT.params(
