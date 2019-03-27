@@ -93,7 +93,7 @@ public class AuthValidIntervalTest extends PersoniumTest {
         // Repeat several times. All returned as "400".
         for (int i = 0; i < 10; i++) {
             try {
-                Thread.sleep(250);
+                Thread.sleep(150);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
