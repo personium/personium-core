@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -81,10 +80,8 @@ public class AuthValidIntervalTest extends PersoniumTest {
 
     /**
      * パスワード認証失敗後1秒以内に成功する認証をリクエストした場合400が返却されること(PR400-AN-0017).
-     * io.personium.core.authn.account.validAuthnIntervalを1秒に設定すると失敗するためIgnore
      */
     @Test
-    @Ignore
     public final void パスワード認証失敗後1秒以内に成功する認証をリクエストした場合400が返却されること() {
         // パスワード認証1回目_ 不正なパスワード指定(400エラー(PR400-AN-0017))
         TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
@@ -93,19 +90,23 @@ public class AuthValidIntervalTest extends PersoniumTest {
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
         // 1秒以内にパスワード認証(400エラー(PR400-AN-0017))
-        passRes = requestAuthentication(TEST_CELL1, "account1", "password1", HttpStatus.SC_BAD_REQUEST);
-        body = (String) passRes.bodyAsJson().get("error_description");
-        assertTrue(body.startsWith("[PR400-AN-0017]"));
-
-        AuthTestCommon.waitForIntervalLock();
+        // Repeat several times. All returned as "400".
+        for (int i = 0; i < 10; i++) {
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            passRes = requestAuthentication(TEST_CELL1, "account1", "password1", HttpStatus.SC_BAD_REQUEST);
+            body = (String) passRes.bodyAsJson().get("error_description");
+            assertTrue(body.startsWith("[PR400-AN-0017]"));
+        }
     }
 
     /**
      * パスワード認証失敗後1秒以内に失敗する認証をリクエストした場合400が返却されること(PR400-AN-0017).
-     * io.personium.core.authn.account.validAuthnIntervalを1秒に設定すると失敗するためIgnore
      */
     @Test
-    @Ignore
     public final void パスワード認証失敗後1秒以内に失敗する認証をリクエストした場合400が返却されること() {
         // パスワード認証1回目_ 不正なパスワード指定(400エラー(PR400-AN-0017))
         TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
@@ -114,11 +115,14 @@ public class AuthValidIntervalTest extends PersoniumTest {
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
         // 1秒以内にパスワード認証(400エラー(PR400-AN-0017))
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         passRes = requestAuthentication(TEST_CELL1, "account1", "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
-
-        AuthTestCommon.waitForIntervalLock();
     }
 
     /**
@@ -132,12 +136,8 @@ public class AuthValidIntervalTest extends PersoniumTest {
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            log.debug("");
-        }
         // 1秒後にパスワード認証(認証成功)
+        AuthTestCommon.waitForIntervalLock();
         passRes = requestAuthentication(TEST_CELL1, "account1", "password1", HttpStatus.SC_OK);
         body = (String) passRes.bodyAsJson().get("access_token");
         assertNotNull(body);
@@ -154,17 +154,11 @@ public class AuthValidIntervalTest extends PersoniumTest {
         String body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            log.debug("");
-        }
-
         // 1秒後にパスワード認証(400エラー(PR400-AN-0017))
+        AuthTestCommon.waitForIntervalLock();
         passRes = requestAuthentication(TEST_CELL1, "account1", "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         body = (String) passRes.bodyAsJson().get("error_description");
         assertTrue(body.startsWith("[PR400-AN-0017]"));
-        AuthTestCommon.waitForIntervalLock();
     }
 
     private TResponse requestAuthentication(String cellName, String userName, String password, int code) {
