@@ -1,3 +1,10 @@
+## 1.7.8
+BUG FIXES:
+* Account locking is incorrect when using memcached.([#377](https://github.com/personium/personium-core/issues/377))
+
+IMPROVEMENTS:
+* Use secure hash in password authentication([#339](https://github.com/personium/personium-core/issues/339))
+
 ## 1.7.7
 NEW FEATURE:
 * Include "inherited" tag information in the response of PROPFIND.([#50](https://github.com/personium/personium-core/issues/50))
