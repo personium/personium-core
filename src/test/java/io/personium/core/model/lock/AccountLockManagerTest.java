@@ -158,13 +158,34 @@ public class AccountLockManagerTest {
      */
     @Test
     public void account_lock_life_time() throws Exception {
+        // before
+        assertThat(AccountLockManager.isLockedAccount("account_1"), is(false));
+        assertThat(AccountLockManager.getFailedCount("account_1"), is(-1L));
+        assertThat(AccountLockManager.isLockedAccount("account_2"), is(false));
+        assertThat(AccountLockManager.getFailedCount("account_2"), is(-1L));
+
+        // account1
         AccountLockManager.countupFailedCount("account_1");
+        assertThat(AccountLockManager.isLockedAccount("account_1"), is(false));
+        assertThat(AccountLockManager.getFailedCount("account_1"), is(1L));
+        Thread.sleep(1000 * AccountLockManager.accountLockTime / 2);
         AccountLockManager.countupFailedCount("account_1");
+        assertThat(AccountLockManager.isLockedAccount("account_1"), is(false));
+        assertThat(AccountLockManager.getFailedCount("account_1"), is(2L));
+        Thread.sleep(1000 * AccountLockManager.accountLockTime / 2);
         AccountLockManager.countupFailedCount("account_1");
+        assertThat(AccountLockManager.isLockedAccount("account_1"), is(false));
+        assertThat(AccountLockManager.getFailedCount("account_1"), is(3L));
+        Thread.sleep(1000 * AccountLockManager.accountLockTime / 2);
         AccountLockManager.countupFailedCount("account_1");
+        assertThat(AccountLockManager.isLockedAccount("account_1"), is(false));
+        assertThat(AccountLockManager.getFailedCount("account_1"), is(4L));
+        Thread.sleep(1000 * AccountLockManager.accountLockTime / 2);
         AccountLockManager.countupFailedCount("account_1");
         assertThat(AccountLockManager.isLockedAccount("account_1"), is(true));
         assertThat(AccountLockManager.getFailedCount("account_1"), is(5L));
+
+        // account2
         AccountLockManager.countupFailedCount("account_2");
         AccountLockManager.countupFailedCount("account_2");
         AccountLockManager.countupFailedCount("account_2");
@@ -176,8 +197,6 @@ public class AccountLockManagerTest {
 
         // check ralease account lock and reset failed count.
         assertThat(AccountLockManager.isLockedAccount("account_1"), is(false));
-        assertThat(AccountLockManager.getFailedCount("account_1"), is(0L));
         assertThat(AccountLockManager.isLockedAccount("account_2"), is(false));
-        assertThat(AccountLockManager.getFailedCount("account_2"), is(0L));
     }
 }
