@@ -105,8 +105,8 @@ public class PersoniumAtomFeedFormatWriter extends AtomFeedFormatWriter {
                 // the producer has populated the link collection, we just what he gave us.
                 for (OLink link : entityLinks) {
                     String rel = related + link.getTitle();
-                    String type = (link.isCollection())
-                            ? atom_feed_content_type // CHECKSTYLE IGNORE : Copy of logic from inheritance source
+                    String type = (link.isCollection()) // NOPMD - Copy of logic from inheritance source
+                            ? atom_feed_content_type // CHECKSTYLE IGNORE - Copy of logic from inheritance source
                             : atom_entry_content_type;
                     String href = relid + "/" + link.getTitle();
                     if (link.isInline()) {
