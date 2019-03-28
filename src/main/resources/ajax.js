@@ -37,6 +37,30 @@ function createHttpRequest() {
     }
 }
 
+// Reflect the required parameters on the display.
+function reflectRequestParameters() {
+    // get parameters
+    var arg = new Object;
+    var pair = location.search.substring(1).split('&');
+    for (var i = 0; pair[i]; i++) {
+        var kv = pair[i].split('=');
+        arg[kv[0]] = decodeURIComponent(kv[1]);
+    }
+
+    // reflect parameters on the display.
+    document.getElementById("response_type").value = arg["response_type"] ? arg["response_type"] : "";
+    document.getElementById("client_id").value = arg["client_id"] ? arg["client_id"] : "";
+    document.getElementById("redirect_uri").value = arg["redirect_uri"] ? arg["redirect_uri"] : "";
+    document.getElementById("state").value = arg["state"] ? arg["state"] : "";
+    document.getElementById("scope").value = arg["scope"] ? arg["scope"] : "";
+    if (document.getElementById("ap_token") && arg["ap_token"]) {
+        document.getElementById("ap_token").value = arg["ap_token"];
+    }
+    if (arg["error_description"]) {
+        document.getElementById("message").textContent = arg["error_description"];
+    }
+}
+
 //Access the file and check the received contents.
 function requestFile(method , appFileName , dataFileName , async ) {
     //Create XMLHttpRequest Object
