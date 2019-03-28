@@ -1,3 +1,7 @@
+## 1.7.6b
+BUG FIXES:
+* Account locking is incorrect when using memcached.([#377](https://github.com/personium/personium-core/issues/377))
+
 ## 1.7.6a
 BUG FIXES:
 * ActiveMQ leaks memory.([#373](https://github.com/personium/personium-core/issues/373))
