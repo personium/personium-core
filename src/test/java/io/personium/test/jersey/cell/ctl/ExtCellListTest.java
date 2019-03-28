@@ -51,8 +51,6 @@ public class ExtCellListTest extends ODataCommon {
     private static String cellName = "testcell1";
     private static String testExtCellName = "testcell2";
     private String testExtCellUrl = UrlUtils.cellRoot(testExtCellName);
-    //    private String extCellUrl1 = UrlUtils.cellRoot("cellHoge1");
-    //    private String extCellUrl2 = UrlUtils.cellRoot("cellHoge2");
     private final String token = AbstractCase.MASTER_TOKEN_NAME;
 
     /**
