@@ -199,6 +199,9 @@ public class MemcachedClient implements CacheClient {
     public Boolean createLongValue(String key, long initValue, int expiresIn) {
         try {
             long count = this.spyClient.incr(key, 0, initValue, expiresIn);
+            if (expiresIn > 0) {
+                this.spyClient.touch(key, expiresIn);
+            }
             return count == initValue;
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
@@ -238,7 +241,11 @@ public class MemcachedClient implements CacheClient {
      */
     public long incrementLongValue(String key, int expiresIn) {
         try {
-            return this.spyClient.incr(key, 1, 1, expiresIn);
+            long count = this.spyClient.incr(key, 1, 1, expiresIn);
+            if (expiresIn > 0) {
+                this.spyClient.touch(key, expiresIn);
+            }
+            return count;
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
             throw new MemcachedClientException(e);
