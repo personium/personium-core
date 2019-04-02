@@ -44,7 +44,7 @@ function reflectRequestParameters() {
     var pair = location.search.substring(1).split('&');
     for (var i = 0; pair[i]; i++) {
         var kv = pair[i].split('=');
-        arg[kv[0]] = decodeURIComponent(kv[1]);
+        arg[kv[0]] = decodeURIComponent(kv[1].replace(/\+/g," "));
     }
 
     // reflect parameters on the display.

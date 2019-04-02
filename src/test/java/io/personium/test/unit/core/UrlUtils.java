@@ -20,6 +20,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -775,5 +777,43 @@ public final class UrlUtils {
             final String navPropName) {
         return String.format("%s/%s/%s/%s/%s('%s')/_%s", baseUrl,
                 cellName, boxName, colName, entityTypeName, key, navPropName);
+    }
+    /**
+     * parse fragment.
+     * @param url url
+     * @return fragments
+     */
+    public static Map<String, String> parseFragment(String url) {
+        Map<String, String> map = new HashMap<String, String>();
+        if (!url.contains("#")) {
+            return map;
+        }
+        String[] splits = url.split("#");
+        String[] fragments = splits[1].split("&");
+        for (String fragment : fragments) {
+            String[] value = fragment.split("=");
+            map.put(value[0], value[1]);
+        }
+
+        return map;
+    }
+
+    /**
+     * parse querys.
+     * @param url url
+     * @return query
+     */
+    public static Map<String, String> parseQuery(String url) {
+        Map<String, String> map = new HashMap<String, String>();
+        if (!url.contains("?")) {
+            return map;
+        }
+        String[] splits = url.split("\\?");
+        String[] querys = splits[1].split("&");
+        for (String query : querys) {
+            String[] value = query.split("=");
+            map.put(value[0], value[1]);
+        }
+        return map;
     }
 }

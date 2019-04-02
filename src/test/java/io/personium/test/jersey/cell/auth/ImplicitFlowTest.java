@@ -16,12 +16,16 @@
  */
 package io.personium.test.jersey.cell.auth;
 
+import static org.fest.assertions.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +37,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.cookie.Cookie;
 import org.json.simple.JSONObject;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -91,6 +97,32 @@ public class ImplicitFlowTest extends PersoniumTest {
     static final String DEFAULT_STATE = "0000000111";
     private List<Cookie> cookies = null;
 
+    private static final int TEST_ACCOUNT_VALID_AUTHN_INTERVAL = 5;
+
+    /**
+     * before class.
+     * @throws Exception Unexpected exception
+     */
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        // Rewrite "accountValidAuthnInterval" as test parameters.
+        Field field = LockManager.class.getDeclaredField("accountValidAuthnInterval");
+        field.setAccessible(true);
+        field.set(LockManager.class, TEST_ACCOUNT_VALID_AUTHN_INTERVAL);
+    }
+
+    /**
+     * after class.
+     * @throws Exception Unexpected exception
+     */
+    @AfterClass
+    public static void afterClass() throws Exception {
+        // Restore "accountValidAuthnInterval".
+        Field field = LockManager.class.getDeclaredField("accountValidAuthnInterval");
+        field.setAccessible(true);
+        field.set(LockManager.class, PersoniumUnitConfig.getAccountValidAuthnInterval());
+    }
+
     /**
      * 前処理.
      */
@@ -126,20 +158,17 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * 認証フォームへのPOSTで200が返ること.
+     * No query parameter. return 200.
      */
     @Test
-    public final void 認証フォームへのPOSTで200が返ること() {
+    public final void No_query_parameter() {
 
         PersoniumResponse res = requesttoAuthz(null);
-
-        assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-        // レスポンスヘッダのチェック
-        assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-        // レスポンスボディのチェック
-        checkHtmlBody(res, "PS-AU-0002", Setup.TEST_CELL1);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0003"));
     }
 
     /**
@@ -224,7 +253,7 @@ public class ImplicitFlowTest extends PersoniumTest {
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-        Map<String, String> response = parseResponse(res);
+        Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         try {
             AccountAccessToken aToken = AccountAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                     UrlUtils.cellRoot(Setup.TEST_CELL1));
@@ -247,115 +276,78 @@ public class ImplicitFlowTest extends PersoniumTest {
         String addbody = "&username=account2&password=dummypassword";
 
         PersoniumResponse res = requesttoAuthz(addbody);
-
-        assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-        // レスポンスヘッダのチェック
-        assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-        // レスポンスボディのチェック
-        checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-        AuthTestCommon.waitForIntervalLock();
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
     }
 
     /**
-     * パスワード認証失敗後1秒以内に成功する認証をリクエストした場合200が返却されてエラーhtmlが返却されること.
-     * io.personium.core.authn.account.validAuthnIntervalを1秒に設定すると失敗するためIgnore
+     * パスワード認証失敗後一定時間以内に成功する認証をリクエストした場合エラーが返却されること.
      */
     @Test
-    @Ignore
-    public final void パスワード認証失敗後1秒以内に成功する認証をリクエストした場合200が返却されてエラーhtmlが返却されること() {
+    public final void パスワード認証失敗後一定時間以内に成功する認証をリクエストした場合エラーが返却されること() {
         String lockType = PersoniumUnitConfig.getLockType();
         if (lockType.equals("memcached")) {
             String addbody = "&username=account2&password=dummypassword";
 
             // パスワード認証(失敗)
             PersoniumResponse res = requesttoAuthz(addbody);
+            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+            assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                    UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+            assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+            Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+            assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
 
-            // レスポンスヘッダのチェック
-            assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-            // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-
+            // 認証間隔を開けずにパスワード認証(認証失敗)
+            try {
+                Thread.sleep(1000 * TEST_ACCOUNT_VALID_AUTHN_INTERVAL / 2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             addbody = "&username=account2&password=password2";
-            // 1秒以内にパスワード認証(401エラー(PR401-AN-0019))
             res = requesttoAuthz(addbody);
-
-            assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-            // レスポンスヘッダのチェック
-            assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-            // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-            AuthTestCommon.waitForIntervalLock();
+            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+            assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                    UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+            assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+            queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+            assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
         }
     }
 
     /**
-     * パスワード認証失敗後1秒以内に失敗する認証をリクエストした場合200が返却されてエラーhtmlが返却されること.
-     * io.personium.core.authn.account.validAuthnIntervalを1秒に設定すると失敗するためIgnore
+     * パスワード認証失敗後一定時間後に成功する認証をリクエストした場合303が返却されること.
      */
     @Test
-    @Ignore
-    public final void パスワード認証失敗後1秒以内に失敗する認証をリクエストした場合200が返却されてエラーhtmlが返却されること() {
+    public final void パスワード認証失敗後一定時間後に成功する認証をリクエストした場合303が返却されること() {
         String lockType = PersoniumUnitConfig.getLockType();
         if (lockType.equals("memcached")) {
             String addbody = "&username=account2&password=dummypassword";
 
             // パスワード認証(失敗)
             PersoniumResponse res = requesttoAuthz(addbody);
+            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+            assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                    UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+            assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+            Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+            assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
 
-            // レスポンスヘッダのチェック
-            assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-            // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-
-            addbody = "&username=account2&password=dummypassword";
-            // 1秒以内にパスワード認証(401エラー(PR401-AN-0019))
-            res = requesttoAuthz(addbody);
-
-            assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-            // レスポンスヘッダのチェック
-            assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-            // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-            AuthTestCommon.waitForIntervalLock();
-        }
-    }
-
-    /**
-     * パスワード認証失敗後1秒後に成功する認証をリクエストした場合302が返却されること.
-     */
-    @Test
-    public final void パスワード認証失敗後1秒後に成功する認証をリクエストした場合302が返却されること() {
-        String lockType = PersoniumUnitConfig.getLockType();
-        if (lockType.equals("memcached")) {
-            String addbody = "&username=account2&password=dummypassword";
-
-            // パスワード認証(失敗)
-            PersoniumResponse res = requesttoAuthz(addbody);
-
-            // レスポンスヘッダのチェック
-            assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-            // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-
+            // 認証間隔を開けてパスワード認証(認証成功)
+            try {
+                Thread.sleep(1000 * TEST_ACCOUNT_VALID_AUTHN_INTERVAL);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             addbody = "&username=account2&password=password2";
-
-            AuthTestCommon.waitForIntervalLock();
-
-            // 1秒後にパスワード認証(認証成功)
             res = requesttoAuthz(addbody);
-
             assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
-            Map<String, String> response = parseResponse(res);
+            Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
             try {
                 AccountAccessToken aToken = AccountAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                         UrlUtils.cellRoot(Setup.TEST_CELL1));
@@ -371,42 +363,6 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * パスワード認証失敗後1秒後に失敗する認証をリクエストした場合200が返却されてエラーhtmlが返却されること.
-     */
-    @Test
-    public final void パスワード認証失敗後1秒後に失敗する認証をリクエストした場合200が返却されてエラーhtmlが返却されること() {
-        String lockType = PersoniumUnitConfig.getLockType();
-        if (lockType.equals("memcached")) {
-            String addbody = "&username=account2&password=dummypassword";
-
-            // パスワード認証(失敗)
-            PersoniumResponse res = requesttoAuthz(addbody);
-
-            // レスポンスヘッダのチェック
-            assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-            // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-
-            addbody = "&username=account2&password=dummypassword";
-
-            AuthTestCommon.waitForIntervalLock();
-
-            // 1秒後にパスワード認証(401エラー(PS-AU-0004))
-            res = requesttoAuthz(addbody);
-
-            assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-            // レスポンスヘッダのチェック
-            assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-            // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-            AuthTestCommon.waitForIntervalLock();
-        }
-    }
-
-    /**
      * パスワード認証でユーザ名またはパスワードに空文字を指定して自分セルトークンを取得し認証フォームにエラーメッセージが出力されること.
      */
     @Test
@@ -414,30 +370,23 @@ public class ImplicitFlowTest extends PersoniumTest {
 
         // ユーザ名が空
         String addbody = "&username=&password=password2";
-
         PersoniumResponse res = requesttoAuthz(addbody);
-
-        assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-        // レスポンスヘッダのチェック
-        assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-        // レスポンスボディのチェック
-        checkHtmlBody(res, "PS-AU-0003", Setup.TEST_CELL1);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0003"));
 
         // パスワードが空
         addbody = "&username=account2&password=";
-
         res = requesttoAuthz(addbody);
-
-        assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-        // レスポンスヘッダのチェック
-        assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-        // レスポンスボディのチェック
-        checkHtmlBody(res, "PS-AU-0003", Setup.TEST_CELL1);
-        AuthTestCommon.waitForIntervalLock();
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0003"));
     }
 
     /**
@@ -447,16 +396,13 @@ public class ImplicitFlowTest extends PersoniumTest {
     public final void パスワード認証で未登録のユーザを指定して自分セルトークンを取得し認証フォームにエラーメッセージが出力されること() {
 
         String addbody = "&username=dummyaccount&password=dummypassword";
-
         PersoniumResponse res = requesttoAuthz(addbody);
-
-        assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-        // レスポンスヘッダのチェック
-        assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-        // レスポンスボディのチェック
-        checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
     }
 
     /**
@@ -474,7 +420,7 @@ public class ImplicitFlowTest extends PersoniumTest {
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-        Map<String, String> response = parseResponse(res);
+        Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         try {
             AbstractOAuth2Token tcToken = TransCellAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                     UrlUtils.cellRoot(Setup.TEST_CELL1), UrlUtils.getHost());
@@ -513,7 +459,7 @@ public class ImplicitFlowTest extends PersoniumTest {
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-        Map<String, String> response = parseResponse(res);
+        Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         try {
             UnitLocalUnitUserToken uluut = UnitLocalUnitUserToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                     UrlUtils.getHost());
@@ -548,7 +494,7 @@ public class ImplicitFlowTest extends PersoniumTest {
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-        Map<String, String> response = parseResponse(res);
+        Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         try {
             UnitLocalUnitUserToken uluut = UnitLocalUnitUserToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                     UrlUtils.getHost());
@@ -564,10 +510,10 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * パスワード認証でredirect_uriにURL形式ではない文字列を指定した場合302が返ること.
+     * パスワード認証でredirect_uriにURL形式ではない文字列を指定した場合303が返ること.
      */
     @Test
-    public final void パスワード認証でredirect_uriにURL形式ではない文字列を指定した場合302が返ること() {
+    public final void パスワード認証でredirect_uriにURL形式ではない文字列を指定した場合303が返ること() {
         String addbody = "&username=account2&password=password2";
         String redirectUri = REDIRECT_HTML;
 
@@ -581,10 +527,10 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * パスワード認証でredirect_uriとclient_idが異なる場合302が返ること.
+     * パスワード認証でredirect_uriとclient_idが異なる場合303が返ること.
      */
     @Test
-    public final void パスワード認証でredirect_uriとclient_idが異なる場合302が返ること() {
+    public final void パスワード認証でredirect_uriとclient_idが異なる場合303が返ること() {
         String addbody = "&username=account2&password=password2";
         String redirectUri = UrlUtils.cellRoot(Setup.TEST_CELL2) + REDIRECT_HTML;
 
@@ -598,10 +544,10 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * パスワード認証でresponse_typeにtoken以外の文字列を指定した場合302が返ること.
+     * パスワード認証でresponse_typeにtoken以外の文字列を指定した場合303が返ること.
      */
     @Test
-    public final void パスワード認証でresponse_typeにtoken以外の文字列を指定した場合302が返ること() {
+    public final void パスワード認証でresponse_typeにtoken以外の文字列を指定した場合303が返ること() {
         String responseType = "test";
 
         String body = "response_type=" + responseType + "&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
@@ -634,7 +580,7 @@ public class ImplicitFlowTest extends PersoniumTest {
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-        Map<String, String> response = parseResponse(res);
+        Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         try {
             AccountAccessToken aToken = AccountAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                     UrlUtils.cellRoot(Setup.TEST_CELL1));
@@ -673,7 +619,7 @@ public class ImplicitFlowTest extends PersoniumTest {
             assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
             // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-            Map<String, String> response = parseResponse(res);
+            Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
             try {
                 AbstractOAuth2Token tcToken = TransCellAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                         UrlUtils.cellRoot(Setup.TEST_CELL2), UrlUtils.getHost());
@@ -700,10 +646,10 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * トークン認証でresponse_typeの指定が無い場合302が返却されること.
+     * トークン認証でresponse_typeの指定が無い場合303が返却されること.
      */
     @Test
-    public final void トークン認証でresponse_typeの指定が無い場合302が返却されること() {
+    public final void トークン認証でresponse_typeの指定が無い場合303が返却されること() {
 
         String transCellAccessToken = getTcToken();
 
@@ -726,10 +672,10 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * トークン認証でclient_idの指定が無い場合302が返却されること.
+     * トークン認証でclient_idの指定が無い場合303が返却されること.
      */
     @Test
-    public final void トークン認証でclient_idの指定が無い場合302が返却されること() {
+    public final void トークン認証でclient_idの指定が無い場合303が返却されること() {
 
         String transCellAccessToken = getTcToken();
 
@@ -748,10 +694,10 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * トークン認証でredirect_uriの指定が無い場合302が返却されること.
+     * トークン認証でredirect_uriの指定が無い場合303が返却されること.
      */
     @Test
-    public final void トークン認証でredirect_uriの指定が無い場合302が返却されること() {
+    public final void トークン認証でredirect_uriの指定が無い場合303が返却されること() {
 
         String transCellAccessToken = getTcToken();
 
@@ -842,20 +788,6 @@ public class ImplicitFlowTest extends PersoniumTest {
         }
 
         return res;
-    }
-
-    private Map<String, String> parseResponse(PersoniumResponse res) {
-        String location = res.getFirstHeader(HttpHeaders.LOCATION);
-        System.out.println(location);
-        String[] locations = location.split("#");
-        String[] responses = locations[1].split("&");
-        Map<String, String> map = new HashMap<String, String>();
-        for (String response : responses) {
-            String[] value = response.split("=");
-            map.put(value[0], value[1]);
-        }
-
-        return map;
     }
 
 //    private Map<String, Object> getSessionMap() {

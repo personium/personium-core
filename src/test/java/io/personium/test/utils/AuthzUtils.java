@@ -269,9 +269,19 @@ public class AuthzUtils {
                 .returns().statusCode(statusCode).debug();
     }
 
-    // Create system default html.
-    // TODO Should call AuthzEndPointResource.createForm() properly.
-    public static String createDefaultHtml(String clientId, String redirectUriStr, String message, String state,
+    /**
+     * create system default authz html.
+     * @param clientId client id
+     * @param redirectUriStr redirect uri
+     * @param state state
+     * @param scope scope
+     * @param responseType response type
+     * @param pTarget target
+     * @param pOwner owner
+     * @param cellUrl cell url
+     * @return html
+     */
+    public static String createDefaultHtml(String clientId, String redirectUriStr, String state,
             String scope, String responseType, String pTarget, String pOwner, String cellUrl) {
         // If processing fails, return system default html.
         List<Object> paramsList = new ArrayList<Object>();
@@ -286,12 +296,7 @@ public class AuthzUtils {
         paramsList.add(cellUrl + Box.DEFAULT_BOX_NAME + "/profile.json");
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
         paramsList.add(cellUrl + "__authz");
-        paramsList.add(message);
-        paramsList.add(state != null ? state : ""); // CHECKSTYLE IGNORE
-        paramsList.add(responseType);
-        paramsList.add(clientId);
-        paramsList.add(redirectUriStr);
-        paramsList.add(scope != null ? scope : ""); // CHECKSTYLE IGNORE
+        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0002"));
 
         Object[] params = paramsList.toArray();
 

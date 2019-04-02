@@ -103,7 +103,7 @@ public class AuthzExpiresInTest extends PersoniumTest {
         PersoniumResponse res = rest.post(
                 UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz", bodyBuilder.toString(), requestheaders);
 
-        Map<String, String> responseMap = parseResponse(res.getFirstHeader(HttpHeaders.LOCATION));
+        Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertThat(responseMap.get(OAuth2Helper.Key.EXPIRES_IN), is("5"));
     }
 
@@ -135,24 +135,7 @@ public class AuthzExpiresInTest extends PersoniumTest {
         TResponse response = AuthzUtils.getPCookie(
                 Setup.TEST_CELL1, queryBuilder.toString(), pCookie, HttpStatus.SC_SEE_OTHER);
 
-        Map<String, String> locationQuery = parseResponse(response.getLocationHeader());
+        Map<String, String> locationQuery = UrlUtils.parseFragment(response.getLocationHeader());
         assertThat(locationQuery.get(OAuth2Helper.Key.EXPIRES_IN), is("5"));
-    }
-
-    /**
-     * parse response.
-     * @param location location
-     * @return parse response.
-     */
-    private Map<String, String> parseResponse(String location) {
-        String[] locations = location.split("#");
-        String[] responses = locations[1].split("&");
-        Map<String, String> map = new HashMap<String, String>();
-        for (String response : responses) {
-            String[] value = response.split("=");
-            map.put(value[0], value[1]);
-        }
-
-        return map;
     }
 }

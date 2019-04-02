@@ -21,7 +21,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpHeaders;
@@ -99,9 +98,9 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
      */
     @Test
     public final void authz_first_authenticated() throws Exception {
-        PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        Map<String, String> responseMap = parseResponse(dcRes);
+        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
         assertThat(responseMap.get(OAuth2Helper.Key.LAST_AUTHENTICATED)).contains("null");
         assertThat(responseMap.get(OAuth2Helper.Key.FAILED_COUNT)).contains("0");
@@ -119,21 +118,21 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
         requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
         AuthTestCommon.waitForIntervalLock();
         Long before1stAuthnTime = new Date().getTime();
-        PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
+        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
         Long after1stAuthnTime = new Date().getTime();
 
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        Map<String, String> responseMap = parseResponse(dcRes);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
         assertThat(responseMap.get(OAuth2Helper.Key.LAST_AUTHENTICATED)).contains("null");
         assertThat(responseMap.get(OAuth2Helper.Key.FAILED_COUNT)).contains("3");
 
         // second get token. failed count = 0.
-        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
+        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
         Long after2ndAuthnTime = new Date().getTime();
 
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        responseMap = parseResponse(dcRes);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
         Long lastAuthenticated = Long.valueOf(responseMap.get(OAuth2Helper.Key.LAST_AUTHENTICATED));
         assertTrue(before1stAuthnTime <= lastAuthenticated && lastAuthenticated <= after1stAuthnTime);
@@ -142,10 +141,10 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
         // third get token. failed count = 1.
         requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
         AuthTestCommon.waitForIntervalLock();
-        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
+        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
 
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        responseMap = parseResponse(dcRes);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
         lastAuthenticated = Long.valueOf(responseMap.get(OAuth2Helper.Key.LAST_AUTHENTICATED));
         assertTrue(after1stAuthnTime <= lastAuthenticated && lastAuthenticated <= after2ndAuthnTime);
@@ -164,24 +163,5 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
         PersoniumResponse dcRes = CellUtils.implicitflowAuthenticate(cellName, Setup.TEST_CELL_SCHEMA1, userName,
                 password, "__/redirect.html", ImplicitFlowTest.DEFAULT_STATE, null);
         return dcRes;
-    }
-
-    /**
-     * parse response.
-     * @param res the personium response
-     * @return parse response.
-     */
-    private Map<String, String> parseResponse(PersoniumResponse res) {
-        String location = res.getFirstHeader(HttpHeaders.LOCATION);
-        System.out.println(location);
-        String[] locations = location.split("#");
-        String[] responses = locations[1].split("&");
-        Map<String, String> map = new HashMap<String, String>();
-        for (String response : responses) {
-            String[] value = response.split("=");
-            map.put(value[0], value[1]);
-        }
-
-        return map;
     }
 }

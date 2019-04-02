@@ -17,10 +17,12 @@
 package io.personium.test.jersey.cell.auth;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpHeaders;
@@ -151,9 +153,9 @@ public class AuthzAccountLockTest extends PersoniumTest {
     @Test
     public final void lock_and_unlock() throws Exception {
         // before account lock.
-        PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        Map<String, String> responseMap = parseResponse(dcRes);
+        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // authentication failed repeatedly, account is locked.
@@ -161,14 +163,17 @@ public class AuthzAccountLockTest extends PersoniumTest {
             requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, "error");
         }
         AuthTestCommon.waitForIntervalLock();
-        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-        ImplicitFlowTest.checkHtmlBody(dcRes, "PS-AU-0004", TEST_CELL);
+        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(UrlUtils.cellRoot(TEST_CELL) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        responseMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(responseMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
 
         // other account not locked.
-        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        responseMap = parseResponse(dcRes);
+        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // wait account lock expiration time (s). lock is released .
@@ -177,9 +182,9 @@ public class AuthzAccountLockTest extends PersoniumTest {
         } catch (InterruptedException e) {
             log.debug("");
         }
-        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        responseMap = parseResponse(dcRes);
+        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
     }
 
@@ -194,9 +199,9 @@ public class AuthzAccountLockTest extends PersoniumTest {
             requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, "error");
         }
         AuthTestCommon.waitForIntervalLock();
-        PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        Map<String, String> responseMap = parseResponse(dcRes);
+        PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // seccond authenticated.
@@ -204,9 +209,9 @@ public class AuthzAccountLockTest extends PersoniumTest {
             requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, "error");
         }
         AuthTestCommon.waitForIntervalLock();
-        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        responseMap = parseResponse(dcRes);
+        res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
     }
 
@@ -222,24 +227,5 @@ public class AuthzAccountLockTest extends PersoniumTest {
         PersoniumResponse dcRes = CellUtils.implicitflowAuthenticate(cellName, Setup.TEST_CELL_SCHEMA1, userName,
                 password, "__/redirect.html", ImplicitFlowTest.DEFAULT_STATE, null);
         return dcRes;
-    }
-
-    /**
-     * parse response.
-     * @param res the personium response
-     * @return parse response.
-     */
-    private Map<String, String> parseResponse(PersoniumResponse res) {
-        String location = res.getFirstHeader(HttpHeaders.LOCATION);
-        System.out.println(location);
-        String[] locations = location.split("#");
-        String[] responses = locations[1].split("&");
-        Map<String, String> map = new HashMap<String, String>();
-        for (String response : responses) {
-            String[] value = response.split("=");
-            map.put(value[0], value[1]);
-        }
-
-        return map;
     }
 }

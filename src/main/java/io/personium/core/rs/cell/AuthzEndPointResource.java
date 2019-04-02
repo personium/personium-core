@@ -122,29 +122,21 @@ public class AuthzEndPointResource {
     private static final String AJAX_FILE_NAME = "ajax.js";
     /** Login form _ Initial display message. */
     private static final String CODE_PASS_FORM = "PS-AU-0002";
-    // TODO ★private static final String MSG_PASS_FORM = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
     /** Login form _ User ID/Password not yet entered. */
     private static final String CODE_NO_ID_PASS = "PS-AU-0003";
- // TODO ★private static final String MSG_NO_ID_PASS = PersoniumCoreMessageUtils.getMessage("PS-AU-0003");
-    /** Login form User ID or password is incorrect. */
+    /** Login form _ User ID or password is incorrect. */
     private static final String CODE_INCORRECT_ID_PASS = "PS-AU-0004";
- // TODO ★private static final String MSG_INCORRECT_ID_PASS = PersoniumCoreMessageUtils.getMessage("PS-AU-0004");
-    /** Message when cookie authentication failed. */
+    /** Login form _ Message when cookie authentication failed. */
     private static final String CODE_MISS_COOKIE = "PS-AU-0005";
- // TODO ★private static final String MSG_MISS_COOKIE = PersoniumCoreMessageUtils.getMessage("PS-AU-0005");
 
     /** Password change form _ The password should be changed. */
     private static final String CODE_PASSWORD_CHANGE_REQUIRED = "PS-AU-0006";
- // TODO ★private static final String MSG_PASSWORD_CHANGE_REQUIRED = PersoniumCoreMessageUtils.getMessage("PS-AU-0006");
     /** Password change form _ Please input password. */
     private static final String CODE_PASSWORD_CHANGE_NO_PASS = "PS-AU-0007";
- // TODO ★private static final String MSG_PASSWORD_CHANGE_NO_PASS = PersoniumCoreMessageUtils.getMessage("PS-AU-0007");
     /** Password change form _ Password format is invalid. */
     private static final String CODE_PASSWORD_CHANGE_PASSWORD_FORMAT_INVALID = "PS-AU-0008";
- // TODO ★private static final String MSG_PASSWORD_CHANGE_PASSWORD_FORMAT_INVALID =
- //           PersoniumCoreMessageUtils.getMessage("PS-AU-0008");
+    /** Password change form _ Failed to update password. */
     private static final String CODE_PASSWORD_CHANGE_FAILED = "PS-AU-0009";
- // TODO ★private static final String MSG_PASSWORD_CHANGE_FAILED = PersoniumCoreMessageUtils.getMessage("PS-AU-0009");
 
     /**
      * constructor.
@@ -339,12 +331,12 @@ public class AuthzEndPointResource {
             }
         } else {
             if (!StringUtils.isEmpty(apTokenStr)) {
-                String massage = PersoniumCoreMessageUtils.getMessage(CODE_PASSWORD_CHANGE_REQUIRED);
-                return returnPasswordChangeHtmlForm(
-                        responseType, clientId, redirectUri, massage, state, scope, apTokenStr);
+                return returnPasswordChangeHtmlForm(clientId);
+            } else if (pCookie != null) {
+                return handlePCookie(responseType, clientId, redirectUri,
+                        pCookie, state, scope, keepLogin, expiresIn, uriInfo);
             } else {
-                String massage = PersoniumCoreMessageUtils.getMessage(CODE_PASS_FORM);
-                return returnHtmlForm(responseType, clientId, redirectUri, massage, state, scope);
+                return returnHtmlForm(clientId);
             }
         }
     }
@@ -365,9 +357,8 @@ public class AuthzEndPointResource {
     private Response handlePasswordChange(String responseType, String clientId, String redirectUri, String apTokenStr,
             String newPassword, String state, String scope, String keepLogin, long expiresIn) {
         if (newPassword == null || StringUtils.isEmpty(newPassword)) {
-            // password is requierd.
-            return returnPasswordChangeHtmlForm(responseType, clientId, redirectUri,
-                    CODE_PASSWORD_CHANGE_NO_PASS, state, scope, apTokenStr);
+            return returnFormRedirect(responseType, clientId, redirectUri,
+                    OAuth2Helper.Error.INVALID_REQUEST, state, CODE_PASSWORD_CHANGE_NO_PASS, scope, apTokenStr);
         }
 
         // token parse.
@@ -417,8 +408,8 @@ public class AuthzEndPointResource {
         } catch (PersoniumCoreException e) {
             if (e.getCode().equals(PersoniumCoreException.Auth.PASSWORD_INVALID.getCode())) {
                 // input password is invalid.
-                return returnPasswordChangeHtmlForm(responseType, clientId, redirectUri,
-                        CODE_PASSWORD_CHANGE_PASSWORD_FORMAT_INVALID, state, scope, apTokenStr);
+                return returnFormRedirect(responseType, clientId, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
+                        state, CODE_PASSWORD_CHANGE_PASSWORD_FORMAT_INVALID, scope, apTokenStr);
             } else {
                 return this.returnErrorRedirect(responseType, redirectUri,
                         OAuth2Helper.Error.SERVER_ERROR, state, CODE_PASSWORD_CHANGE_FAILED);
@@ -901,13 +892,11 @@ public class AuthzEndPointResource {
      * @param redirectUri
      * @param state
      * @param scope
-     * @param massagae
      * @return
      */
-    private Response returnHtmlForm(String responseType, String clientId, String redirectUri,
-            String massage, String state, String scope) {
+    private Response returnHtmlForm(String clientId) {
         ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML_TYPE.withCharset(CharEncoding.UTF_8));
-        return rb.entity(this.createForm(responseType, clientId, redirectUri, massage, state, scope)).build();
+        return rb.entity(this.createForm(clientId)).build();
     }
 
     /**
@@ -915,7 +904,6 @@ public class AuthzEndPointResource {
      * @param responseType responseType
      * @param clientId clientId
      * @param redirectUri redirectUri
-     * @param message String to be output to message display area
      * @param state state
      * @param scope scope
      * @param oAuthResponseType responseType
@@ -923,8 +911,7 @@ public class AuthzEndPointResource {
      * @param pOwner pOwner
      * @return HTML
      */
-    private String createForm(String responseType, String clientId, String redirectUri,
-            String message, String state, String scope) {
+    private String createForm(String clientId) {
 
         try {
             HttpResponse response = cellRsCmp.requestGetAuthorizationHtml();
@@ -958,8 +945,8 @@ public class AuthzEndPointResource {
             paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
             //Callee
             paramsList.add(cell.getUrl() + "__authz");
-            //Message display area
-            paramsList.add(message);
+            //Message display area (Default message)
+            paramsList.add(PersoniumCoreMessageUtils.getMessage(CODE_PASS_FORM));
 
             Object[] params = paramsList.toArray();
 
@@ -981,11 +968,9 @@ public class AuthzEndPointResource {
      * @param apTokenStr password change access token string
      * @return response
      */
-    private Response returnPasswordChangeHtmlForm(String responseType, String clientId, String redirectUri,
-            String massage, String state, String scope, String apTokenStr) {
+    private Response returnPasswordChangeHtmlForm(String clientId) {
         ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML_TYPE.withCharset(CharEncoding.UTF_8));
-        return rb.entity(this.createPasswordChangeForm(
-                responseType, clientId, redirectUri, massage, state, scope, apTokenStr)).build();
+        return rb.entity(this.createPasswordChangeForm(clientId)).build();
     }
 
     /**
@@ -999,8 +984,7 @@ public class AuthzEndPointResource {
      * @param apTokenStr password change access token string
      * @return HTML
      */
-    private String createPasswordChangeForm(String responseType, String clientId, String redirectUri,
-            String message, String state, String scope, String apTokenStr) {
+    private String createPasswordChangeForm(String clientId) {
 
         try {
             HttpResponse response = cellRsCmp.requestGetAuthorizationHtml();
@@ -1033,8 +1017,8 @@ public class AuthzEndPointResource {
             paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
             //Callee
             paramsList.add(cell.getUrl() + "__authz");
-            //Message display area
-            paramsList.add(message);
+            //Message display area (Default message)
+            paramsList.add(PersoniumCoreMessageUtils.getMessage(CODE_PASSWORD_CHANGE_REQUIRED));
 
             Object[] params = paramsList.toArray();
 

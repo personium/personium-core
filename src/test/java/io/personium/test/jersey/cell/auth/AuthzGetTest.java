@@ -28,7 +28,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -100,9 +99,8 @@ public class AuthzGetTest extends AbstractCase {
         TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, HttpStatus.SC_OK);
 
         String cellUrl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/";
-        String message = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
         String expected = AuthzUtils.createDefaultHtml(
-                clientId, redirectUri, message, null, null, responseType, null, null, cellUrl);
+                clientId, redirectUri, null, null, responseType, null, null, cellUrl);
         assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
         assertThat(res.getBody(), is(expected));
     }
