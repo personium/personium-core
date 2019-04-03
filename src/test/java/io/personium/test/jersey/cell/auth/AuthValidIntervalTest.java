@@ -98,12 +98,12 @@ public class AuthValidIntervalTest extends PersoniumTest {
     }
 
     /**
-     * ログ.
+     * logger.
      */
     static Logger log = LoggerFactory.getLogger(TokenEndPointResource.class);
 
     /**
-     * コンストラクタ.
+     * constructor.
      */
     public AuthValidIntervalTest() {
         super(new PersoniumCoreApplication());

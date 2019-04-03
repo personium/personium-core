@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,6 @@ import io.personium.common.auth.token.AccountAccessToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.core.PersoniumCoreMessageUtils;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.lock.LockManager;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -97,18 +95,12 @@ public class ImplicitFlowTest extends PersoniumTest {
     static final String DEFAULT_STATE = "0000000111";
     private List<Cookie> cookies = null;
 
-    private static final int TEST_ACCOUNT_VALID_AUTHN_INTERVAL = 5;
-
     /**
      * before class.
      * @throws Exception Unexpected exception
      */
     @BeforeClass
     public static void beforeClass() throws Exception {
-        // Rewrite "accountValidAuthnInterval" as test parameters.
-        Field field = LockManager.class.getDeclaredField("accountValidAuthnInterval");
-        field.setAccessible(true);
-        field.set(LockManager.class, TEST_ACCOUNT_VALID_AUTHN_INTERVAL);
     }
 
     /**
@@ -117,10 +109,6 @@ public class ImplicitFlowTest extends PersoniumTest {
      */
     @AfterClass
     public static void afterClass() throws Exception {
-        // Restore "accountValidAuthnInterval".
-        Field field = LockManager.class.getDeclaredField("accountValidAuthnInterval");
-        field.setAccessible(true);
-        field.set(LockManager.class, PersoniumUnitConfig.getAccountValidAuthnInterval());
     }
 
     /**
@@ -282,84 +270,6 @@ public class ImplicitFlowTest extends PersoniumTest {
         assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
         Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
         assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
-    }
-
-    /**
-     * パスワード認証失敗後一定時間以内に成功する認証をリクエストした場合エラーが返却されること.
-     */
-    @Test
-    public final void パスワード認証失敗後一定時間以内に成功する認証をリクエストした場合エラーが返却されること() {
-        String lockType = PersoniumUnitConfig.getLockType();
-        if (lockType.equals("memcached")) {
-            String addbody = "&username=account2&password=dummypassword";
-
-            // パスワード認証(失敗)
-            PersoniumResponse res = requesttoAuthz(addbody);
-            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-            assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
-                    UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
-            assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
-            Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
-            assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
-
-            // 認証間隔を開けずにパスワード認証(認証失敗)
-            try {
-                Thread.sleep(1000 * TEST_ACCOUNT_VALID_AUTHN_INTERVAL / 2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            addbody = "&username=account2&password=password2";
-            res = requesttoAuthz(addbody);
-            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-            assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
-                    UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
-            assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
-            queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
-            assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
-        }
-    }
-
-    /**
-     * パスワード認証失敗後一定時間後に成功する認証をリクエストした場合303が返却されること.
-     */
-    @Test
-    public final void パスワード認証失敗後一定時間後に成功する認証をリクエストした場合303が返却されること() {
-        String lockType = PersoniumUnitConfig.getLockType();
-        if (lockType.equals("memcached")) {
-            String addbody = "&username=account2&password=dummypassword";
-
-            // パスワード認証(失敗)
-            PersoniumResponse res = requesttoAuthz(addbody);
-            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-            assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
-                    UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
-            assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
-            Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
-            assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
-
-            // 認証間隔を開けてパスワード認証(認証成功)
-            try {
-                Thread.sleep(1000 * TEST_ACCOUNT_VALID_AUTHN_INTERVAL);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            addbody = "&username=account2&password=password2";
-            res = requesttoAuthz(addbody);
-            assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-
-            Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
-            try {
-                AccountAccessToken aToken = AccountAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
-                        UrlUtils.cellRoot(Setup.TEST_CELL1));
-                assertNotNull("access token parse error.", aToken);
-                assertEquals(OAuth2Helper.Scheme.BEARER, response.get(OAuth2Helper.Key.TOKEN_TYPE));
-                assertEquals("3600", response.get(OAuth2Helper.Key.EXPIRES_IN));
-                assertEquals(DEFAULT_STATE, response.get(OAuth2Helper.Key.STATE));
-            } catch (TokenParseException e) {
-                fail(e.getMessage());
-                e.printStackTrace();
-            }
-        }
     }
 
     /**

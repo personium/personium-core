@@ -52,38 +52,6 @@ public class AuthzUtils {
 
     /**
      * Exec GET API.
-     * This method that specifies only required params.
-     * @param cellName Target cell name
-     * @param responseType response_type
-     * @param redirectUri redirect_uri
-     * @param clientId client_id
-     * @param statusCode Expected response code
-     * @return API response
-     */
-    public static TResponse get(String cellName, String responseType, String redirectUri,
-            String clientId, int statusCode) {
-        return get(cellName, responseType, redirectUri, clientId, null, statusCode);
-    }
-
-    /**
-     * Exec GET API.
-     * This method that can also specify optional params.
-     * Parameters that specify null are ignored.
-     * @param cellName Target cell name
-     * @param responseType response_type
-     * @param redirectUri redirect_uri
-     * @param clientId client_id
-     * @param state state
-     * @param statusCode Expected response code
-     * @return API response
-     */
-    public static TResponse get(String cellName, String responseType, String redirectUri,
-            String clientId, String state, int statusCode) {
-        return get(cellName, responseType, redirectUri, clientId, state, null, statusCode);
-    }
-
-    /**
-     * Exec GET API.
      * This method that can also specify optional params.
      * Parameters that specify null are ignored.
      * @param cellName Target cell name
@@ -92,11 +60,16 @@ public class AuthzUtils {
      * @param clientId client_id
      * @param state state
      * @param scope scope
+     * @param keeplogin keep login
+     * @param cancelFlg cancel flg
+     * @param expiresIn expires in
+     * @param apToken password change account token
      * @param statusCode Expected response code
      * @return API response
      */
     public static TResponse get(String cellName, String responseType, String redirectUri,
-            String clientId, String state, String scope, int statusCode) {
+            String clientId, String state, String scope, String keeplogin, String cancelFlg, String expiresIn,
+            String apToken, int statusCode) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("response_type=").append(responseType)
                     .append("&redirect_uri=").append(redirectUri)
@@ -106,6 +79,18 @@ public class AuthzUtils {
         }
         if (scope != null) {
             queryBuilder.append("&scope=").append(scope);
+        }
+        if (keeplogin != null) {
+            queryBuilder.append("&keeplogin=").append(keeplogin);
+        }
+        if (cancelFlg != null) {
+            queryBuilder.append("&cancel_flg=").append(cancelFlg);
+        }
+        if (expiresIn != null) {
+            queryBuilder.append("&expires_in=").append(expiresIn);
+        }
+        if (apToken != null) {
+            queryBuilder.append("&ap_token=").append(apToken);
         }
         return get(cellName, queryBuilder.toString(), statusCode);
     }
@@ -301,6 +286,43 @@ public class AuthzUtils {
         Object[] params = paramsList.toArray();
 
         String html = PersoniumCoreUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
+        html = MessageFormat.format(html, params);
+
+        return html;
+    }
+
+    /**
+     * create system default authz html.
+     * @param clientId client id
+     * @param redirectUriStr redirect uri
+     * @param state state
+     * @param scope scope
+     * @param responseType response type
+     * @param pTarget target
+     * @param pOwner owner
+     * @param cellUrl cell url
+     * @return html
+     */
+    public static String createDefaultPasswordChangeHtml(String clientId, String redirectUriStr, String state,
+            String scope, String responseType, String pTarget, String pOwner, String cellUrl) {
+        // If processing fails, return system default html.
+        List<Object> paramsList = new ArrayList<Object>();
+
+        if (!"".equals(clientId) && !clientId.endsWith("/")) {
+            clientId = clientId + "/";
+        }
+
+        paramsList.add(AuthResourceUtils.getJavascript("ajax.js"));
+        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
+        paramsList.add(clientId + Box.DEFAULT_BOX_NAME + "/profile.json");
+        paramsList.add(cellUrl + Box.DEFAULT_BOX_NAME + "/profile.json");
+        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
+        paramsList.add(cellUrl + "__authz");
+        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0006"));
+
+        Object[] params = paramsList.toArray();
+
+        String html = PersoniumCoreUtils.readStringResource("html/authform_passwordchange.html", CharEncoding.UTF_8);
         html = MessageFormat.format(html, params);
 
         return html;

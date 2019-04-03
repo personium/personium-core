@@ -162,6 +162,7 @@ public class AuthzEndPointResource {
      * @param keepLogin query parameter
      * @param isCancel Cancel flag
      * @param expiresInStr accress token expires in time(s).
+     * @param apTokenStr password change access token.
      * @param uriInfo context
      * @param xForwardedFor X-Forwarded-For Header
      * @return JAX-RS Response Object
@@ -177,11 +178,12 @@ public class AuthzEndPointResource {
             @QueryParam(Key.KEEPLOGIN) final String keepLogin,
             @QueryParam(Key.CANCEL_FLG) final String isCancel,
             @QueryParam(Key.EXPIRES_IN) final String expiresInStr,
+            @QueryParam(Key.AP_TOKEN) final String apTokenStr,
             @Context final UriInfo uriInfo,
             @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
 
         return auth(false, responseType, clientId, redirectUri, null, null,
-                pCookie, state, scope, keepLogin, isCancel, expiresInStr, uriInfo, xForwardedFor, null);
+                pCookie, state, scope, keepLogin, isCancel, expiresInStr, uriInfo, xForwardedFor, apTokenStr);
     }
 
     /**
@@ -987,7 +989,7 @@ public class AuthzEndPointResource {
     private String createPasswordChangeForm(String clientId) {
 
         try {
-            HttpResponse response = cellRsCmp.requestGetAuthorizationHtml();
+            HttpResponse response = cellRsCmp.requestGetAuthorizationPasswordChangeHtml();
             StringBuilder builder = new StringBuilder();
             try (BufferedReader br = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent(), CharEncoding.UTF_8))) {
