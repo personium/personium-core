@@ -146,7 +146,7 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * No query parameter. return 200.
+     * No query parameter. return 303.
      */
     @Test
     public final void No_query_parameter() {

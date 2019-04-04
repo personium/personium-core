@@ -18,6 +18,9 @@ package io.personium.test.jersey.cell.auth;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -463,12 +466,11 @@ public class AuthzGetTest extends AbstractCase {
         }
     }
 
-    // Forms Authentication Request (invalid)
     /**
      * invalid parameter test.
      */
     @Test
-    public void invalid() {
+    public void invalid_parameter() {
         String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String responseType = OAuth2Helper.ResponseType.TOKEN;
@@ -479,23 +481,53 @@ public class AuthzGetTest extends AbstractCase {
         String expiresIn = "2400";
 
         // clientId is invalid.
-        AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, "invalid", state, scope, keepLogin,
+        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, "invalid", state, scope, keepLogin,
                 cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error"));
+        Map<String, String> queryMap = UrlUtils.parseQuery(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0002"));
 
         // redirectUri is invalid.
-        AuthzUtils.get(Setup.TEST_CELL1, responseType, "invalid", clientId, state, scope, keepLogin,
+        res = AuthzUtils.get(Setup.TEST_CELL1, responseType, "invalid", clientId, state, scope, keepLogin,
                 cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error"));
+        queryMap = UrlUtils.parseQuery(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0003"));
+
+        // box non installed.
+        String clientId2 = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA2;
+        String redirectUri2 = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA2;
+        res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri2, clientId2, state, scope, keepLogin,
+                cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error"));
+        queryMap = UrlUtils.parseQuery(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0007"));
+
+        // responseType is empty.
+        res = AuthzUtils.get(Setup.TEST_CELL1, "", redirectUri, clientId, state, scope, keepLogin,
+                cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        Map<String, String> fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0004"));
 
         // responseType is invalid.
-        AuthzUtils.get(Setup.TEST_CELL1, "invalid", redirectUri, clientId, state, scope, keepLogin,
+        res = AuthzUtils.get(Setup.TEST_CELL1, "invalid", redirectUri, clientId, state, scope, keepLogin,
                 cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0001"));
 
         // expiresIn is invalid.
-        AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, state, scope, keepLogin,
+        res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, state, scope, keepLogin,
                 cancelFlg, "invalid", null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0008"));
     }
 
-    // Forms Authentication Request (cancel)
     /**
      * cancel test.
      */
@@ -505,8 +537,11 @@ public class AuthzGetTest extends AbstractCase {
         String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String responseType = OAuth2Helper.ResponseType.TOKEN;
 
-        // Cancel
-        AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null, "1", null, null,
-                HttpStatus.SC_SEE_OTHER);
+        // CancelSC_UNAUTHORIZED
+        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null, "1",
+                null, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        Map<String, String> fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0001"));
     }
 }
