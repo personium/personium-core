@@ -153,11 +153,11 @@ public class EventActionTest extends PersoniumTest {
      * @param expectedStatus Expected status of the last log line
      */
     private void checkEventLogStatus(int expectedStatus) {
-        String expectedString = "\"" + expectedStatus + "\"\r\n";
         TResponse logResponse = CellUtils.getLog(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK,
                 Setup.TEST_CELL1, "current", "default.log");
         String[] log = logResponse.getBody().split(",");
-        assertThat(log[log.length - 1], is(expectedString));
+        int status = Integer.parseInt(log[log.length - 1].replaceAll("[^0-9]", ""));
+        assertThat(status, is(expectedStatus));
     }
 
     /**
