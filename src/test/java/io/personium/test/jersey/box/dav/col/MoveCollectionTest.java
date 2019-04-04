@@ -1421,8 +1421,8 @@ public class MoveCollectionTest extends PersoniumTest {
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + srcColName + "/__src/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN,
                     HttpStatus.SC_CREATED);
-            DavResourceUtils.setServiceProppatch(TOKEN, HttpStatus.SC_MULTI_STATUS, CELL_NAME, BOX_NAME, srcColName,
-                    FILE_NAME, "test");
+            DavResourceUtils.setServiceProppatch(CELL_NAME, BOX_NAME, srcColName, TOKEN,
+                    "test",  FILE_NAME, HttpStatus.SC_MULTI_STATUS);
 
             // 移動
             String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, srcColName);
