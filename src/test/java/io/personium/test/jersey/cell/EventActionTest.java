@@ -19,6 +19,7 @@ package io.personium.test.jersey.cell;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.apache.commons.logging.Log;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 import org.junit.After;
@@ -44,8 +45,10 @@ import io.personium.test.utils.TResponse;
 @RunWith(PersoniumIntegTestRunner.class)
 public class EventActionTest extends PersoniumTest {
 
+    private Log log;
+
     /** Time to wait for action execution. */
-    private static final long SLEEP_MILLES = 3000;
+    private static final long SLEEP_MILLES = 5000;
     /** Name of engine script. */
     private static final String SERVICE_SOURCE_NAME = "service.js";
     /** Name of engine service. */
@@ -155,8 +158,9 @@ public class EventActionTest extends PersoniumTest {
     private void checkEventLogStatus(int expectedStatus) {
         TResponse logResponse = CellUtils.getLog(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK,
                 Setup.TEST_CELL1, "current", "default.log");
-        String[] log = logResponse.getBody().split(",");
-        int status = Integer.parseInt(log[log.length - 1].replaceAll("[^0-9]", ""));
+        log.debug(logResponse.getBody());
+        String[] logs = logResponse.getBody().split(",");
+        int status = Integer.parseInt(logs[logs.length - 1].replaceAll("[^0-9]", ""));
         assertThat(status, is(expectedStatus));
     }
 
