@@ -192,7 +192,7 @@ public class RuleUtils {
             keyBoxName = "'" + boxName + "'";
         }
 
-        Http.request("role-delete.txt")
+        Http.request("rule-delete.txt")
                 .with("token", token)
                 .with("cellPath", cellName)
                 .with("rulename", ruleName)
