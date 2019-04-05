@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 import org.junit.After;
@@ -45,7 +46,7 @@ import io.personium.test.utils.TResponse;
 @RunWith(PersoniumIntegTestRunner.class)
 public class EventActionTest extends PersoniumTest {
 
-    private Log log;
+    private Log log = LogFactory.getLog(EventActionTest.class);
 
     /** Time to wait for action execution. */
     private static final long SLEEP_MILLES = 5000;
