@@ -1,3 +1,7 @@
+## 1.7.6c
+BUG FIXES:
+* Token when executing the "exec" action does not contain Role.([#384](https://github.com/personium/personium-core/issues/384))
+
 ## 1.7.6b
 BUG FIXES:
 * Account locking is incorrect when using memcached.([#377](https://github.com/personium/personium-core/issues/377))
