@@ -394,9 +394,42 @@ public class CodeFlowTest extends PersoniumTest {
         String locationUri = getRedirectUri(locationHeader);
         Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
 
-        String expectedUri = UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error";
-        assertThat(locationUri, is(expectedUri));
-        assertThat(locationQuery.get("code"), is("PR400-AZ-0007"));
+        assertThat(locationUri, is(redirectUri));
+        assertThat(locationQuery.get(OAuth2Helper.Key.ERROR), is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
+        assertThat(locationQuery.get(OAuth2Helper.Key.ERROR_DESCRIPTION).replaceAll("\\+", " "),
+                is(PersoniumCoreMessageUtils.getMessage("PR401-AZ-0003")));
+        assertThat(locationQuery.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0003"));
+    }
+
+    /**
+     * Box with schema specified by client_id does not exist with pCookie.
+     */
+    @Test
+    public void error_box_not_found_pCookie() {
+        String username = ACCOUNT_1;
+        String password = PASSWORD_1;
+
+        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, username, password, HttpStatus.SC_OK);
+        String setCookie = tokenResponse.getHeader("Set-Cookie");
+        String pCookie = setCookie.split("=")[1];
+
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL2);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = STATE_1;
+        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+                state, pCookie, HttpStatus.SC_SEE_OTHER);
+
+        String locationHeader = response.getLocationHeader();
+        String locationUri = getRedirectUri(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
+
+        assertThat(locationUri, is(redirectUri));
+        assertThat(locationQuery.get("state"), is(state));
+        assertThat(locationQuery.get(OAuth2Helper.Key.ERROR), is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
+        assertThat(locationQuery.get(OAuth2Helper.Key.ERROR_DESCRIPTION).replaceAll("\\+", " "),
+                is(PersoniumCoreMessageUtils.getMessage("PR401-AZ-0003")));
+        assertThat(locationQuery.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0003"));
     }
 
     /**

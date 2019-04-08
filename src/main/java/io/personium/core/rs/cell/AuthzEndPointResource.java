@@ -525,6 +525,13 @@ public class AuthzEndPointResource {
                 return returnFormRedirect(responseType, clientId, redirectUri,
                         OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope, null);
             }
+
+            //Check box install
+            boolean boxInstall = checkBoxInstall(clientId);
+            if (!boxInstall) {
+                return this.returnErrorRedirect(responseType, redirectUri,
+                        OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, "PR401-AZ-0003");
+            }
         } catch (PersoniumCoreException e) {
             return this.returnErrorRedirect(responseType, redirectUri,
                     OAuth2Helper.Error.SERVER_ERROR, state, e.getCode());
@@ -634,6 +641,12 @@ public class AuthzEndPointResource {
                         OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_MISS_COOKIE, scope, null);
             }
 
+            //Check box install
+            boolean boxInstall = checkBoxInstall(clientId);
+            if (!boxInstall) {
+                return this.returnErrorRedirect(responseType, redirectUri,
+                        OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, "PR401-AZ-0003");
+            }
         } catch (TokenParseException e) {
             //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
@@ -1090,12 +1103,6 @@ public class AuthzEndPointResource {
         if (normalizedClientId.equals(cell.getUrl())) {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
-        // Check box installed.
-        if (!checkBoxInstall(normalizedClientId)) {
-            PersoniumCoreException exception = PersoniumCoreException.Auth.BOX_NOT_INSTALLED;
-            log.debug(exception.getMessage());
-            throw exception;
-        }
     }
 
     /**
@@ -1104,6 +1111,11 @@ public class AuthzEndPointResource {
      * @return true: authorization success false: authorization failure
      */
     private boolean checkBoxInstall(final String clientId) {
+        String normalizedClientId = clientId;
+        if (!clientId.endsWith("/")) {
+            normalizedClientId = clientId + "/";
+        }
+
         EntitySetAccessor boxAcceccor = EsModel.box(this.cell);
 
         // {filter={and={filters=[{term={c=$CELL_ID}, {term={s.Schema.untouched=$CLIENT_ID}]}}}
@@ -1121,7 +1133,7 @@ public class AuthzEndPointResource {
         term1.put("term", query1);
 
         String boxSchemaKey = OEntityDocHandler.KEY_STATIC_FIELDS + "." + Box.P_SCHEMA.getName() + ".untouched";
-        query2.put(boxSchemaKey, clientId);
+        query2.put(boxSchemaKey, normalizedClientId);
         term2.put("term", query2);
 
         queriesList.add(term1);

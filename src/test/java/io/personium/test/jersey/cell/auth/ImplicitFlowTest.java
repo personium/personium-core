@@ -74,6 +74,7 @@ import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
@@ -192,38 +193,48 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * 認証フォームへのPOSTでclient_idで指定したCellをスキーマに持つBoxが存在しない場合認可エラーとなること.
+     * If Box does not exist in the cell schema specified in client_id, an authorization error occurs.
      */
     @Test
-    public final void 認証フォームへのPOSTでclient_idで指定したCellをスキーマに持つBoxが存在しない場合認可エラーとなること() {
+    public final void error_box_not_found() {
         String clientId = UrlUtils.cellRoot("dummyCell");
+        String addbody = "&username=account2&password=password2";
 
-        PersoniumResponse res = requesttoAuthz(null, Setup.TEST_CELL1, clientId, null);
+        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL1, clientId, null);
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-
-        assertEquals(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error?code=PR400-AZ-0007",
-                res.getFirstHeader(HttpHeaders.LOCATION));
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(clientId + REDIRECT_HTML));
+        Map<String, String> fragmentMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.ERROR), is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.ERROR_DESCRIPTION).replaceAll("\\+", " "),
+                is(PersoniumCoreMessageUtils.getMessage("PR401-AZ-0003")));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0003"));
     }
 
     /**
-     * 認証フォームへのPOSTでclient_idで指定したCellをスキーマに持つBoxが別のCellに存在する場合認可エラーとなること.
+     * If the Box of Cell schema specified in client_id is another Cell, an authorization error occurs.
      */
     @Test
-    public final void 認証フォームへのPOSTでclient_idで指定したCellをスキーマに持つBoxが別のCellに存在する場合認可エラーとなること() {
+    public final void error_box_another_cell_schema() {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String addbody = "&username=account2&password=password2";
         String cellName = "authztestcell";
 
         try {
             // Cell作成
             CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            AccountUtils.create(Setup.MASTER_TOKEN_NAME, cellName, "account2", "password2", HttpStatus.SC_CREATED);
 
             // __authzリクエストを実行
-            PersoniumResponse res = requesttoAuthz(null, cellName, clientId, null);
+            PersoniumResponse res = requesttoAuthz(addbody, cellName, clientId, null);
             assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-
-            assertEquals(UrlUtils.cellRoot(cellName) + "__html/error?code=PR400-AZ-0007",
-                    res.getFirstHeader(HttpHeaders.LOCATION));
+            assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(clientId + REDIRECT_HTML));
+            Map<String, String> fragmentMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
+            assertThat(fragmentMap.get(OAuth2Helper.Key.ERROR), is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
+            assertThat(fragmentMap.get(OAuth2Helper.Key.ERROR_DESCRIPTION).replaceAll("\\+", " "),
+                    is(PersoniumCoreMessageUtils.getMessage("PR401-AZ-0003")));
+            assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0003"));
         } finally {
+            AccountUtils.delete(cellName, Setup.MASTER_TOKEN_NAME, "account2", -1);
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName);
         }
     }

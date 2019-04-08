@@ -496,16 +496,6 @@ public class AuthzGetTest extends AbstractCase {
         queryMap = UrlUtils.parseQuery(res.getHeader(HttpHeaders.LOCATION));
         assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0003"));
 
-        // box non installed.
-        String clientId2 = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA2;
-        String redirectUri2 = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA2;
-        res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri2, clientId2, state, scope, keepLogin,
-                cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
-        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(
-                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error"));
-        queryMap = UrlUtils.parseQuery(res.getHeader(HttpHeaders.LOCATION));
-        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0007"));
-
         // responseType is empty.
         res = AuthzUtils.get(Setup.TEST_CELL1, "", redirectUri, clientId, state, scope, keepLogin,
                 cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
