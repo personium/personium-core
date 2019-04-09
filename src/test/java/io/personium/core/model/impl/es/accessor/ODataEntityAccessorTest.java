@@ -47,7 +47,7 @@ import io.personium.test.unit.core.UrlUtils;
 public class ODataEntityAccessorTest {
 
     private static final String INDEX_NAME = "index_for_test";
-    private static final String TYPE_NAME = "TypeForTest";
+    private static final String TYPE_NAME = "userdata";
     private static final String ROUTING_ID = "RoutingIdTest";
 
     private static EsClient esClient;

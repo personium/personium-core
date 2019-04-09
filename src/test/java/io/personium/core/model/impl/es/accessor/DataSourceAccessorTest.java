@@ -98,7 +98,7 @@ public class DataSourceAccessorTest {
     public void create処理が正常に終了する() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         PersoniumIndexResponse response = dsa.create("id00001", new HashMap<Object, Object>());
         assertNotNull(response);
         assertEquals("id00001", response.getId());
@@ -111,7 +111,7 @@ public class DataSourceAccessorTest {
     public void ID省略でcreate処理が正常に終了する() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         PersoniumIndexResponse response = dsa.create(new HashMap<Object, Object>());
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
@@ -124,7 +124,7 @@ public class DataSourceAccessorTest {
     public void update処理が正常に終了する() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         PersoniumIndexResponse response = dsa.update("id00001", new HashMap<Object, Object>());
         assertNotNull(response);
         assertEquals("id00001", response.getId());
@@ -137,7 +137,7 @@ public class DataSourceAccessorTest {
     public void search処理が正常に終了する() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         dsa.create("id00001", new HashMap<Object, Object>());
         PersoniumSearchResponse response = dsa.search(new HashMap<String, Object>());
         assertNotNull(response);
@@ -150,7 +150,7 @@ public class DataSourceAccessorTest {
     public void search処理でクエリにサイズを指定した場合指定したサイズのドキュメントが取得できる() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         dsa.create("id00001", new HashMap<Object, Object>());
         dsa.create("id00002", new HashMap<Object, Object>());
         dsa.create("id00003", new HashMap<Object, Object>());
@@ -171,7 +171,7 @@ public class DataSourceAccessorTest {
     public void search処理でクエリに実データ数以上のサイズを指定した場合実データと同じドキュメント数が取得できる() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         dsa.create("id00001", new HashMap<Object, Object>());
         dsa.create("id00002", new HashMap<Object, Object>());
         dsa.create("id00003", new HashMap<Object, Object>());
@@ -190,7 +190,7 @@ public class DataSourceAccessorTest {
     public void search処理でクエリにサイズ0を指定した場合0件取得できる() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         dsa.create("id00001", new HashMap<Object, Object>());
         dsa.create("id00002", new HashMap<Object, Object>());
         dsa.create("id00003", new HashMap<Object, Object>());
@@ -209,7 +209,7 @@ public class DataSourceAccessorTest {
     public void search処理でクエリにnullを指定した場合全件取得できる() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         dsa.create("id00001", new HashMap<Object, Object>());
         dsa.create("id00002", new HashMap<Object, Object>());
         dsa.create("id00003", new HashMap<Object, Object>());
@@ -234,7 +234,7 @@ public class DataSourceAccessorTest {
     public void search処理でクエリにサイズを指定しなかった場合ドキュメントが全件取得できる() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
 
         Map<String, String> data = new HashMap<String, String>();
         data.put("test", "value");
@@ -264,7 +264,7 @@ public class DataSourceAccessorTest {
     public void count処理でクエリにnullを指定した場合全件数取得できる() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         dsa.create("id00001", new HashMap<Object, Object>());
         dsa.create("id00002", new HashMap<Object, Object>());
         dsa.create("id00003", new HashMap<Object, Object>());
@@ -288,7 +288,7 @@ public class DataSourceAccessorTest {
     public void count処理でクエリに空のクエリを指定した場合全件数取得できる() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         dsa.create("id00001", new HashMap<Object, Object>());
         dsa.create("id00002", new HashMap<Object, Object>());
         dsa.create("id00003", new HashMap<Object, Object>());
@@ -312,7 +312,7 @@ public class DataSourceAccessorTest {
     public void count処理でクエリに3件ヒットするクエリを指定した場合件数が3で取得できる() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         Map<String, Object> body = new HashMap<String, Object>();
         body.put("sample", "test");
         dsa.create("id00001", body);
@@ -341,7 +341,7 @@ public class DataSourceAccessorTest {
     public void count処理でクエリに3件ヒットするクエリにサイズ2を指定した場合件数が3で取得できる() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         Map<String, Object> body = new HashMap<String, Object>();
         body.put("sample", "test");
         dsa.create("id00001", body);
@@ -371,7 +371,7 @@ public class DataSourceAccessorTest {
     public void delete処理が正常に終了する() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         dsa.create("id00001", new HashMap<Object, Object>());
         PersoniumDeleteResponse response = dsa.delete("id00001", -1);
         assertNotNull(response);
@@ -385,7 +385,7 @@ public class DataSourceAccessorTest {
     public void インデックスが存在しない場合にdelete処理でnullが返却される() {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
-        DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
+        DataSourceAccessor dsa = new DataSourceAccessor(index, "cell", "RoutingIdTest");
         PersoniumDeleteResponse response = dsa.delete("id00001", -1);
         assertNull(response);
     }
