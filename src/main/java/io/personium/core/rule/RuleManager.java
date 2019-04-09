@@ -125,6 +125,8 @@ public class RuleManager {
             PersoniumEventType.cellctl(Box.EDM_TYPE_NAME, PersoniumEventType.Operation.UPDATE);
     private static final String RULEEVENT_BOX_MERGE =
             PersoniumEventType.cellctl(Box.EDM_TYPE_NAME, PersoniumEventType.Operation.MERGE);
+    private static final String RULEEVENT_BOX_RECURSIVE_DELETE =
+            PersoniumEventType.box(PersoniumEventType.Operation.DELETE);
     private static final String RULEEVENT_CELL_IMPORT = PersoniumEventType.cell(PersoniumEventType.Operation.IMPORT);
 
     private static RuleManager instance = null;
@@ -348,6 +350,7 @@ public class RuleManager {
                                     || RULEEVENT_BOX_NAVPROP_RULE_CREATE.equals(type)
                                     || RULEEVENT_BOX_UPDATE.equals(type)
                                     || RULEEVENT_BOX_MERGE.equals(type)
+                                    || RULEEVENT_BOX_RECURSIVE_DELETE.equals(type)
                                     || RULEEVENT_CELL_IMPORT.equals(type))) {
                                ruleEventPublisher.publish(event);
                            }
@@ -692,6 +695,10 @@ public class RuleManager {
                     setBoxInfo(cell, box);
                 }
                 ret = true;
+            } else if (RULEEVENT_BOX_RECURSIVE_DELETE.equals(type)) {
+                String boxUri = event.getObject().get();
+                String boxName = boxUri.substring(boxUri.lastIndexOf(UriUtils.STRING_SLASH) + 1);
+                ret = unregisterRule(boxName, cell);
             } else if (RULEEVENT_CELL_IMPORT.equals(type)) {
                 deleteRule(cell.getId());
                 loadRule(cell);
@@ -875,6 +882,29 @@ public class RuleManager {
 
     /**
      * Unregister rule.
+     * @param boxName name of box linked with the rule
+     * @param cell cell object that the rule belongs to
+     * @return true if unregistering is success, false otherwise
+     */
+    private boolean unregisterRule(String boxName, Cell cell) {
+        Map<String, RuleInfo> map = rules.get(cell.getId());
+        if (map == null || map.isEmpty()) {
+            return true;
+        }
+        for (RuleInfo rule : map.values()) {
+            if (boxName.equals(rule.boxname)) {
+                // Get key string for HashMap from ruleName and box's id
+                String key = getRuleKey(rule.name, rule.box.id);
+                if (!unregisterRuleByKey(key, rule.box.id, cell)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Unregister rule.
      * @param ruleName name of rule unregistered
      * @param boxName name of box linked with the rule
      * @param cell cell object that the rule belongs to
@@ -893,6 +923,17 @@ public class RuleManager {
         // Get key string for HashMap from ruleName and box's id
         String key = getRuleKey(ruleName, boxId);
 
+        return unregisterRuleByKey(key, boxId, cell);
+    }
+
+    /**
+     * Unregister rule.
+     * @param key key is ruleName and box's id
+     * @param boxId id of box linked with the rule
+     * @param cell cell object that the rule belongs to
+     * @return true if unregistering is success, false otherwise
+     */
+    private boolean unregisterRuleByKey(String key, String boxId, Cell cell) {
         // Remove rule and box as necessary.
         synchronized (lockObj) {
             Map<String, RuleInfo> map = rules.get(cell.getId());
