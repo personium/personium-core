@@ -16,7 +16,12 @@
  */
 package io.personium.test.jersey.cell.ctl;
 
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+
 import org.apache.http.HttpStatus;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -24,6 +29,7 @@ import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -40,6 +46,7 @@ import io.personium.test.utils.ExtRoleUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.RoleUtils;
+import io.personium.test.utils.RuleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
 
@@ -88,12 +95,15 @@ public class BoxBulkDeletionTest extends ODataCommon {
     /**
      * Normal test.
      * Box is not empty.
+     * @throws InterruptedException Error
      */
+    @SuppressWarnings("unchecked")
     @Test
-    public void normal_box_is_not_empty() {
+    public void normal_box_is_not_empty() throws InterruptedException {
         String cellName = Setup.TEST_CELL1;
         String boxName = "BoxBulkDeletionTestBox";
         String roleName = "BoxBulkDeletionTestRole";
+        String ruleName = "BoxBulkDeletionTestRule";
         String relationName = "BoxBulkDeletionTestRelation";
         String webDavCollectionName = "WebDAVCollection";
         String engineServiceCollectionName = "EngineServiceCollection";
@@ -101,6 +111,14 @@ public class BoxBulkDeletionTest extends ODataCommon {
         String davFileName = "davFile.txt";
         String sourceFileName = "source.js";
         String entityTypeName = "entityType";
+
+        JSONObject ruleJson = new JSONObject();
+        ruleJson.put("_Box.Name", boxName);
+        ruleJson.put("Name", ruleName);
+        ruleJson.put("EventType", "external");
+        ruleJson.put("EventExternal", "true");
+        ruleJson.put("Action", "log");
+
         try {
             // ---------------
             // Preparation
@@ -108,6 +126,7 @@ public class BoxBulkDeletionTest extends ODataCommon {
             BoxUtils.create(cellName, boxName, MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
             // Create box linked object.
             RoleUtils.create(cellName, MASTER_TOKEN_NAME, roleName, boxName, HttpStatus.SC_CREATED);
+            RuleUtils.create(cellName, MASTER_TOKEN_NAME, ruleJson, HttpStatus.SC_CREATED);
             RelationUtils.create(cellName, relationName, boxName, MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
             ExtRoleUtils.create(cellName, UrlUtils.roleClassUrl("testCell", "testRole"), relationName, boxName,
                     MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
@@ -137,6 +156,8 @@ public class BoxBulkDeletionTest extends ODataCommon {
             // Execution
             // ---------------
             BoxUtils.deleteRecursive(cellName, boxName, MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+            // Wait a bit until the event is issued.
+            Thread.sleep(PersoniumUnitConfig.getAccountValidAuthnInterval() * 1000L);
 
             // ---------------
             // Verification
@@ -144,12 +165,21 @@ public class BoxBulkDeletionTest extends ODataCommon {
             BoxUtils.get(cellName, MASTER_TOKEN_NAME, boxName, HttpStatus.SC_NOT_FOUND);
             RoleUtils.get(cellName, MASTER_TOKEN_NAME, roleName, boxName, HttpStatus.SC_NOT_FOUND);
             RoleUtils.get(cellName, MASTER_TOKEN_NAME, roleName, null, HttpStatus.SC_NOT_FOUND);
+            RuleUtils.get(cellName, MASTER_TOKEN_NAME, ruleName, boxName, HttpStatus.SC_NOT_FOUND);
+            RuleUtils.get(cellName, MASTER_TOKEN_NAME, ruleName, null, HttpStatus.SC_NOT_FOUND);
             RelationUtils.get(cellName, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_NOT_FOUND);
             RelationUtils.get(cellName, MASTER_TOKEN_NAME, relationName, null, HttpStatus.SC_NOT_FOUND);
             ExtRoleUtils.get(MASTER_TOKEN_NAME, cellName, UrlUtils.roleClassUrl("testCell", "testRole"),
                     "'" + relationName + "'", "'" + boxName + "'", HttpStatus.SC_NOT_FOUND);
             ExtRoleUtils.get(MASTER_TOKEN_NAME, cellName, UrlUtils.roleClassUrl("testCell", "testRole"),
                     "'" + relationName + "'", "null", HttpStatus.SC_NOT_FOUND);
+            // Check of Rule internal information.
+            TResponse ruleDetail = RuleUtils.listDetail(MASTER_TOKEN_NAME, cellName, HttpStatus.SC_OK);
+            JSONArray rules = (JSONArray) ruleDetail.bodyAsJson().get("rules");
+            for (int i = 0; i < rules.size(); i++) {
+                JSONObject rule = (JSONObject) rules.get(i);
+                assertThat(rule.get("_Box.Name"), not(boxName));
+            }
         } finally {
             BoxUtils.deleteRecursive(cellName, boxName, MASTER_TOKEN_NAME, -1);
         }
