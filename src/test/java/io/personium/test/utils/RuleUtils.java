@@ -103,6 +103,23 @@ public class RuleUtils {
     }
 
     /**
+     * Get list of rules.
+     * List is internal detail information.
+     * @param token token string
+     * @param cellName cell name
+     * @param sc status code
+     * @return response
+     */
+    public static TResponse listDetail(String token, String cellName, int sc) {
+        TResponse res = Http.request("rule-list-detail.txt")
+                .with("token", token)
+                .with("cellPath", cellName)
+                .returns()
+                .statusCode(sc);
+        return res;
+    }
+
+    /**
      * Create a rule.
      * @param cellName cell name
      * @param token token
