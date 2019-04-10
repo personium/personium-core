@@ -887,20 +887,38 @@ public class RuleManager {
      * @return true if unregistering is success, false otherwise
      */
     private boolean unregisterRule(String boxName, Cell cell) {
-        Map<String, RuleInfo> map = rules.get(cell.getId());
-        if (map == null || map.isEmpty()) {
+        List<RuleInfo> ruleList = getRuleListLinkedBox(boxName, cell);
+        if (ruleList.isEmpty()) {
             return true;
         }
-        for (RuleInfo rule : map.values()) {
-            if (boxName.equals(rule.boxname)) {
-                // Get key string for HashMap from ruleName and box's id
-                String key = getRuleKey(rule.name, rule.box.id);
-                if (!unregisterRuleByKey(key, rule.box.id, cell)) {
-                    return false;
-                }
+        for (RuleInfo rule : ruleList) {
+            // Get key string for HashMap from ruleName and box's id
+            String key = getRuleKey(rule.name, rule.box.id);
+            if (!unregisterRuleByKey(key, rule.box.id, cell)) {
+                return false;
             }
         }
         return true;
+    }
+
+    /**
+     * Get rule list linked box.
+     * @param boxName boxName name of box linked with the rule
+     * @param cell cell object that the rule belongs to
+     * @return rule list
+     */
+    private List<RuleInfo> getRuleListLinkedBox(String boxName, Cell cell) {
+        List<RuleInfo> ruleList = new ArrayList<RuleInfo>();
+        Map<String, RuleInfo> map = rules.get(cell.getId());
+        if (map == null || map.isEmpty()) {
+            return ruleList;
+        }
+        for (RuleInfo rule : map.values()) {
+            if (boxName.equals(rule.boxname)) {
+                ruleList.add(rule);
+            }
+        }
+        return ruleList;
     }
 
     /**
