@@ -1,3 +1,7 @@
+## 1.7.6d
+BUG FIXES:
+* Rule information is not deleted when executing Box recursive deletion API.([#388](https://github.com/personium/personium-core/issues/388))
+
 ## 1.7.6c
 BUG FIXES:
 * Token when executing the "exec" action does not contain Role.([#384](https://github.com/personium/personium-core/issues/384))
