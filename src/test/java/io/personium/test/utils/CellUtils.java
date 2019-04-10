@@ -840,6 +840,26 @@ public class CellUtils {
     }
 
     /**
+     * Set ACL. Single privilege.
+     * @param cellName target cell
+     * @param token token
+     * @param boxName box name
+     * @param roleName target role
+     * @param privilege privilege
+     * @param code expected response code
+     * @return api response
+     */
+    public static TResponse setAclSingle(String cellName, String token, String roleName, String privilege, int code) {
+        return Http.request("cell/acl-setting-single-request.txt")
+                .with("url", cellName)
+                .with("token", token)
+                .with("role", roleName)
+                .with("roleBaseUrl", UrlUtils.roleResource(cellName, null, ""))
+                .with("privilege", privilege)
+                .returns().debug().statusCode(code);
+    }
+
+    /**
      * ACLを設定するユーティリティ(デフォルト).
      * @param cellName Cell名
      * @param token トークン
