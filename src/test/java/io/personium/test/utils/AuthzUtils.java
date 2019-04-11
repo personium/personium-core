@@ -90,7 +90,8 @@ public class AuthzUtils {
             queryBuilder.append("&expires_in=").append(expiresIn);
         }
         if (apToken != null) {
-            queryBuilder.append("&ap_token=").append(apToken);
+            queryBuilder.append("&access_token=").append(apToken);
+            queryBuilder.append("&password_change_required=true");
         }
         return get(cellName, queryBuilder.toString(), statusCode);
     }
