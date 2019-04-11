@@ -759,7 +759,8 @@ public class CellUtils {
 
         String body = "response_type=token&client_id=" + clientId
                 + "&redirect_uri=" + clientId + redirectPath
-                + "&ap_token=" + apTokenStr
+                + "&access_token=" + apTokenStr
+                + "&password_change_required=true"
                 + "&password=" + schemaPassword
                 + "&state=" + state;
 
@@ -837,6 +838,26 @@ public class CellUtils {
                 .with("roleBaseUrl", UrlUtils.roleResource(cellName, null, ""))
                 .returns()
                 .debug();
+    }
+
+    /**
+     * Set ACL. Single privilege.
+     * @param cellName target cell
+     * @param token token
+     * @param boxName box name
+     * @param roleName target role
+     * @param privilege privilege
+     * @param code expected response code
+     * @return api response
+     */
+    public static TResponse setAclSingle(String cellName, String token, String roleName, String privilege, int code) {
+        return Http.request("cell/acl-setting-single-request.txt")
+                .with("url", cellName)
+                .with("token", token)
+                .with("role", roleName)
+                .with("roleBaseUrl", UrlUtils.roleResource(cellName, null, ""))
+                .with("privilege", privilege)
+                .returns().debug().statusCode(code);
     }
 
     /**

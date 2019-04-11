@@ -158,25 +158,26 @@ public class AuthzAccountStatusTest extends PersoniumTest {
             PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, testAccount, TEST_PASSWORD);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
             Map<String, String> responseMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
-            String apTokenStr = responseMap.get("ap_token");
-            assertNotNull(apTokenStr);
+            String accessTokenStr = responseMap.get(OAuth2Helper.Key.ACCESS_TOKEN);
+            assertNotNull(accessTokenStr);
+            assertTrue(Boolean.parseBoolean(responseMap.get(OAuth2Helper.Key.PASSWORD_CHANGE_REQUIRED)));
 
             // Password change success.
             String newPassword = "newpassword";
-            res = requestAuthorizationPasswordChange(TEST_CELL, apTokenStr, newPassword);
+            res = requestAuthorizationPasswordChange(TEST_CELL, accessTokenStr, newPassword);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
             assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
                     UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + "__/redirect.html"));
             responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
             assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
-            assertTrue(responseMap.containsKey(OAuth2Helper.Key.ACCESS_TOKEN));
+            assertNotNull(responseMap.get(OAuth2Helper.Key.ACCESS_TOKEN));
 
             // Authentication can be performed with the changed password.
             res = requestAuthorization4Authz(TEST_CELL, testAccount, newPassword);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
             responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
             assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
-            assertTrue(responseMap.containsKey(OAuth2Helper.Key.ACCESS_TOKEN));
+            assertNotNull(responseMap.get(OAuth2Helper.Key.ACCESS_TOKEN));
 
             // It can not be authenticated with the password before change
             res = requestAuthorization4Authz(TEST_CELL, testAccount, TEST_PASSWORD);
@@ -204,26 +205,29 @@ public class AuthzAccountStatusTest extends PersoniumTest {
             PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, testAccount, TEST_PASSWORD);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
             Map<String, String> responseMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
-            String apTokenStr = responseMap.get("ap_token");
-            assertNotNull(apTokenStr);
+            String accessTokenStr = responseMap.get(OAuth2Helper.Key.ACCESS_TOKEN);
+            assertNotNull(accessTokenStr);
+            assertTrue(Boolean.parseBoolean(responseMap.get(OAuth2Helper.Key.PASSWORD_CHANGE_REQUIRED)));
 
             // Password change failed, No pass.
-            res = requestAuthorizationPasswordChange(TEST_CELL, apTokenStr, "");
+            res = requestAuthorizationPasswordChange(TEST_CELL, accessTokenStr, "");
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
             assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(UrlUtils.cellRoot(TEST_CELL) + "__authz?"));
             assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
             responseMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
             assertThat(responseMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0007"));
-            assertTrue(responseMap.containsKey("ap_token"));
+            assertNotNull(responseMap.get(OAuth2Helper.Key.ACCESS_TOKEN));
+            assertTrue(Boolean.parseBoolean(responseMap.get(OAuth2Helper.Key.PASSWORD_CHANGE_REQUIRED)));
 
             // Password change failed, Password invalid format.
-            res = requestAuthorizationPasswordChange(TEST_CELL, apTokenStr, "error");
+            res = requestAuthorizationPasswordChange(TEST_CELL, accessTokenStr, "error");
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
             assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(UrlUtils.cellRoot(TEST_CELL) + "__authz?"));
             assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
             responseMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
             assertThat(responseMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0008"));
-            assertTrue(responseMap.containsKey("ap_token"));
+            assertNotNull(responseMap.get(OAuth2Helper.Key.ACCESS_TOKEN));
+            assertTrue(Boolean.parseBoolean(responseMap.get(OAuth2Helper.Key.PASSWORD_CHANGE_REQUIRED)));
 
             // Password change failed, invalid token.
             res = requestAuthorizationPasswordChange(TEST_CELL, "dummy_token", "newpassword");
@@ -232,7 +236,8 @@ public class AuthzAccountStatusTest extends PersoniumTest {
             assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
             responseMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
             assertThat(responseMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0002"));
-            assertFalse(responseMap.containsKey("ap_token"));
+            assertFalse(responseMap.containsKey(OAuth2Helper.Key.ACCESS_TOKEN));
+            assertFalse(Boolean.parseBoolean(responseMap.get(OAuth2Helper.Key.PASSWORD_CHANGE_REQUIRED)));
 
             // Authentication can be performed with the password before change. (account password change required)
             res = requestAuthorization4Authz(TEST_CELL, testAccount, TEST_PASSWORD);
@@ -241,7 +246,7 @@ public class AuthzAccountStatusTest extends PersoniumTest {
             assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
             responseMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
             assertThat(responseMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0006"));
-            assertNotNull(responseMap.get("ap_token"));
+            assertNotNull(responseMap.get(OAuth2Helper.Key.ACCESS_TOKEN));
         } finally {
             AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, testAccount, -1);
         }

@@ -16,9 +16,9 @@
  */
 package io.personium.core.event;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -237,13 +237,6 @@ public class PersoniumEvent implements Serializable {
      */
     public void convertObject(String cellUrl) {
         this.object = UriUtils.convertSchemeFromLocalCellToHttp(cellUrl, this.object);
-    }
-
-    /**
-     * Convert PersoniumEvent object to publish.
-     */
-    public void convertToPublish() {
-        this.roles = null;
     }
 
     /**

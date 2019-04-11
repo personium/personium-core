@@ -162,7 +162,8 @@ public class AuthzEndPointResource {
      * @param keepLogin query parameter
      * @param isCancel Cancel flag
      * @param expiresInStr accress token expires in time(s).
-     * @param apTokenStr password change access token.
+     * @param accessTokenStr access token.
+     * @param passwordChangeRequiredStr password change required.
      * @param uriInfo context
      * @param xForwardedFor X-Forwarded-For Header
      * @return JAX-RS Response Object
@@ -178,12 +179,13 @@ public class AuthzEndPointResource {
             @QueryParam(Key.KEEPLOGIN) final String keepLogin,
             @QueryParam(Key.CANCEL_FLG) final String isCancel,
             @QueryParam(Key.EXPIRES_IN) final String expiresInStr,
-            @QueryParam(Key.AP_TOKEN) final String apTokenStr,
+            @QueryParam(Key.ACCESS_TOKEN) final String accessTokenStr,
+            @QueryParam(Key.PASSWORD_CHANGE_REQUIRED) final String passwordChangeRequiredStr,
             @Context final UriInfo uriInfo,
             @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
 
-        return auth(false, responseType, clientId, redirectUri, null, null,
-                pCookie, state, scope, keepLogin, isCancel, expiresInStr, uriInfo, xForwardedFor, apTokenStr);
+        return auth(false, responseType, clientId, redirectUri, null, null, pCookie, state, scope, keepLogin, isCancel,
+                expiresInStr, uriInfo, xForwardedFor, accessTokenStr, passwordChangeRequiredStr);
     }
 
     /**
@@ -215,10 +217,11 @@ public class AuthzEndPointResource {
         String keepLogin = formParams.getFirst(Key.KEEPLOGIN);
         String isCancel = formParams.getFirst(Key.CANCEL_FLG);
         String expiresInStr = formParams.getFirst(Key.EXPIRES_IN);
-        String apTokenStr = formParams.getFirst(Key.AP_TOKEN);
+        String accessTokenStr = formParams.getFirst(Key.ACCESS_TOKEN);
+        String passwordChangeRequiredStr = formParams.getFirst(Key.PASSWORD_CHANGE_REQUIRED);
 
-        return auth(true, responseType, clientId, redirectUri, username, password,
-                pCookie, state, scope, keepLogin, isCancel, expiresInStr, uriInfo, xForwardedFor, apTokenStr);
+        return auth(true, responseType, clientId, redirectUri, username, password, pCookie, state, scope, keepLogin,
+                isCancel, expiresInStr, uriInfo, xForwardedFor, accessTokenStr, passwordChangeRequiredStr);
     }
 
     /**
@@ -243,11 +246,12 @@ public class AuthzEndPointResource {
      * @param keepLogin keep_login
      * @param isCancel is_cancel
      * @param expiresInStr accress token expires in time(s).
-     * @param apTokenStr password change access token
+     * @param accessTokenStr access token
+     * @param passwordChangeRequiredStr password change required
      * @param uriInfo uri_info
      * @return JAX-RS Response
      */
-    private Response auth(
+    private Response auth( // CHECKSTYLE IGNORE
             final boolean isPost,
             final String responseType,
             final String clientId,
@@ -262,7 +266,8 @@ public class AuthzEndPointResource {
             final String expiresInStr,
             final UriInfo uriInfo,
             final String xForwardedFor,
-            final String apTokenStr) {
+            final String accessTokenStr,
+            final String passwordChangeRequiredStr) {
 
         this.requestURIInfo = uriInfo;
         this.ipaddress = xForwardedFor;
@@ -314,9 +319,9 @@ public class AuthzEndPointResource {
 
         //Password change and authentication/ Password authentication / Transcel token authentication / Cookie authentication separation
         if (isPost) {
-            if (apTokenStr != null && !apTokenStr.isEmpty()) {
+            if (accessTokenStr != null && !accessTokenStr.isEmpty()) {
                 //password change and authentication
-                return handlePasswordChange(responseType, clientId, redirectUri, apTokenStr,
+                return handlePasswordChange(responseType, clientId, redirectUri, accessTokenStr,
                         password, state, scope, keepLogin, expiresIn);
             } else if (username != null || password != null) {
                 //When there is a setting in either user ID or password
@@ -329,10 +334,10 @@ public class AuthzEndPointResource {
             } else {
                 //If user ID, password, cookie are not specified,
                 return returnFormRedirect(responseType, clientId, redirectUri,
-                        OAuth2Helper.Error.INVALID_REQUEST, state, CODE_NO_ID_PASS, scope, null);
+                        OAuth2Helper.Error.INVALID_REQUEST, state, CODE_NO_ID_PASS, scope);
             }
         } else {
-            if (!StringUtils.isEmpty(apTokenStr)) {
+            if (Boolean.parseBoolean(passwordChangeRequiredStr)) {
                 return returnPasswordChangeHtmlForm(clientId);
             } else if (pCookie != null) {
                 return handlePCookie(responseType, clientId, redirectUri,
@@ -360,7 +365,7 @@ public class AuthzEndPointResource {
             String newPassword, String state, String scope, String keepLogin, long expiresIn) {
         if (newPassword == null || StringUtils.isEmpty(newPassword)) {
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.INVALID_REQUEST, state, CODE_PASSWORD_CHANGE_NO_PASS, scope, apTokenStr);
+                    OAuth2Helper.Error.INVALID_REQUEST, state, CODE_PASSWORD_CHANGE_NO_PASS, scope, apTokenStr, true);
         }
 
         // token parse.
@@ -371,25 +376,25 @@ public class AuthzEndPointResource {
             //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope, null);
+                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
         } catch (TokenDsigException e) {
             //Because certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope, null);
+                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
         } catch (TokenRootCrtException e) {
             //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope, null);
+                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
         }
         if (!(token instanceof PasswordChangeAccessToken)) {
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope, null);
+                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
         }
         if (token.isExpired()) {
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_MISS_COOKIE, scope, null);
+                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_MISS_COOKIE, scope);
         }
 
         // Get account.
@@ -398,7 +403,7 @@ public class AuthzEndPointResource {
         if (oew == null) {
             // It transits when mainly deleted.
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope, null);
+                    OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope);
         }
 
         // Password change.
@@ -411,7 +416,7 @@ public class AuthzEndPointResource {
             if (e.getCode().equals(PersoniumCoreException.Auth.PASSWORD_INVALID.getCode())) {
                 // input password is invalid.
                 return returnFormRedirect(responseType, clientId, redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
-                        state, CODE_PASSWORD_CHANGE_PASSWORD_FORMAT_INVALID, scope, apTokenStr);
+                        state, CODE_PASSWORD_CHANGE_PASSWORD_FORMAT_INVALID, scope, apTokenStr, true);
             } else {
                 return this.returnErrorRedirect(responseType, redirectUri,
                         OAuth2Helper.Error.SERVER_ERROR, state, CODE_PASSWORD_CHANGE_FAILED);
@@ -441,7 +446,7 @@ public class AuthzEndPointResource {
         //If both user ID and password are unspecified, return login error
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.INVALID_REQUEST, state, CODE_NO_ID_PASS, scope, null);
+                    OAuth2Helper.Error.INVALID_REQUEST, state, CODE_NO_ID_PASS, scope);
         }
 
         String accountId = null;
@@ -463,7 +468,7 @@ public class AuthzEndPointResource {
             if (oew == null) {
                 log.info("responseCode : " + CODE_INCORRECT_ID_PASS);
                 return returnFormRedirect(responseType, clientId, redirectUri,
-                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope, null);
+                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope);
             }
 
             //Check valid authentication interval
@@ -475,7 +480,7 @@ public class AuthzEndPointResource {
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnFormRedirect(responseType, clientId, redirectUri,
-                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope, null);
+                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope);
             }
 
             //Check account lock
@@ -487,7 +492,7 @@ public class AuthzEndPointResource {
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnFormRedirect(responseType, clientId, redirectUri,
-                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope, null);
+                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope);
             }
 
             // Check valid IP address
@@ -499,7 +504,7 @@ public class AuthzEndPointResource {
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnFormRedirect(responseType, clientId, redirectUri,
-                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope, null);
+                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope);
 
             }
 
@@ -512,7 +517,7 @@ public class AuthzEndPointResource {
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnFormRedirect(responseType, clientId, redirectUri,
-                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope, null);
+                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope);
             }
 
             //Check account status.
@@ -523,7 +528,7 @@ public class AuthzEndPointResource {
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 return returnFormRedirect(responseType, clientId, redirectUri,
-                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope, null);
+                        OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope);
             }
 
             //Check box install
@@ -546,7 +551,7 @@ public class AuthzEndPointResource {
             PasswordChangeAccessToken apToken = new PasswordChangeAccessToken(
                     issuedAt, expiresIn, getIssuerUrl(), username, schema);
             return returnFormRedirect(responseType, clientId, redirectUri, OAuth2Helper.Error.UNAUTHORIZED_CLIENT,
-                    state, CODE_PASSWORD_CHANGE_REQUIRED, scope, apToken.toTokenString());
+                    state, CODE_PASSWORD_CHANGE_REQUIRED, scope, apToken.toTokenString(), true);
         }
 
         if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)
@@ -631,14 +636,14 @@ public class AuthzEndPointResource {
 
             if (!(token instanceof IAccessToken)) {
                 return returnFormRedirect(responseType, clientId, redirectUri,
-                        OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope, null);
+                        OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
 
             }
 
             //Checking the validity of tokens
             if (token.isExpired()) {
                 return returnFormRedirect(responseType, clientId, redirectUri,
-                        OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_MISS_COOKIE, scope, null);
+                        OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_MISS_COOKIE, scope);
             }
 
             //Check box install
@@ -651,17 +656,17 @@ public class AuthzEndPointResource {
             //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope, null);
+                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
         } catch (TokenDsigException e) {
             //Because certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope, null);
+                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
         } catch (TokenRootCrtException e) {
             //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
             return returnFormRedirect(responseType, clientId, redirectUri,
-                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope, null);
+                    OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
         }
         long issuedAt = new Date().getTime();
         Map<String, String> paramMap = new HashMap<>();
@@ -844,11 +849,29 @@ public class AuthzEndPointResource {
      * @param state state
      * @param code message code
      * @param scope scope
-     * @param apToken password change accesss token
      * @return response (redirect to the authentication form)
      */
     private Response returnFormRedirect(String responseType, String clientId, String redirectUri,
-            String error, String state, String code, String scope, String apToken) {
+            String error, String state, String code, String scope) {
+        return returnFormRedirect(responseType, clientId, redirectUri, error, state, code, scope, null, false);
+    }
+
+    /**
+     * Return the redirect to the authentication form response.
+     * @param responseType response type
+     * @param clientId client id
+     * @param error error
+     * @param errorDesp error description
+     * @param state state
+     * @param code message code
+     * @param scope scope
+     * @param accessTokenStr accesss token
+     * @param passwordChangeRequired password change required
+     * @return response (redirect to the authentication form)
+     */
+    private Response returnFormRedirect(String responseType, String clientId, String redirectUri,
+            String error, String state, String code, String scope, String accessTokenStr,
+            boolean passwordChangeRequired) {
         //Respond with 303 and return Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
@@ -875,10 +898,14 @@ public class AuthzEndPointResource {
                 sbuf.append("&").append(OAuth2Helper.Key.SCOPE)
                         .append("=").append(URLEncoder.encode(scope, CharEncoding.UTF_8));
             }
-            // ap_token
-            if (StringUtils.isNotEmpty(apToken)) {
-                sbuf.append("&").append("ap_token")
-                        .append("=").append(URLEncoder.encode(apToken, CharEncoding.UTF_8));
+            // access_token
+            if (StringUtils.isNotEmpty(accessTokenStr)) {
+                sbuf.append("&").append(OAuth2Helper.Key.ACCESS_TOKEN)
+                        .append("=").append(URLEncoder.encode(accessTokenStr, CharEncoding.UTF_8));
+            }
+            // password_change_required
+            if (passwordChangeRequired) {
+                sbuf.append("&").append(OAuth2Helper.Key.PASSWORD_CHANGE_REQUIRED).append("=true");
             }
             // error
             sbuf.append("&").append(OAuth2Helper.Key.ERROR)

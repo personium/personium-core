@@ -206,23 +206,24 @@ public class DavResourceUtils {
     }
 
     /**
-     * サービス登録を実行し、レスポンスコードをチェックする.
-     * @param token トークン
-     * @param code 期待するレスポンスコード
-     * @param cell セル名
-     * @param box ボックス名
-     * @param path サービスコレクションのパス
-     * @param svcFileName サービスファイル名
-     * @param svcName サービス名
-     * @return レスポンス
+     * Set service property.
+     * @param cell Cell name
+     * @param box Box name
+     * @param path Path after box name
+     * @param token token
+     * @param svcName Service name
+     * @param svcFileName Service file name
+     * @param code Expected response code
+     * @return API response
      */
-    public static TResponse setServiceProppatch(String token,
-            int code,
+    public static TResponse setServiceProppatch(
             String cell,
             String box,
             String path,
+            String token,
+            String svcName,
             String svcFileName,
-            String svcName) {
+            int code) {
         return Http.request("box/proppatch-set-service-path.txt")
                 .with("cell", cell)
                 .with("box", box)
@@ -230,6 +231,33 @@ public class DavResourceUtils {
                 .with("token", token)
                 .with("name", svcName)
                 .with("src", svcFileName)
+                .returns()
+                .statusCode(code);
+    }
+
+    /**
+     * Remove service property.
+     * @param cell Cell name
+     * @param box Box name
+     * @param path Path after box name
+     * @param token token
+     * @param svcName Service name
+     * @param code Expected response code
+     * @return API response
+     */
+    public static TResponse removeServiceProppatch(
+            String cell,
+            String box,
+            String path,
+            String token,
+            String svcName,
+            int code) {
+        return Http.request("box/proppatch-remove-service-path.txt")
+                .with("cell", cell)
+                .with("box", box)
+                .with("path", path)
+                .with("token", token)
+                .with("name", svcName)
                 .returns()
                 .statusCode(code);
     }
@@ -936,7 +964,7 @@ public class DavResourceUtils {
      * Create service collection source.
      * @param cellName Cell name
      * @param boxName Box name
-     * @param path Path after box name
+     * @param collectionPath Path after box name
      * @param sourceName service collection source name.
      * @param contentType content-type
      * @param token Token
@@ -945,9 +973,9 @@ public class DavResourceUtils {
      * @return API response
      */
     public static TResponse createServiceCollectionSource(
-            String cellName, String boxName, String path, String sourceName,
+            String cellName, String boxName, String collectionPath, String sourceName,
             String contentType, String token, String fileBody, int code) {
-        String sourcePath = path + "/__src/" + sourceName;
+        String sourcePath = collectionPath + "/__src/" + sourceName;
         return Http.request("box/dav-put.txt")
                 .with("cellPath", cellName)
                 .with("box", boxName)
@@ -1150,6 +1178,27 @@ public class DavResourceUtils {
                 .with("cellPath", cellName)
                 .with("box", boxName)
                 .with("path", path)
+                .with("token", token)
+                .returns().debug().statusCode(code);
+    }
+
+    /**
+     * Delete service collection source.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param collectionPath Path after box name
+     * @param sourceName service collection source name.
+     * @param token Token
+     * @param code Expected response code
+     * @return API response
+     */
+    public static TResponse deleteServiceCollectionSource(
+            String cellName, String boxName, String collectionPath, String sourceName, String token, int code) {
+        String sourcePath = collectionPath + "/__src/" + sourceName;
+        return Http.request("box/dav-delete.txt")
+                .with("cellPath", cellName)
+                .with("box", boxName)
+                .with("path", sourcePath)
                 .with("token", token)
                 .returns().debug().statusCode(code);
     }
