@@ -204,10 +204,8 @@ public class ImplicitFlowTest extends PersoniumTest {
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
         assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(clientId + REDIRECT_HTML));
         Map<String, String> fragmentMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
-        assertThat(fragmentMap.get(OAuth2Helper.Key.ERROR), is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
-        assertThat(fragmentMap.get(OAuth2Helper.Key.ERROR_DESCRIPTION).replaceAll("\\+", " "),
-                is(PersoniumCoreMessageUtils.getMessage("PR401-AZ-0003")));
-        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0003"));
+        assertNotNull(fragmentMap.get(OAuth2Helper.Key.ACCESS_TOKEN));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.BOX_NOT_INSTALLED), is("true"));
     }
 
     /**
@@ -229,10 +227,8 @@ public class ImplicitFlowTest extends PersoniumTest {
             assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
             assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(clientId + REDIRECT_HTML));
             Map<String, String> fragmentMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
-            assertThat(fragmentMap.get(OAuth2Helper.Key.ERROR), is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
-            assertThat(fragmentMap.get(OAuth2Helper.Key.ERROR_DESCRIPTION).replaceAll("\\+", " "),
-                    is(PersoniumCoreMessageUtils.getMessage("PR401-AZ-0003")));
-            assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0003"));
+            assertNotNull(fragmentMap.get(OAuth2Helper.Key.ACCESS_TOKEN));
+            assertThat(fragmentMap.get(OAuth2Helper.Key.BOX_NOT_INSTALLED), is("true"));
         } finally {
             AccountUtils.delete(cellName, Setup.MASTER_TOKEN_NAME, "account2", -1);
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName);

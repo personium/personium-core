@@ -395,10 +395,8 @@ public class CodeFlowTest extends PersoniumTest {
         Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
 
         assertThat(locationUri, is(redirectUri));
-        assertThat(locationQuery.get(OAuth2Helper.Key.ERROR), is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
-        assertThat(locationQuery.get(OAuth2Helper.Key.ERROR_DESCRIPTION).replaceAll("\\+", " "),
-                is(PersoniumCoreMessageUtils.getMessage("PR401-AZ-0003")));
-        assertThat(locationQuery.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0003"));
+        assertNotNull(locationQuery.get(OAuth2Helper.Key.CODE));
+        assertThat(locationQuery.get(OAuth2Helper.Key.BOX_NOT_INSTALLED), is("true"));
     }
 
     /**
@@ -426,10 +424,8 @@ public class CodeFlowTest extends PersoniumTest {
 
         assertThat(locationUri, is(redirectUri));
         assertThat(locationQuery.get("state"), is(state));
-        assertThat(locationQuery.get(OAuth2Helper.Key.ERROR), is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
-        assertThat(locationQuery.get(OAuth2Helper.Key.ERROR_DESCRIPTION).replaceAll("\\+", " "),
-                is(PersoniumCoreMessageUtils.getMessage("PR401-AZ-0003")));
-        assertThat(locationQuery.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0003"));
+        assertNotNull(locationQuery.get(OAuth2Helper.Key.CODE));
+        assertThat(locationQuery.get(OAuth2Helper.Key.BOX_NOT_INSTALLED), is("true"));
     }
 
     /**

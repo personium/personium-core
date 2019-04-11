@@ -276,6 +276,10 @@ public final class OAuth2Helper {
          */
         public static final String PASSWORD_CHANGE_REQUIRED = "password_change_required";
         /**
+         * box not installed.
+         */
+        public static final String BOX_NOT_INSTALLED = "box_not_installed";
+        /**
          * scope.
          */
         public static final String SCOPE = "scope";

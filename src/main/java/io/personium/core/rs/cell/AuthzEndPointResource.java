@@ -530,13 +530,6 @@ public class AuthzEndPointResource {
                 return returnFormRedirect(responseType, clientId, redirectUri,
                         OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope);
             }
-
-            //Check box install
-            boolean boxInstall = checkBoxInstall(clientId);
-            if (!boxInstall) {
-                return this.returnErrorRedirect(responseType, redirectUri,
-                        OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, "PR401-AZ-0003");
-            }
         } catch (PersoniumCoreException e) {
             return this.returnErrorRedirect(responseType, redirectUri,
                     OAuth2Helper.Error.SERVER_ERROR, state, e.getCode());
@@ -603,6 +596,11 @@ public class AuthzEndPointResource {
         // release account lock.
         AuthResourceUtils.releaseAccountLock(accountId);
 
+        //Check box install
+        if (!checkBoxInstall(clientId)) {
+            paramMap.put(OAuth2Helper.Key.BOX_NOT_INSTALLED, Boolean.TRUE.toString());
+        }
+
         return returnSuccessRedirect(responseType, redirectUri, paramMap, keepLogin);
     }
 
@@ -644,13 +642,6 @@ public class AuthzEndPointResource {
             if (token.isExpired()) {
                 return returnFormRedirect(responseType, clientId, redirectUri,
                         OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_MISS_COOKIE, scope);
-            }
-
-            //Check box install
-            boolean boxInstall = checkBoxInstall(clientId);
-            if (!boxInstall) {
-                return this.returnErrorRedirect(responseType, redirectUri,
-                        OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, "PR401-AZ-0003");
             }
         } catch (TokenParseException e) {
             //Because I failed in Perth
@@ -705,6 +696,12 @@ public class AuthzEndPointResource {
         if (StringUtils.isNotEmpty(state)) {
             paramMap.put(OAuth2Helper.Key.STATE, state);
         }
+
+        //Check box install
+        if (!checkBoxInstall(clientId)) {
+            paramMap.put(OAuth2Helper.Key.BOX_NOT_INSTALLED, Boolean.TRUE.toString());
+        }
+
         //Cookie authentication successful
         //Respond with 303 and return Location header
         return returnSuccessRedirect(responseType, redirectUri, paramMap, keepLogin);
