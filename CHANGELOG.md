@@ -1,3 +1,10 @@
+## 1.7.8a
+BUG FIXES:
+* Rule information is not deleted when executing Box recursive deletion API.([#388](https://github.com/personium/personium-core/issues/388))
+
+IMPROVEMENTS:
+* Divide elasticsearch index into each type.([#390](https://github.com/personium/personium-core/issues/390))
+
 ## 1.7.8
 BUG FIXES:
 * Account locking is incorrect when using memcached.([#377](https://github.com/personium/personium-core/issues/377))
