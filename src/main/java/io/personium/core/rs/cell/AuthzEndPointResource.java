@@ -40,9 +40,11 @@ import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
@@ -70,9 +72,11 @@ import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.PersoniumCoreAuthnException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumCoreMessageUtils;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.auth.AuthUtils;
@@ -311,7 +315,7 @@ public class AuthzEndPointResource {
                     OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE, state, "PR400-AZ-0001");
         }
 
-        if ("1".equals(isCancel)) {
+        if (Boolean.parseBoolean(isCancel)) {
             //Redirect to redirect_uri
             return this.returnErrorRedirect(responseType, redirectUri,
                     OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, "PR401-AZ-0001");
@@ -910,6 +914,18 @@ public class AuthzEndPointResource {
             log.warn("Failed to URLencode, fragmentInfo of Location header.");
         }
         rb.header(HttpHeaders.LOCATION, sbuf.toString());
+
+        // remove pCookie (Do not allow pCookie to authorize when redirecting)
+        // TODO : Need to consider again when implementing keepLogin.
+        // TODO : It is necessary to test whether pCookie is removed by this route after implementing UnitLogin test also with keepLogin.
+        try {
+            URL url = new URL(cell.getUrl());
+            Cookie cookie = new Cookie(FacadeResource.P_COOKIE_KEY, "", url.getPath(),
+                    requestURIInfo.getBaseUri().getHost(), 0);
+            rb.cookie(new NewCookie(cookie, "", 0, PersoniumUnitConfig.isHttps()));
+        } catch (MalformedURLException e) {
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+        }
         //Returning the response
         return rb.entity("").build();
     }
