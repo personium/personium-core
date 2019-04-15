@@ -1,6 +1,17 @@
+## 1.7.9
+BUG FIXES:
+* URLs in link element in XML return value is not escaped.([#372](https://github.com/personium/personium-core/issues/372))
+* Token when executing the "exec" action does not contain Role.([#384](https://github.com/personium/personium-core/issues/384))
+* Rule information is not deleted when executing Box recursive deletion API.([#388](https://github.com/personium/personium-core/issues/388))
+
+IMPROVEMENTS:
+* Divide elasticsearch index into each type.([#390](https://github.com/personium/personium-core/issues/390))
+  * Note: You need to recreate the Elasticsearch index configuration.
+
 ## 1.7.8
 BUG FIXES:
 * Account locking is incorrect when using memcached.([#377](https://github.com/personium/personium-core/issues/377))
+  * Caution: It is necessary to modernize memcached. (v1.5.12) <br> Please see the [official website](https://memcached.org/) for details.
 
 IMPROVEMENTS:
 * Use secure hash in password authentication([#339](https://github.com/personium/personium-core/issues/339))
