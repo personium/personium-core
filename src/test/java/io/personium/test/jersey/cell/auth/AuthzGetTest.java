@@ -477,7 +477,7 @@ public class AuthzGetTest extends AbstractCase {
         String state = "dummy_state";
         String scope = "token";
         String keepLogin = "false";
-        String cancelFlg = "0";
+        String cancelFlg = "false";
         String expiresIn = "2400";
 
         // clientId is invalid.
@@ -516,6 +516,13 @@ public class AuthzGetTest extends AbstractCase {
         assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
         fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
         assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0008"));
+
+        // isCancel.
+        res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, state, scope, keepLogin,
+                "true", expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0001"));
     }
 
     /**
@@ -528,7 +535,7 @@ public class AuthzGetTest extends AbstractCase {
         String responseType = OAuth2Helper.ResponseType.TOKEN;
 
         // CancelSC_UNAUTHORIZED
-        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null, "1",
+        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null, "true",
                 null, null, HttpStatus.SC_SEE_OTHER);
         assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
         Map<String, String> fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
