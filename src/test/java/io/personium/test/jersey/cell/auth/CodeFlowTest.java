@@ -161,7 +161,7 @@ public class CodeFlowTest extends PersoniumTest {
         String setCookie = tokenResponse.getHeader("Set-Cookie");
         String pCookie = setCookie.split("=")[1];
 
-        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
                 state, pCookie, HttpStatus.SC_SEE_OTHER);
 
         String locationHeader = response.getLocationHeader();
@@ -170,6 +170,62 @@ public class CodeFlowTest extends PersoniumTest {
 
         assertThat(locationUri, is(redirectUri));
         assertNotNull(locationQuery.get("code"));
+        assertThat(locationQuery.get("state"), is(state));
+    }
+
+    /**
+     * Authz error with pCookie.
+     * @throws Exception Unexpected exception
+     */
+    @Test
+    public void error_pCookie_expires_out() throws Exception {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = STATE_1;
+        String username = ACCOUNT_1;
+        String password = PASSWORD_1;
+
+        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, username, password, "1", HttpStatus.SC_OK);
+        String setCookie = tokenResponse.getHeader("Set-Cookie");
+        String pCookie = setCookie.split("=")[1];
+
+        Thread.sleep(1500);
+
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+                state, pCookie, HttpStatus.SC_SEE_OTHER);
+
+        String locationHeader = response.getLocationHeader();
+        String locationUri = getRedirectUri(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
+
+        assertThat(locationUri, is(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz"));
+        assertThat(locationQuery.get("error"), is("unauthorized_client"));
+        assertThat(locationQuery.get("code"), is("PS-AU-0005"));
+        assertThat(locationQuery.get("state"), is(state));
+    }
+
+    /**
+     * Authz error with pCookie invalid.
+     */
+    @Test
+    public void error_pCookie_invalid() {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = STATE_1;
+
+        String pCookie = "dummyPCookie";
+
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+                state, pCookie, HttpStatus.SC_SEE_OTHER);
+
+        String locationHeader = response.getLocationHeader();
+        String locationUri = getRedirectUri(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
+
+        assertThat(locationUri, is(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz"));
+        assertThat(locationQuery.get("error"), is("unauthorized_client"));
+        assertThat(locationQuery.get("code"), is("PS-AU-0002"));
         assertThat(locationQuery.get("state"), is(state));
     }
 
@@ -216,7 +272,7 @@ public class CodeFlowTest extends PersoniumTest {
         // authz endpoint.
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String redirectUri = clientId + "__/redirect.html";
-        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
                 STATE_1, pCookie, HttpStatus.SC_SEE_OTHER);
 
         String locationHeader = response.getLocationHeader();
@@ -297,7 +353,7 @@ public class CodeFlowTest extends PersoniumTest {
         // authz endpoint.
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String redirectUri = clientId + "__/redirect.html";
-        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE,
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE,
                 redirectUri, clientId, STATE_1, OAuth2Helper.Scope.OPENID,
                 pCookie, HttpStatus.SC_SEE_OTHER);
         String locationHeader = response.getLocationHeader();
@@ -381,7 +437,7 @@ public class CodeFlowTest extends PersoniumTest {
      * Box with schema specified by client_id does not exist.
      */
     @Test
-    public void error_box_not_found() {
+    public void box_not_found() {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL2);
         String redirectUri = clientId + "__/redirect.html";
         String state = STATE_1;
@@ -403,7 +459,7 @@ public class CodeFlowTest extends PersoniumTest {
      * Box with schema specified by client_id does not exist with pCookie.
      */
     @Test
-    public void error_box_not_found_pCookie() {
+    public void box_not_found_pCookie() {
         String username = ACCOUNT_1;
         String password = PASSWORD_1;
 
@@ -415,7 +471,7 @@ public class CodeFlowTest extends PersoniumTest {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL2);
         String redirectUri = clientId + "__/redirect.html";
         String state = STATE_1;
-        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
                 state, pCookie, HttpStatus.SC_SEE_OTHER);
 
         String locationHeader = response.getLocationHeader();

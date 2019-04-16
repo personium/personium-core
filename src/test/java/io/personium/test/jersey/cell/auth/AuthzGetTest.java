@@ -18,6 +18,7 @@ package io.personium.test.jersey.cell.auth;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
@@ -45,6 +46,7 @@ import io.personium.test.utils.AuthzUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.TokenUtils;
 
 /**
  * Authorization endpoint tests. GET method.
@@ -477,7 +479,7 @@ public class AuthzGetTest extends AbstractCase {
         String state = "dummy_state";
         String scope = "token";
         String keepLogin = "false";
-        String cancelFlg = "0";
+        String cancelFlg = "false";
         String expiresIn = "2400";
 
         // clientId is invalid.
@@ -516,6 +518,13 @@ public class AuthzGetTest extends AbstractCase {
         assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
         fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
         assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0008"));
+
+        // isCancel.
+        res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, state, scope, keepLogin,
+                "true", expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0001"));
     }
 
     /**
@@ -528,10 +537,71 @@ public class AuthzGetTest extends AbstractCase {
         String responseType = OAuth2Helper.ResponseType.TOKEN;
 
         // CancelSC_UNAUTHORIZED
-        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null, "1",
+        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null, "true",
                 null, null, HttpStatus.SC_SEE_OTHER);
         assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
         Map<String, String> fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
         assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0001"));
+    }
+
+    // TODO ： ★pCookieでGetしたときのテスト１（正常）
+
+    /**
+     * Authz successful with pCookie. (Authorization processing with GET)
+     */
+    @Test
+    public void pCookie_authorization_successful() {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = "state1";
+        String username = "account1";
+        String password = "password1";
+
+        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, username, password, HttpStatus.SC_OK);
+        String setCookie = tokenResponse.getHeader("Set-Cookie");
+        String pCookie = setCookie.split("=")[1];
+
+        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, "code", redirectUri, clientId,
+                state, pCookie, HttpStatus.SC_SEE_OTHER);
+
+        String locationHeader = response.getLocationHeader();
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
+        assertTrue(locationHeader.startsWith(redirectUri));
+        assertNotNull(locationQuery.get("code"));
+        assertThat(locationQuery.get("state"), is(state));
+    }
+
+    /**
+     * pCookie expires out. The certification form is returned.
+     * @throws Exception Unexpected exception
+     */
+    @Test
+    public void pCookie_expires_out() throws Exception {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = "state1";
+        String username = "account1";
+        String password = "password1";
+
+        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, username, password, "1", HttpStatus.SC_OK);
+        String setCookie = tokenResponse.getHeader("Set-Cookie");
+        String pCookie = setCookie.split("=")[1];
+
+        Thread.sleep(1500);
+
+        AuthzUtils.getPCookie(Setup.TEST_CELL1, "code", redirectUri, clientId, state, pCookie, HttpStatus.SC_OK);
+    }
+
+    /**
+     * pCookie invalid. The certification form is returned.
+     */
+    @Test
+    public void pCookie_invalid() {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String pCookie = "dummyPCookie";
+        AuthzUtils.getPCookie(Setup.TEST_CELL1, "code", redirectUri, clientId, null, pCookie, HttpStatus.SC_OK);
     }
 }

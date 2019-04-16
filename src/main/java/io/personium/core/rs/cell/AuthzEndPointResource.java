@@ -311,7 +311,7 @@ public class AuthzEndPointResource {
                     OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE, state, "PR400-AZ-0001");
         }
 
-        if ("1".equals(isCancel)) {
+        if (Boolean.parseBoolean(isCancel)) {
             //Redirect to redirect_uri
             return this.returnErrorRedirect(responseType, redirectUri,
                     OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, "PR401-AZ-0001");
@@ -329,7 +329,7 @@ public class AuthzEndPointResource {
                         username, password, state, scope, keepLogin, expiresIn);
                 return response;
             } else if (pCookie != null) {
-                return handlePCookie(responseType, clientId, redirectUri,
+                return handlePCookie(isPost, responseType, clientId, redirectUri,
                         pCookie, state, scope, keepLogin, expiresIn, uriInfo);
             } else {
                 //If user ID, password, cookie are not specified,
@@ -340,7 +340,7 @@ public class AuthzEndPointResource {
             if (Boolean.parseBoolean(passwordChangeRequiredStr)) {
                 return returnPasswordChangeHtmlForm(clientId);
             } else if (pCookie != null) {
-                return handlePCookie(responseType, clientId, redirectUri,
+                return handlePCookie(isPost, responseType, clientId, redirectUri,
                         pCookie, state, scope, keepLogin, expiresIn, uriInfo);
             } else {
                 return returnHtmlForm(clientId);
@@ -606,6 +606,7 @@ public class AuthzEndPointResource {
 
     /**
      * Authorization p_cookie.
+     * @param isPost true is post process
      * @param responseType response_type
      * @param clientId client_id
      * @param redirectUri redirect_uri
@@ -617,7 +618,7 @@ public class AuthzEndPointResource {
      * @param uriInfo UriInfo
      * @return JAX-RS Response
      */
-    private Response handlePCookie(String responseType, String clientId, String redirectUri,
+    private Response handlePCookie(boolean isPost, String responseType, String clientId, String redirectUri,
             String pCookie, String state, String scope, String keepLogin, long expiresIn, UriInfo uriInfo) {
         //Cookie authentication
         //Get decrypted value of cookie value
@@ -633,30 +634,30 @@ public class AuthzEndPointResource {
             token = AbstractOAuth2Token.parse(authToken, getIssuerUrl(), cell.getUnitUrl());
 
             if (!(token instanceof IAccessToken)) {
-                return returnFormRedirect(responseType, clientId, redirectUri,
+                return returnHandlePCookieFailedResponse(isPost, responseType, clientId, redirectUri,
                         OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
 
             }
 
             //Checking the validity of tokens
             if (token.isExpired()) {
-                return returnFormRedirect(responseType, clientId, redirectUri,
+                return returnHandlePCookieFailedResponse(isPost, responseType, clientId, redirectUri,
                         OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_MISS_COOKIE, scope);
             }
         } catch (TokenParseException e) {
             //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-            return returnFormRedirect(responseType, clientId, redirectUri,
+            return returnHandlePCookieFailedResponse(isPost, responseType, clientId, redirectUri,
                     OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
         } catch (TokenDsigException e) {
             //Because certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
-            return returnFormRedirect(responseType, clientId, redirectUri,
+            return returnHandlePCookieFailedResponse(isPost, responseType, clientId, redirectUri,
                     OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
         } catch (TokenRootCrtException e) {
             //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
-            return returnFormRedirect(responseType, clientId, redirectUri,
+            return returnHandlePCookieFailedResponse(isPost, responseType, clientId, redirectUri,
                     OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, CODE_PASS_FORM, scope);
         }
         long issuedAt = new Date().getTime();
@@ -705,6 +706,29 @@ public class AuthzEndPointResource {
         //Cookie authentication successful
         //Respond with 303 and return Location header
         return returnSuccessRedirect(responseType, redirectUri, paramMap, keepLogin);
+    }
+
+    /**
+     * The response that authentication failed in handlePCookie is returned.
+     * @param isPost true is post process
+     * @param responseType response type
+     * @param clientId client id
+     * @param error error
+     * @param errorDesp error description
+     * @param state state
+     * @param code message code
+     * @param scope scope
+     * @return response
+     */
+    private Response returnHandlePCookieFailedResponse(boolean isPost, String responseType, String clientId,
+            String redirectUri, String error, String state, String code, String scope) {
+        if (isPost) {
+            // It redirects at POST.
+            return returnFormRedirect(responseType, clientId, redirectUri, error, state, code, scope);
+        } else {
+            // The form is displayed at GET.
+            return returnHtmlForm(clientId);
+        }
     }
 
     private Response returnSuccessRedirect(String responseType, String redirectUri,

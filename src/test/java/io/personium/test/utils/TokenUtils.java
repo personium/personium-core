@@ -81,6 +81,26 @@ public class TokenUtils {
     }
 
     /**
+     * Exec token API for password authentication.
+     * p_cookie=true.
+     * @param cellName Target cell name
+     * @param username username
+     * @param password password
+     * @param expiresIn expires in
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse getTokenPasswordPCookie(String cellName, String username, String password, String expiresIn, int statusCode) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append("grant_type=").append(OAuth2Helper.GrantType.PASSWORD)
+                   .append("&username=").append(username)
+                   .append("&password=").append(password)
+                   .append("&expires_in=").append(expiresIn)
+                   .append("&p_cookie=true");
+        return getToken(cellName, bodyBuilder.toString(), statusCode);
+    }
+
+    /**
      * Exec token API for token refresh.
      * @param cellName Target cell name
      * @param refreshToken refreshtoken

@@ -132,7 +132,7 @@ public class AuthzExpiresInTest extends PersoniumTest {
                 .append("&state=").append(state)
                 .append("&expires_in=").append("5");
 
-        TResponse response = AuthzUtils.getPCookie(
+        TResponse response = AuthzUtils.postPCookie(
                 Setup.TEST_CELL1, queryBuilder.toString(), pCookie, HttpStatus.SC_SEE_OTHER);
 
         Map<String, String> locationQuery = UrlUtils.parseFragment(response.getLocationHeader());

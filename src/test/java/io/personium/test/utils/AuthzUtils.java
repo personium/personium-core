@@ -174,6 +174,69 @@ public class AuthzUtils {
     }
 
     /**
+     * Exec POST API.
+     * This method that can also specify optional params.
+     * Parameters that specify null are ignored.
+     * @param cellName Target cell name
+     * @param responseType response_type
+     * @param redirectUri redirect_uri
+     * @param clientId client_id
+     * @param state state
+     * @param pCookie p_cookie
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse postPCookie(String cellName, String responseType, String redirectUri,
+            String clientId, String state, String pCookie, int statusCode) {
+        return postPCookie(cellName, responseType, redirectUri, clientId, state, null, pCookie, statusCode);
+    }
+
+    /**
+     * Exec POST API.
+     * This method that can also specify optional params.
+     * Parameters that specify null are ignored.
+     * @param cellName Target cell name
+     * @param responseType response_type
+     * @param redirectUri redirect_uri
+     * @param clientId client_id
+     * @param state state
+     * @param scope scope
+     * @param pCookie p_cookie
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse postPCookie(String cellName, String responseType, String redirectUri,
+            String clientId, String state, String scope, String pCookie, int statusCode) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append("response_type=").append(responseType)
+                   .append("&redirect_uri=").append(redirectUri)
+                   .append("&client_id=").append(clientId);
+        if (state != null) {
+            bodyBuilder.append("&state=").append(state);
+        }
+        if (scope != null) {
+            bodyBuilder.append("&scope=").append(scope);
+        }
+        return postPCookie(cellName, bodyBuilder.toString(), pCookie, statusCode);
+    }
+
+    /**
+     * Exec POST API for p_cookie authentication.
+     * @param cellName Target cell name
+     * @param body body
+     * @param pCookie p_cookie
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse postPCookie(String cellName, String body, String pCookie, int statusCode) {
+        return Http.request("authz/authz-post-pcookie.txt")
+                .with("cellName", cellName)
+                .with("pCookie", pCookie)
+                .with("body", body)
+                .returns().statusCode(statusCode).debug();
+    }
+
+    /**
      * Exec POST API for password authentication.
      * This method that specifies only required params.
      * @param cellName Target cell name
