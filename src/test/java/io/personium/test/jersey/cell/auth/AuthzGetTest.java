@@ -544,8 +544,6 @@ public class AuthzGetTest extends AbstractCase {
         assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0001"));
     }
 
-    // TODO ： ★pCookieでGetしたときのテスト１（正常）
-
     /**
      * Authz successful with pCookie. (Authorization processing with GET)
      */
@@ -570,28 +568,6 @@ public class AuthzGetTest extends AbstractCase {
         assertTrue(locationHeader.startsWith(redirectUri));
         assertNotNull(locationQuery.get("code"));
         assertThat(locationQuery.get("state"), is(state));
-    }
-
-    /**
-     * pCookie expires out. The certification form is returned.
-     * @throws Exception Unexpected exception
-     */
-    @Test
-    public void pCookie_expires_out() throws Exception {
-        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
-        String redirectUri = clientId + "__/redirect.html";
-        String state = "state1";
-        String username = "account1";
-        String password = "password1";
-
-        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
-                Setup.TEST_CELL1, username, password, "1", HttpStatus.SC_OK);
-        String setCookie = tokenResponse.getHeader("Set-Cookie");
-        String pCookie = setCookie.split("=")[1];
-
-        Thread.sleep(1500);
-
-        AuthzUtils.getPCookie(Setup.TEST_CELL1, "code", redirectUri, clientId, state, pCookie, HttpStatus.SC_OK);
     }
 
     /**

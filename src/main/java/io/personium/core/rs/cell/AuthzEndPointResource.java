@@ -150,9 +150,6 @@ public class AuthzEndPointResource {
 
     /**
      * Authorization endpoint. <H2> Issuance of token </ h2>
-     * <ul>
-     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
-     * </ul>
      * @param responseType query parameter
      * @param clientId query parameter
      * @param redirectUri query parameter
@@ -190,9 +187,6 @@ public class AuthzEndPointResource {
 
     /**
      * Authorization endpoint. <H2> Issuance of token </ h2>
-     * <ul>
-     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
-     * </ul>
      * @param pCookie p_cookie
      * @param formParams Body parameters
      * @param uriInfo context
@@ -317,7 +311,7 @@ public class AuthzEndPointResource {
                     OAuth2Helper.Error.UNAUTHORIZED_CLIENT, state, "PR401-AZ-0001");
         }
 
-        //Password change and authentication/ Password authentication / Transcel token authentication / Cookie authentication separation
+        //Password change and authentication/ Password authentication / Cookie authentication separation
         if (isPost) {
             if (accessTokenStr != null && !accessTokenStr.isEmpty()) {
                 //password change and authentication

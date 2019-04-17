@@ -108,11 +108,43 @@ public class AuthzExpiresInTest extends PersoniumTest {
     }
 
     /**
-     * Testing handlePCookie.
+     * Testing handlePCookie for post.
      * @throws Exception Unexpected exception
      */
     @Test
-    public final void test_handlePCookie() throws Exception {
+    public final void test_post_handlePCookie() throws Exception {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = "state1";
+        String username = "account1";
+        String password = "password1";
+
+        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, username, password, HttpStatus.SC_OK);
+        String setCookie = tokenResponse.getHeader("Set-Cookie");
+        String pCookie = setCookie.split("=")[1];
+
+        // post authz handle password.
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append("response_type=").append("token")
+                .append("&redirect_uri=").append(redirectUri)
+                .append("&client_id=").append(clientId)
+                .append("&state=").append(state)
+                .append("&expires_in=").append("5");
+
+        TResponse response = AuthzUtils.postPCookie(
+                Setup.TEST_CELL1, bodyBuilder.toString(), pCookie, HttpStatus.SC_SEE_OTHER);
+
+        Map<String, String> locationQuery = UrlUtils.parseFragment(response.getLocationHeader());
+        assertThat(locationQuery.get(OAuth2Helper.Key.EXPIRES_IN), is("5"));
+    }
+
+    /**
+     * Testing handlePCookie for get.
+     * @throws Exception Unexpected exception
+     */
+    @Test
+    public final void test_get_handlePCookie() throws Exception {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String redirectUri = clientId + "__/redirect.html";
         String state = "state1";
@@ -132,7 +164,7 @@ public class AuthzExpiresInTest extends PersoniumTest {
                 .append("&state=").append(state)
                 .append("&expires_in=").append("5");
 
-        TResponse response = AuthzUtils.postPCookie(
+        TResponse response = AuthzUtils.getPCookie(
                 Setup.TEST_CELL1, queryBuilder.toString(), pCookie, HttpStatus.SC_SEE_OTHER);
 
         Map<String, String> locationQuery = UrlUtils.parseFragment(response.getLocationHeader());
