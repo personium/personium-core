@@ -36,9 +36,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.cookie.Cookie;
 import org.json.simple.JSONObject;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -95,22 +93,6 @@ public class ImplicitFlowTest extends PersoniumTest {
     private static final String REDIRECT_HTML = "__/redirect.html";
     static final String DEFAULT_STATE = "0000000111";
     private List<Cookie> cookies = null;
-
-    /**
-     * before class.
-     * @throws Exception Unexpected exception
-     */
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-    }
-
-    /**
-     * after class.
-     * @throws Exception Unexpected exception
-     */
-    @AfterClass
-    public static void afterClass() throws Exception {
-    }
 
     /**
      * 前処理.
