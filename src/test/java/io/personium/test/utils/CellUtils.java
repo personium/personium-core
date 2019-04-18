@@ -759,7 +759,8 @@ public class CellUtils {
 
         String body = "response_type=token&client_id=" + clientId
                 + "&redirect_uri=" + clientId + redirectPath
-                + "&ap_token=" + apTokenStr
+                + "&access_token=" + apTokenStr
+                + "&password_change_required=true"
                 + "&password=" + schemaPassword
                 + "&state=" + state;
 

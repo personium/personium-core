@@ -1,0 +1,8 @@
+POST /${cellName}/__authz HTTP/1.1
+Host: ?
+Cookie: p_cookie=${pCookie}
+Content-Length: ?
+Connection: close
+Content-Type: application/x-www-form-urlencoded
+
+${body}

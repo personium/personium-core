@@ -22,17 +22,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.cxf.rs.security.jose.jwa.AlgorithmUtils;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONArray;
@@ -65,7 +66,7 @@ import io.personium.test.utils.TokenUtils;
  * Code flow tests.
  */
 @RunWith(PersoniumIntegTestRunner.class)
-@Category({ Integration.class })
+@Category({Integration.class})
 public class CodeFlowTest extends PersoniumTest {
 
     /** username. */
@@ -137,7 +138,7 @@ public class CodeFlowTest extends PersoniumTest {
 
         String locationHeader = response.getLocationHeader();
         String locationUri = getRedirectUri(locationHeader);
-        Map<String, String> locationQuery = parseQuery(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
 
         assertThat(locationUri, is(redirectUri));
         assertNotNull(locationQuery.get("code"));
@@ -160,15 +161,39 @@ public class CodeFlowTest extends PersoniumTest {
         String setCookie = tokenResponse.getHeader("Set-Cookie");
         String pCookie = setCookie.split("=")[1];
 
-        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
                 state, pCookie, HttpStatus.SC_SEE_OTHER);
 
         String locationHeader = response.getLocationHeader();
         String locationUri = getRedirectUri(locationHeader);
-        Map<String, String> locationQuery = parseQuery(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
 
         assertThat(locationUri, is(redirectUri));
         assertNotNull(locationQuery.get("code"));
+        assertThat(locationQuery.get("state"), is(state));
+    }
+
+    /**
+     * Authz error with pCookie invalid.
+     */
+    @Test
+    public void error_pCookie_invalid() {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = STATE_1;
+
+        String pCookie = "dummyPCookie";
+
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+                state, pCookie, HttpStatus.SC_SEE_OTHER);
+
+        String locationHeader = response.getLocationHeader();
+        String locationUri = getRedirectUri(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
+
+        assertThat(locationUri, is(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz"));
+        assertThat(locationQuery.get("error"), is("unauthorized_client"));
+        assertThat(locationQuery.get("code"), is("PS-AU-0002"));
         assertThat(locationQuery.get("state"), is(state));
     }
 
@@ -184,7 +209,7 @@ public class CodeFlowTest extends PersoniumTest {
                 redirectUri, clientId, STATE_1, ACCOUNT_1, PASSWORD_1, HttpStatus.SC_SEE_OTHER);
 
         String locationHeader = response.getLocationHeader();
-        Map<String, String> locationQuery = parseQuery(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
         // Get code.
         String code = locationQuery.get("code");
 
@@ -215,11 +240,11 @@ public class CodeFlowTest extends PersoniumTest {
         // authz endpoint.
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String redirectUri = clientId + "__/redirect.html";
-        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
                 STATE_1, pCookie, HttpStatus.SC_SEE_OTHER);
 
         String locationHeader = response.getLocationHeader();
-        Map<String, String> locationQuery = parseQuery(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
         // Get code.
         String code = locationQuery.get("code");
 
@@ -249,7 +274,7 @@ public class CodeFlowTest extends PersoniumTest {
                 redirectUri, clientId, STATE_1, OAuth2Helper.Scope.OPENID,
                 ACCOUNT_1, PASSWORD_1, HttpStatus.SC_SEE_OTHER);
         String locationHeader = response.getLocationHeader();
-        Map<String, String> locationQuery = parseQuery(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
         // Get code.
         String code = locationQuery.get("code");
 
@@ -296,11 +321,11 @@ public class CodeFlowTest extends PersoniumTest {
         // authz endpoint.
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String redirectUri = clientId + "__/redirect.html";
-        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, TYPE_CODE,
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE,
                 redirectUri, clientId, STATE_1, OAuth2Helper.Scope.OPENID,
                 pCookie, HttpStatus.SC_SEE_OTHER);
         String locationHeader = response.getLocationHeader();
-        Map<String, String> locationQuery = parseQuery(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
         // Get code.
         String code = locationQuery.get("code");
 
@@ -332,53 +357,55 @@ public class CodeFlowTest extends PersoniumTest {
 
     /**
      * Specify username that does not exist.
+     * @throws Exception exception
      */
     @Test
-    public void error_user_not_found() {
+    public void error_user_not_found() throws Exception {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String redirectUri = clientId + "__/redirect.html";
         String state = STATE_1;
         String username = "not_found_account";
         String password = PASSWORD_1;
         TResponse response = AuthzUtils.postPassword(Setup.TEST_CELL1, TYPE_CODE,
-                redirectUri, clientId, state, username, password, HttpStatus.SC_OK);
-
-        String message = PersoniumCoreMessageUtils.getMessage("PS-AU-0004");
-        String cellUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
-        String expectedHtml = AuthzUtils.createDefaultHtml(
-                clientId, redirectUri, message, state, null, TYPE_CODE, null, null, cellUrl);
-
-        assertThat(response.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
-        assertThat(response.getBody(), is(expectedHtml));
+                redirectUri, clientId, state, username, password, HttpStatus.SC_SEE_OTHER);
+        assertTrue(response.getHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(response.getHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(response.getHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
+        String expectedMessage = PersoniumCoreMessageUtils.getMessage("PS-AU-0004");
+        String errorDesp = queryMap.get(OAuth2Helper.Key.ERROR_DESCRIPTION);
+        assertThat(URLDecoder.decode(errorDesp, CharEncoding.UTF_8), is(expectedMessage));
     }
 
     /**
      * Specify an incorrect password.
+     * @throws Exception exception
      */
     @Test
-    public void error_password_failed() {
+    public void error_password_failed() throws Exception {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String redirectUri = clientId + "__/redirect.html";
         String state = STATE_1;
         String username = ACCOUNT_1;
         String password = "failed_password";
         TResponse response = AuthzUtils.postPassword(Setup.TEST_CELL1, TYPE_CODE,
-                redirectUri, clientId, state, username, password, HttpStatus.SC_OK);
-
-        String message = PersoniumCoreMessageUtils.getMessage("PS-AU-0004");
-        String cellUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
-        String expectedHtml = AuthzUtils.createDefaultHtml(
-                clientId, redirectUri, message, state, null, TYPE_CODE, null, null, cellUrl);
-
-        assertThat(response.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
-        assertThat(response.getBody(), is(expectedHtml));
+                redirectUri, clientId, state, username, password, HttpStatus.SC_SEE_OTHER);
+        assertTrue(response.getHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(response.getHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(response.getHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
+        String expectedMessage = PersoniumCoreMessageUtils.getMessage("PS-AU-0004");
+        String errorDesp = queryMap.get(OAuth2Helper.Key.ERROR_DESCRIPTION);
+        assertThat(URLDecoder.decode(errorDesp, CharEncoding.UTF_8), is(expectedMessage));
     }
 
     /**
      * Box with schema specified by client_id does not exist.
      */
     @Test
-    public void error_box_not_found() {
+    public void box_not_found() {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL2);
         String redirectUri = clientId + "__/redirect.html";
         String state = STATE_1;
@@ -389,11 +416,40 @@ public class CodeFlowTest extends PersoniumTest {
 
         String locationHeader = response.getLocationHeader();
         String locationUri = getRedirectUri(locationHeader);
-        Map<String, String> locationQuery = parseQuery(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
 
-        String expectedUri = UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error";
-        assertThat(locationUri, is(expectedUri));
-        assertThat(locationQuery.get("code"), is("PR400-AZ-0007"));
+        assertThat(locationUri, is(redirectUri));
+        assertNotNull(locationQuery.get(OAuth2Helper.Key.CODE));
+        assertThat(locationQuery.get(OAuth2Helper.Key.BOX_NOT_INSTALLED), is("true"));
+    }
+
+    /**
+     * Box with schema specified by client_id does not exist with pCookie.
+     */
+    @Test
+    public void box_not_found_pCookie() {
+        String username = ACCOUNT_1;
+        String password = PASSWORD_1;
+
+        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, username, password, HttpStatus.SC_OK);
+        String setCookie = tokenResponse.getHeader("Set-Cookie");
+        String pCookie = setCookie.split("=")[1];
+
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL2);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = STATE_1;
+        TResponse response = AuthzUtils.postPCookie(Setup.TEST_CELL1, TYPE_CODE, redirectUri, clientId,
+                state, pCookie, HttpStatus.SC_SEE_OTHER);
+
+        String locationHeader = response.getLocationHeader();
+        String locationUri = getRedirectUri(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
+
+        assertThat(locationUri, is(redirectUri));
+        assertThat(locationQuery.get("state"), is(state));
+        assertNotNull(locationQuery.get(OAuth2Helper.Key.CODE));
+        assertThat(locationQuery.get(OAuth2Helper.Key.BOX_NOT_INSTALLED), is("true"));
     }
 
     /**
@@ -411,7 +467,7 @@ public class CodeFlowTest extends PersoniumTest {
 
         String locationHeader = response.getLocationHeader();
         String locationUri = getRedirectUri(locationHeader);
-        Map<String, String> locationQuery = parseQuery(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
 
         String expectedUri = UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error";
         assertThat(locationUri, is(expectedUri));
@@ -426,22 +482,6 @@ public class CodeFlowTest extends PersoniumTest {
     private String getRedirectUri(String locationHeader) {
         String[] splits = locationHeader.split("\\?");
         return splits[0];
-    }
-
-    /**
-     * Return query part of the location header.
-     * @param locationHeader
-     * @return query
-     */
-    private Map<String, String> parseQuery(String locationHeader) {
-        String[] splits = locationHeader.split("\\?");
-        String[] querys = splits[1].split("&");
-        Map<String, String> map = new HashMap<String, String>();
-        for (String query : querys) {
-            String[] keyvalue = query.split("=");
-            map.put(keyvalue[0], keyvalue[1]);
-        }
-        return map;
     }
 
     /**

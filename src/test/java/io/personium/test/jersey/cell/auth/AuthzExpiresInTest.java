@@ -103,16 +103,48 @@ public class AuthzExpiresInTest extends PersoniumTest {
         PersoniumResponse res = rest.post(
                 UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz", bodyBuilder.toString(), requestheaders);
 
-        Map<String, String> responseMap = parseResponse(res.getFirstHeader(HttpHeaders.LOCATION));
+        Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertThat(responseMap.get(OAuth2Helper.Key.EXPIRES_IN), is("5"));
     }
 
     /**
-     * Testing handlePCookie.
+     * Testing handlePCookie for post.
      * @throws Exception Unexpected exception
      */
     @Test
-    public final void test_handlePCookie() throws Exception {
+    public final void test_post_handlePCookie() throws Exception {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = "state1";
+        String username = "account1";
+        String password = "password1";
+
+        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, username, password, HttpStatus.SC_OK);
+        String setCookie = tokenResponse.getHeader("Set-Cookie");
+        String pCookie = setCookie.split("=")[1];
+
+        // post authz handle password.
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append("response_type=").append("token")
+                .append("&redirect_uri=").append(redirectUri)
+                .append("&client_id=").append(clientId)
+                .append("&state=").append(state)
+                .append("&expires_in=").append("5");
+
+        TResponse response = AuthzUtils.postPCookie(
+                Setup.TEST_CELL1, bodyBuilder.toString(), pCookie, HttpStatus.SC_SEE_OTHER);
+
+        Map<String, String> locationQuery = UrlUtils.parseFragment(response.getLocationHeader());
+        assertThat(locationQuery.get(OAuth2Helper.Key.EXPIRES_IN), is("5"));
+    }
+
+    /**
+     * Testing handlePCookie for get.
+     * @throws Exception Unexpected exception
+     */
+    @Test
+    public final void test_get_handlePCookie() throws Exception {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String redirectUri = clientId + "__/redirect.html";
         String state = "state1";
@@ -135,24 +167,7 @@ public class AuthzExpiresInTest extends PersoniumTest {
         TResponse response = AuthzUtils.getPCookie(
                 Setup.TEST_CELL1, queryBuilder.toString(), pCookie, HttpStatus.SC_SEE_OTHER);
 
-        Map<String, String> locationQuery = parseResponse(response.getLocationHeader());
+        Map<String, String> locationQuery = UrlUtils.parseFragment(response.getLocationHeader());
         assertThat(locationQuery.get(OAuth2Helper.Key.EXPIRES_IN), is("5"));
-    }
-
-    /**
-     * parse response.
-     * @param location location
-     * @return parse response.
-     */
-    private Map<String, String> parseResponse(String location) {
-        String[] locations = location.split("#");
-        String[] responses = locations[1].split("&");
-        Map<String, String> map = new HashMap<String, String>();
-        for (String response : responses) {
-            String[] value = response.split("=");
-            map.put(value[0], value[1]);
-        }
-
-        return map;
     }
 }

@@ -20,7 +20,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -274,7 +273,7 @@ public class AuthExpiresInTest extends PersoniumTest {
                 redirectUri, clientId, "state1", "account1", "password1", HttpStatus.SC_SEE_OTHER);
 
         String locationHeader = response.getLocationHeader();
-        Map<String, String> locationQuery = parseQuery(locationHeader);
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
         String code = locationQuery.get("code");
 
         // Get app token.
@@ -427,21 +426,5 @@ public class AuthExpiresInTest extends PersoniumTest {
         }
         TResponse res = requestAuthentication(cellName, params, code);
         return res;
-    }
-
-    /**
-     * Return query part of the location header.
-     * @param locationHeader
-     * @return query
-     */
-    private Map<String, String> parseQuery(String locationHeader) {
-        String[] splits = locationHeader.split("\\?");
-        String[] querys = splits[1].split("&");
-        Map<String, String> map = new HashMap<String, String>();
-        for (String query : querys) {
-            String[] keyvalue = query.split("=");
-            map.put(keyvalue[0], keyvalue[1]);
-        }
-        return map;
     }
 }

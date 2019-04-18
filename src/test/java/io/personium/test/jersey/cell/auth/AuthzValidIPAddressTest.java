@@ -17,7 +17,10 @@
 package io.personium.test.jersey.cell.auth;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -102,19 +105,27 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
         // Authentication possible if set IP address.
         PersoniumResponse res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        Map<String, String> responseMap = parseResponse(res);
+        Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // failure if other IP address.
         res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.2");
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(TEST_CELL) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
 
         // failure if IP address is unknown.
         AuthTestCommon.waitForIntervalLock();
         res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, null);
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(TEST_CELL) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
 
     }
 
@@ -131,13 +142,17 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
         // Authentication possible if set IP address.
         PersoniumResponse res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.3");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        Map<String, String> responseMap = parseResponse(res);
+        Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // failure if other IP address.
         res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.1");
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(TEST_CELL) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
     }
 
     /**
@@ -153,13 +168,17 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
         // Authentication possible if set IP address.
         PersoniumResponse res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.127");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        Map<String, String> responseMap = parseResponse(res);
+        Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // failure if other IP address.
         res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.1.1");
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(TEST_CELL) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
     }
 
     /**
@@ -175,13 +194,17 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
         // Authentication possible if set IP address.
         PersoniumResponse res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.2.127");
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
-        Map<String, String> responseMap = parseResponse(res);
+        Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // failure if other IP address.
         res = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, "192.127.0.127");
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-        ImplicitFlowTest.checkHtmlBody(res, "PS-AU-0004", TEST_CELL);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(TEST_CELL) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(res.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
     }
 
     /**
@@ -218,24 +241,5 @@ public class AuthzValidIPAddressTest extends PersoniumTest {
         PersoniumResponse res = CellUtils.implicitflowAuthenticate(cellName, Setup.TEST_CELL_SCHEMA1, userName,
                 password, "__/redirect.html", ImplicitFlowTest.DEFAULT_STATE, authorizationHeader);
         return res;
-    }
-
-    /**
-     * parse response.
-     * @param res the personium response
-     * @return parse response.
-     */
-    private Map<String, String> parseResponse(PersoniumResponse res) {
-        String location = res.getFirstHeader(HttpHeaders.LOCATION);
-        System.out.println(location);
-        String[] locations = location.split("#");
-        String[] responses = locations[1].split("&");
-        Map<String, String> map = new HashMap<String, String>();
-        for (String response : responses) {
-            String[] value = response.split("=");
-            map.put(value[0], value[1]);
-        }
-
-        return map;
     }
 }

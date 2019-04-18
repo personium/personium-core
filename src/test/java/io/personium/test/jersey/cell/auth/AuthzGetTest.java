@@ -18,19 +18,25 @@ package io.personium.test.jersey.cell.auth;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.lock.LockManager;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.jersey.AbstractCase;
@@ -40,6 +46,7 @@ import io.personium.test.utils.AuthzUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.TokenUtils;
 
 /**
  * Authorization endpoint tests. GET method.
@@ -56,8 +63,24 @@ public class AuthzGetTest extends AbstractCase {
     /** Authorization html2 file contents. */
     private static final String AUTHORIZATION_HTML2_BODY = "<html><body>This is test2 html.</body></html>";
 
+    /** Authorization html url. */
+    private static final String AUTHORIZATION_HTML_URL = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
+            + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML_NAME;
+    /** Authorization html2 url. */
+    private static final String AUTHORIZATION_HTML2_URL = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
+            + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML2_NAME;
+
+    /** Authorization html acl path. */
+    private static final String AUTHORIZATION_HTML_ACL_PATH = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/"
+            + AUTHORIZATION_HTML_NAME;
+    /** Authorization html2 acl path. */
+    private static final String AUTHORIZATION_HTML2_ACL_PATH = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/"
+            + AUTHORIZATION_HTML2_NAME;
+
     /** Default value of authorizationhtmlurl. */
     private static String authorizationhtmlurlDefault;
+    /** Default value of authorizationpasswordchangehtmlurl. */
+    private static String passwordchangehtmlurlDefault;
 
     /**
      * Constructor.
@@ -71,7 +94,10 @@ public class AuthzGetTest extends AbstractCase {
      */
     @BeforeClass
     public static void beforClass() {
-        authorizationhtmlurlDefault = PersoniumUnitConfig.get(PersoniumUnitConfig.Cell.AUTHORIZATIONHTMLURL_DEFAULT);
+        authorizationhtmlurlDefault = PersoniumUnitConfig.get(
+                PersoniumUnitConfig.Cell.AUTHORIZATIONHTMLURL_DEFAULT);
+        passwordchangehtmlurlDefault = PersoniumUnitConfig.get(
+                PersoniumUnitConfig.Cell.AUTHORIZATION_PASSWORD_CHANGE_HTM_LURL_DEFAULT);
     }
 
     /**
@@ -81,87 +107,66 @@ public class AuthzGetTest extends AbstractCase {
     public static void afterClass() {
         PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATIONHTMLURL_DEFAULT,
                 authorizationhtmlurlDefault != null ? authorizationhtmlurlDefault : ""); // CHECKSTYLE IGNORE
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATION_PASSWORD_CHANGE_HTM_LURL_DEFAULT,
+                passwordchangehtmlurlDefault != null ? passwordchangehtmlurlDefault : ""); // CHECKSTYLE IGNORE
+    }
+    /**
+     * before.
+     */
+    @Before
+    public void before() {
+        LockManager.deleteAllLocks();
     }
 
     /**
-     * Normal test.
+     * after.
+     */
+    @After
+    public void after() {
+        LockManager.deleteAllLocks();
+    }
+
+    // Forms Authentication Request (auth form)
+    /**
+     * Normal test for auth form.
      * Default authorizationhtmlurl not set.
      * Property authorizationhtmlurl not set.
      */
     @Test
-    public void normal_default_not_set_property_not_set() {
+    public void authform_default_not_set_and_property_not_set() {
         String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String responseType = OAuth2Helper.ResponseType.TOKEN;
+        String state = "dummy_state";
+        String scope = "token";
+        String keepLogin = "false";
+        String cancelFlg = "0";
+        String expiresIn = "2400";
 
         PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATIONHTMLURL_DEFAULT, "");
 
         // Exec.
-        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, HttpStatus.SC_OK);
+        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, state, scope, keepLogin,
+                cancelFlg, expiresIn, null, HttpStatus.SC_OK);
 
         String cellUrl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/";
-        String message = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
         String expected = AuthzUtils.createDefaultHtml(
-                clientId, redirectUri, message, null, null, responseType, null, null, cellUrl);
+                clientId, redirectUri, state, scope, responseType, null, null, cellUrl);
         assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
         assertThat(res.getBody(), is(expected));
     }
 
     /**
-     * Normal test.
-     * Default authorizationhtmlurl set.
-     * Property authorizationhtmlurl not set.
-     * authorizationhtmlurl:"http:"
-     */
-    @Test
-    public void normal_default_set_property_not_set() {
-        String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
-        String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
-        String responseType = OAuth2Helper.ResponseType.TOKEN;
-
-        String authorizationhtmlurl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
-                + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML_NAME;
-        String aclPath = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML_NAME;
-
-        try {
-            // SetUp.
-            PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATIONHTMLURL_DEFAULT, authorizationhtmlurl);
-            DavResourceUtils.createWebDAVFile(
-                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
-                    MediaType.TEXT_HTML, MASTER_TOKEN_NAME, AUTHORIZATION_HTML_BODY,
-                    HttpStatus.SC_CREATED);
-            DavResourceUtils.setACLPrivilegeAllForAllUser(
-                    Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
-                    aclPath, OAuth2Helper.SchemaLevel.NONE);
-
-            // Exec.
-            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, HttpStatus.SC_OK);
-
-            assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
-            assertThat(res.getBody(), is(AUTHORIZATION_HTML_BODY));
-        } finally {
-            // Remove.
-            DavResourceUtils.deleteWebDavFile(
-                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
-                    MASTER_TOKEN_NAME, -1);
-        }
-    }
-
-    /**
-     * Normal test.
+     * Normal test for auth form.
      * Default authorizationhtmlurl not set.
      * Property authorizationhtmlurl set.
      * authorizationhtmlurl:"http:"
      */
     @Test
-    public void normal_default_not_set_property_set() {
+    public void authform_default_not_set_and_property_set() {
         String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String responseType = OAuth2Helper.ResponseType.TOKEN;
-
-        String authorizationhtmlurl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
-                + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML_NAME;
-        String aclPath = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML_NAME;
 
         try {
             // SetUp.
@@ -172,14 +177,15 @@ public class AuthzGetTest extends AbstractCase {
                     HttpStatus.SC_CREATED);
             DavResourceUtils.setACLPrivilegeAllForAllUser(
                     Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
-                    aclPath, OAuth2Helper.SchemaLevel.NONE);
+                    AUTHORIZATION_HTML_ACL_PATH, OAuth2Helper.SchemaLevel.NONE);
             CellUtils.proppatchSet(
                     Setup.TEST_CELL1,
-                    "<p:authorizationhtmlurl>" + authorizationhtmlurl + "</p:authorizationhtmlurl>",
+                    "<p:authorizationhtmlurl>" + AUTHORIZATION_HTML_URL + "</p:authorizationhtmlurl>",
                     MASTER_TOKEN_NAME, HttpStatus.SC_MULTI_STATUS);
 
             // Exec.
-            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, HttpStatus.SC_OK);
+            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null,
+                    null, null, null, HttpStatus.SC_OK);
 
             assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
             assertThat(res.getBody(), is(AUTHORIZATION_HTML_BODY));
@@ -196,49 +202,80 @@ public class AuthzGetTest extends AbstractCase {
     }
 
     /**
-     * Normal test.
+     * Normal test for auth form.
      * Default authorizationhtmlurl set.
-     * Property authorizationhtmlurl set.
+     * Property authorizationhtmlurl not set.
      * authorizationhtmlurl:"http:"
      */
     @Test
-    public void normal_default_set_property_set() {
+    public void authform_default_set_and_property_not_set() {
         String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String responseType = OAuth2Helper.ResponseType.TOKEN;
 
-        String authorizationhtmlurl1 = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
-                + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML_NAME;
-        String aclPath1 = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML_NAME;
-        String authorizationhtmlurl2 = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
-                + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML2_NAME;
-        String aclPath2 = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML2_NAME;
-
         try {
             // SetUp.
-            PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATIONHTMLURL_DEFAULT, authorizationhtmlurl1);
+            PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATIONHTMLURL_DEFAULT, AUTHORIZATION_HTML_URL);
             DavResourceUtils.createWebDAVFile(
                     Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
                     MediaType.TEXT_HTML, MASTER_TOKEN_NAME, AUTHORIZATION_HTML_BODY,
                     HttpStatus.SC_CREATED);
             DavResourceUtils.setACLPrivilegeAllForAllUser(
                     Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
-                    aclPath1, OAuth2Helper.SchemaLevel.NONE);
+                    AUTHORIZATION_HTML_ACL_PATH, OAuth2Helper.SchemaLevel.NONE);
+
+            // Exec.
+            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null,
+                    null, null, null, HttpStatus.SC_OK);
+
+            assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
+            assertThat(res.getBody(), is(AUTHORIZATION_HTML_BODY));
+        } finally {
+            // Remove.
+            DavResourceUtils.deleteWebDavFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
+                    MASTER_TOKEN_NAME, -1);
+        }
+    }
+
+    /**
+     * Normal test for auth form.
+     * Default authorizationhtmlurl set.
+     * Property authorizationhtmlurl set.
+     * authorizationhtmlurl:"http:"
+     */
+    @Test
+    public void authform_default_set_and_property_set() {
+        String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String responseType = OAuth2Helper.ResponseType.TOKEN;
+
+        try {
+            // SetUp.
+            PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATIONHTMLURL_DEFAULT, AUTHORIZATION_HTML_URL);
+            DavResourceUtils.createWebDAVFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
+                    MediaType.TEXT_HTML, MASTER_TOKEN_NAME, AUTHORIZATION_HTML_BODY,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.setACLPrivilegeAllForAllUser(
+                    Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
+                    AUTHORIZATION_HTML_ACL_PATH, OAuth2Helper.SchemaLevel.NONE);
             DavResourceUtils.createWebDAVFile(
                     Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML2_NAME,
                     MediaType.TEXT_HTML, MASTER_TOKEN_NAME, AUTHORIZATION_HTML2_BODY,
                     HttpStatus.SC_CREATED);
             DavResourceUtils.setACLPrivilegeAllForAllUser(
                     Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
-                    aclPath2, OAuth2Helper.SchemaLevel.NONE);
+                    AUTHORIZATION_HTML2_ACL_PATH, OAuth2Helper.SchemaLevel.NONE);
             CellUtils.proppatchSet(
                     Setup.TEST_CELL1,
-                    "<p:authorizationhtmlurl>" + authorizationhtmlurl2 + "</p:authorizationhtmlurl>",
+                    "<p:authorizationhtmlurl>" + AUTHORIZATION_HTML2_URL + "</p:authorizationhtmlurl>",
                     MASTER_TOKEN_NAME, HttpStatus.SC_MULTI_STATUS);
 
             // Exec.
-            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, HttpStatus.SC_OK);
-
+            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null,
+                    null, null, null, HttpStatus.SC_OK);
+            // The page set in Property is displayed.
             assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
             assertThat(res.getBody(), is(AUTHORIZATION_HTML2_BODY));
         } finally {
@@ -256,4 +293,291 @@ public class AuthzGetTest extends AbstractCase {
         }
     }
 
+    // Forms Authentication Request (password change form)
+    /**
+     * Normal test for password change form.
+     * Default authorizationpasswordchangehtmlurl not set.
+     * Property authorizationpasswordchangehtmlurl not set.
+     */
+    @Test
+    public void passwordchangeform_default_not_set_and_property_not_set() {
+        String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String responseType = OAuth2Helper.ResponseType.TOKEN;
+        String state = "dummy_state";
+        String scope = "token";
+        String keepLogin = "false";
+        String cancelFlg = "0";
+        String expiresIn = "2400";
+        String apToken = "dummyPasswordChangeToken";
+
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATION_PASSWORD_CHANGE_HTM_LURL_DEFAULT, "");
+
+        // Exec.
+        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, state, scope, keepLogin,
+                cancelFlg, expiresIn, apToken, HttpStatus.SC_OK);
+
+        String cellUrl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/";
+        String expected = AuthzUtils.createDefaultPasswordChangeHtml(
+                clientId, redirectUri, state, scope, responseType, null, null, cellUrl);
+        assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
+        assertThat(res.getBody(), is(expected));
+    }
+
+    /**
+     * Normal test for password change form.
+     * Default authorizationpasswordchangehtmlurl not set.
+     * Property authorizationpasswordchangehtmlurl set.
+     * authorizationpasswordchangehtmlurl:"http:"
+     */
+    @Test
+    public void passwordchangeform_default_not_set_and_property_set() {
+        String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String responseType = OAuth2Helper.ResponseType.TOKEN;
+        String apToken = "dummyPasswordChangeToken";
+
+        try {
+            // SetUp.
+            PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATION_PASSWORD_CHANGE_HTM_LURL_DEFAULT, "");
+            DavResourceUtils.createWebDAVFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
+                    MediaType.TEXT_HTML, MASTER_TOKEN_NAME, AUTHORIZATION_HTML_BODY,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.setACLPrivilegeAllForAllUser(
+                    Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
+                    AUTHORIZATION_HTML_ACL_PATH, OAuth2Helper.SchemaLevel.NONE);
+            CellUtils.proppatchSet(
+                    Setup.TEST_CELL1,
+                    "<p:authorizationpasswordchangehtmlurl>" + AUTHORIZATION_HTML_URL
+                            + "</p:authorizationpasswordchangehtmlurl>",
+                    MASTER_TOKEN_NAME, HttpStatus.SC_MULTI_STATUS);
+
+            // Exec.
+            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null,
+                    null, null, apToken, HttpStatus.SC_OK);
+
+            assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
+            assertThat(res.getBody(), is(AUTHORIZATION_HTML_BODY));
+        } finally {
+            // Remove.
+            CellUtils.proppatchRemove(
+                    Setup.TEST_CELL1,
+                    "<p:authorizationpasswordchangehtmlurl/>",
+                    MASTER_TOKEN_NAME, -1);
+            DavResourceUtils.deleteWebDavFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
+                    MASTER_TOKEN_NAME, -1);
+        }
+    }
+
+    /**
+     * Normal test for password change form.
+     * Default authorizationpasswordchangehtmlurl set.
+     * Property authorizationpasswordchangehtmlurl not set.
+     * authorizationpasswordchangehtmlurl:"http:"
+     */
+    @Test
+    public void passwordchangeform_default_set_and_property_not_set() {
+        String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String responseType = OAuth2Helper.ResponseType.TOKEN;
+        String apToken = "dummyPasswordChangeToken";
+
+        try {
+            // SetUp.
+            PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATION_PASSWORD_CHANGE_HTM_LURL_DEFAULT,
+                    AUTHORIZATION_HTML_URL);
+            DavResourceUtils.createWebDAVFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
+                    MediaType.TEXT_HTML, MASTER_TOKEN_NAME, AUTHORIZATION_HTML_BODY,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.setACLPrivilegeAllForAllUser(
+                    Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
+                    AUTHORIZATION_HTML_ACL_PATH, OAuth2Helper.SchemaLevel.NONE);
+
+            // Exec.
+            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null,
+                    null, null, apToken, HttpStatus.SC_OK);
+
+            assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
+            assertThat(res.getBody(), is(AUTHORIZATION_HTML_BODY));
+        } finally {
+            // Remove.
+            DavResourceUtils.deleteWebDavFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
+                    MASTER_TOKEN_NAME, -1);
+        }
+    }
+
+    /**
+     * Normal test for password change form.
+     * Default authorizationpasswordchangehtmlurl set.
+     * Property authorizationpasswordchangehtmlurl set.
+     * authorizationpasswordchangehtmlurl:"http:"
+     */
+    @Test
+    public void passwordchangeform_default_set_and_property_set() {
+        String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String responseType = OAuth2Helper.ResponseType.TOKEN;
+        String apToken = "dummyPasswordChangeToken";
+
+        try {
+            // SetUp.
+            PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATION_PASSWORD_CHANGE_HTM_LURL_DEFAULT,
+                    AUTHORIZATION_HTML_URL);
+            DavResourceUtils.createWebDAVFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
+                    MediaType.TEXT_HTML, MASTER_TOKEN_NAME, AUTHORIZATION_HTML_BODY,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.setACLPrivilegeAllForAllUser(
+                    Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
+                    AUTHORIZATION_HTML_ACL_PATH, OAuth2Helper.SchemaLevel.NONE);
+            DavResourceUtils.createWebDAVFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML2_NAME,
+                    MediaType.TEXT_HTML, MASTER_TOKEN_NAME, AUTHORIZATION_HTML2_BODY,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.setACLPrivilegeAllForAllUser(
+                    Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
+                    AUTHORIZATION_HTML2_ACL_PATH, OAuth2Helper.SchemaLevel.NONE);
+            CellUtils.proppatchSet(
+                    Setup.TEST_CELL1,
+                    "<p:authorizationpasswordchangehtmlurl>" + AUTHORIZATION_HTML2_URL
+                            + "</p:authorizationpasswordchangehtmlurl>",
+                    MASTER_TOKEN_NAME, HttpStatus.SC_MULTI_STATUS);
+
+            // Exec.
+            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null,
+                    null, null, apToken, HttpStatus.SC_OK);
+            // The page set in Property is displayed.
+            assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
+            assertThat(res.getBody(), is(AUTHORIZATION_HTML2_BODY));
+        } finally {
+            // Remove.
+            CellUtils.proppatchRemove(
+                    Setup.TEST_CELL1,
+                    "<p:authorizationpasswordchangehtmlurl/>",
+                    MASTER_TOKEN_NAME, -1);
+            DavResourceUtils.deleteWebDavFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML_NAME,
+                    MASTER_TOKEN_NAME, -1);
+            DavResourceUtils.deleteWebDavFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, AUTHORIZATION_HTML2_NAME,
+                    MASTER_TOKEN_NAME, -1);
+        }
+    }
+
+    /**
+     * invalid parameter test.
+     */
+    @Test
+    public void invalid_parameter() {
+        String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String responseType = OAuth2Helper.ResponseType.TOKEN;
+        String state = "dummy_state";
+        String scope = "token";
+        String keepLogin = "false";
+        String cancelFlg = "false";
+        String expiresIn = "2400";
+
+        // clientId is invalid.
+        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, "invalid", state, scope, keepLogin,
+                cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error"));
+        Map<String, String> queryMap = UrlUtils.parseQuery(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0002"));
+
+        // redirectUri is invalid.
+        res = AuthzUtils.get(Setup.TEST_CELL1, responseType, "invalid", clientId, state, scope, keepLogin,
+                cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error"));
+        queryMap = UrlUtils.parseQuery(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0003"));
+
+        // responseType is empty.
+        res = AuthzUtils.get(Setup.TEST_CELL1, "", redirectUri, clientId, state, scope, keepLogin,
+                cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        Map<String, String> fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0004"));
+
+        // responseType is invalid.
+        res = AuthzUtils.get(Setup.TEST_CELL1, "invalid", redirectUri, clientId, state, scope, keepLogin,
+                cancelFlg, expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0001"));
+
+        // expiresIn is invalid.
+        res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, state, scope, keepLogin,
+                cancelFlg, "invalid", null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR400-AZ-0008"));
+
+        // isCancel.
+        res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, state, scope, keepLogin,
+                "true", expiresIn, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0001"));
+    }
+
+    /**
+     * cancel test.
+     */
+    @Test
+    public void cancel() {
+        String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
+        String responseType = OAuth2Helper.ResponseType.TOKEN;
+
+        // CancelSC_UNAUTHORIZED
+        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, null, null, null, "true",
+                null, null, HttpStatus.SC_SEE_OTHER);
+        assertTrue(res.getHeader(HttpHeaders.LOCATION).startsWith(redirectUri));
+        Map<String, String> fragmentMap = UrlUtils.parseFragment(res.getHeader(HttpHeaders.LOCATION));
+        assertThat(fragmentMap.get(OAuth2Helper.Key.CODE), is("PR401-AZ-0001"));
+    }
+
+    /**
+     * Authz successful with pCookie. (Authorization processing with GET)
+     */
+    @Test
+    public void pCookie_authorization_successful() {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String state = "state1";
+        String username = "account1";
+        String password = "password1";
+
+        TResponse tokenResponse = TokenUtils.getTokenPasswordPCookie(
+                Setup.TEST_CELL1, username, password, HttpStatus.SC_OK);
+        String setCookie = tokenResponse.getHeader("Set-Cookie");
+        String pCookie = setCookie.split("=")[1];
+
+        TResponse response = AuthzUtils.getPCookie(Setup.TEST_CELL1, "code", redirectUri, clientId,
+                state, pCookie, HttpStatus.SC_SEE_OTHER);
+
+        String locationHeader = response.getLocationHeader();
+        Map<String, String> locationQuery = UrlUtils.parseQuery(locationHeader);
+        assertTrue(locationHeader.startsWith(redirectUri));
+        assertNotNull(locationQuery.get("code"));
+        assertThat(locationQuery.get("state"), is(state));
+    }
+
+    /**
+     * pCookie invalid. The certification form is returned.
+     */
+    @Test
+    public void pCookie_invalid() {
+        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
+        String redirectUri = clientId + "__/redirect.html";
+        String pCookie = "dummyPCookie";
+        AuthzUtils.getPCookie(Setup.TEST_CELL1, "code", redirectUri, clientId, null, pCookie, HttpStatus.SC_OK);
+    }
 }

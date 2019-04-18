@@ -17,11 +17,12 @@
 package io.personium.test.jersey.cell.auth;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
-
-import javax.ws.rs.core.MediaType;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpHeaders;
@@ -129,16 +130,17 @@ public class BasicAuthCellLevelTest extends PersoniumTest {
         AuthTestCommon.waitForIntervalLock();
 
         // __authz
-        // 認証失敗時：200でHTMLが返却される。この際、HTML中にメッセージが付与される。
-        // また、WWW-Authenticateヘッダーは付与されない。
+        // failure : 303 is returned.
         HashMap<String, String> authorizationHeader = new HashMap<String, String>();
         authorizationHeader.put(HttpHeaders.AUTHORIZATION, authorization);
         dcRes = CellUtils.implicitflowAuthenticate(authTargetCell, authSchemaCell, authSchemaAccount,
                 "invalid_password", "__/redirect.html", ImplicitFlowTest.DEFAULT_STATE, authorizationHeader);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-        assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", dcRes.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-        ImplicitFlowTest.checkHtmlBody(dcRes, "PS-AU-0004", authTargetCell);
-        AuthTestCommon.checkAuthenticateHeaderNotExists(dcRes);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        assertTrue(dcRes.getFirstHeader(HttpHeaders.LOCATION).startsWith(
+                UrlUtils.cellRoot(Setup.TEST_CELL1) + "__authz?"));
+        assertTrue(UrlUtils.parseFragment(dcRes.getFirstHeader(HttpHeaders.LOCATION)).isEmpty());
+        Map<String, String> queryMap = UrlUtils.parseQuery(dcRes.getFirstHeader(HttpHeaders.LOCATION));
+        assertThat(queryMap.get(OAuth2Helper.Key.CODE), is("PS-AU-0004"));
         AuthTestCommon.waitForIntervalLock();
     }
 

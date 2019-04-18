@@ -37,6 +37,30 @@ function createHttpRequest() {
     }
 }
 
+// Reflect the required parameters on the display.
+function reflectRequestParameters() {
+    // get parameters
+    var arg = new Object;
+    var pair = location.search.substring(1).split('&');
+    for (var i = 0; i < pair.length; i++) {
+        var kv = pair[i].split('=');
+        arg[kv[0]] = decodeURIComponent(kv[1].replace(/\+/g," "));
+    }
+
+    // reflect parameters on the display.
+    var queryParamNames = ["response_type", "client_id", "redirect_uri",
+            "state", "scope", "access_token", "error_description"];
+    for (var i = 0; i < queryParamNames.length; i++) {
+        var paramName = queryParamNames[i];
+        if (document.getElementById(paramName) && arg[paramName]) {
+            document.getElementById(paramName).value = arg[paramName];
+        }
+    }
+    if (arg["error_description"]) {
+        document.getElementById("message").textContent = arg["error_description"];
+    }
+}
+
 //Access the file and check the received contents.
 function requestFile(method , appFileName , dataFileName , async ) {
     //Create XMLHttpRequest Object
