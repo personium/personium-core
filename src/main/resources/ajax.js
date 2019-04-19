@@ -49,7 +49,7 @@ function reflectRequestParameters() {
 
     // reflect parameters on the display.
     var queryParamNames = ["response_type", "client_id", "redirect_uri",
-            "state", "scope", "access_token", "error_description"];
+            "state", "scope", "access_token"];
     for (var i = 0; i < queryParamNames.length; i++) {
         var paramName = queryParamNames[i];
         if (document.getElementById(paramName) && arg[paramName]) {
@@ -57,7 +57,7 @@ function reflectRequestParameters() {
         }
     }
     if (arg["error_description"]) {
-        document.getElementById("message").textContent = arg["error_description"];
+        document.getElementById("error_description").textContent = arg["error_description"];
     }
 }
 
@@ -117,6 +117,6 @@ function data_on_loaded(oj) {
 
 // Cancel button.
 function onCancel() {
-    document.getElementById("cancel_flg").value = "1";
+    document.getElementById("cancel_flg").value = "true";
     document.form.submit();
 }
