@@ -19,6 +19,8 @@ package io.personium.core.model;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -52,6 +54,8 @@ public class CellRsCmp extends DavRsCmp {
     private static final String AUTHORIZATION_HTML_URL = "authorizationhtmlurl";
     /** Name of property in which the URL of the authorization html. */
     private static final String AUTHORIZATION_PASSWORD_CHANGE_HTML_URL = "authorizationpasswordchangehtmlurl";
+    /** Not to recording authentication history accounts. */
+    private static final String NOT_TO_RECORDING_AUTH_HISTORY_ACCOUNTS = "nottorecordingauthhistoryaccounts";
 
     Cell cell;
     AccessContext accessContext;
@@ -315,6 +319,27 @@ public class CellRsCmp extends DavRsCmp {
         } catch (URISyntaxException e) {
             throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(propertyName);
         }
+    }
+
+
+    /**
+     * Request get not to recording authentication history accounts.
+     * @return Http response
+     */
+    public List<String> requestGetNotToRecordingAuthHistoryAccounts() {
+        // Get not to recording auth accounts.
+        String accountsStr;
+        try {
+            accountsStr = getDavCmp().getProperty(
+                    NOT_TO_RECORDING_AUTH_HISTORY_ACCOUNTS, "urn:x-personium:xmlns");
+        } catch (IOException | SAXException e1) {
+            throw PersoniumCoreException.UI.PROPERTY_SETTINGS_ERROR.params(NOT_TO_RECORDING_AUTH_HISTORY_ACCOUNTS);
+        }
+        if (StringUtils.isEmpty(accountsStr)) {
+            return null;
+        }
+        String[] accounts = accountsStr.split(",");
+        return Arrays.asList(accounts);
     }
 
     /**

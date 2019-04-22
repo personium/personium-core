@@ -152,6 +152,71 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
     }
 
     /**
+     * test nottorecordingauthhistoryaccounts.
+     * @throws Exception Unexpected exception
+     */
+    @Test
+    public final void not_to_recording_auth_history_accounts() throws Exception {
+        String accountNr2 = "accountNr2";
+
+        try {
+            AccountUtils.create(Setup.MASTER_TOKEN_NAME, TEST_CELL, accountNr2, TEST_PASSWORD,
+                    HttpStatus.SC_CREATED);
+            CellUtils.proppatchSet(TEST_CELL,
+                    "<p:nottorecordingauthhistoryaccounts>accountNr1,accountNr2</p:nottorecordingauthhistoryaccounts>",
+                    Setup.MASTER_TOKEN_NAME, HttpStatus.SC_MULTI_STATUS);
+
+            // first get token. Authentication history is not recorded.
+            requestAuthorization4Authz(TEST_CELL, accountNr2, "dummypassword");
+            requestAuthorization4Authz(TEST_CELL, accountNr2, "dummypassword");
+            requestAuthorization4Authz(TEST_CELL, accountNr2, "dummypassword");
+            AuthTestCommon.waitForIntervalLock();
+            PersoniumResponse res = requestAuthorization4Authz(TEST_CELL, accountNr2, TEST_PASSWORD);
+
+            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+            Map<String, String> responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
+            assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
+            assertThat(responseMap.get(OAuth2Helper.Key.LAST_AUTHENTICATED)).contains("null");
+            assertThat(responseMap.get(OAuth2Helper.Key.FAILED_COUNT)).contains("0");
+
+            // second get token. Authentication history is not recorded.
+            res = requestAuthorization4Authz(TEST_CELL, accountNr2, TEST_PASSWORD);
+
+            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+            responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
+            assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
+            assertThat(responseMap.get(OAuth2Helper.Key.LAST_AUTHENTICATED)).contains("null");
+            assertThat(responseMap.get(OAuth2Helper.Key.FAILED_COUNT)).contains("0");
+
+            // third get token. Authentication history is not recorded.
+            requestAuthorization4Authz(TEST_CELL, accountNr2, "dummypassword");
+            AuthTestCommon.waitForIntervalLock();
+            res = requestAuthorization4Authz(TEST_CELL, accountNr2, TEST_PASSWORD);
+
+            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+            responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
+            assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
+            assertThat(responseMap.get(OAuth2Helper.Key.LAST_AUTHENTICATED)).contains("null");
+            assertThat(responseMap.get(OAuth2Helper.Key.FAILED_COUNT)).contains("0");
+
+            // The authentication history of other accounts is recorded.
+            requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
+            requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
+            requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
+            AuthTestCommon.waitForIntervalLock();
+            res = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
+            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+            responseMap = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
+            assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
+            assertThat(responseMap.get(OAuth2Helper.Key.LAST_AUTHENTICATED)).contains("null");
+            assertThat(responseMap.get(OAuth2Helper.Key.FAILED_COUNT)).contains("3");
+        } finally {
+            AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, accountNr2, -1);
+            CellUtils.proppatchRemove(TEST_CELL, "<p:nottorecordingauthhistoryaccounts/>", Setup.MASTER_TOKEN_NAME, -1);
+        }
+    }
+
+    /**
      * request authorization.
      * @param cellName cell name
      * @param userName user name

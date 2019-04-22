@@ -23,7 +23,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,7 @@ import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.model.Cell;
+import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.lock.AccountLockManager;
 import io.personium.core.model.lock.AccountValidAuthnIntervalLockManager;
 import io.personium.core.model.lock.Lock;
@@ -191,6 +194,24 @@ public class AuthResourceUtils {
             log.debug("unlock auth history. accountId:" + accountId);
             lock.release();
         }
+    }
+
+    /**
+     * Check if the target account records authentication history.
+     * @param cellRsCmp cell rs cmp
+     * @param accountId account ID
+     * @param accountName account name
+     * @return "true" is records authentication history
+     */
+    public static boolean isRecordingAuthHistory(CellRsCmp cellRsCmp, String accountId, String accountName) {
+        if (StringUtils.isEmpty(accountId) || StringUtils.isEmpty(accountName)) {
+            return false;
+        }
+        List<String> ineligibleAccountList = cellRsCmp.requestGetNotToRecordingAuthHistoryAccounts();
+        if (ineligibleAccountList == null) {
+            return true;
+        }
+        return !ineligibleAccountList.contains(accountName);
     }
 
     /**
