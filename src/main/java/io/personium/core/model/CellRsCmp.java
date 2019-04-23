@@ -54,8 +54,8 @@ public class CellRsCmp extends DavRsCmp {
     private static final String AUTHORIZATION_HTML_URL = "authorizationhtmlurl";
     /** Name of property in which the URL of the authorization html. */
     private static final String AUTHORIZATION_PASSWORD_CHANGE_HTML_URL = "authorizationpasswordchangehtmlurl";
-    /** Not to recording authentication history accounts. */
-    private static final String NOT_TO_RECORDING_AUTH_HISTORY_ACCOUNTS = "nottorecordingauthhistoryaccounts";
+    /** Name of property in accounts not recording authentication history. */
+    private static final String ACCOUNTS_NOT_RECORDING_AUTH_HISTORY = "accountsnotrecordingauthhistory";
 
     Cell cell;
     AccessContext accessContext;
@@ -326,14 +326,14 @@ public class CellRsCmp extends DavRsCmp {
      * Request get not to recording authentication history accounts.
      * @return Http response
      */
-    public List<String> requestGetNotToRecordingAuthHistoryAccounts() {
+    public List<String> requestGetAccountsNotRecordingAuthHistory() {
         // Get not to recording auth accounts.
         String accountsStr;
         try {
             accountsStr = getDavCmp().getProperty(
-                    NOT_TO_RECORDING_AUTH_HISTORY_ACCOUNTS, "urn:x-personium:xmlns");
+                    ACCOUNTS_NOT_RECORDING_AUTH_HISTORY, "urn:x-personium:xmlns");
         } catch (IOException | SAXException e1) {
-            throw PersoniumCoreException.UI.PROPERTY_SETTINGS_ERROR.params(NOT_TO_RECORDING_AUTH_HISTORY_ACCOUNTS);
+            throw PersoniumCoreException.UI.PROPERTY_SETTINGS_ERROR.params(ACCOUNTS_NOT_RECORDING_AUTH_HISTORY);
         }
         if (StringUtils.isEmpty(accountsStr)) {
             return null;

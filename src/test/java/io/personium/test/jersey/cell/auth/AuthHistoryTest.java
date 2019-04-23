@@ -169,17 +169,17 @@ public class AuthHistoryTest extends PersoniumTest {
     }
 
     /**
-     * test nottorecordingauthhistoryaccounts.
+     * test accountsnotrecordingauthhistory.
      */
     @Test
-    public final void not_to_recording_auth_history_accounts() {
+    public final void not_recording_auth_history() {
         String accountNr2 = "accountNr2";
 
         try {
             AccountUtils.create(Setup.MASTER_TOKEN_NAME, TEST_CELL, accountNr2, TEST_PASSWORD,
                     HttpStatus.SC_CREATED);
             CellUtils.proppatchSet(TEST_CELL,
-                    "<p:nottorecordingauthhistoryaccounts>accountNr1,accountNr2</p:nottorecordingauthhistoryaccounts>",
+                    "<p:accountsnotrecordingauthhistory>accountNr1,accountNr2</p:accountsnotrecordingauthhistory>",
                     Setup.MASTER_TOKEN_NAME, HttpStatus.SC_MULTI_STATUS);
 
             // first get token. Authentication history is not recorded.
@@ -215,7 +215,7 @@ public class AuthHistoryTest extends PersoniumTest {
             assertThat(passRes.bodyAsJson().get(OAuth2Helper.Key.FAILED_COUNT), is(3L));
         } finally {
             AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, accountNr2, -1);
-            CellUtils.proppatchRemove(TEST_CELL, "<p:nottorecordingauthhistoryaccounts/>", Setup.MASTER_TOKEN_NAME, -1);
+            CellUtils.proppatchRemove(TEST_CELL, "<p:accountsnotrecordingauthhistory/>", Setup.MASTER_TOKEN_NAME, -1);
         }
     }
 
