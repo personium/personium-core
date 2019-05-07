@@ -71,6 +71,7 @@ import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
+import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
 import io.personium.core.model.DavRsCmp;
@@ -464,6 +465,14 @@ public class PersoniumEngineSvcCollectionResource {
             }
         }
 
+        // If RequestKey is not specified in the header, Take over the generated RequestKey.
+        if (!req.containsHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY)) {
+            String requestKey = this.getRequestKey(this.davRsCmp);
+            if (requestKey != null) {
+                req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, requestKey);
+            }
+        }
+
         if (log.isDebugEnabled()) {
             log.debug("[EngineRelay]" + req.getMethod() + " " + req.getURI());
             Header[] reqHeaders = req.getAllHeaders();
@@ -556,6 +565,24 @@ public class PersoniumEngineSvcCollectionResource {
 
         //Response return
         return res.build();
+    }
+
+    /**
+     * get request key. (For when not specified in the header)
+     * @param rsCmp DavRsCmp
+     * @return request key
+     */
+    private String getRequestKey(DavRsCmp rsCmp) {
+        if (rsCmp == null) {
+            return null;
+        }
+        if (rsCmp instanceof CellRsCmp) {
+            return ((CellRsCmp) rsCmp).getRequestKey();
+        }
+        if (rsCmp.getParent() == null) {
+            return null;
+        }
+        return getRequestKey(rsCmp);
     }
 
     /**
