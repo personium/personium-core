@@ -21,6 +21,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -161,7 +162,7 @@ public class ResourceUtils {
     }
 
     static final int MAXREQUEST_KEY_LENGTH = 128;
-    static final String REQEUST_KEY_DEFAULT_FORMAT = "PCS-%d";
+    static final String REQEUST_KEY_DEFAULT_FORMAT = "PCS-%s";
     static final Pattern REQUEST_KEY_PATTERN = Pattern.compile("[\\p{Alpha}\\p{Digit}_-]*");
 
     /**
@@ -173,7 +174,7 @@ public class ResourceUtils {
      */
     public static String validateXPersoniumRequestKey(String requestKey) {
         if (null == requestKey) {
-            requestKey = String.format(REQEUST_KEY_DEFAULT_FORMAT, System.currentTimeMillis());
+            requestKey = String.format(REQEUST_KEY_DEFAULT_FORMAT, UUID.randomUUID().toString());
         }
         if (MAXREQUEST_KEY_LENGTH < requestKey.length()) {
             throw PersoniumCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID;
