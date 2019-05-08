@@ -19,6 +19,8 @@ package io.personium.core.model;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -50,6 +52,8 @@ public class CellRsCmp extends DavRsCmp {
     private static final String RELAY_HTML_URL = "relayhtmlurl";
     /** Name of property in which the URL of the authorization html. */
     private static final String AUTHORIZATION_HTML_URL = "authorizationhtmlurl";
+    /** Name of property in accounts not recording authentication history. */
+    private static final String ACCOUNTS_NOT_RECORDING_AUTH_HISTORY = "accountsnotrecordingauthhistory";
 
     Cell cell;
     AccessContext accessContext;
@@ -283,6 +287,25 @@ public class CellRsCmp extends DavRsCmp {
             throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(propertyName);
         }
     }
+
+    /**
+    * Request get accounts not to recording authentication history.
+    * @return Http response
+    */
+   public List<String> getAccountsNotRecordingAuthHistory() {
+       String accountsStr;
+       try {
+           accountsStr = getDavCmp().getProperty(
+                   ACCOUNTS_NOT_RECORDING_AUTH_HISTORY, "urn:x-personium:xmlns");
+       } catch (IOException | SAXException e1) {
+           throw PersoniumCoreException.UI.PROPERTY_SETTINGS_ERROR.params(ACCOUNTS_NOT_RECORDING_AUTH_HISTORY);
+       }
+       if (StringUtils.isEmpty(accountsStr)) {
+           return null;
+       }
+       String[] accounts = accountsStr.split(",");
+       return Arrays.asList(accounts);
+   }
 
     /**
      * Obtain Auth Scheme that can be used for authentication.

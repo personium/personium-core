@@ -169,6 +169,57 @@ public class AuthHistoryTest extends PersoniumTest {
     }
 
     /**
+    * test accountsnotrecordingauthhistory.
+    */
+    @Test
+    public final void not_recording_auth_history() {
+        String accountNr2 = "accountNr2";
+
+        try {
+            AccountUtils.create(Setup.MASTER_TOKEN_NAME, TEST_CELL, accountNr2, TEST_PASSWORD,
+                    HttpStatus.SC_CREATED);
+            CellUtils.proppatchSet(TEST_CELL,
+                    "<p:accountsnotrecordingauthhistory>accountNr1,accountNr2</p:accountsnotrecordingauthhistory>",
+                    Setup.MASTER_TOKEN_NAME, HttpStatus.SC_MULTI_STATUS);
+
+            // first get token. Authentication history is not recorded.
+            requestAuthentication(TEST_CELL, accountNr2, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+            requestAuthentication(TEST_CELL, accountNr2, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+            requestAuthentication(TEST_CELL, accountNr2, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+            AuthTestCommon.waitForIntervalLock();
+            TResponse passRes = requestAuthentication(TEST_CELL, accountNr2, TEST_PASSWORD, HttpStatus.SC_OK);
+            assertTrue(passRes.bodyAsJson().containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
+            assertNull(passRes.bodyAsJson().get(OAuth2Helper.Key.LAST_AUTHENTICATED));
+            assertThat(passRes.bodyAsJson().get(OAuth2Helper.Key.FAILED_COUNT), is(0L));
+
+            // second get token. Authentication history is not recorded.
+            passRes = requestAuthentication(TEST_CELL, accountNr2, TEST_PASSWORD, HttpStatus.SC_OK);
+            assertTrue(passRes.bodyAsJson().containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
+            assertNull(passRes.bodyAsJson().get(OAuth2Helper.Key.LAST_AUTHENTICATED));
+            assertThat(passRes.bodyAsJson().get(OAuth2Helper.Key.FAILED_COUNT), is(0L));
+
+            // third get token. Authentication history is not recorded.
+            requestAuthentication(TEST_CELL, accountNr2, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+            AuthTestCommon.waitForIntervalLock();
+            passRes = requestAuthentication(TEST_CELL, accountNr2, TEST_PASSWORD, HttpStatus.SC_OK);
+            assertTrue(passRes.bodyAsJson().containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
+            assertNull(passRes.bodyAsJson().get(OAuth2Helper.Key.LAST_AUTHENTICATED));
+            assertThat(passRes.bodyAsJson().get(OAuth2Helper.Key.FAILED_COUNT), is(0L));
+
+            // The authentication history of other accounts is recorded.
+            requestAuthentication(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+            requestAuthentication(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+            requestAuthentication(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
+            AuthTestCommon.waitForIntervalLock();
+            passRes = requestAuthentication(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
+            assertThat(passRes.bodyAsJson().get(OAuth2Helper.Key.FAILED_COUNT), is(3L));
+        } finally {
+            AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, accountNr2, -1);
+            CellUtils.proppatchRemove(TEST_CELL, "<p:accountsnotrecordingauthhistory/>", Setup.MASTER_TOKEN_NAME, -1);
+        }
+    }
+
+    /**
      * request authentication.
      * @param cellName cell name
      * @param userName user name

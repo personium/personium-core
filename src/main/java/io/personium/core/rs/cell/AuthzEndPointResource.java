@@ -111,6 +111,7 @@ public class AuthzEndPointResource {
     private final CellRsCmp cellRsCmp;
     private String ipaddress;
     private UriInfo requestURIInfo;
+    private boolean isRecordingAuthHistory = false;
 
     /** Login form _ Javascript source file. */
     private static final String AJAX_FILE_NAME = "ajax.js";
@@ -334,6 +335,9 @@ public class AuthzEndPointResource {
         //In order to update the last login time, keep UUID in class variable
         String accountId = (String) oew.getUuid();
 
+        // Check if the target account records authentication history.
+        isRecordingAuthHistory = AuthResourceUtils.isRecordingAuthHistory(cellRsCmp, accountId, username);
+
         Boolean isLock = true;
         try {
             //Check valid authentication interval
@@ -344,7 +348,9 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Authn.FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
-                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                if (isRecordingAuthHistory) {
+                    AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                }
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
             }
 
@@ -356,7 +362,9 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_LOCKED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
-                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                if (isRecordingAuthHistory) {
+                    AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                }
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
             }
 
@@ -367,7 +375,9 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Authn.FAILED_OUTSIDE_IP_ADDRESS_RANGE.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
-                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                if (isRecordingAuthHistory) {
+                    AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                }
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
 
             }
@@ -380,7 +390,9 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Authn.FAILED_INCORRECT_PASSWORD.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
-                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                if (isRecordingAuthHistory) {
+                    AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                }
                 return returnHtmlForm(responseType, clientId, redirectUri, MSG_INCORRECT_ID_PASS, state, scope);
             }
         } catch (PersoniumCoreException e) {
@@ -434,8 +446,11 @@ public class AuthzEndPointResource {
         String failedCount = last.getFailedCount() != null ? last.getFailedCount().toString() : null; //CHECKSTYLE IGNORE
         paramMap.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
         paramMap.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
-        // update auth history.
-        AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
+        if (isRecordingAuthHistory) {
+            // update auth history.
+            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId,
+                    issuedAt);
+        }
         // release account lock.
         AuthResourceUtils.releaseAccountLock(accountId);
 

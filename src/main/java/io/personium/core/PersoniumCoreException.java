@@ -865,6 +865,10 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException PROPERTY_NOT_URL = create("PR412-UI-0002");
         /**
+         * Property settings error. [{0}] // CHECKSTYLE IGNORE - To maintain readability
+         */
+        public static final PersoniumCoreException PROPERTY_SETTINGS_ERROR = create("PR412-UI-0003");
+        /**
          * Invalid HTTP response was returned.<p>
          * Invalid HTTP response was returned from {0}.
          */
