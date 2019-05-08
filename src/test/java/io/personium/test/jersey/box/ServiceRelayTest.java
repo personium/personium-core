@@ -79,7 +79,8 @@ public class ServiceRelayTest extends PersoniumTest {
             "host",
             "connection",
             "authorization",
-            "user-agent"};
+            "user-agent",
+            "X-Personium-RequestKey"};
 
     /**
      * 事前準備.
