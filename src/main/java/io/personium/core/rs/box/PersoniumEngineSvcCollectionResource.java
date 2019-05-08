@@ -582,7 +582,7 @@ public class PersoniumEngineSvcCollectionResource {
         if (rsCmp.getParent() == null) {
             return null;
         }
-        return getRequestKey(rsCmp);
+        return getRequestKey(rsCmp.getParent());
     }
 
     /**
