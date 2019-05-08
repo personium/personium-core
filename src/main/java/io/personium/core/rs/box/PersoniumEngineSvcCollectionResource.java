@@ -403,7 +403,7 @@ public class PersoniumEngineSvcCollectionResource {
      * @param is Request body
      * @return JAX-RS Response
      */
-    private Response relaycommon(
+    private Response relaycommon( // CHECKSTYLE IGNORE - Necessary processing
             String method,
             UriInfo uriInfo,
             String path,
