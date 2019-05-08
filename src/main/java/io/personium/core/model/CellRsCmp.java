@@ -323,11 +323,10 @@ public class CellRsCmp extends DavRsCmp {
 
 
     /**
-     * Request get not to recording authentication history accounts.
+     * Request get accounts not to recording authentication history.
      * @return Http response
      */
-    public List<String> requestGetAccountsNotRecordingAuthHistory() {
-        // Get not to recording auth accounts.
+    public List<String> getAccountsNotRecordingAuthHistory() {
         String accountsStr;
         try {
             accountsStr = getDavCmp().getProperty(

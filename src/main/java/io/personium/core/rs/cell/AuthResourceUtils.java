@@ -207,7 +207,7 @@ public class AuthResourceUtils {
         if (StringUtils.isEmpty(accountId) || StringUtils.isEmpty(accountName)) {
             return false;
         }
-        List<String> ineligibleAccountList = cellRsCmp.requestGetAccountsNotRecordingAuthHistory();
+        List<String> ineligibleAccountList = cellRsCmp.getAccountsNotRecordingAuthHistory();
         if (ineligibleAccountList == null) {
             return true;
         }
