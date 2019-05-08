@@ -83,6 +83,18 @@ public class FacadeResource {
             @Context final UriInfo uriInfo,
             @Context HttpServletRequest httpServletRequest) {
 
+        if (log.isDebugEnabled()) {
+            log.debug("Call API '" + uriInfo.getAbsolutePath().toString() + "'.");
+            log.debug("    p_cookie: " + cookieAuthValue);
+            log.debug("    p_cookie_peer: " + cookiePeer);
+            log.debug("    Authorization: " + headerAuthz);
+            log.debug("    X-Personium-Unit-User: " + headerPersoniumUnitUser);
+            log.debug("    X-Personium-RequestKey: " + headerPersoniumRequestKey);
+            log.debug("    X-Personium-EventId: " + headerPersoniumEventId);
+            log.debug("    X-Personium-RuleChain: " + headerPersoniumRuleChain);
+            log.debug("    X-Personium-Via: " + headerPersoniumVia);
+        }
+
         if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
             return new UnitResource(cookieAuthValue, cookiePeer, headerAuthz, headerHost,
                     headerPersoniumUnitUser, uriInfo);

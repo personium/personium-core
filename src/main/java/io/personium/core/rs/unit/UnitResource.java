@@ -30,6 +30,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.CharEncoding;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
@@ -46,6 +48,7 @@ import io.personium.core.utils.ResourceUtils;
  * Jax-RS Resource handling Personium Unit Level API.
  */
 public class UnitResource {
+    private static Logger log = LoggerFactory.getLogger(UnitResource.class);
 
     /** Cookie : p_cookie. */
     private String cookieAuthValue;
@@ -133,10 +136,11 @@ public class UnitResource {
 
         CellLockManager.incrementReferenceCount(cell.getId());
         httpServletRequest.setAttribute("cellId", cell.getId());
-        if (xPersoniumRequestKey != null) {
-            ResourceUtils.validateXPersoniumRequestKey(xPersoniumRequestKey);
+        String requestKey = ResourceUtils.validateXPersoniumRequestKey(xPersoniumRequestKey);
+        if (xPersoniumRequestKey == null) {
+            log.debug("    Create RequestKey: " + requestKey);
         }
-        return new CellResource(ac, xPersoniumRequestKey,
+        return new CellResource(ac, requestKey,
                 xPersoniumEventId, xPersoniumRuleChain, xPersoniumVia, httpServletRequest);
     }
 
