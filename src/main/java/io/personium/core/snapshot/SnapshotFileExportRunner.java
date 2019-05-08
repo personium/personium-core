@@ -257,9 +257,6 @@ public class SnapshotFileExportRunner implements Runnable {
         // Specifying sort
         List<Map<String, Object>> sortList = new ArrayList<Map<String, Object>>();
         sortList.add(QueryMapFactory.sortQuery("_type", EsQueryHandler.SORT_ASC));
-        sortList.add(QueryMapFactory.sortQuery(OEntityDocHandler.KEY_BOX_ID, EsQueryHandler.SORT_ASC));
-        sortList.add(QueryMapFactory.sortQuery(OEntityDocHandler.KEY_NODE_ID, EsQueryHandler.SORT_ASC));
-        sortList.add(QueryMapFactory.sortQuery(OEntityDocHandler.KEY_ENTITY_ID, EsQueryHandler.SORT_ASC));
         sortList.add(QueryMapFactory.sortQuery("_uid", EsQueryHandler.SORT_ASC));
 
         // Generate query

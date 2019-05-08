@@ -1,3 +1,8 @@
+## 1.7.10
+IMPROVEMENTS:
+* Modify the behavior when using user settings html for authorization endpoint.([#362](https://github.com/personium/personium-core/issues/362))
+* Add the function to prompt Box installation to the authorization endpoint.([#380](https://github.com/personium/personium-core/issues/380))
+
 ## 1.7.9
 BUG FIXES:
 * URLs in link element in XML return value is not escaped.([#372](https://github.com/personium/personium-core/issues/372))
