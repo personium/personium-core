@@ -27,8 +27,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.json.simple.JSONObject;
 import org.xml.sax.SAXException;
 
@@ -278,7 +278,7 @@ public class CellRsCmp extends DavRsCmp {
         req.addHeader(HttpHeaders.ACCEPT, MediaType.TEXT_HTML);
 
         // GET html.
-        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
+        CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
         HttpResponse res;
         try {
             res = client.execute(req);
