@@ -278,8 +278,9 @@ public class CellRsCmp extends DavRsCmp {
         req.addHeader(HttpHeaders.ACCEPT, MediaType.TEXT_HTML);
 
         // GET html.
+        CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
         HttpResponse res;
-        try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE)) {
+        try {
             res = client.execute(req);
         } catch (ClientProtocolException e) {
             throw PersoniumCoreException.UI.INVALID_HTTP_RESPONSE.params(requestUrl).reason(e);
