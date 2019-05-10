@@ -71,6 +71,7 @@ import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
+import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
 import io.personium.core.model.DavRsCmp;
@@ -402,7 +403,7 @@ public class PersoniumEngineSvcCollectionResource {
      * @param is Request body
      * @return JAX-RS Response
      */
-    private Response relaycommon(
+    private Response relaycommon( // CHECKSTYLE IGNORE - Necessary processing
             String method,
             UriInfo uriInfo,
             String path,
@@ -461,6 +462,14 @@ public class PersoniumEngineSvcCollectionResource {
             for (Iterator<String> i = valueList.iterator(); i.hasNext();) {
                 String value = (String) i.next();
                 req.setHeader(key, value);
+            }
+        }
+
+        // If RequestKey is not specified in the header, Take over the generated RequestKey.
+        if (!req.containsHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY)) {
+            String requestKey = this.getRequestKey(this.davRsCmp);
+            if (requestKey != null) {
+                req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, requestKey);
             }
         }
 
@@ -556,6 +565,24 @@ public class PersoniumEngineSvcCollectionResource {
 
         //Response return
         return res.build();
+    }
+
+    /**
+     * get request key. (For when not specified in the header)
+     * @param rsCmp DavRsCmp
+     * @return request key
+     */
+    private String getRequestKey(DavRsCmp rsCmp) {
+        if (rsCmp == null) {
+            return null;
+        }
+        if (rsCmp instanceof CellRsCmp) {
+            return ((CellRsCmp) rsCmp).getRequestKey();
+        }
+        if (rsCmp.getParent() == null) {
+            return null;
+        }
+        return getRequestKey(rsCmp.getParent());
     }
 
     /**

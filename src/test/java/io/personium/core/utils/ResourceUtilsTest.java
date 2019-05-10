@@ -100,8 +100,7 @@ public class ResourceUtilsTest {
     public void validateXPersoniumRequestKey_Normal_key_is_null() {
         String result = ResourceUtils.validateXPersoniumRequestKey(null);
         assertTrue(result.startsWith("PCS-"));
-        String timeStr = result.substring(4);
-        Long.parseLong(timeStr);
+        assertTrue(result.length() == 40);
     }
 
     /**

@@ -24,11 +24,10 @@ import org.apache.http.HttpMessage;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +54,23 @@ public abstract class PostAction extends HttpAction {
 
     @Override
     public PersoniumEvent execute(PersoniumEvent event) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Event Execute with '" + event.getType() + " '.");
+            logger.debug("    External: " + event.getExternal());
+            logger.debug("    Schema: " + event.getSchema());
+            logger.debug("    Subject: " + event.getSubject());
+            logger.debug("    Type: " + event.getType());
+            logger.debug("    Object: " + event.getObject());
+            logger.debug("    Info: " + event.getInfo());
+            logger.debug("    RequestKey: " + event.getRequestKey());
+            logger.debug("    EventId: " + event.getEventId());
+            logger.debug("    RuleChain: " + event.getRuleChain());
+            logger.debug("    Via: " + event.getVia());
+            logger.debug("    Roles: " + event.getRoles());
+            logger.debug("    CellId: " + event.getCellId());
+            logger.debug("    Time: " + event.getTime());
+        }
+
         String requestUrl = getRequestUrl();
         if (requestUrl == null) {
             return null;
