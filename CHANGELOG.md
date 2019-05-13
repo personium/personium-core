@@ -1,3 +1,11 @@
+## 1.7.11
+BUG FIXES:
+* There is a part that is not closed after executing HttpClient execute.([#406](https://github.com/personium/personium-core/issues/406))
+* Change the default value of "X-Personium-RequestKey".([#408](https://github.com/personium/personium-core/issues/408))
+
+IMPROVEMENTS:
+* Add debug log.([#415](https://github.com/personium/personium-core/issues/415))
+
 ## 1.7.10
 IMPROVEMENTS:
 * Modify the behavior when using user settings html for authorization endpoint.([#362](https://github.com/personium/personium-core/issues/362))
