@@ -1,3 +1,11 @@
+## 1.7.8b
+BUG FIXES:
+* There is a part that is not closed after executing HttpClient execute.([#406](https://github.com/personium/personium-core/issues/406))
+* Change the default value of "X-Personium-RequestKey".([#408](https://github.com/personium/personium-core/issues/408))
+
+IMPROVEMENTS:
+* Add debug log.([#415](https://github.com/personium/personium-core/issues/415))
+
 ## 1.7.8a
 BUG FIXES:
 * Rule information is not deleted when executing Box recursive deletion API.([#388](https://github.com/personium/personium-core/issues/388))
