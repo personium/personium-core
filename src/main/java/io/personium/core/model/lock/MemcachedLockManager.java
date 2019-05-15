@@ -21,6 +21,10 @@ import io.personium.core.utils.MemcachedClient;
 /**
  */
 class MemcachedLockManager extends LockManager {
+    /**
+     * Lock for mutateWithDefault. Exclusive control of count increase / decrease for the same key.
+     */
+    public static final String MUTATE_WITH_DEFAULT_LOCK = "mutateWithDefault_";
 
     @Override
     Lock doGetLock(String fullKey) {
@@ -64,7 +68,10 @@ class MemcachedLockManager extends LockManager {
 
     @Override
     long doIncrementAccountLock(String fullKey, int expired) {
-        return MemcachedClient.getLockClient().incrementLongValue(fullKey, expired);
+        Lock lock = getLock(MUTATE_WITH_DEFAULT_LOCK, null, null, fullKey);
+        long value = MemcachedClient.getLockClient().incrementLongValue(fullKey, expired);
+        lock.release();
+        return value;
     }
 
     @Override
@@ -89,28 +96,38 @@ class MemcachedLockManager extends LockManager {
 
     @Override
     long doIncrementReferenceCount(String fullKey) {
-        return MemcachedClient.getLockClient().incrementLongValue(fullKey);
+        Lock lock = getLock(MUTATE_WITH_DEFAULT_LOCK, null, null, fullKey);
+        long value = MemcachedClient.getLockClient().incrementLongValue(fullKey);
+        lock.release();
+        return value;
     }
 
     @Override
     long doDecrementReferenceCount(String fullKey) {
-        return MemcachedClient.getLockClient().decrementLongValue(fullKey);
+        Lock lock = getLock(MUTATE_WITH_DEFAULT_LOCK, null, null, fullKey);
+        long value = MemcachedClient.getLockClient().decrementLongValue(fullKey);
+        lock.release();
+        return value;
     }
 
     @Override
     long doGetCellStatus(String fullKey) {
-        return MemcachedClient.getLockClient().getLongValue(fullKey);
+        Long value = MemcachedClient.getLockClient().get(fullKey, Long.class);
+        if (value == null) {
+            return -1L;
+        }
+        return value.longValue();
     }
 
     @Override
     Boolean doSetCellStatus(String fullKey, long status) {
-        MemcachedClient.getLockClient().deleteLongValue(fullKey);
-        return MemcachedClient.getLockClient().createLongValue(fullKey, status);
+        MemcachedClient.getLockClient().delete(fullKey);
+        return MemcachedClient.getLockClient().add(fullKey, status);
     }
 
     @Override
     void doDeleteCellStatus(String fullKey) {
-        MemcachedClient.getLockClient().deleteLongValue(fullKey);
+        MemcachedClient.getLockClient().delete(fullKey);
     }
 
     @Override
