@@ -74,6 +74,7 @@ import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
+import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.impl.fs.CellKeysFile;
@@ -105,6 +106,7 @@ public class TokenEndPointResource {
     //The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
     private String accountId;
     private String ipaddress;
+    private boolean isRecordingAuthHistory = false;
 
     /**
      * constructor.
@@ -726,8 +728,10 @@ public class TokenEndPointResource {
             resp.put(OAuth2Helper.Key.LAST_AUTHENTICATED, last.getLastAuthenticated());
             resp.put(OAuth2Helper.Key.FAILED_COUNT, last.getFailedCount());
             // update auth history.
-            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(
-                    davRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
+            if (isRecordingAuthHistory) {
+                AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(
+                        davRsCmp.getDavCmp().getFsPath(), accountId, issuedAt);
+            }
             // release account lock.
             AuthResourceUtils.releaseAccountLock(accountId);
         }
@@ -788,12 +792,17 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
+        // Check if the target account records authentication history.
+        isRecordingAuthHistory = AuthResourceUtils.isRecordingAuthHistory((CellRsCmp) davRsCmp, accountId, username);
+
         //Check valid authentication interval
         if (isLockedInterval) {
             //Update lock time of memcached
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
-            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            if (isRecordingAuthHistory) {
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            }
             PersoniumCoreLog.Authn.FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
@@ -804,7 +813,9 @@ public class TokenEndPointResource {
             //Update lock time of memcached
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
-            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            if (isRecordingAuthHistory) {
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            }
             PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_LOCKED.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
@@ -814,7 +825,9 @@ public class TokenEndPointResource {
         if (!validIPAddress) {
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
-            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            if (isRecordingAuthHistory) {
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            }
             PersoniumCoreLog.Authn.FAILED_OUTSIDE_IP_ADDRESS_RANGE.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
@@ -824,7 +837,9 @@ public class TokenEndPointResource {
             //Make lock on memcached
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCount(accountId);
-            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            if (isRecordingAuthHistory) {
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            }
             PersoniumCoreLog.Authn.FAILED_INCORRECT_PASSWORD.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
@@ -838,7 +853,9 @@ public class TokenEndPointResource {
             } else {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
-                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+                if (isRecordingAuthHistory) {
+                    AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+                }
                 PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_DEACTIVATED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
