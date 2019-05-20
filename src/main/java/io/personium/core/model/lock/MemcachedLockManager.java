@@ -23,32 +23,32 @@ import io.personium.core.utils.MemcachedClient;
 class MemcachedLockManager extends LockManager {
 
     @Override
-    synchronized Lock doGetLock(String fullKey) {
+    Lock doGetLock(String fullKey) {
         return MemcachedClient.getLockClient().get(fullKey, Lock.class);
     }
 
     @Override
-    synchronized Boolean doPutLock(String fullKey, Lock lock) {
+    Boolean doPutLock(String fullKey, Lock lock) {
         return MemcachedClient.getLockClient().add(fullKey, lock);
     }
 
     @Override
-    synchronized void doReleaseLock(String fullKey) {
+    void doReleaseLock(String fullKey) {
         MemcachedClient.getLockClient().delete(fullKey);
     }
 
     @Override
-    synchronized void doDeleteAllLocks() {
+    void doDeleteAllLocks() {
         MemcachedClient.getLockClient().clear();
     }
 
     @Override
-    synchronized String doGetReferenceOnlyLock(String fullKey) {
+    String doGetReferenceOnlyLock(String fullKey) {
         return MemcachedClient.getLockClient().get(fullKey, String.class);
     }
 
     @Override
-    synchronized Boolean doPutReferenceOnlyLock(String fullKey, String value) {
+    Boolean doPutReferenceOnlyLock(String fullKey, String value) {
         return MemcachedClient.getLockClient().add(fullKey, value);
     }
 
@@ -73,13 +73,13 @@ class MemcachedLockManager extends LockManager {
     }
 
     @Override
-    synchronized String doGetUnituserLock(String fullKey) {
+     String doGetUnituserLock(String fullKey) {
         return MemcachedClient.getLockClient().get(fullKey, String.class);
     }
 
     @Override
-    synchronized Boolean doPutUnituserLock(String fullKey, String value, int expired) {
-        return MemcachedClient.getLockClient().put(fullKey, expired, value);
+    Boolean doPutUnituserLock(String fullKey, String value, int expired) {
+        return MemcachedClient.getLockClient().add(fullKey, expired, value);
     }
 
     @Override
@@ -114,7 +114,7 @@ class MemcachedLockManager extends LockManager {
     }
 
     @Override
-    synchronized String doGetReadDeleteOnlyMode(String fullKey) {
+    String doGetReadDeleteOnlyMode(String fullKey) {
         return MemcachedClient.getLockClient().get(fullKey, String.class);
     }
 }
