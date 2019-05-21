@@ -73,7 +73,7 @@ class MemcachedLockManager extends LockManager {
     }
 
     @Override
-     String doGetUnituserLock(String fullKey) {
+    String doGetUnituserLock(String fullKey) {
         return MemcachedClient.getLockClient().get(fullKey, String.class);
     }
 
