@@ -27,13 +27,10 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
-import io.personium.core.model.impl.es.EsModel;
-import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.lock.CellLockManager;
 
@@ -49,6 +46,20 @@ public class SnapshotFileManager {
 
     /** Logger. */
     private static Logger log = LoggerFactory.getLogger(SnapshotFileManager.class);
+
+    /**
+     * Snapshot api version.
+     * <p>
+     * In the future, increment such as when changing the configuration of snapshot file.
+     * Refer to the value with the import API and switch the processing.
+     */
+    public static final long SNAPSHOT_API_VERSION = 2L;
+    /** Manifest json key : export api version. */
+    public static final String MANIFEST_JSON_KEY_EXPORT_VERSION = "export_version";
+    /** Manifest json key : export unit url. */
+    public static final String MANIFEST_JSON_KEY_UNIT_URL = "unit_url";
+    /** Manifest json key : snapshot create date. */
+    public static final String MANIFEST_JSON_KEY_CREATE_DATE = "create_date";
 
     /** Extension of the snapshot file to be created. */
     private static final String SNAPSHOT_FILE_EXTENSION = ".zip";
@@ -114,8 +125,7 @@ public class SnapshotFileManager {
 
         Path snapshotFilePath = snapshotDirPath.resolve(DavCmpFsImpl.CONTENT_FILE_NAME);
 
-        // TODO Provisional
-        validateCellExists(snapshotFilePath);
+        validateSnapshot(snapshotFilePath);
 
         waitCellAccessible(targetCell.getId());
         try {
@@ -157,34 +167,25 @@ public class SnapshotFileManager {
     }
 
     /**
-     * TODO Provisional.
-     * Currently the following import from a snapshot operations are allowed.
-     * 1. Import onto the original Cell where the snapshot is exported.
-     * 2. Import onto a different Cell (same or different Unit) only when the original Cell no longer exists .
+     * Validate snapshoat file structure.
      * @param snapshotFilePath snapshot file
      */
-    private void validateCellExists(Path snapshotFilePath) {
+    private void validateSnapshot(Path snapshotFilePath) {
         try (SnapshotFile snapshotFile = SnapshotFile.newInstance(snapshotFilePath)) {
-            String cellJsonStr = snapshotFile.readCellJson();
-            JSONObject cellJson;
+            // Check version.
+            String manifestJsonStr = snapshotFile.readManifestJson();
+            JSONObject manifestJson;
             try {
-                cellJson = (JSONObject) new JSONParser().parse(cellJsonStr);
+                manifestJson = (JSONObject) new JSONParser().parse(manifestJsonStr);
             } catch (ParseException e) {
-                throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(cellJsonStr);
+                throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(manifestJsonStr);
             }
-            String cellId = (String) cellJson.get("_id");
-            // Import to the same Cell is possible.
-            if (targetCell.getId().equals(cellId)) {
-                return;
+            Long exportVersion = (Long) manifestJson.get(MANIFEST_JSON_KEY_EXPORT_VERSION);
+            if (exportVersion == null || !exportVersion.equals(SNAPSHOT_API_VERSION)) {
+                throw PersoniumCoreException.Misc.SNAPSHOT_VERSION_INVALID.params(SNAPSHOT_API_VERSION, exportVersion);
             }
-            // If there is a cell with the same id in unit except for target cell, an error.
-            EntitySetAccessor esCells = EsModel.cell();
-            PersoniumGetResponse resp = esCells.get(cellId);
-            // get(cellId) may return null.
-            // Ref:lib-es-adapter EsTypeImpl#get()
-            if (resp != null && resp.exists()) {
-                throw PersoniumCoreException.Misc.EXPORT_CELL_EXISTS;
-            }
+            // Check structure.
+            snapshotFile.checkStructure();
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read snapshot file").reason(e);
         }

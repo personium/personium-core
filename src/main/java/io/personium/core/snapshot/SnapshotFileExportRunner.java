@@ -67,20 +67,6 @@ public class SnapshotFileExportRunner implements Runnable {
     /** Limit when retrieving OData. */
     private static final int SEARCH_LIMIT = 1000;
 
-    /** Manifest json key : export api version. */
-    private static final String MANIFEST_JSON_KEY_EXPORT_VERSION = "export_version";
-    /** Manifest json key : export unit url. */
-    private static final String MANIFEST_JSON_KEY_UNIT_URL = "unit_url";
-    /** Manifest json key : snapshot create date. */
-    private static final String MANIFEST_JSON_KEY_CREATE_DATE = "create_date";
-    /**
-     * Export api version.
-     * <p>
-     * In the future, increment such as when changing the configuration of snapshot file.
-     * Refer to the value with the import API and switch the processing.
-     */
-    private static final long EXPORT_API_VERSION = 1L;
-
     /** Extension of the error file. */
     private static final String ERROR_FILE_EXTENSION = ".error";
 
@@ -204,7 +190,7 @@ public class SnapshotFileExportRunner implements Runnable {
         log.info(String.format("Added manifest json."));
         addCellToZip(snapshotFile);
         log.info(String.format("Added cell json."));
-        addDataToZip(snapshotFile);
+        addODataToZip(snapshotFile);
         log.info(String.format("Added odata pjson."));
         addWebDAVToZip(snapshotFile);
         log.info(String.format("Added webdav file."));
@@ -217,9 +203,10 @@ public class SnapshotFileExportRunner implements Runnable {
     @SuppressWarnings("unchecked")
     private void addManifestToZip(SnapshotFile snapshotFile) {
         JSONObject manifestJson = new JSONObject();
-        manifestJson.put(MANIFEST_JSON_KEY_EXPORT_VERSION, EXPORT_API_VERSION);
-        manifestJson.put(MANIFEST_JSON_KEY_UNIT_URL, targetCell.getUnitUrl());
-        manifestJson.put(MANIFEST_JSON_KEY_CREATE_DATE, System.currentTimeMillis());
+        manifestJson.put(SnapshotFileManager.MANIFEST_JSON_KEY_EXPORT_VERSION,
+                SnapshotFileManager.SNAPSHOT_API_VERSION);
+        manifestJson.put(SnapshotFileManager.MANIFEST_JSON_KEY_UNIT_URL, targetCell.getUnitUrl());
+        manifestJson.put(SnapshotFileManager.MANIFEST_JSON_KEY_CREATE_DATE, System.currentTimeMillis());
         snapshotFile.writeManifestJson(manifestJson.toJSONString());
     }
 
@@ -246,8 +233,22 @@ public class SnapshotFileExportRunner implements Runnable {
      * Extract data other than cells from OData and add it to the zip file.
      * @param snapshotFile snapshot file
      */
+    private void addODataToZip(SnapshotFile snapshotFile) {
+        for (String key : SnapshotFile.ODATA_PJSON_CELL_LEVEL_MAP.keySet()) {
+            addODataToZip(key, snapshotFile);
+        }
+        for (String key : SnapshotFile.ODATA_PJSON_BOX_LEVEL_MAP.keySet()) {
+            addODataToZip(key, snapshotFile);
+        }
+    }
+
+    /**
+     * Extract data other than cells from OData and add it to the zip file.
+     * @param typeName Es type name
+     * @param snapshotFile snapshot file
+     */
     @SuppressWarnings("unchecked")
-    private void addDataToZip(SnapshotFile snapshotFile) {
+    private void addODataToZip(String typeName, SnapshotFile snapshotFile) {
         // Specifying filter
         Map<String, Object> filter = new HashMap<String, Object>();
         filter = QueryMapFactory.termQuery(OEntityDocHandler.KEY_CELL_ID, targetCell.getId());
@@ -267,15 +268,13 @@ public class SnapshotFileExportRunner implements Runnable {
         query.put("size", SEARCH_LIMIT);
 
         // Get index accessor of Es
-        String indexName = targetCell.getDataBundleName();
-        DataSourceAccessor dataSourceAccessor = EsModel.getDataSourceAccessorFromIndexName(indexName);
+        EntitySetAccessor entitySetAccessor = EsModel.cellCtl(targetCell, typeName);
 
         // At least create an empty file.
-        snapshotFile.createDataPJson();
+        snapshotFile.createODataPJson(typeName);
         while (true) {
             // Search Es
-            PersoniumSearchResponse response = dataSourceAccessor.searchForIndex(
-                    targetCell.getId(), query);
+            PersoniumSearchResponse response = entitySetAccessor.search(query);
             if (response.getHits().getCount() == 0) {
                 break;
             }
@@ -293,7 +292,7 @@ public class SnapshotFileExportRunner implements Runnable {
 
                 resultJson.clear();
             }
-            snapshotFile.writeDataPJson(builder.toString());
+            snapshotFile.writeODataPJson(typeName, builder.toString());
 
             progressInfo.addDelta(response.getHits().getCount());
             progressInfo.writeToCache();

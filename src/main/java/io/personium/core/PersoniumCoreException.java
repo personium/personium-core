@@ -899,6 +899,13 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException PATH_BASED_ACCESS_NOT_ALLOWED = create("PR400-MC-0002");
         /**
+         * Version of the snapshot file is invalid.
+         * <p>
+         * {0} : Expected version
+         * {1} : Actual version
+         */
+        public static final PersoniumCoreException SNAPSHOT_VERSION_INVALID = create("PR400-MC-0003");
+        /**
          * Unexpected URI.
          */
         public static final PersoniumCoreException NOT_FOUND = create("PR404-MC-0001");

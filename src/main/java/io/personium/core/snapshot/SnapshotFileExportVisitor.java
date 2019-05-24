@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.model.file.DataCryptor;
+import io.personium.core.model.impl.fs.CellKeys;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.impl.fs.DavMetadataFile;
 
@@ -73,8 +74,13 @@ public class SnapshotFileExportVisitor implements FileVisitor<Path> {
      */
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        Path relativezeDir = webdavRootDir.relativize(dir);
+        // Skip export pkeys.
+        if (relativezeDir.startsWith(CellKeys.KEYS_DIR_NAME)) {
+            return FileVisitResult.SKIP_SUBTREE;
+        }
         // Create directory in zip
-        Path relativePath = replaceMainboxIdToUnderscore(webdavRootDir.relativize(dir));
+        Path relativePath = replaceMainboxIdToUnderscore(relativezeDir);
         Path pathInZip = webdavRootDirInZip.resolve(relativePath.toString());
         Files.createDirectories(pathInZip);
         return FileVisitResult.CONTINUE;

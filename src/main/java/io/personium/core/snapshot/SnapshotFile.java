@@ -30,11 +30,28 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.io.Charsets;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Account;
+import io.personium.core.model.ctl.AssociationEnd;
+import io.personium.core.model.ctl.ComplexType;
+import io.personium.core.model.ctl.ComplexTypeProperty;
+import io.personium.core.model.ctl.EntityType;
+import io.personium.core.model.ctl.ExtCell;
+import io.personium.core.model.ctl.ExtRole;
+import io.personium.core.model.ctl.Property;
+import io.personium.core.model.ctl.ReceivedMessage;
+import io.personium.core.model.ctl.Relation;
+import io.personium.core.model.ctl.Role;
+import io.personium.core.model.ctl.Rule;
+import io.personium.core.model.ctl.SentMessage;
+import io.personium.core.model.impl.es.EsModel;
+import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 
 /**
  * Class for Read/Write interface of snapshot file.
@@ -50,10 +67,34 @@ public class SnapshotFile implements Closeable {
     private static final String ODATA_DIR = "10_odata";
     /** File name : cell. */
     private static final String CELL_JSON = "00_cell.json";
-    /** File name : odata. */
-    private static final String DATA_PJSON = "10_data.pjson";
     /** Directory name : webdav. */
     private static final String WEBDAV_DIR = "20_webdav";
+    /** File names : cell level odata. */
+    public static final Map<String, String> ODATA_PJSON_CELL_LEVEL_MAP = new LinkedHashMap<String, String>() {
+        {
+            put(Box.EDM_TYPE_NAME, "10_box.pjson");
+            put(Account.EDM_TYPE_NAME, "11_account.pjson");
+            put(ExtCell.EDM_TYPE_NAME, "12_extcell.pjson");
+            put(Role.EDM_TYPE_NAME, "20_role.pjson");
+            put(Rule.EDM_TYPE_NAME, "21_rule.pjson");
+            put(Relation.EDM_TYPE_NAME, "22_relation.pjson");
+            put(SentMessage.EDM_TYPE_NAME, "23_sentmessage.pjson");
+            put(ReceivedMessage.EDM_TYPE_NAME, "24_receivedmessage.pjson");
+            put(ExtRole.EDM_TYPE_NAME, "30_extrole.pjson");
+        }
+    };
+    /** File names : box level odata. */
+    public static final Map<String, String> ODATA_PJSON_BOX_LEVEL_MAP = new LinkedHashMap<String, String>() {
+        {
+            put(EntityType.EDM_TYPE_NAME, "40_entitytype.pjson");
+            put(ComplexType.EDM_TYPE_NAME, "41_complextype.pjson");
+            put(Property.EDM_TYPE_NAME, "50_property.pjson");
+            put(ComplexTypeProperty.EDM_TYPE_NAME, "51_complextypeproperty.pjson");
+            put(AssociationEnd.EDM_TYPE_NAME, "60_associationend.pjson");
+            put(UserDataODataProducer.USER_ODATA_NAMESPACE, "70_userdata.pjson");
+            put(EsModel.TYPE_CTL_LINK, "80_link.pjson");
+        }
+    };
 
     /** Number of skipped bytes at line count. */
     private static final long SKIP_DATA_NUM = 1024L;
@@ -98,12 +139,29 @@ public class SnapshotFile implements Closeable {
     }
 
     /**
-     * Count and return data pjson line.
+     * Count and return odata pjson line.
      * @return Total line number
      */
-    public long countDataPJson() {
-        Path pathInZip = pathMap.get(DATA_PJSON);
-        try (BufferedReader bufReader = Files.newBufferedReader(pathInZip, Charsets.UTF_8)) {
+    public long countODataPJson() {
+        long count = 0L;
+        for (String key : ODATA_PJSON_CELL_LEVEL_MAP.keySet()) {
+            Path pathInZip = pathMap.get(key);
+            count += countODataPJson(pathInZip);
+        }
+        for (String key : ODATA_PJSON_BOX_LEVEL_MAP.keySet()) {
+            Path pathInZip = pathMap.get(key);
+            count += countODataPJson(pathInZip);
+        }
+        return count;
+    }
+
+    /**
+     * Count and return odata pjson line.
+     * @param filePath File path
+     * @return Total line number
+     */
+    private long countODataPJson(Path filePath) {
+        try (BufferedReader bufReader = Files.newBufferedReader(filePath, Charsets.UTF_8)) {
             LineNumberReader reader = new LineNumberReader(bufReader);
             while (true) {
                 long readByte = reader.skip(SKIP_DATA_NUM);
@@ -113,7 +171,7 @@ public class SnapshotFile implements Closeable {
             }
             return reader.getLineNumber();
         } catch (IOException e) {
-            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read data pjson from snapshot file").reason(e);
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read odata pjson from snapshot file").reason(e);
         }
     }
 
@@ -149,6 +207,19 @@ public class SnapshotFile implements Closeable {
     }
 
     /**
+     * Read manifest json.
+     * @return Read data
+     */
+    public String readManifestJson() {
+        Path pathInZip = pathMap.get(MANIFEST_JSON);
+        try {
+            return new String(Files.readAllBytes(pathInZip), Charsets.UTF_8);
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read manifest json from snapshot file").reason(e);
+        }
+    }
+
+    /**
      * Write to manifest json.
      * @param data Data to write
      */
@@ -162,7 +233,7 @@ public class SnapshotFile implements Closeable {
     }
 
     /**
-     * Read manifest json.
+     * Read cell json.
      * @return Read data
      */
     public String readCellJson() {
@@ -188,38 +259,42 @@ public class SnapshotFile implements Closeable {
     }
 
     /**
-     * Get and return the reader of data pjson.
-     * @return reader of data pjson
+     * Get and return the reader of odata pjson.
+     * @param edmTypeName Es type name
+     * @return reader of odata pjson
      * @throws IOException file I/O error
      */
-    public BufferedReader getDataPJsonReader() throws IOException {
-        Path pathInZip = pathMap.get(DATA_PJSON);
+    public BufferedReader getODataPJsonReader(String edmTypeName) throws IOException {
+        Path pathInZip = pathMap.get(edmTypeName);
         return Files.newBufferedReader(pathInZip);
     }
 
     /**
-     * Create data pjson.
+     * Create odata pjson.
+     * @param edmTypeName Es type name
      */
-    public void createDataPJson() {
-        Path pathInZip = pathMap.get(DATA_PJSON);
+    public void createODataPJson(String edmTypeName) {
+        Path pathInZip = pathMap.get(edmTypeName);
         try {
             Files.createFile(pathInZip);
         } catch (IOException e) {
-            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("create data pjson to snapshot file").reason(e);
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params(
+                    "create odata pjsons to snapshot file").reason(e);
         }
     }
 
     /**
-     * Write to data pjson.
+     * Write to odata pjson.
+     * @param edmTypeName Es type name
      * @param data Data to write
      */
-    public void writeDataPJson(String data) {
-        Path pathInZip = pathMap.get(DATA_PJSON);
+    public void writeODataPJson(String edmTypeName, String data) {
+        Path pathInZip = pathMap.get(edmTypeName);
         try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
             writer.write(data);
         } catch (IOException e) {
-            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add data pjson to snapshot file").reason(e);
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add odata pjson to snapshot file").reason(e);
         }
     }
 
@@ -280,7 +355,8 @@ public class SnapshotFile implements Closeable {
      * │
      * ├─ODATA_DIR
      * │ ├─ CELL_JSON
-     * │ └ ─ DATA _ PJSON
+     * │ ├─ ODATA_PJSONs
+     * │ └─ ...
      * │
      * └ - WEBDAV_DIR
      * -------------------------
@@ -293,7 +369,12 @@ public class SnapshotFile implements Closeable {
         map.put(MANIFEST_JSON, fs.getPath(MANIFEST_JSON));
         map.put(ODATA_DIR, fs.getPath(ODATA_DIR));
         map.put(CELL_JSON, fs.getPath(ODATA_DIR, CELL_JSON));
-        map.put(DATA_PJSON, fs.getPath(ODATA_DIR, DATA_PJSON));
+        for (String key : ODATA_PJSON_CELL_LEVEL_MAP.keySet()) {
+            map.put(key, fs.getPath(ODATA_DIR, ODATA_PJSON_CELL_LEVEL_MAP.get(key)));
+        }
+        for (String key : ODATA_PJSON_BOX_LEVEL_MAP.keySet()) {
+            map.put(key, fs.getPath(ODATA_DIR, ODATA_PJSON_BOX_LEVEL_MAP.get(key)));
+        }
         map.put(WEBDAV_DIR, fs.getPath(WEBDAV_DIR));
         return map;
     }

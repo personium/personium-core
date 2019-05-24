@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.EsBulkRequest;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.event.EventBus;
@@ -74,6 +75,12 @@ public class SnapshotFileImportRunner implements Runnable {
     private Path snapshotFilePath;
     /** Progress info. */
     private SnapshotFileImportProgressInfo progressInfo;
+    /**
+     * OData _id mapping.
+     * key: old _id.
+     * value: new _id.
+     */
+    private Map<String, String> odataIdMap;
 
     /**
      * Constructor.
@@ -86,6 +93,7 @@ public class SnapshotFileImportRunner implements Runnable {
         String snapshotName = FilenameUtils.getBaseName(this.snapshotFilePath.getParent().getFileName().toString());
         long entryCount = countEntry();
         progressInfo = new SnapshotFileImportProgressInfo(this.targetCell.getId(), snapshotName, entryCount);
+        odataIdMap = new HashMap<String, String>();
         log.info(String.format("Setup cell import. CellName:%s, EntryCount:%d, SnapshotName:%s",
                 this.targetCell.getName(), entryCount, snapshotName));
     }
@@ -100,8 +108,6 @@ public class SnapshotFileImportRunner implements Runnable {
             try (SnapshotFile snapshotFile = SnapshotFile.newInstance(snapshotFilePath)) {
                 // start import.
                 progressInfo.writeToCache(true);
-                // Check export file structure.
-                snapshotFile.checkStructure();
                 // Delete cell data.
                 deleteCellData();
                 // Import snapshot.
@@ -149,7 +155,7 @@ public class SnapshotFileImportRunner implements Runnable {
      */
     private long countEntry() {
         try (SnapshotFile snapshotFile = SnapshotFile.newInstance(snapshotFilePath)) {
-            return snapshotFile.countDataPJson() + snapshotFile.countWebDAVFile();
+            return snapshotFile.countODataPJson() + snapshotFile.countWebDAVFile();
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read snapshot file").reason(e);
         }
@@ -206,10 +212,12 @@ public class SnapshotFileImportRunner implements Runnable {
     private void makeCellData(SnapshotFile snapshotFile) {
         modifyCellInfo(snapshotFile);
         log.info(String.format("Modified cell info."));
-        addDataToCell(snapshotFile);
-        log.info(String.format("Added odata."));
+        addCellLevelODataToCell(snapshotFile);
+        log.info(String.format("Added cell level odata."));
         addWebDAVToCell(snapshotFile);
         log.info(String.format("Added webdav file."));
+        addBoxLevelODataToCell(snapshotFile);
+        log.info(String.format("Added box level odata."));
     }
 
     /**
@@ -244,20 +252,42 @@ public class SnapshotFileImportRunner implements Runnable {
     }
 
     /**
-     * Extract odata from snapshot file and add it to cell.
+     * Extract cell level odata from snapshot file and add it to cell.
      * @param snapshotFile snapshot file
      */
-    private void addDataToCell(SnapshotFile snapshotFile) {
-        try (BufferedReader bufferedReader = snapshotFile.getDataPJsonReader()) {
+    private void addCellLevelODataToCell(SnapshotFile snapshotFile) {
+        for (String key : SnapshotFile.ODATA_PJSON_CELL_LEVEL_MAP.keySet()) {
+            addODataToCell(key, snapshotFile);
+        }
+    }
+
+    /**
+     * Extract box level odata from snapshot file and add it to cell.
+     * @param snapshotFile snapshot file
+     */
+    private void addBoxLevelODataToCell(SnapshotFile snapshotFile) {
+        for (String key : SnapshotFile.ODATA_PJSON_BOX_LEVEL_MAP.keySet()) {
+            addODataToCell(key, snapshotFile);
+        }
+    }
+
+    /**
+     * Extract odata from snapshot file and add it to cell.
+     * @param typeName Es type name
+     * @param snapshotFile snapshot file
+     */
+    private void addODataToCell(String typeName, SnapshotFile snapshotFile) {
+        try (BufferedReader bufferedReader = snapshotFile.getODataPJsonReader(typeName)) {
             String line = null;
             DataSourceAccessor accessor = EsModel.batch(targetCell);
             List<EsBulkRequest> bulkRequestList = new ArrayList<>();
             while ((line = bufferedReader.readLine()) != null) {
+                String replacedLine = replaceIdString(line);
                 JSONObject dataJson;
                 try {
-                    dataJson = (JSONObject) new JSONParser().parse(line);
+                    dataJson = (JSONObject) new JSONParser().parse(replacedLine);
                 } catch (ParseException e) {
-                    throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(line);
+                    throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(replacedLine);
                 }
 
                 // When c attribute is rewritten, since it is treated as data of another cell,
@@ -266,8 +296,10 @@ public class SnapshotFileImportRunner implements Runnable {
                 map.put("c", targetCell.getId());
 
                 String type = (String) dataJson.get("_type");
-                String id = (String) dataJson.get("_id");
-                bulkRequestList.add(new MapBulkRequest(EsBulkRequest.BulkRequestType.INDEX, type, id, map));
+                String oldId = (String) dataJson.get("_id");
+                String newId = PersoniumUUID.randomUUID();
+                odataIdMap.put(oldId, newId);
+                bulkRequestList.add(new MapBulkRequest(EsBulkRequest.BulkRequestType.INDEX, type, newId, map));
 
                 if (BULK_REQUEST_LIMIT <= bulkRequestList.size()) {
                     accessor.bulkCreate(bulkRequestList, targetCell.getId());
@@ -287,6 +319,20 @@ public class SnapshotFileImportRunner implements Runnable {
     }
 
     /**
+     * Replace _id.
+     * @param source target string
+     * @return replaced string
+     */
+    private String replaceIdString(String source) {
+        String replacedString = source;
+        for (String oldId : odataIdMap.keySet()) {
+            String newId = odataIdMap.get(oldId);
+            replacedString = replacedString.replaceAll(oldId, newId);
+        }
+        return replacedString;
+    }
+
+    /**
      * Extract webdav file from snapshot file and add it to cell.
      * Encrypt the file according to the setting of the unitconfig property.
      * @param snapshotFile snapshot file
@@ -297,7 +343,7 @@ public class SnapshotFileImportRunner implements Runnable {
                 targetCell.getDataBundleName(), targetCell.getId());
         // Use FileVisitor to process files recursively
         FileVisitor<Path> visitor = new SnapshotFileImportVisitor(targetCell.getId(),
-                webdavRootPath, webdavRootPathInZip.toAbsolutePath(), progressInfo);
+                odataIdMap, webdavRootPath, webdavRootPathInZip.toAbsolutePath(), progressInfo);
         try {
             Files.walkFileTree(webdavRootPathInZip.toAbsolutePath(), visitor);
         } catch (IOException e) {
