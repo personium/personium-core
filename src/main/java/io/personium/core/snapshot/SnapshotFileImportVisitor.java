@@ -122,11 +122,10 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
                 metadata.setNodeId(newId);
             }
             // Set encryption type.
-            if (PersoniumUnitConfig.isDavEncryptEnabled()) {
+            if (PersoniumUnitConfig.isDavEncryptEnabled()
+                    && DataCryptor.ENCRYPTION_TYPE_NONE.equals(metadata.getEncryptionType())) {
                 // In the case of ZipPath, toFile() can not be used, so copy it first and rewrite it.
-                if (DataCryptor.ENCRYPTION_TYPE_NONE.equals(metadata.getEncryptionType())) {
-                    metadata.setEncryptionType(DataCryptor.ENCRYPTION_TYPE_AES);
-                }
+                metadata.setEncryptionType(DataCryptor.ENCRYPTION_TYPE_AES);
             }
             metadata.save();
         } else {
