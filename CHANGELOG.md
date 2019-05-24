@@ -1,3 +1,13 @@
+## 1.7.12
+BUG FIXES:
+* At the time of cell import, data of other cells may be deleted.([#353](https://github.com/personium/personium-core/issues/353))
+* Some Unittests that use memcached fail.([#416](https://github.com/personium/personium-core/issues/416))
+
+IMPROVEMENTS:
+* Update activemq-client version.([#383](https://github.com/personium/personium-core/issues/383))
+* Concurrent request support for token authentication to the same account(App cell).([#398](https://github.com/personium/personium-core/issues/398))
+* Update jackson-databind version.([#420](https://github.com/personium/personium-core/issues/420))
+
 ## 1.7.11
 BUG FIXES:
 * There is a part that is not closed after executing HttpClient execute.([#406](https://github.com/personium/personium-core/issues/406))
