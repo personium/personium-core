@@ -25,11 +25,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.es.util.PersoniumUUID;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.DavCmp;
 import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.impl.fs.DavMetadataFile;
 
@@ -44,6 +51,8 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
 
     /** Target cell id. */
     private String cellId;
+    /** OData id map. */
+    private Map<String, String> odataIdMap;
     /** WebDAV root directory. */
     private Path webdavRootDir;
     /** WebDAV root directory in zip. */
@@ -54,13 +63,15 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
     /**
      * Constructor.
      * @param cellId Target cell id
+     * @param odataIdMap odata id map
      * @param webdavRootDir WebDAV root directory
      * @param webdavRootDirInZip WebDAV root directory in zip
      * @param progressInfo Progress info
      */
-    public SnapshotFileImportVisitor(String cellId, Path webdavRootDir, Path webdavRootDirInZip,
-            SnapshotFileImportProgressInfo progressInfo) {
+    public SnapshotFileImportVisitor(String cellId, Map<String, String> odataIdMap,
+            Path webdavRootDir, Path webdavRootDirInZip, SnapshotFileImportProgressInfo progressInfo) {
         this.cellId = cellId;
+        this.odataIdMap = odataIdMap;
         this.webdavRootDir = webdavRootDir;
         this.webdavRootDirInZip = webdavRootDirInZip;
         this.progressInfo = progressInfo;
@@ -72,7 +83,7 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         // Create directory
-        Path relativePath = replaceUnderscoreToMainboxId(webdavRootDirInZip.relativize(dir));
+        Path relativePath = replaceBoxDirName(webdavRootDirInZip.relativize(dir));
         Path path = webdavRootDir.resolve(relativePath.toString());
         Files.createDirectories(path);
         return FileVisitResult.CONTINUE;
@@ -83,7 +94,7 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
      */
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        Path relativePath = replaceUnderscoreToMainboxId(webdavRootDirInZip.relativize(file));
+        Path relativePath = replaceBoxDirName(webdavRootDirInZip.relativize(file));
         Path path = webdavRootDir.resolve(relativePath.toString());
 
         if (DavMetadataFile.DAV_META_FILE_NAME.equals(file.getFileName().toString())) {
@@ -93,15 +104,31 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
             Files.copy(file, tempPath);
             // In order to perform atomic file operation, it moves after copying.
             Files.move(tempPath, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+
+            DavMetadataFile metadata = DavMetadataFile.newInstance(path.toFile());
+            metadata.load();
+            // Replace acl.
+            String aclString = replaceIdString(metadata.getAcl().toJSONString());
+            try {
+                JSONObject aclJson = (JSONObject) new JSONParser().parse(aclString);
+                metadata.setAcl(aclJson);
+            } catch (ParseException e) {
+                throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(aclString);
+            }
+            // Recreate node id.
+            if (DavCmp.TYPE_COL_ODATA.equals(metadata.getNodeType())) {
+                String newId = PersoniumUUID.randomUUID();
+                odataIdMap.put(metadata.getNodeId(), newId);
+                metadata.setNodeId(newId);
+            }
+            // Set encryption type.
             if (PersoniumUnitConfig.isDavEncryptEnabled()) {
                 // In the case of ZipPath, toFile() can not be used, so copy it first and rewrite it.
-                DavMetadataFile metadata = DavMetadataFile.newInstance(path.toFile());
-                metadata.load();
                 if (DataCryptor.ENCRYPTION_TYPE_NONE.equals(metadata.getEncryptionType())) {
                     metadata.setEncryptionType(DataCryptor.ENCRYPTION_TYPE_AES);
-                    metadata.save();
                 }
             }
+            metadata.save();
         } else {
             // Content file
             // It reads the setting file and decides whether to encrypt it or not.
@@ -134,6 +161,32 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
     }
 
     /**
+     * Replace _id.
+     * @param source target string
+     * @return replaced string
+     */
+    private String replaceIdString(String source) {
+        String replacedString = source;
+        for (String oldId : odataIdMap.keySet()) {
+            String newId = odataIdMap.get(oldId);
+            replacedString = replacedString.replaceAll(oldId, newId);
+        }
+        return replacedString;
+    }
+
+    /**
+     * Replace box dir name and return it.
+     * @param path target path
+     * @return Replaced path
+     */
+    private Path replaceBoxDirName(Path path) {
+        Path resultPath = path;
+        resultPath = replaceUnderscoreToMainboxId(resultPath);
+        resultPath = replaceOldIdToNewId(resultPath);
+        return resultPath;
+    }
+
+    /**
      * Replace "__" in Path with MainBoxID(same as CellID) and return it.
      * @param path target path
      * @return Replaced path
@@ -143,6 +196,25 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
         if (path.startsWith(SnapshotFile.MAIN_BOX_DIR_NAME)) {
             String replace = path.toString().replaceFirst(SnapshotFile.MAIN_BOX_DIR_NAME, cellId);
             resultPath = Paths.get(replace);
+        }
+        return resultPath;
+    }
+
+    /**
+     * Replace box dir name. Old _id to new _id.
+     * @param path target path
+     * @return Replaced path
+     */
+    private Path replaceOldIdToNewId(Path path) {
+        Path resultPath = path;
+        for (String oldId : odataIdMap.keySet()) {
+            if (path.startsWith(oldId)) {
+                String newId = odataIdMap.get(oldId);
+                String replace = path.toString().replaceFirst(oldId, newId);
+                resultPath = Paths.get(replace);
+                break;
+            }
+
         }
         return resultPath;
     }
