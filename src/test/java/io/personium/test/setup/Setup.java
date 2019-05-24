@@ -45,6 +45,7 @@ import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.model.lock.LockManager;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
@@ -290,6 +291,7 @@ public class Setup extends AbstractCase {
      */
     @Test
     public void reset() {
+        LockManager.deleteAllLocks();
         for (Config conf : confs) {
             this.delete(conf);
             this.create(conf);
@@ -302,6 +304,7 @@ public class Setup extends AbstractCase {
      */
     @Test
     public void resetEventLog() throws InterruptedException {
+        LockManager.deleteAllLocks();
         for (Config conf : eventLogConfs) {
             this.delete(conf);
             this.createCell(conf);

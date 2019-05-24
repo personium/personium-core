@@ -53,22 +53,22 @@ class MemcachedLockManager extends LockManager {
     }
 
     @Override
-    long doGetAccountLock(String fullKey) {
+    synchronized long doGetAccountLock(String fullKey) {
         return MemcachedClient.getLockClient().getLongValue(fullKey);
     }
 
     @Override
-    Boolean doPutAccountLock(String fullKey, long value, int expired) {
+    synchronized Boolean doPutAccountLock(String fullKey, long value, int expired) {
         return MemcachedClient.getLockClient().createLongValue(fullKey, value, expired);
     }
 
     @Override
-    long doIncrementAccountLock(String fullKey, int expired) {
+    synchronized long doIncrementAccountLock(String fullKey, int expired) {
         return MemcachedClient.getLockClient().incrementLongValue(fullKey, expired);
     }
 
     @Override
-    void doReleaseAccountLock(String fullKey) {
+    synchronized void doReleaseAccountLock(String fullKey) {
         MemcachedClient.getLockClient().delete(fullKey);
     }
 
@@ -79,37 +79,37 @@ class MemcachedLockManager extends LockManager {
 
     @Override
     Boolean doPutUnituserLock(String fullKey, String value, int expired) {
-        return MemcachedClient.getLockClient().put(fullKey, expired, value);
+        return MemcachedClient.getLockClient().add(fullKey, expired, value);
     }
 
     @Override
-    long doGetReferenceCount(String fullKey) {
+    synchronized long doGetReferenceCount(String fullKey) {
         return MemcachedClient.getLockClient().getLongValue(fullKey);
     }
 
     @Override
-    long doIncrementReferenceCount(String fullKey) {
+    synchronized long doIncrementReferenceCount(String fullKey) {
         return MemcachedClient.getLockClient().incrementLongValue(fullKey);
     }
 
     @Override
-    long doDecrementReferenceCount(String fullKey) {
+    synchronized long doDecrementReferenceCount(String fullKey) {
         return MemcachedClient.getLockClient().decrementLongValue(fullKey);
     }
 
     @Override
-    long doGetCellStatus(String fullKey) {
+    synchronized long doGetCellStatus(String fullKey) {
         return MemcachedClient.getLockClient().getLongValue(fullKey);
     }
 
     @Override
-    Boolean doSetCellStatus(String fullKey, long status) {
+    synchronized Boolean doSetCellStatus(String fullKey, long status) {
         MemcachedClient.getLockClient().deleteLongValue(fullKey);
         return MemcachedClient.getLockClient().createLongValue(fullKey, status);
     }
 
     @Override
-    void doDeleteCellStatus(String fullKey) {
+    synchronized void doDeleteCellStatus(String fullKey) {
         MemcachedClient.getLockClient().deleteLongValue(fullKey);
     }
 

@@ -24,12 +24,12 @@ import io.personium.core.utils.MemcachedClient;
 class MemcachedProgressManager extends ProgressManager {
 
     @Override
-    Progress doGetProgress(String fullKey) {
+    synchronized Progress doGetProgress(String fullKey) {
         return MemcachedClient.getCacheClient().get(fullKey, Progress.class);
     }
 
     @Override
-    Boolean doPutProgress(String fullKey, Progress progress) {
+    synchronized Boolean doPutProgress(String fullKey, Progress progress) {
         return MemcachedClient.getCacheClient().put(fullKey, lifeTime, progress);
     }
 
