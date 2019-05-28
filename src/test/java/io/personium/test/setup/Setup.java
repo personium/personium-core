@@ -147,7 +147,7 @@ public class Setup extends AbstractCase {
 
     static final String TEST_RULE_NAME = "rule1";
     static final long WAIT_TIME_FOR_EVENT = 3000; // msec
-    static final long WAIT_TIME_FOR_BULK_DELETE = 10000L;
+    static final long WAIT_TIME_FOR_BULK_DELETE = 1000L;
 
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
