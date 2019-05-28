@@ -19,6 +19,7 @@ package io.personium.core.rule;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,11 +33,13 @@ import java.util.stream.Stream;
 
 import javax.ws.rs.core.UriBuilder;
 
+import org.elasticsearch.action.search.SearchPhaseExecutionException;
+import org.elasticsearch.rest.RestStatus;
 import org.odata4j.core.NamedValue;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.core.OEntityKey.KeyType;
-import org.odata4j.core.OProperty;
+import org.odata4j.edm.EdmDataServices;
 import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.producer.EntitiesResponse;
 import org.odata4j.producer.EntityResponse;
@@ -45,8 +48,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import io.personium.common.es.response.EsClientException;
+import io.personium.common.es.response.EsClientException.PersoniumSearchPhaseExecutionException;
+import io.personium.common.es.response.PersoniumSearchHit;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumThread;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.event.EventFactory;
 import io.personium.core.event.EventPublisher;
@@ -56,12 +64,18 @@ import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Common;
+import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.Rule;
+import io.personium.core.model.impl.es.EsModel;
+import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
+import io.personium.core.model.impl.es.accessor.ODataEntityAccessor;
+import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
+import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
-import io.personium.core.model.impl.es.odata.UnitCtlODataProducer;
+import io.personium.core.model.impl.es.odata.EsQueryHandler;
+import io.personium.core.model.impl.es.odata.ODataQueryHandler;
 import io.personium.core.model.lock.CellLockManager;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.utils.UriUtils;
 
@@ -95,6 +109,8 @@ public class RuleManager {
         String name;
         long hitcount;
     }
+
+    private static Logger logger = LoggerFactory.getLogger(RuleManager.class);
 
     /** EventType definition for rule event. */
     private static final String RULEEVENT_RULE_CREATE =
@@ -133,7 +149,7 @@ public class RuleManager {
     private Optional<TimerRuleManager> timerRuleManager = Optional.empty();
     private Map<String, Map<String, RuleInfo>> rules;
     private Map<String, Map<String, BoxInfo>> boxes;
-    private Logger logger;
+    private Set<String> loadRuleCells;
 
     private Object lockObj;
     private Object boxLockObj;
@@ -148,7 +164,7 @@ public class RuleManager {
     private RuleManager() {
         rules = new HashMap<>();
         boxes = new HashMap<>();
-        logger = LoggerFactory.getLogger(RuleManager.class);
+        loadRuleCells = new HashSet<>();
         lockObj = new Object();
         boxLockObj = new Object();
     }
@@ -169,13 +185,14 @@ public class RuleManager {
      * Initialize RuleManager and execute threads in order to receive event.
      */
     private void initialize() {
+        logger.info("initialize.");
         // Initialize TimerRuleManager.
         if (PersoniumUnitConfig.getTimerEventThreadNum() > 0) {
             timerRuleManager = Optional.of(TimerRuleManager.getInstance());
         }
 
-        // Load rules from DB.
-        load();
+        // Load rules for initialize.
+        loadRulesForInitialize();
 
         // Create ThreadPool.
         final ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
@@ -256,6 +273,10 @@ public class RuleManager {
         }
         if (ruleChain != null) {
             synchronized (lockObj) {
+                if (!loadRuleCells.contains(cellId)) {
+                    loadRule(cell);
+                }
+
                 Map<String, RuleInfo> map = rules.get(cellId);
                 if (map != null) {
                     for (Map.Entry<String, RuleInfo> e : map.entrySet()) {
@@ -438,40 +459,73 @@ public class RuleManager {
     }
 
     /**
-     * Load all rules from DB.
+     * Load rules from DB (Only cells with "timer event").
      */
-    private void load() {
-        // accesscontext is set as null
-        UnitCtlODataProducer odataProducer = new UnitCtlODataProducer(null);
-        EdmEntitySet eSet = odataProducer.getMetadata().findEdmEntitySet(Cell.EDM_TYPE_NAME);
-        List<Map<String, Object>> implicitFilters = new ArrayList<Map<String, Object>>();
-        EntitySetAccessor esType = odataProducer.getAccessorForEntitySet(Cell.EDM_TYPE_NAME);
-        EntitiesResponse resp = odataProducer.execEntitiesRequest(null, eSet, esType, implicitFilters);
-        List<OEntity> cells = resp.getEntities();
-        for (OEntity entity : cells) {
-            OEntityWrapper oew = (OEntityWrapper) entity;
-            OProperty<?> prop = oew.getProperty(Common.P_NAME.getName());
-            logger.info("Cell=" + prop.getValue());
-            List<OProperty<?>> props = oew.getProperties();
-            for (OProperty<?> op : props) {
-                logger.info("op: " + op.getName() + "=" + op.getValue());
+    private void loadRulesForInitialize() {
+        // Load Rule for cells with timer events.
+        // (Other cells read the rule later.)
+        List<String> cellIdList = this.searchCellsWithTimerEventOnly();
+        for (String cellId : cellIdList) {
+            Cell cell = ModelFactory.cellFromId(cellId);
+            synchronized (lockObj) {
+                if (!loadRuleCells.contains(cell.getId())) {
+                    loadRule(cell);
+                }
             }
-            Map<String, Object> map = oew.getMetadata();
-            for (Map.Entry<String, Object> e : map.entrySet()) {
-                logger.info("meta: " + e.getKey() + "=" + e.getValue());
-            }
-            logger.info("id=" + oew.getUuid());
-
-            // Cell object
-            Cell cell = ModelFactory.cellFromId(oew.getUuid());
-
-            // load Rules for cell
-            loadRule(cell);
         }
+    }
+
+    /**
+     * Perform list retrieval.
+     * @return cell list (have timerEvent cells only)
+     */
+    public List<String> searchCellsWithTimerEventOnly() {
+        EdmDataServices metadata = CtlSchema.getEdmDataServicesForCellCtl().build();
+        EdmEntitySet eSet = metadata.findEdmEntitySet(Rule.EDM_TYPE_NAME);
+        EntitySetAccessor esType = new ODataEntityAccessor(EsModel.idxUser("*"), Rule.EDM_TYPE_NAME, null);
+
+        List<Map<String, Object>> implicitFilters = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> orQueries = new ArrayList<Map<String, Object>>();
+        orQueries.add(QueryMapFactory.termQuery("s.EventType.untouched", PersoniumEventType.timerPeriodic()));
+        orQueries.add(QueryMapFactory.termQuery("s.EventType.untouched", PersoniumEventType.timerOneshot()));
+        implicitFilters.add(QueryMapFactory.shouldQuery(orQueries));
+
+        // Conditional search etc.
+        ODataQueryHandler visitor = new EsQueryHandler(eSet.getType());
+        visitor.initialize(null, implicitFilters);
+        Map<String, Object> source = visitor.getSource();
+
+        PersoniumSearchResponse res = null;
+        try {
+            res = esType.search(source);
+        } catch (EsClientException ex) {
+            if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
+                SearchPhaseExecutionException speex = (SearchPhaseExecutionException) ex.getCause().getCause();
+                if (speex.status().equals(RestStatus.BAD_REQUEST)) {
+                    throw PersoniumCoreException.OData.SEARCH_QUERY_INVALID_ERROR.reason(ex);
+                } else {
+                    throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
+                }
+            }
+        }
+
+        List<String> cellIds = new ArrayList<>();
+        if (res != null) {
+            for (PersoniumSearchHit hit : res.getHits().getHits()) {
+                EntitySetDocHandler oedh = new OEntityDocHandler(hit);
+                oedh.getCellId();
+                if (oedh.getCellId() != null && !cellIds.contains(oedh.getCellId())) {
+                    cellIds.add(oedh.getCellId());
+                }
+            }
+        }
+        return cellIds;
     }
 
     // Load rules that belongs to cell.
     private void loadRule(Cell cell) {
+        logger.info("loadRule Cell=" + cell.getName() + " id=" + cell.getId());
+
         CellCtlODataProducer producer = new CellCtlODataProducer(cell);
         // query is null
         EntitiesResponse resp = producer.getEntities(Rule.EDM_TYPE_NAME, null);
@@ -479,6 +533,7 @@ public class RuleManager {
         for (OEntity entity : ruleList) {
             registerRule(entity, cell);
         }
+        this.loadRuleCells.add(cell.getId());
     }
 
     // Convert OEntity object to RuleInfo.
@@ -615,6 +670,11 @@ public class RuleManager {
         CellCtlODataProducer producer = new CellCtlODataProducer(cell);
 
         try {
+            synchronized (lockObj) {
+                if (!loadRuleCells.contains(cell.getId())) {
+                    loadRule(cell);
+                }
+            }
 
             String type = event.getType().get();
             if (RULEEVENT_RULE_CREATE.equals(type)) {
@@ -996,6 +1056,10 @@ public class RuleManager {
         String cellId = cell.getId();
         logger.info("cellId is " + cellId);
         synchronized (lockObj) {
+            if (!loadRuleCells.contains(cellId)) {
+                loadRule(cell);
+            }
+
             Optional<Map<String, RuleInfo>> rulesForCell = Optional.ofNullable(rules.get(cellId));
             List<Map<String, Object>> ruleList;
             ruleList = rulesForCell.map(mapRule ->

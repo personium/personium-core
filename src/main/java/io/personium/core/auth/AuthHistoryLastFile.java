@@ -112,6 +112,7 @@ public class AuthHistoryLastFile {
      * load from the file.
      */
     public void load() {
+        log.debug("load started. accountID:" + accountId);
         int retryCount = 0;
         while (true) {
             try {
@@ -133,6 +134,7 @@ public class AuthHistoryLastFile {
                 }
             }
         }
+        log.debug("load ended.");
     }
 
     /**
@@ -152,6 +154,7 @@ public class AuthHistoryLastFile {
      * save to the file.
      */
     public void save() {
+        log.debug("save started. accountID:" + accountId);
         if (!this.file.getParentFile().exists() && !this.file.getParentFile().mkdirs()) {
             String message = "unable create directory: " + this.file.getParentFile().getAbsolutePath();
             throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(message);
@@ -162,6 +165,7 @@ public class AuthHistoryLastFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        log.debug("save ended.");
     }
 
     /**

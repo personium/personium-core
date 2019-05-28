@@ -23,12 +23,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.personium.core.PersoniumCoreException;
 
 /**
  * Class that manages cell specific key information.
  */
 public class CellKeys {
+    /** Logger. */
+    private static Logger log = LoggerFactory.getLogger(CellKeys.class);
 
     /** Keys file storage directory name. */
     public static final String KEYS_DIR_NAME = ".pkeys";
@@ -57,12 +62,14 @@ public class CellKeys {
      * @return CellKeys
      */
     public CellKeys load() {
+        log.debug("load started.");
         if (exists()) {
             doLoad();
         } else {
             // Automatically generated if keys file does not exist.
             doCreate();
         }
+        log.debug("load ended.");
         return this;
     }
 
