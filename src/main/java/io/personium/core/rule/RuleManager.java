@@ -462,9 +462,11 @@ public class RuleManager {
      * Load rules from DB (Only cells with "timer event").
      */
     private void loadRulesForInitialize() {
+        logger.debug("  loadRulesForInitialize.");
         // Load Rule for cells with timer events.
         // (Other cells read the rule later.)
         List<String> cellIdList = this.searchCellsWithTimerEventOnly();
+        logger.debug("  count cells with TimerEvent:" + cellIdList.size());
         for (String cellId : cellIdList) {
             Cell cell = ModelFactory.cellFromId(cellId);
             synchronized (lockObj) {
