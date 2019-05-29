@@ -87,6 +87,7 @@ import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
+import io.personium.core.model.impl.es.cache.UserDataSchemaCache;
 import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
 import io.personium.core.model.jaxb.Ace;
 import io.personium.core.model.jaxb.Acl;
@@ -1007,6 +1008,7 @@ public class DavCmpFsImpl implements DavCmp {
             try {
                 CellDataAccessor accessor = EsModel.cellData(cell.getDataBundleNameWithOutPrefix(), getCellId());
                 accessor.bulkDeleteODataCollection(getBox().getId(), getId());
+                UserDataSchemaCache.clear(getId());
             } finally {
                 lock.release();
             }
