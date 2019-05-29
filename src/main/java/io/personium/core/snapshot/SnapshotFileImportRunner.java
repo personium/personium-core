@@ -114,6 +114,8 @@ public class SnapshotFileImportRunner implements Runnable {
                 makeCellData(snapshotFile);
             } catch (IOException e) {
                 throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read snapshot file").reason(e);
+            } catch (UnsupportedOperationException e) {
+                throw PersoniumCoreException.Misc.SNAPSHOT_IS_NOT_ZIP;
             }
             // Write 100%. It clears immediately, but it writes once.
             progressInfo.writeToCache(true);
@@ -158,6 +160,8 @@ public class SnapshotFileImportRunner implements Runnable {
             return snapshotFile.countODataPJson() + snapshotFile.countWebDAVFile();
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read snapshot file").reason(e);
+        } catch (UnsupportedOperationException e) {
+            throw PersoniumCoreException.Misc.SNAPSHOT_IS_NOT_ZIP;
         }
     }
 

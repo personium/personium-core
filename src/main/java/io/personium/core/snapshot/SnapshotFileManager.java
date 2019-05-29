@@ -188,6 +188,8 @@ public class SnapshotFileManager {
             snapshotFile.checkStructure();
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read snapshot file").reason(e);
+        } catch (UnsupportedOperationException e) {
+            throw PersoniumCoreException.Misc.SNAPSHOT_IS_NOT_ZIP;
         }
     }
 }

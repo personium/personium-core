@@ -108,6 +108,8 @@ public class SnapshotFileExportRunner implements Runnable {
                 makeSnapshotFile(snapshotFile);
             } catch (IOException e) {
                 throw PersoniumCoreException.Common.FILE_IO_ERROR.params("create snapshot file").reason(e);
+            } catch (UnsupportedOperationException e) {
+                throw PersoniumCoreException.Misc.SNAPSHOT_IS_NOT_ZIP;
             }
             // Write 100%. It clears immediately, but it writes once.
             progressInfo.writeToCache(true);
