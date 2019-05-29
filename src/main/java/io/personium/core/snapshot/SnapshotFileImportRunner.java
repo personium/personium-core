@@ -17,8 +17,6 @@
 package io.personium.core.snapshot;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -30,12 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.odata4j.core.OEntity;
+import org.odata4j.producer.EntitiesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +45,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
+import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.ModelFactory;
@@ -54,6 +54,7 @@ import io.personium.core.model.impl.es.accessor.CellAccessor;
 import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
+import io.personium.core.model.impl.fs.BoxCmpFsImpl;
 import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.rs.odata.MapBulkRequest;
 import io.personium.core.utils.UriUtils;
@@ -169,42 +170,28 @@ public class SnapshotFileImportRunner implements Runnable {
      * Delete cell data.
      */
     private void deleteCellData() {
-        deleteWebDAV();
-        deleteOData();
+        deleteBoxes();
+        deleteCellOData();
     }
 
     /**
-     * Delete cell webdav data.
+     * Delete cell boxes data.
      */
-    private void deleteWebDAV() {
-        Path webdavRootPath = Paths.get(PersoniumUnitConfig.getBlobStoreRoot(),
-                targetCell.getDataBundleName(), targetCell.getId());
-
-        // Since want to keep .pmeta file under the cell, delete only the directory.
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory();
-            }
-        };
-        File[] dirList = webdavRootPath.toFile().listFiles(filter);
-
-        if (dirList == null || dirList.length == 0) {
-            return;
+    private void deleteBoxes() {
+        EntitiesResponse res = ModelFactory.ODataCtl.cellCtl(targetCell).getEntities(Box.EDM_TYPE_NAME, null);
+        for (OEntity entity : res.getEntities()) {
+            BoxCmpFsImpl boxCmp = new BoxCmpFsImpl(new Box(targetCell, entity));
+            boxCmp.delete("*", true);
         }
-        try {
-            for (File dir : dirList) {
-                FileUtils.deleteDirectory(dir);
-            }
-        } catch (IOException e) {
-            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("delete WebDAV files").reason(e);
-        }
+        // Delete main box.
+        BoxCmpFsImpl boxCmp = new BoxCmpFsImpl(new Box(targetCell, null));
+        boxCmp.delete("*", true);
     }
 
     /**
      * Delete cell odata data.
      */
-    private void deleteOData() {
+    private void deleteCellOData() {
         CellDataAccessor accessor = EsModel.cellData(targetCell.getDataBundleNameWithOutPrefix(), targetCell.getId());
         accessor.bulkDeleteCell();
     }
