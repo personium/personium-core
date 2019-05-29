@@ -31,6 +31,7 @@ import org.apache.commons.io.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.impl.fs.CellKeys;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
@@ -75,8 +76,9 @@ public class SnapshotFileExportVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         Path relativezeDir = webdavRootDir.relativize(dir);
-        // Skip export pkeys.
-        if (relativezeDir.startsWith(CellKeys.KEYS_DIR_NAME)) {
+        // Skip export pkeys and pauthhistory.
+        if (relativezeDir.startsWith(CellKeys.KEYS_DIR_NAME)
+                || relativezeDir.startsWith(AuthHistoryLastFile.AUTH_HISTORY_DIRECTORY)) {
             return FileVisitResult.SKIP_SUBTREE;
         }
         // Create directory in zip
