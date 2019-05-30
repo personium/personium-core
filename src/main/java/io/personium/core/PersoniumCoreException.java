@@ -906,6 +906,10 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException SNAPSHOT_VERSION_INVALID = create("PR400-MC-0003");
         /**
+         * The specified snapshot file is not zip file.
+         */
+        public static final PersoniumCoreException SNAPSHOT_IS_NOT_ZIP = create("PR400-MC-0004");
+        /**
          * Unexpected URI.
          */
         public static final PersoniumCoreException NOT_FOUND = create("PR404-MC-0001");

@@ -108,8 +108,10 @@ public class SnapshotFile implements Closeable {
      * Constructor.
      * If want to create an instance, use newInstance method.
      * @param filePath Target snapshot file path
+     * @throws IOException File I/O error
+     * @throws UnsupportedOperationException File is not zip
      */
-    private SnapshotFile(Path filePath) throws IOException {
+    private SnapshotFile(Path filePath) throws IOException, UnsupportedOperationException {
         fileSystem = toZipFileSystem(filePath);
         pathMap = createItemPathInZip(fileSystem);
         createODataDir();
@@ -120,9 +122,10 @@ public class SnapshotFile implements Closeable {
      * Create new instance.
      * @param filePath Target snapshot file path
      * @return SnapshotFile instance.
-     * @throws IOException file I/O error
+     * @throws IOException File I/O error
+     * @throws UnsupportedOperationException File is not zip
      */
-    public static SnapshotFile newInstance(Path filePath) throws IOException {
+    public static SnapshotFile newInstance(Path filePath) throws IOException, UnsupportedOperationException {
         return new SnapshotFile(filePath);
     }
 
@@ -319,8 +322,9 @@ public class SnapshotFile implements Closeable {
      * @param zipFilePath Source zip file path
      * @return Zip's FileSystem
      * @throws IOException File I/O error
+     * @throws UnsupportedOperationException File is not zip
      */
-    private FileSystem toZipFileSystem(Path zipFilePath) throws IOException {
+    private FileSystem toZipFileSystem(Path zipFilePath) throws IOException, UnsupportedOperationException {
         // Preparation to handle zip with FileSystem.
         URI uri = toZipUri(zipFilePath);
         Map<String, String> env = new HashMap<>();
