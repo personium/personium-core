@@ -1,3 +1,11 @@
+## 1.7.13
+BUG FIXES:
+* Unknown Exception occurs during cell import.([#296](https://github.com/personium/personium-core/issues/296))
+* Repeating cell import api will erase the contents of box.([#423](https://github.com/personium/personium-core/issues/423))
+
+IMPROVEMENTS:
+* When a large number of Rules are registered in Unit, it takes time to start personium (tomcat).([#370](https://github.com/personium/personium-core/issues/370))
+
 ## 1.7.12
 BUG FIXES:
 * At the time of cell import, data of other cells may be deleted.([#353](https://github.com/personium/personium-core/issues/353))
