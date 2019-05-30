@@ -162,6 +162,7 @@ public class DavMetadataFile {
      * load from the file.
      */
     public void load() {
+        log.debug("load started.");
         // Coping with core issue #28.
         // When an Exception occurs Retry several times.
         int retryCount = 0;
@@ -185,6 +186,7 @@ public class DavMetadataFile {
                 }
             }
         }
+        log.debug("load ended.");
     }
 
     /**
@@ -204,6 +206,7 @@ public class DavMetadataFile {
      * save to the file.
      */
     public void save() {
+        log.debug("save started.");
         this.incrementVersion();
         String jsonStr = JSONObject.toJSONString(this.getJSON());
         try {
@@ -211,6 +214,7 @@ public class DavMetadataFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        log.debug("save ended.");
     }
 
     private void incrementVersion() {
