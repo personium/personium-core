@@ -19,7 +19,9 @@ package io.personium.core.model.impl.fs;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -38,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 
 /**
  * Class dealing with cell specific key information.
@@ -266,13 +269,28 @@ public class CellKeysFile {
      * @param data file data
      */
     private void writeFile(Path filePath, byte[] data) {
-        try (OutputStream out = Files.newOutputStream(filePath)) {
+        try (OutputStream out = Files.newOutputStream(filePath, getWriteOptions())) {
             out.write(data);
         } catch (IOException e) {
             StringBuilder builder = new StringBuilder();
             builder.append("writing ").append(filePath.getFileName());
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params(builder.toString()).reason(e);
         }
+    }
+
+    /**
+     * get options for write.
+     * @return options specifying how the file is opened
+     */
+    private OpenOption[] getWriteOptions() {
+        if (PersoniumUnitConfig.getFsyncEnabled()) {
+            OpenOption[] options = {
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING,
+                    StandardOpenOption.SYNC};
+            return options;
+        }
+        return new OpenOption[0];
     }
 
 }

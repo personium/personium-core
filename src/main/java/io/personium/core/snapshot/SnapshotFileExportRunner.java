@@ -17,11 +17,13 @@
 package io.personium.core.snapshot;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -109,6 +111,16 @@ public class SnapshotFileExportRunner implements Runnable {
             } catch (IOException e) {
                 throw PersoniumCoreException.Common.FILE_IO_ERROR.params("create snapshot file").reason(e);
             }
+
+            // Sync snapshot file.
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                try (FileOutputStream fos = new FileOutputStream(snapshotFilePath.toFile(), true)) {
+                    fos.getFD().sync();
+                } catch (IOException e) {
+                    throw PersoniumCoreException.Common.FILE_IO_ERROR.params("sync failed").reason(e);
+                }
+            }
+
             // Write 100%. It clears immediately, but it writes once.
             progressInfo.writeToCache(true);
             // Create new metadata file
@@ -379,7 +391,12 @@ public class SnapshotFileExportRunner implements Runnable {
         messageDetailJson.put("value", e.getMessage());
 
         try {
-            Files.write(errorFilePath, messageJson.toJSONString().getBytes(Charsets.UTF_8));
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                Files.write(errorFilePath, messageJson.toJSONString().getBytes(Charsets.UTF_8),
+                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
+            } else {
+                Files.write(errorFilePath, messageJson.toJSONString().getBytes(Charsets.UTF_8));
+            }
         } catch (IOException e1) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("create error file").reason(e1);
         }
