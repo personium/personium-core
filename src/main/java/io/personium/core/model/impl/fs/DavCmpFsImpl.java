@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -592,6 +593,10 @@ public class DavCmpFsImpl implements DavCmp {
                 writtenBytes = ((CipherInputStream) input).getReadLengthBeforEncryption();
                 encryptionType = DataCryptor.ENCRYPTION_TYPE_AES;
             }
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                sync(newFile);
+            }
+
             // create new metadata file.
             this.metaFile = DavMetadataFile.prepareNewFile(this, DavCmp.TYPE_DAV_FILE);
             this.metaFile.setContentType(contentType);
@@ -642,6 +647,9 @@ public class DavCmpFsImpl implements DavCmp {
             Files.copy(bufferedInput, tmpFile.toPath());
             Files.delete(contentFile.toPath());
             Files.move(tmpFile.toPath(), contentFile.toPath());
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                sync(contentFile);
+            }
 
             long writtenBytes = contentFile.length();
             String encryptionType = DataCryptor.ENCRYPTION_TYPE_NONE;
@@ -909,6 +917,9 @@ public class DavCmpFsImpl implements DavCmp {
                 Files.move(this.fsDir.toPath(), destDir.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 res = javax.ws.rs.core.Response.status(HttpStatus.SC_NO_CONTENT);
             }
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                sync(destDir);
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -1175,6 +1186,21 @@ public class DavCmpFsImpl implements DavCmp {
             result = String.format(ACL_RELATIVE_PATH_FORMAT, roleResourceUrl.getBoxName(), roleResourceUrl.getName());
         }
         return result;
+    }
+
+    /**
+     * sync file.
+     * (Methods for when it is difficult to control with processing parameters such as Files.copy and Files.move)
+     *
+     * @param file target file
+     * @throws IOException failed sync file
+     */
+    protected void sync(File file) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(file, true)) {
+            fos.getFD().sync();
+        } catch (IOException e) {
+            throw e;
+        }
     }
 
     /**
