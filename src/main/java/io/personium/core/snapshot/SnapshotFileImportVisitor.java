@@ -16,6 +16,8 @@
  */
 package io.personium.core.snapshot;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
@@ -104,6 +106,9 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
             Files.copy(file, tempPath);
             // In order to perform atomic file operation, it moves after copying.
             Files.move(tempPath, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                sync(path.toFile());
+            }
 
             DavMetadataFile metadata = DavMetadataFile.newInstance(path.toFile());
             metadata.load();
@@ -135,6 +140,9 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
             try (InputStream in = cryptor.encode(Files.newInputStream(file),
                     PersoniumUnitConfig.isDavEncryptEnabled())) {
                 Files.copy(in, path);
+            }
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                sync(path.toFile());
             }
         }
         progressInfo.addDelta(1L);
@@ -216,5 +224,19 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
 
         }
         return resultPath;
+    }
+
+    /**
+     * sync file.
+     *
+     * @param file target file
+     * @throws IOException failed sync file
+     */
+    private void sync(File file) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(file, true)) {
+            fos.getFD().sync();
+        } catch (IOException e) {
+            throw e;
+        }
     }
 }

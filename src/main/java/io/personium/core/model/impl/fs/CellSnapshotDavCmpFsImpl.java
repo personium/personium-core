@@ -18,7 +18,6 @@ package io.personium.core.model.impl.fs;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -170,7 +169,6 @@ public class CellSnapshotDavCmpFsImpl extends DavCmpFsImpl implements CellSnapsh
             throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
         }
 
-        FileOutputStream contentFileStream = null;
         try {
             // Update Content
             BufferedInputStream bufferedInput = new BufferedInputStream(inputStream);

@@ -917,9 +917,6 @@ public class DavCmpFsImpl implements DavCmp {
                 Files.move(this.fsDir.toPath(), destDir.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 res = javax.ws.rs.core.Response.status(HttpStatus.SC_NO_CONTENT);
             }
-            if (PersoniumUnitConfig.getFsyncEnabled()) {
-                sync(destDir);
-            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
