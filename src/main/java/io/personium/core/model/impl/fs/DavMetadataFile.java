@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Date;
 
 import org.apache.commons.io.Charsets;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 
 /**
  * a class for handling internal fs file storing Dav metadata.
@@ -210,7 +212,12 @@ public class DavMetadataFile {
         this.incrementVersion();
         String jsonStr = JSONObject.toJSONString(this.getJSON());
         try {
-            Files.write(this.file.toPath(), jsonStr.getBytes(Charsets.UTF_8));
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                Files.write(this.file.toPath(), jsonStr.getBytes(Charsets.UTF_8),
+                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
+            } else {
+                Files.write(this.file.toPath(), jsonStr.getBytes(Charsets.UTF_8));
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

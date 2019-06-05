@@ -30,6 +30,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.http.HttpStatus;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.CellSnapshotDavCmp;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.file.DataCryptor;
@@ -130,6 +131,9 @@ public class CellSnapshotDavCmpFsImpl extends DavCmpFsImpl implements CellSnapsh
             Files.copy(bufferedInput, newFile.toPath());
             long writtenBytes = newFile.length();
             String encryptionType = DataCryptor.ENCRYPTION_TYPE_NONE;
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                sync(newFile);
+            }
 
             // create new metadata file.
             this.metaFile = DavMetadataFile.prepareNewFile(this, DavCmp.TYPE_DAV_FILE);
@@ -175,6 +179,9 @@ public class CellSnapshotDavCmpFsImpl extends DavCmpFsImpl implements CellSnapsh
             Files.move(tmpFile.toPath(), contentFile.toPath());
             long writtenBytes = contentFile.length();
             String encryptionType = DataCryptor.ENCRYPTION_TYPE_NONE;
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                sync(contentFile);
+            }
 
             // Update Metadata
             this.metaFile.setUpdated(new Date().getTime());

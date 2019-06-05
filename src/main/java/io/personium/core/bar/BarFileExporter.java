@@ -16,6 +16,7 @@
  */
 package io.personium.core.bar;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -120,6 +121,15 @@ public class BarFileExporter {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("create bar file").reason(e);
         }
         log.info(String.format("End export. BoxName:%s", boxRsCmp.getBox().getName()));
+
+        // Sync bar file.
+        if (PersoniumUnitConfig.getFsyncEnabled()) {
+            try (FileOutputStream fos = new FileOutputStream(barFilePath.toFile(), true)) {
+                fos.getFD().sync();
+            } catch (IOException e) {
+                throw PersoniumCoreException.Common.FILE_IO_ERROR.params("sync failed").reason(e);
+            }
+        }
 
         // Create response.
         StreamingOutput streaming = new StreamingOutput() {
