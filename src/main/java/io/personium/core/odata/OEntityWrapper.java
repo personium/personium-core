@@ -89,6 +89,20 @@ public final class OEntityWrapper implements OEntity {
         return this.core.getProperties();
     }
 
+    /**
+     * Check has a property by name.
+     *
+     * @param propName Property name
+     * @return True if it has a property
+     */
+    public boolean hasProperty(final String propName) {
+        for (OProperty<?> op : getProperties()) {
+            if (op.getName().equals(propName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public OProperty<?> getProperty(final String propName) {

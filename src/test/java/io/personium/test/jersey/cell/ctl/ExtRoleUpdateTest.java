@@ -320,4 +320,156 @@ public class ExtRoleUpdateTest extends ODataCommon {
         }
     }
 
+    /**
+     * merge test.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void merge() {
+        String relationName = "testrelation01";
+        String relationName2 = "testrelation02";
+        String relationName3 = "testrelation03";
+        String relationBoxName = "box1";
+        String relationBoxName2 = "box2";
+        try {
+            // Advance preparation.
+            CellCtlUtils.createRelation(cellName, relationName, relationBoxName);
+            CellCtlUtils.createRelation(cellName, relationName2, relationBoxName2);
+            CellCtlUtils.createRelation(cellName, relationName3);
+            JSONObject body = new JSONObject();
+            body.put("ExtRole", testExtRoleName);
+            body.put("_Relation.Name", relationName);
+            body.put("_Relation._Box.Name", relationBoxName);
+            ExtRoleUtils.create(token, cellName, body, HttpStatus.SC_CREATED);
+
+            // Execute update (MERGE) with all parameters specified
+            body = new JSONObject();
+            body.put("ExtRole", UrlUtils.roleResource(cellName, "__", "newextRoleName"));
+            body.put("_Relation.Name", relationName2);
+            body.put("_Relation._Box.Name", relationBoxName2);
+            ExtRoleUtils.updateMerge(
+                    token,
+                    cellName,
+                    testExtRoleName,
+                    "'" + relationName + "'",
+                    "'" + relationBoxName + "'",
+                    body,
+                    HttpStatus.SC_NO_CONTENT);
+
+            // ExtRole only
+            body = new JSONObject();
+            body.put("ExtRole", UrlUtils.roleResource(cellName, "__", "newextRoleName2"));
+            ExtRoleUtils.updateMerge(
+                    token,
+                    cellName,
+                    UrlUtils.roleResource(cellName, "__", "newextRoleName"),
+                    "'" + relationName2 + "'",
+                    "'" + relationBoxName2 + "'",
+                    body,
+                    HttpStatus.SC_NO_CONTENT);
+
+            // Set other than ExtRole
+            body = new JSONObject();
+            body.put("_Relation.Name", relationName);
+            body.put("_Relation._Box.Name", relationBoxName);
+            ExtRoleUtils.updateMerge(
+                    token,
+                    cellName,
+                    UrlUtils.roleResource(cellName, "__", "newextRoleName2"),
+                    "'" + relationName2 + "'",
+                    "'" + relationBoxName2 + "'",
+                    body,
+                    HttpStatus.SC_NO_CONTENT);
+
+            // Set null to "_Relation._Box.Name"
+            body = new JSONObject();
+            body.put("ExtRole", UrlUtils.roleResource(cellName, "__", "newextRoleName3"));
+            body.put("_Relation.Name", relationName3);
+            body.put("_Relation._Box.Name", null);
+            ExtRoleUtils.updateMerge(
+                    token,
+                    cellName,
+                    UrlUtils.roleResource(cellName, "__", "newextRoleName2"),
+                    "'" + relationName + "'",
+                    "'" + relationBoxName + "'",
+                    body,
+                    HttpStatus.SC_NO_CONTENT);
+        } finally {
+            CellCtlUtils.deleteExtRole(cellName, UrlUtils.roleResource(cellName, "__", "newextRoleName3"),
+                    relationName3);
+            CellCtlUtils.deleteRelation(cellName, relationName, relationBoxName);
+            CellCtlUtils.deleteRelation(cellName, relationName2, relationBoxName2);
+            CellCtlUtils.deleteRelation(cellName, relationName3);
+        }
+    }
+
+    /**
+     * merge test.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void merge_invalid() {
+        String relationName = "testrelation01";
+        String relationName2 = "testrelation02";
+        String relationName3 = "testrelation03";
+        String relationBoxName = "box1";
+        String relationBoxName2 = "box2";
+        try {
+            // Advance preparation.
+            CellCtlUtils.createRelation(cellName, relationName, relationBoxName);
+            CellCtlUtils.createRelation(cellName, relationName2, relationBoxName2);
+            CellCtlUtils.createRelation(cellName, relationName3);
+            JSONObject body = new JSONObject();
+            body.put("ExtRole", testExtRoleName);
+            body.put("_Relation.Name", relationName);
+            body.put("_Relation._Box.Name", relationBoxName);
+            ExtRoleUtils.create(token, cellName, body, HttpStatus.SC_CREATED);
+
+            // Required ExtRole
+            body = new JSONObject();
+            body.put("ExtRole", null);
+            body.put("_Relation.Name", relationName2);
+            body.put("_Relation._Box.Name", relationBoxName2);
+            ExtRoleUtils.updateMerge(
+                    token,
+                    cellName,
+                    testExtRoleName,
+                    "'" + relationName + "'",
+                    "'" + relationBoxName + "'",
+                    body,
+                    HttpStatus.SC_BAD_REQUEST);
+
+            // Required _Relation.Name
+            body = new JSONObject();
+            body.put("ExtRole", "newextRoleNameBad");
+            body.put("_Relation.Name", null);
+            body.put("_Relation._Box.Name", relationBoxName2);
+            ExtRoleUtils.updateMerge(
+                    token,
+                    cellName,
+                    testExtRoleName,
+                    "'" + relationName + "'",
+                    "'" + relationBoxName + "'",
+                    body,
+                    HttpStatus.SC_BAD_REQUEST);
+
+            // Nonexistent Relation.(MERGE:testrelation03 - box1)
+            body = new JSONObject();
+            body.put("ExtRole", "newextRoleNameBad");
+            body.put("_Relation.Name", relationName3);
+            ExtRoleUtils.updateMerge(
+                    token,
+                    cellName,
+                    testExtRoleName,
+                    "'" + relationName + "'",
+                    "'" + relationBoxName + "'",
+                    body,
+                    HttpStatus.SC_BAD_REQUEST);
+        } finally {
+            CellCtlUtils.deleteExtRole(cellName, testExtRoleName, relationName, relationBoxName);
+            CellCtlUtils.deleteRelation(cellName, relationName, relationBoxName);
+            CellCtlUtils.deleteRelation(cellName, relationName2, relationBoxName2);
+            CellCtlUtils.deleteRelation(cellName, relationName3);
+        }
+    }
 }

@@ -20,6 +20,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -28,6 +29,8 @@ import org.odata4j.core.ODataConstants;
 import org.odata4j.core.ODataVersion;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
+import org.odata4j.core.OEntityKey.KeyType;
+import org.odata4j.core.OProperties;
 import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmComplexType;
 import org.odata4j.edm.EdmDataServices;
@@ -35,8 +38,15 @@ import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmProperty;
 
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.event.PersoniumEventType;
+import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
+import io.personium.core.model.ctl.ExtCell;
+import io.personium.core.model.ctl.ExtRole;
+import io.personium.core.model.ctl.Relation;
+import io.personium.core.model.ctl.Role;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
@@ -88,21 +98,38 @@ public class ODataMergeResource extends ODataEntityResource {
         //We will also check the existence of resources here.
         getOdataProducer().mergeEntity(getEntitySetName(), getOEntityKey(), oew);
 
-        // post event to eventBus
-        String key = AbstractODataResource.replaceDummyKeyToNull(getOEntityKey().toKeyString());
-        String object = getOdataResource().getRootUrl() + getEntitySetName() + key;
-        String newKey = AbstractODataResource.replaceDummyKeyToNull(oew.getEntityKey().toKeyString());
-        String info = "204," + newKey;
-        getOdataResource().postEvent(getEntitySetName(), object, info, PersoniumEventType.Operation.MERGE);
-
         //If there are no exceptions, return a response.
         //Return ETag newly registered in oew
         etag = oew.getEtag();
-        return Response.noContent()
+        Response res = Response.noContent()
                 .header(HttpHeaders.ETAG, ODataResource.renderEtagHeader(etag))
                 .header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString)
                 .build();
 
+        // post event to EventBus
+        String key = AbstractODataResource.replaceDummyKeyToNull(getOEntityKey().toKeyString());
+        String object = getOdataResource().getRootUrl() + getEntitySetName() + key;
+        // set new entitykey's string to Info
+        String newKey = AbstractODataResource.replaceDummyKeyToNull(oew.getEntityKey().toKeyString());
+        String info = Integer.toString(res.getStatus()) + "," + newKey;
+        getOdataResource().postEvent(getEntitySetName(), object, info, PersoniumEventType.Operation.MERGE);
+
+        return res;
+    }
+
+    /**
+     * Method execution feasibility check.
+     */
+    @Override
+    protected void checkNotAllowedMethod() {
+        if (!Account.EDM_TYPE_NAME.equals(getEntitySetName())
+                && !Box.EDM_TYPE_NAME.equals(getEntitySetName())
+                && !Role.EDM_TYPE_NAME.equals(getEntitySetName())
+                && !ExtCell.EDM_TYPE_NAME.equals(getEntitySetName())
+                && !Relation.EDM_TYPE_NAME.equals(getEntitySetName())
+                && !ExtRole.EDM_TYPE_NAME.equals(getEntitySetName())) {
+            throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
+        }
     }
 
     /**
@@ -130,9 +157,42 @@ public class ODataMergeResource extends ODataEntityResource {
                     && !Common.P_UPDATED.getName().equals(epName)) {
                 return null;
             }
+            //If the key is not input in Body, Get the value specified in URL.
+            if (keysDefined.contains(epName)) {
+                String value = getKeyDefinedParameter(propName);
+                if (value != null) {
+                    return OProperties.string(propName, value);
+                }
+            }
         }
 
         return super.setDefaultValue(ep, propName, op, metadata);
+    }
+
+    /**
+     * Information corresponding to the key is acquired from the request URL.
+     * @param propName prop name.
+     * @return value
+     */
+    private String getKeyDefinedParameter(String propName) {
+        if (KeyType.COMPLEX.equals(getOEntityKey().getKeyType())) {
+            Set<OProperty<?>> keys = getOEntityKey().asComplexProperties();
+            for (OProperty<?> key : keys) {
+                if (propName.equals(key.getName()) && key.getValue() != null) {
+                    String value = key.getValue().toString();
+                    if (DUMMY_KEY.equals(value)) {
+                        return null;
+                    }
+                    return key.getValue().toString();
+                }
+            }
+        } else {
+            Object key = getOEntityKey().asSingleValue();
+            if (key != null) {
+                return key.toString();
+            }
+        }
+        return null;
     }
 
     /**

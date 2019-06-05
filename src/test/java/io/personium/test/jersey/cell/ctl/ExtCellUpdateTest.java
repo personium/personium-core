@@ -163,4 +163,36 @@ public class ExtCellUpdateTest extends ODataCommon {
             ExtCellUtils.delete(token, cellName, extCellUrl, -1);
         }
     }
+
+    /**
+     * merge test.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void merge() {
+        String newCellUrl = UrlUtils.cellRoot("cellXXX");
+
+        try {
+            ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
+
+            // Set url.
+            JSONObject body = new JSONObject();
+            body.put("Url", newCellUrl);
+            ExtCellUtils.updateMerge(token, cellName, extCellUrl, body.toJSONString(),
+                    HttpStatus.SC_NO_CONTENT);
+
+            // Not set url (url is not updated)
+            body = new JSONObject();
+            ExtCellUtils.updateMerge(token, cellName, newCellUrl, body.toJSONString(),
+                    HttpStatus.SC_NO_CONTENT);
+
+            // Set url is null (Bad request)
+            body = new JSONObject();
+            body.put("Url", null);
+            ExtCellUtils.updateMerge(token, cellName, newCellUrl, body.toJSONString(),
+                    HttpStatus.SC_BAD_REQUEST);
+        } finally {
+            ExtCellUtils.delete(token, cellName, newCellUrl, -1);
+        }
+    }
 }

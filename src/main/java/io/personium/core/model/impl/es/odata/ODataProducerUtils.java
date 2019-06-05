@@ -26,6 +26,7 @@ import java.util.Set;
 import org.odata4j.core.NamespacedAnnotation;
 import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityKey;
+import org.odata4j.core.OProperties;
 import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmProperty;
 import org.odata4j.producer.QueryInfo;
@@ -128,6 +129,11 @@ public final class ODataProducerUtils {
             for (String k : ukProps) {
                 log.debug("              - [" + k + "]");
                 OProperty<?> oProp = newEntity.getProperty(k);
+                if (oProp == null) {
+                    log.debug("                  [" + k + "] is not set. (Do not update in the case of MERGE)");
+                    ukSet.add(OProperties.string(k, null));
+                    continue;
+                }
                 if (oProp.getValue() != null) {
                     allNull = false;
                     if (originalEntity != null) {

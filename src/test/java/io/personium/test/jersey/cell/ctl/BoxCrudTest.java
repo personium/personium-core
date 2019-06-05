@@ -554,6 +554,82 @@ public class BoxCrudTest extends ODataCommon {
     }
 
     /**
+     * Test of BOX update (MERGE).
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void box_update_merge() {
+        try {
+            // create BOX1
+            String etag1 = createBoxRequest(TEST_BOX_NAME, null)
+                    .returns().statusCode(HttpStatus.SC_CREATED).getHeader(HttpHeaders.ETAG);
+            // create Box2
+            String etag2 = createBoxRequest(TEST_BOX_NAME_WITH_SCHEMA, null)
+                    .returns().statusCode(HttpStatus.SC_CREATED).getHeader(HttpHeaders.ETAG);
+
+            // Successful unique key(schema) change for Box2 (now with schema)
+            JSONObject updateBody = new JSONObject();
+            updateBody.put("Name", TEST_BOX_NAME_WITH_SCHEMA);
+            updateBody.put("Schema", TEST_BOX_SCHEMA);
+            etag2 = mergeBoxRequest(TEST_BOX_NAME_WITH_SCHEMA, etag2, updateBody.toJSONString()).
+                    returns().statusCode(HttpStatus.SC_NO_CONTENT).getHeader(HttpHeaders.ETAG);
+
+            // Etag difference update of Box2 fails
+            updateBody = new JSONObject();
+            updateBody.put("Name", TEST_BOX_NAME);
+            updateBody.put("Schema", TEST_BOX_SCHEMA);
+            mergeBoxRequest(TEST_BOX_NAME_WITH_SCHEMA, etag1, updateBody.toJSONString(),
+                    HttpStatus.SC_PRECONDITION_FAILED);
+
+            // Change primary key of Box 2 fails due to conflict.
+            updateBody = new JSONObject();
+            updateBody.put("Name", TEST_BOX_NAME);
+            updateBody.put("Schema", TEST_BOX_SCHEMA);
+            mergeBoxRequest(TEST_BOX_NAME_WITH_SCHEMA, etag2, updateBody.toJSONString(), HttpStatus.SC_CONFLICT);
+
+            // Unique key(schema) changes in Box 1 fail due to conflict.
+            updateBody = new JSONObject();
+            updateBody.put("Name", TEST_BOX_NAME);
+            updateBody.put("Schema", TEST_BOX_SCHEMA);
+            mergeBoxRequest(TEST_BOX_NAME, etag1, updateBody.toJSONString(), HttpStatus.SC_CONFLICT);
+
+            // Unique key(schema) change of Box 1 is successful
+            updateBody = new JSONObject();
+            updateBody.put("Name", TEST_BOX_NAME);
+            updateBody.put("Schema", "http://example.net/hoge/");
+            mergeBoxRequest(TEST_BOX_NAME, etag1, updateBody.toJSONString()).
+                    returns().statusCode(HttpStatus.SC_NO_CONTENT).getHeader(HttpHeaders.ETAG);
+
+            // If the Body Name is not specified
+            updateBody = new JSONObject();
+            updateBody.put("Schema", null);
+            mergeBoxRequest(TEST_BOX_NAME, "*", updateBody.toJSONString(), HttpStatus.SC_NO_CONTENT);
+
+            // If the schema of Body is not specified
+            updateBody = new JSONObject();
+            updateBody.put("Name", TEST_BOX_NAME);
+            mergeBoxRequest(TEST_BOX_NAME, "*", updateBody.toJSONString(), HttpStatus.SC_NO_CONTENT);
+
+            // If the schema of Body is null, it will be updated with null
+            updateBody = new JSONObject();
+            updateBody.put("Name", TEST_BOX_NAME);
+            updateBody.put("Schema", null);
+            mergeBoxRequest(TEST_BOX_NAME, "*", updateBody.toJSONString(), HttpStatus.SC_NO_CONTENT);
+
+            // It is an error if null is specified in the name
+            updateBody = new JSONObject();
+            updateBody.put("Name", null);
+            updateBody.put("Schema", "http://example.net/hoge/");
+            mergeBoxRequest(TEST_BOX_NAME, "*", updateBody.toJSONString(), HttpStatus.SC_BAD_REQUEST);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            deleteBoxRequest(TEST_BOX_NAME_WITH_SCHEMA).returns();
+            deleteBoxRequest(TEST_BOX_NAME).returns();
+        }
+    }
+
+    /**
      * BOX更新時にリクエストボディに管理情報__publishedを指定した場合_レスポンスコード400になることを確認.
      */
     @SuppressWarnings("unchecked")
@@ -741,6 +817,33 @@ public class BoxCrudTest extends ODataCommon {
     }
 
     /**
+     * Generate Box Update Request (MERGE).
+     * @param name Box名
+     * @param etag Etag
+     * @param body リクエストボディ
+     * @return リクエストオブジェクト
+     */
+    public static Http mergeBoxRequest(String name, String etag, String body) {
+        return Http.request("cell/box-update-merge-without-body.txt")
+                .with("cellPath", CELL_NAME)
+                .with("boxPath", name)
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .with("etag", etag)
+                .with("body", body);
+    }
+
+    /**
+     * Generate Box Update Request (MERGE).
+     * @param name Box名
+     * @param etag Etag
+     * @param body リクエストボディ
+     * @param sc 期待するレスポンスコード
+     */
+    public static void mergeBoxRequest(String name, String etag, String body, int sc) {
+        mergeBoxRequest(name, etag, body).returns().statusCode(sc);
+    }
+
+    /**
      * Box更新リクエストを生成.
      * @param name Box名
      * @param newName 新しいBox名
@@ -749,8 +852,12 @@ public class BoxCrudTest extends ODataCommon {
      * @return リクエストオブジェクト
      */
     public static Http updateBoxRequest(String name, String newName, String schema, String etag) {
-        return Http.request("cell/box-update.txt").with("cellPath", CELL_NAME).with("boxPath", name)
-                .with("token", AbstractCase.MASTER_TOKEN_NAME).with("etag", etag).with("newBoxPath", newName)
+        return Http.request("cell/box-update.txt")
+                .with("cellPath", CELL_NAME)
+                .with("boxPath", name)
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .with("etag", etag)
+                .with("newBoxPath", newName)
                 .with("schema", schema);
     }
 

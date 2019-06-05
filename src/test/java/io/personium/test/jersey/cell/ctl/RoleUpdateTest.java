@@ -297,6 +297,99 @@ public class RoleUpdateTest extends ODataCommon {
     }
 
     /**
+     * merge test.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void merge() {
+        String boxname = "box1";
+        String targetRoleName = testRoleName;
+
+        try {
+            // Preparation in advance: Create a role (Box not specified)
+            createRoleAndCheckResponse(false);
+
+            // Update by MERGE
+            String updateRoleName = testRoleName + "m0";
+            JSONObject updateBody = new JSONObject();
+            updateBody.put("Name", updateRoleName);
+            Http.request("role-update-merge.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .with("rolenamekey", targetRoleName)
+                    .with("boxnamekey", "null")
+                    .with("body", updateBody.toJSONString())
+                    .returns()
+                    .debug()
+                    .statusCode(HttpStatus.SC_NO_CONTENT);
+            targetRoleName = updateRoleName;
+
+            updateRoleName = testRoleName + "m1";
+            updateBody = new JSONObject();
+            updateBody.put("Name", updateRoleName);
+            updateBody.put("_Box.Name", boxname);
+            Http.request("role-update-merge.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .with("rolenamekey", targetRoleName)
+                    .with("boxnamekey", "null")
+                    .with("body", updateBody.toJSONString())
+                    .returns()
+                    .debug()
+                    .statusCode(HttpStatus.SC_NO_CONTENT);
+            targetRoleName = updateRoleName;
+
+            // Specify only Name and MERGE
+            updateRoleName = testRoleName + "m2";
+            updateBody = new JSONObject();
+            updateBody.put("Name", updateRoleName);
+            Http.request("role-update-merge.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .with("rolenamekey", targetRoleName)
+                    .with("boxnamekey", "'" + boxname + "'")
+                    .with("body", updateBody.toJSONString())
+                    .returns()
+                    .debug()
+                    .statusCode(HttpStatus.SC_NO_CONTENT);
+            targetRoleName = updateRoleName;
+
+            // Specify null for _Box.Name and MERGE
+            updateBody = new JSONObject();
+            updateBody.put("_Box.Name", null);
+            Http.request("role-update-merge.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .with("rolenamekey", targetRoleName)
+                    .with("boxnamekey", "'" + boxname + "'")
+                    .with("body", updateBody.toJSONString())
+                    .returns()
+                    .debug()
+                    .statusCode(HttpStatus.SC_NO_CONTENT);
+
+            // Get role (check response parameter)
+            TResponse response = Http.request("role-retrieve.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .with("rolename", targetRoleName)
+                    .with("boxname", "null")
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+            String location = UrlUtils.cellCtlWithoutSingleQuote(cellName,
+                    Role.EDM_TYPE_NAME,
+                    "Name='" + targetRoleName + "',_Box.Name=null");
+            ODataCommon.checkCommonResponseHeader(response);
+            Map<String, Object> additional = new HashMap<String, Object>();
+            additional.put("Name", targetRoleName);
+            additional.put("_Box.Name", null);
+            ODataCommon.checkResponseBody(response.bodyAsJson(), location, ROLE_TYPE, additional);
+
+        } finally {
+            CellCtlUtils.deleteRole(cellName, targetRoleName);
+        }
+    }
+
+    /**
      * 指定されたボックス名にリンクされたロール情報を作成する.
      * @param boxname
      */

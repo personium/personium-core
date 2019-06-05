@@ -296,6 +296,97 @@ public class RelationUpdateTest extends ODataCommon {
     }
 
     /**
+     * merge test.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void merge() {
+        String boxname = "box1";
+        String relationName = testRelationName;
+
+        try {
+            // Advance preparation
+            createRelation(boxname);
+
+            // Set and update all parameters(MERGE)
+            JSONObject body = new JSONObject();
+            body.put("Name", "testrelationmerge1");
+            body.put("_Box.Name", null);
+            Http.request("relation-update-merge.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .with("relationname", relationName)
+                    .with("boxname", "'" + boxname + "'")
+                    .with("body", body.toJSONString())
+                    .returns()
+                    .debug()
+                    .statusCode(HttpStatus.SC_NO_CONTENT);
+            relationName = body.get("Name").toString();
+
+            // Set name only
+            body = new JSONObject();
+            body.put("Name", "testrelationmerge2");
+            Http.request("relation-update-merge.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .with("relationname", relationName)
+                    .with("boxname", "null")
+                    .with("body", body.toJSONString())
+                    .returns()
+                    .debug()
+                    .statusCode(HttpStatus.SC_NO_CONTENT);
+            relationName = body.get("Name").toString();
+
+            // Set _Box.Name only
+            body = new JSONObject();
+            body.put("_Box.Name", boxname);
+            Http.request("relation-update-merge.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .with("relationname", relationName)
+                    .with("boxname", "null")
+                    .with("body", body.toJSONString())
+                    .returns()
+                    .debug()
+                    .statusCode(HttpStatus.SC_NO_CONTENT);
+
+            // Set Name is null (Bad request)
+            body = new JSONObject();
+            body.put("Name", null);
+            body.put("_Box.Name", null);
+            Http.request("relation-update-merge.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .with("relationname", relationName)
+                    .with("boxname", "'" + boxname + "'")
+                    .with("body", body.toJSONString())
+                    .returns()
+                    .debug()
+                    .statusCode(HttpStatus.SC_BAD_REQUEST);
+
+            // Get relation (Check response parameter)
+            TResponse response = Http.request("relation-retrieve.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .with("relationname", relationName)
+                    .with("boxname", "'" + boxname + "'")
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+            String location = UrlUtils.cellCtlWithoutSingleQuote(cellName,
+                    Relation.EDM_TYPE_NAME,
+                    "Name='" + relationName + "',_Box.Name='" + boxname + "'");
+            ODataCommon.checkCommonResponseHeader(response);
+            Map<String, Object> additional = new HashMap<String, Object>();
+            additional.put("Name", relationName);
+            additional.put("_Box.Name", boxname);
+            ODataCommon.checkResponseBody(response.bodyAsJson(), location, RELATION_TYPE, additional);
+
+        } finally {
+            CellCtlUtils.deleteRelation(cellName, relationName, boxname);
+        }
+    }
+
+    /**
      * 指定されたボックス名にリンクされたRelationを作成する.
      * @param boxname
      */

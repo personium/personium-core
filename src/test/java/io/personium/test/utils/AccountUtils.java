@@ -297,6 +297,52 @@ public class AccountUtils {
     }
 
     /**
+     * Account update with body.
+     * @param token token
+     * @param cellName cell name
+     * @param userName current user name
+     * @param newPassword new password
+     * @param updateBody update body
+     * @param sc expected status code
+     * @return response
+     */
+    public static TResponse updateWithBody(String token, String cellName, String userName,
+            String newPassword, JSONObject updateBody, int sc) {
+        TResponse res = Http.request("account-update-without-body.txt")
+                .with("token", token)
+                .with("cellPath", cellName)
+                .with("username", userName)
+                .with("password", newPassword)
+                .with("body", updateBody.toJSONString())
+                .returns().debug();
+        res.statusCode(sc);
+        return res;
+    }
+
+    /**
+     * Account update merge.
+     * @param token token
+     * @param cellName cell name
+     * @param userName current user name
+     * @param newPassword new password
+     * @param updateBody update body
+     * @param sc expected status code
+     * @return response
+     */
+    public static TResponse mergeWithBody(String token, String cellName, String userName,
+            String newPassword, JSONObject updateBody, int sc) {
+        TResponse res = Http.request("account-update-merge-without-body.txt")
+                .with("token", token)
+                .with("cellPath", cellName)
+                .with("username", userName)
+                .with("password", newPassword)
+                .with("body", updateBody.toJSONString())
+                .returns().debug();
+        res.statusCode(sc);
+        return res;
+    }
+
+    /**
      * アカウントを削除するユーティリティー.
      * @param cellName セル名
      * @param token トークン
