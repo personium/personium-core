@@ -156,9 +156,9 @@ public class ODataMergeResource extends ODataEntityResource {
                 return null;
             }
 
-            //If the key is not input in Body, Get the value specified in URL.
-            if (isGetKeyFormURL() && keysDefined.contains(epName)) {
-                String value = getKeyDefinedParameter(propName);
+            //Get key value from OEntityKey.
+            if (keysDefined.contains(epName)) {
+                String value = getParameterFromEntityKey(propName);
                 if (value != null) {
                     return OProperties.string(propName, value);
                 }
@@ -169,28 +169,21 @@ public class ODataMergeResource extends ODataEntityResource {
     }
 
     /**
-     * Check do get key information from URL.
-     *
-     * @return target is true
-     */
-    public boolean isGetKeyFormURL() {
-        if (Account.EDM_TYPE_NAME.equals(getEntitySetName())
-                || Box.EDM_TYPE_NAME.equals(getEntitySetName())
-                || Role.EDM_TYPE_NAME.equals(getEntitySetName())
-                || ExtCell.EDM_TYPE_NAME.equals(getEntitySetName())
-                || Relation.EDM_TYPE_NAME.equals(getEntitySetName())
-                || ExtRole.EDM_TYPE_NAME.equals(getEntitySetName())) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Information corresponding to the key is acquired from the request URL.
-     * @param propName prop name.
+     * Get parameter from oEntityKey.
+     * @param propName prop name
      * @return value
      */
-    private String getKeyDefinedParameter(String propName) {
+    private String getParameterFromEntityKey(String propName) {
+        // It excludes items other than CellCtl Object.
+        if (!Account.EDM_TYPE_NAME.equals(getEntitySetName())
+                && !Box.EDM_TYPE_NAME.equals(getEntitySetName())
+                && !Role.EDM_TYPE_NAME.equals(getEntitySetName())
+                && !ExtCell.EDM_TYPE_NAME.equals(getEntitySetName())
+                && !Relation.EDM_TYPE_NAME.equals(getEntitySetName())
+                && !ExtRole.EDM_TYPE_NAME.equals(getEntitySetName())) {
+            return null;
+        }
+
         if (KeyType.COMPLEX.equals(getOEntityKey().getKeyType())) {
             Set<OProperty<?>> keys = getOEntityKey().asComplexProperties();
             for (OProperty<?> key : keys) {
