@@ -47,6 +47,7 @@ import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.model.ctl.Rule;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
@@ -64,6 +65,18 @@ public class ODataMergeResource extends ODataEntityResource {
     public ODataMergeResource(ODataResource odataResource,
             String entitySetName, String keyString, OEntityKey oEntityKey) {
         super(odataResource, entitySetName, keyString, oEntityKey);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkNotAllowedMethod() {
+        // Rule can not be merged.
+        if (Rule.EDM_TYPE_NAME.equals(getEntitySetName())) {
+            throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
+        }
+        super.checkNotAllowedMethod();
     }
 
     /**
@@ -118,21 +131,6 @@ public class ODataMergeResource extends ODataEntityResource {
     }
 
     /**
-     * Method execution feasibility check.
-     */
-    @Override
-    protected void checkNotAllowedMethod() {
-        if (!Account.EDM_TYPE_NAME.equals(getEntitySetName())
-                && !Box.EDM_TYPE_NAME.equals(getEntitySetName())
-                && !Role.EDM_TYPE_NAME.equals(getEntitySetName())
-                && !ExtCell.EDM_TYPE_NAME.equals(getEntitySetName())
-                && !Relation.EDM_TYPE_NAME.equals(getEntitySetName())
-                && !ExtRole.EDM_TYPE_NAME.equals(getEntitySetName())) {
-            throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
-        }
-    }
-
-    /**
      * Set default value to OProperty based on schema definition <br>
      * For MERGE, do not set default values ​​for items other than key, updated, and published.
      * @param ep EdmProperty
@@ -157,8 +155,9 @@ public class ODataMergeResource extends ODataEntityResource {
                     && !Common.P_UPDATED.getName().equals(epName)) {
                 return null;
             }
+
             //If the key is not input in Body, Get the value specified in URL.
-            if (keysDefined.contains(epName)) {
+            if (isGetKeyFormURL() && keysDefined.contains(epName)) {
                 String value = getKeyDefinedParameter(propName);
                 if (value != null) {
                     return OProperties.string(propName, value);
@@ -167,6 +166,23 @@ public class ODataMergeResource extends ODataEntityResource {
         }
 
         return super.setDefaultValue(ep, propName, op, metadata);
+    }
+
+    /**
+     * Check do get key information from URL.
+     *
+     * @return target is true
+     */
+    public boolean isGetKeyFormURL() {
+        if (Account.EDM_TYPE_NAME.equals(getEntitySetName())
+                || Box.EDM_TYPE_NAME.equals(getEntitySetName())
+                || Role.EDM_TYPE_NAME.equals(getEntitySetName())
+                || ExtCell.EDM_TYPE_NAME.equals(getEntitySetName())
+                || Relation.EDM_TYPE_NAME.equals(getEntitySetName())
+                || ExtRole.EDM_TYPE_NAME.equals(getEntitySetName())) {
+            return true;
+        }
+        return false;
     }
 
     /**
