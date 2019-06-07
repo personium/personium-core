@@ -196,6 +196,29 @@ public class ExtRoleUtils {
     }
 
     /**
+     * update ExtRole(MERGE).
+     * @param token token
+     * @param cellName cell name
+     * @param extRoleName ext role name
+     * @param relationName relation name
+     * @param relationBoxName relation box name
+     * @param body request body
+     * @param code response code
+     */
+    public static void updateMerge(final String token, final String cellName, final String extRoleName,
+            final String relationName, final String relationBoxName, final JSONObject body, final int code) {
+        Http.request("cell/extRole/extRole-update-merge.txt")
+                .with("cellPath", cellName)
+                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(extRoleName))
+                .with("relationName", relationName)
+                .with("relationBoxName", relationBoxName)
+                .with("token", token)
+                .with("body", body.toString())
+                .returns()
+                .statusCode(code);
+    }
+
+    /**
      * ExtRoleの削除.
      * @param cellName セル名
      * @param extRoleUrl 外部ロール名

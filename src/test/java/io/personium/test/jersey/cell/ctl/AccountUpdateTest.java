@@ -241,9 +241,7 @@ public class AccountUpdateTest extends ODataCommon {
             // Account取得
             TResponse res = AccountUtils
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
-            String ipAddressRange = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                    .get("results"))
-                    .get("IPAddressRange");
+            String ipAddressRange = getResponseResultParam(res, "IPAddressRange");
             assertNull(ipAddressRange);
         } finally {
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
@@ -269,9 +267,7 @@ public class AccountUpdateTest extends ODataCommon {
             // Account取得
             TResponse res = AccountUtils
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
-            String ipAddressRange = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                    .get("results"))
-                    .get("IPAddressRange");
+            String ipAddressRange = getResponseResultParam(res, "IPAddressRange");
             assertThat(ipAddressRange, is(updateIPAddressRange));
         } finally {
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
@@ -297,9 +293,7 @@ public class AccountUpdateTest extends ODataCommon {
             // Account取得
             TResponse res = AccountUtils
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
-            String ipAddressRange = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                    .get("results"))
-                    .get("IPAddressRange");
+            String ipAddressRange = getResponseResultParam(res, "IPAddressRange");
             assertThat(ipAddressRange, is(updateIPAddressRange));
         } finally {
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
@@ -322,9 +316,7 @@ public class AccountUpdateTest extends ODataCommon {
         // Confirm that the IPAddressRange is not updated
         TResponse res = AccountUtils
                 .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, this.orgUserName);
-        String ipAddressRange = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                .get("results"))
-                .get("IPAddressRange");
+        String ipAddressRange = getResponseResultParam(res, "IPAddressRange");
         assertNull(ipAddressRange);
     }
 
@@ -346,9 +338,7 @@ public class AccountUpdateTest extends ODataCommon {
             // Account取得
             TResponse res = AccountUtils
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
-            String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                    .get("results"))
-                    .get("Status");
+            String status = getResponseResultParam(res, "Status");
             assertEquals(Account.STATUS_ACTIVE, status);
         } finally {
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
@@ -374,9 +364,7 @@ public class AccountUpdateTest extends ODataCommon {
             // Account取得
             TResponse res = AccountUtils
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
-            String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                    .get("results"))
-                    .get("Status");
+            String status = getResponseResultParam(res, "Status");
             assertEquals(Account.STATUS_ACTIVE, status);
         } finally {
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
@@ -402,9 +390,7 @@ public class AccountUpdateTest extends ODataCommon {
             // Account取得
             TResponse res = AccountUtils
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
-            String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                    .get("results"))
-                    .get("Status");
+            String status = getResponseResultParam(res, "Status");
             assertThat(status, is(updateStatus));
         } finally {
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
@@ -427,37 +413,157 @@ public class AccountUpdateTest extends ODataCommon {
         // Confirm that the status is not updated
         TResponse res = AccountUtils
                 .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, this.orgUserName);
-        String status = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                .get("results"))
-                .get("Status");
+        String status = getResponseResultParam(res, "Status");
         assertThat(status, is(Account.STATUS_ACTIVE));
     }
 
+    /**
+     * merge test.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void merge() {
+        String updateUserName = "test_merge";
+        String updatePass = "testPassword";
 
+        try {
+            // Create test account.
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
+                    HttpStatus.SC_CREATED);
 
+            // Set all properties and merge.
+            JSONObject updateBody = new JSONObject();
+            updateBody.put("Name", updateUserName);
+            updateBody.put("Type", "oidc:google");
+            updateBody.put("Status", Account.STATUS_DEACTIVATED);
+            updateBody.put("IPAddressRange", "192.0.1.0");
+            AccountUtils.mergeWithBody(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updatePass, updateBody, HttpStatus.SC_NO_CONTENT);
+            // Get account. (Check properties)
+            TResponse res = AccountUtils
+                    .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
+            String type = getResponseResultParam(res, "Type");
+            String status = getResponseResultParam(res, "Status");
+            String ipAddressRange = getResponseResultParam(res, "IPAddressRange");
+            assertThat(type, is("oidc:google"));
+            assertThat(status, is(Account.STATUS_DEACTIVATED));
+            assertThat(ipAddressRange, is("192.0.1.0"));
 
+            // Set only required properties and merge.
+            JSONObject mergeBody = new JSONObject();
+            mergeBody.put("Name", updateUserName);
+            AccountUtils.mergeWithBody(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updatePass, mergeBody, HttpStatus.SC_NO_CONTENT);
+            // Get account. (Check properties)
+            res = AccountUtils.get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
+            type = getResponseResultParam(res, "Type");
+            status = getResponseResultParam(res, "Status");
+            ipAddressRange = getResponseResultParam(res, "IPAddressRange");
+            assertThat(type, is("oidc:google"));
+            assertThat(status, is(Account.STATUS_DEACTIVATED));
+            assertThat(ipAddressRange, is("192.0.1.0"));
 
+            // Set only required properties and put.
+            mergeBody.put("Name", updateUserName);
+            AccountUtils.updateWithBody(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updatePass, mergeBody, HttpStatus.SC_NO_CONTENT);
+            // Get account. (Check properties)
+            res = AccountUtils.get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
+            type = getResponseResultParam(res, "Type");
+            status = getResponseResultParam(res, "Status");
+            ipAddressRange = getResponseResultParam(res, "IPAddressRange");
+            assertThat(type, is("basic"));
+            assertThat(status, is(Account.STATUS_ACTIVE));
+            assertNull(ipAddressRange);
 
+            // Set null to any property and merge.
+            mergeBody.put("Name", updateUserName);
+            mergeBody.put("Type", null);
+            mergeBody.put("Status", null);
+            mergeBody.put("IPAddressRange", null);
+            AccountUtils.mergeWithBody(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updatePass, mergeBody, HttpStatus.SC_NO_CONTENT);
+            // Get account. (Check properties)
+            res = AccountUtils.get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
+            type = getResponseResultParam(res, "Type");
+            status = getResponseResultParam(res, "Status");
+            ipAddressRange = getResponseResultParam(res, "IPAddressRange");
+            assertThat(type, is("basic"));
+            assertThat(status, is(Account.STATUS_ACTIVE));
+            assertNull(ipAddressRange);
 
+            // Update status only (Name does not change)
+            mergeBody = new JSONObject();
+            mergeBody.put("Status", Account.STATUS_DEACTIVATED);
+            AccountUtils.mergeWithBody(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updatePass, mergeBody, HttpStatus.SC_NO_CONTENT);
+            // Get account. (Check properties)
+            res = AccountUtils.get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
+            status = getResponseResultParam(res, "Status");
+            assertThat(type, is("basic"));
+            assertThat(status, is(Account.STATUS_DEACTIVATED));
+            assertNull(ipAddressRange);
+        } finally {
+            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
+        }
+    }
 
+    /**
+     * merge test.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void merge_invalid() {
+        String updateUserName = "test_merge_invalid";
+        String updatePass = "testPassword";
 
+        try {
+            // Create test account.
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
+                    HttpStatus.SC_CREATED);
 
+            // Invalid Name.
+            JSONObject updateBody = new JSONObject();
+            updateBody.put("Name", null);
+            AccountUtils.mergeWithBody(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updatePass, updateBody, HttpStatus.SC_BAD_REQUEST);
 
+            // Invalid type.
+            updateBody = new JSONObject();
+            updateBody.put("Name", updateUserName);
+            updateBody.put("Type", "invalid_Type");
+            AccountUtils.mergeWithBody(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updatePass, updateBody, HttpStatus.SC_BAD_REQUEST);
 
+            // Invalid status.
+            updateBody = new JSONObject();
+            updateBody.put("Name", updateUserName);
+            updateBody.put("Status", "invalid_Status");
+            AccountUtils.mergeWithBody(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updatePass, updateBody, HttpStatus.SC_BAD_REQUEST);
 
+            // Invalid ip address range.
+            updateBody = new JSONObject();
+            updateBody.put("Name", updateUserName);
+            updateBody.put("IPAddressRange", "invalid_IPAddressRange");
+            AccountUtils.mergeWithBody(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updatePass, updateBody, HttpStatus.SC_BAD_REQUEST);
+        } finally {
+            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
+        }
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * Get response result param.
+     * @param res response
+     * @param paramName parameter key name
+     * @return parameter value
+     */
+    private String getResponseResultParam(TResponse res, String paramName) {
+        return (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
+                .get("results"))
+                .get(paramName);
+    }
 
     /**
      * アカウント更新のリクエストボディに管理情報__publishedを指定してレスポンスコード400が返却されること.

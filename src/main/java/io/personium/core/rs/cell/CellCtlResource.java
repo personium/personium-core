@@ -126,6 +126,32 @@ public final class CellCtlResource extends ODataResource {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void beforeMerge(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
+        String entitySetName = oEntityWrapper.getEntitySet().getName();
+
+        if (Account.EDM_TYPE_NAME.equals(entitySetName)) {
+            // validate Account. (Unspecified items are not subject to validate)
+            if (oEntityWrapper.hasProperty(Account.P_TYPE.getName())) {
+                AuthUtils.validateAccountType(oEntityWrapper, entitySetName);
+            }
+            if (oEntityWrapper.hasProperty(Account.P_IP_ADDRESS_RANGE.getName())) {
+                AuthUtils.validateAccountIPAddressRange(oEntityWrapper, entitySetName);
+            }
+            Map<String, String> hashed = AuthUtils.hashPassword(pCredHeader, entitySetName);
+            if (hashed != null) {
+                for (Map.Entry<String, String> hashedEntry : hashed.entrySet()) {
+                    oEntityWrapper.put(hashedEntry.getKey(), hashedEntry.getValue());
+                }
+            }
+        } else {
+            beforeUpdate(oEntityWrapper, oEntityKey);
+        }
+    }
+
+    /**
      * Corresponds to the service metadata request.
      * @return JAX-RS response object
      */

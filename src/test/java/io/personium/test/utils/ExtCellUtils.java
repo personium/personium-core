@@ -167,6 +167,26 @@ public class ExtCellUtils {
     }
 
     /**
+     * update ExtCell(MERGE).
+     * @param token token
+     * @param cellName cell name
+     * @param url URL
+     * @param body body
+     * @param code response code
+     */
+    public static void updateMerge(final String token, final String cellName,
+            final String url, final String body, final int code) {
+        Http.request("cell/extCell-update-merge.txt")
+                .with("cellPath", cellName)
+                .with("token", token)
+                .with("accept", "application/xml")
+                .with("url", PersoniumCoreUtils.encodeUrlComp(url))
+                .with("body", body)
+                .returns()
+                .statusCode(code);
+    }
+
+    /**
      * ExtCellの削除.
      * @param token トークン
      * @param cellName セル名
