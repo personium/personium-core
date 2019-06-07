@@ -276,11 +276,7 @@ public class DavRsCmp {
 
         // if Depth is not 0, then process children.
         if (!"0".equals(depth)) {
-            Map<String, DavCmp> childrenMap = this.davCmp.getChildren();
-            for (String childName : childrenMap.keySet()) {
-                DavCmp child = childrenMap.get(childName);
-                resList.add(createDavResponse(childName, reqUri + "/" + childName, child, propfind, canAclRead));
-            }
+            resList.addAll(createChildrenDavResponseList(reqUri, propfind, canAclRead));
         }
 
         // output the result
@@ -294,6 +290,24 @@ public class DavRsCmp {
                 .header(HttpHeaders.ETAG, this.davCmp.getEtag())
                 .header("Content-Type", "application/xml")
                 .entity(str).build();
+    }
+
+    /**
+     * create children DavResponse list.
+     * @param reqUri request url
+     * @param propfind propfind
+     * @param canAclRead can acl read
+     * @return DavResponse list
+     */
+    protected List<org.apache.wink.webdav.model.Response> createChildrenDavResponseList(String reqUri,
+            Propfind propfind, boolean canAclRead) {
+        List<org.apache.wink.webdav.model.Response> resList = new ArrayList<>();
+        Map<String, DavCmp> childrenMap = this.davCmp.getChildren();
+        for (String childName : childrenMap.keySet()) {
+            DavCmp child = childrenMap.get(childName);
+            resList.add(createDavResponse(childName, reqUri + "/" + child.getName(), child, propfind, canAclRead));
+        }
+        return resList;
     }
 
     /**

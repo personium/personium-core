@@ -19,8 +19,10 @@ package io.personium.core.model;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -31,7 +33,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.wink.webdav.model.Propfind;
 import org.json.simple.JSONObject;
+import org.odata4j.core.OEntity;
 import org.xml.sax.SAXException;
 
 import io.personium.core.PersoniumCoreAuthzException;
@@ -40,6 +44,8 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
+import io.personium.core.model.ctl.Common;
+import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
 import io.personium.core.utils.HttpClientFactory;
 import io.personium.core.utils.UriUtils;
 
@@ -168,6 +174,34 @@ public class CellRsCmp extends DavRsCmp {
             }
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected List<org.apache.wink.webdav.model.Response> createChildrenDavResponseList(String reqUri,
+            Propfind propfind, boolean canAclRead) {
+        List<org.apache.wink.webdav.model.Response> resList = new ArrayList<>();
+        Map<String, DavCmp> childrenMap = this.davCmp.getChildren();
+        for (String childName : childrenMap.keySet()) {
+            DavCmp child = childrenMap.get(childName);
+            if (DavCmp.TYPE_COL_BOX.equals(child.getType())) {
+                // Since childName is the ID of Box, get Box name.
+                CellCtlODataProducer producer = new CellCtlODataProducer(getCell());
+                OEntity entity = producer.getEntityByInternalId(Box.EDM_TYPE_NAME, childName);
+                if (entity != null) {
+                    String boxName = entity.getProperty(Common.P_NAME.getName()).getValue().toString();
+                    resList.add(createDavResponse(
+                            boxName, reqUri + "/" + boxName, child, propfind, canAclRead));
+                } else {
+                    // It is assumed that we can not reach here.
+                    throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
+                }
+            } else {
+                resList.add(createDavResponse(childName, reqUri + "/" + childName, child, propfind, canAclRead));
+            }
+        }
+        return resList;
     }
 
     /**
