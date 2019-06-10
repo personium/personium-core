@@ -153,9 +153,8 @@ public class DavNodePropFindTest extends PersoniumTest {
         TResponse cellPropRes = CellUtils.propfind(CELL_NAME, "cell/propfind-cell-allprop.txt", TOKEN, "1",
                 HttpStatus.SC_MULTI_STATUS);
         NodeList resElems = cellPropRes.bodyAsXml().getDocumentElement().getElementsByTagName("response");
+        assertEquals(expects.size(),  resElems.getLength());
         checkPropFindChildren(resElems, expects);
-        // Add 1 because ".pkeys" file also exists in the same hierarchy.
-        assertEquals(expects.size(),  resElems.getLength() + 1);
 
         // Check1: Box直下のPROPFND
         path = BOX_NAME;
