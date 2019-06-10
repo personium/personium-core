@@ -204,6 +204,7 @@ public class CellRsCmp extends DavRsCmp {
                             boxName, reqUri + "/" + boxName, child, propfind, canAclRead));
                 } else {
                     // It is assumed that we can not reach here.
+                    log.debug("Box no such. ID=" + childName);
                     throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
                 }
             } else {
