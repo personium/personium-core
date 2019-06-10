@@ -44,12 +44,10 @@ import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
-import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
-import io.personium.core.model.impl.fs.CellKeys;
 import io.personium.core.utils.HttpClientFactory;
 import io.personium.core.utils.UriUtils;
 
@@ -190,39 +188,27 @@ public class CellRsCmp extends DavRsCmp {
         List<org.apache.wink.webdav.model.Response> resList = new ArrayList<>();
         Map<String, DavCmp> childrenMap = this.davCmp.getChildren();
 
-        // debug log.
-        if (log.isDebugEnabled()) {
-            log.debug(this.cell.getName() + " child count:" + this.davCmp.getChildrenCount());
-            for (String childName : childrenMap.keySet()) {
-                DavCmp child = childrenMap.get(childName);
-                log.debug("    name:" + childName + " type:" + child.getType() + " fsPath:" + child.getFsPath());
-            }
-        }
-
+        // Get Box under Cell.
+        // Others are excluded because they are information for internal management.
         for (String childName : childrenMap.keySet()) {
             DavCmp child = childrenMap.get(childName);
-
-            if (CellKeys.KEYS_DIR_NAME.equals(childName)
-                    || AuthHistoryLastFile.AUTH_HISTORY_DIRECTORY.equals(childName)) {
-                // Exclude the administrative metadirectory.
-                continue;
-
-            } else if (DavCmp.TYPE_COL_BOX.equals(child.getType())) {
-                // Since childName is the ID of Box, get Box name.
-                log.debug("Box owner:" + getCell().getOwner() + " ID:" + childName);
-                CellCtlODataProducer producer = new CellCtlODataProducer(getCell());
-                OEntity entity = producer.getEntityByInternalId(Box.EDM_TYPE_NAME, childName);
-                if (entity != null) {
-                    String boxName = entity.getProperty(Common.P_NAME.getName()).getValue().toString();
+            if (DavCmp.TYPE_COL_BOX.equals(child.getType())) {
+                if (childName.equals(this.cell.getId())) {
+                    // Default box.
                     resList.add(createDavResponse(
-                            boxName, reqUri + "/" + boxName, child, propfind, canAclRead));
+                            Box.DEFAULT_BOX_NAME, reqUri + "/" + Box.DEFAULT_BOX_NAME, child, propfind, canAclRead));
                 } else {
-                    // It is assumed that we can not reach here.
-                    log.debug("Box no such. ID=" + childName);
-                    throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
+                    // Since childName is the ID of Box, get Box name.
+                    CellCtlODataProducer producer = new CellCtlODataProducer(getCell());
+                    OEntity entity = producer.getEntityByInternalId(Box.EDM_TYPE_NAME, childName);
+                    if (entity != null) {
+                        String boxName = entity.getProperty(Common.P_NAME.getName()).getValue().toString();
+                        resList.add(createDavResponse(
+                                boxName, reqUri + "/" + boxName, child, propfind, canAclRead));
+                    } else {
+                        throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
+                    }
                 }
-            } else {
-                resList.add(createDavResponse(childName, reqUri + "/" + childName, child, propfind, canAclRead));
             }
         }
         return resList;
