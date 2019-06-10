@@ -36,6 +36,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.wink.webdav.model.Propfind;
 import org.json.simple.JSONObject;
 import org.odata4j.core.OEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import io.personium.core.PersoniumCoreAuthzException;
@@ -54,6 +56,8 @@ import io.personium.core.utils.UriUtils;
  * A class that performs processing except delegation of processing from JaxRS Resource object excluding Dav related persistence.
  */
 public class CellRsCmp extends DavRsCmp {
+    /** Logger. */
+    static Logger log = LoggerFactory.getLogger(CellRsCmp.class);
 
     /** Name of property in which the URL of the relay destination is described. */
     private static final String RELAY_HTML_URL = "relayhtmlurl";
@@ -191,6 +195,7 @@ public class CellRsCmp extends DavRsCmp {
                 continue;
             } else if (DavCmp.TYPE_COL_BOX.equals(child.getType())) {
                 // Since childName is the ID of Box, get Box name.
+                log.debug("Box owner:" + getCell().getOwner() + " ID:" + childName);
                 CellCtlODataProducer producer = new CellCtlODataProducer(getCell());
                 OEntity entity = producer.getEntityByInternalId(Box.EDM_TYPE_NAME, childName);
                 if (entity != null) {
