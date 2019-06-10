@@ -44,6 +44,7 @@ import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
 import io.personium.core.model.ctl.Common;
@@ -188,11 +189,24 @@ public class CellRsCmp extends DavRsCmp {
             Propfind propfind, boolean canAclRead) {
         List<org.apache.wink.webdav.model.Response> resList = new ArrayList<>();
         Map<String, DavCmp> childrenMap = this.davCmp.getChildren();
+
+        // debug log.
+        if (log.isDebugEnabled()) {
+            log.debug(this.cell.getName() + " child count:" + this.davCmp.getChildrenCount());
+            for (String childName : childrenMap.keySet()) {
+                DavCmp child = childrenMap.get(childName);
+                log.debug("    name:" + childName + " type:" + child.getType() + " fsPath:" + child.getFsPath());
+            }
+        }
+
         for (String childName : childrenMap.keySet()) {
             DavCmp child = childrenMap.get(childName);
-            if (CellKeys.KEYS_DIR_NAME.equals(childName)) {
-                // "Key file storage directory" is excluded.
+
+            if (CellKeys.KEYS_DIR_NAME.equals(childName)
+                    || AuthHistoryLastFile.AUTH_HISTORY_DIRECTORY.equals(childName)) {
+                // Exclude the administrative metadirectory.
                 continue;
+
             } else if (DavCmp.TYPE_COL_BOX.equals(child.getType())) {
                 // Since childName is the ID of Box, get Box name.
                 log.debug("Box owner:" + getCell().getOwner() + " ID:" + childName);
