@@ -143,13 +143,12 @@ public class DavNodePropFindTest extends PersoniumTest {
         path = "dav2/dav2-2/dav2-2-file2.txt";
         DavResourceUtils.createWebDavFile(CELL_NAME, TOKEN, davFile, davBody, BOX_NAME, path, HttpStatus.SC_CREATED);
 
-        // Check0: PROPFND directly under Cell
+        // Check0: PROPFND Cell (Resources directly below Cell are not displayed)
         //   * This process essentially corresponds to "290_Cell_Get_Property".
         //   * However, there is a part that performs the same process as "305_Get_Property" internally,
         //   * and it was necessary to register and test the subordinate WebDav, so a test case was added here.
         List<String> expects = new ArrayList<String>();
         expects.add(CELL_NAME);
-        expects.add(BOX_NAME);
         TResponse cellPropRes = CellUtils.propfind(CELL_NAME, "cell/propfind-cell-allprop.txt", TOKEN, "1",
                 HttpStatus.SC_MULTI_STATUS);
         NodeList resElems = cellPropRes.bodyAsXml().getDocumentElement().getElementsByTagName("response");
