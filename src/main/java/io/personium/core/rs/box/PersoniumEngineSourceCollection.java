@@ -31,6 +31,7 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.MOVE;
 import io.personium.core.annotations.PROPFIND;
+import io.personium.core.annotations.REPORT;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
@@ -90,6 +91,15 @@ public class PersoniumEngineSourceCollection {
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
         return this.davRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
                 BoxPrivilege.READ_ACL);
+    }
+
+    /**
+     * REPORT Method.
+     * @return JAX-RS response object
+     */
+    @REPORT
+    public Response report() {
+        throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
     }
 
     /**

@@ -33,6 +33,7 @@ import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MOVE;
 import io.personium.core.annotations.PROPFIND;
 import io.personium.core.annotations.PROPPATCH;
+import io.personium.core.annotations.REPORT;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -135,6 +136,15 @@ public final class ODataSvcCollectionResource extends ODataResource {
         eventBus.post(ev);
 
         return response;
+    }
+
+    /**
+     * REPORT Method.
+     * @return JAX-RS response object
+     */
+    @REPORT
+    public Response report() {
+        throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
     }
 
     /**
