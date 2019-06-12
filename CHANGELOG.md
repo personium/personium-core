@@ -1,3 +1,10 @@
+## 1.7.14
+BUG FIXES:
+* DavCmpFsImpl doesn't respect binaryData.fsync.enabled setting.([#394](https://github.com/personium/personium-core/issues/394))
+
+IMPROVEMENTS:
+* Support MERGE of the cell management object.([#351](https://github.com/personium/personium-core/issues/351))
+
 ## 1.7.13
 BUG FIXES:
 * Unknown Exception occurs during cell import.([#296](https://github.com/personium/personium-core/issues/296))
