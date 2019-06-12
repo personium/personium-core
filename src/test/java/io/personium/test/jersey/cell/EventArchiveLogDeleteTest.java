@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -68,14 +69,14 @@ public class EventArchiveLogDeleteTest extends ODataCommon {
      * <br>
      * "Ignore" for the following reasons. If you want to check, please remove this and execute.
      * <ul>
-     * <li>Need to prepare log archive in advance, it takes time.</li>
+     * <li>Need to prepare log archive in advance, it takes time. (about 10 minutes)</li>
      * <li>It is necessary to create separate data to delete.</li>
      * </ul>
      * @exception Exception exception
      */
     @SuppressWarnings("unchecked")
     @Test
-//    @Ignore
+    @Ignore
     public final void delete_eventLog() throws Exception {
         try {
             // create test cell and log file.

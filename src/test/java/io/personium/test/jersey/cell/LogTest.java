@@ -274,40 +274,6 @@ public class LogTest extends ODataCommon {
     }
 
     /**
-     * ログファイルに対するDELETEで501が返却されること.
-     */
-    @Test
-    public final void ログファイルに対するDELETEで501が返却されること() {
-
-        Http.request("cell/log-get.txt")
-                .with("METHOD", HttpMethod.DELETE)
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", Setup.TEST_CELL1)
-                .with("collection", CURRENT_COLLECTION)
-                .with("fileName", DEFAULT_LOG)
-                .with("ifNoneMatch", "*")
-                .returns()
-                .statusCode(HttpStatus.SC_NOT_IMPLEMENTED);
-    }
-
-    /**
-     * archiveコレクションのログファイルに対するDELETEで501が返却されること.
-     */
-    @Test
-    public final void archiveコレクションのログファイルに対するDELETEで501が返却されること() {
-
-        Http.request("cell/log-get.txt")
-                .with("METHOD", HttpMethod.DELETE)
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", Setup.TEST_CELL1)
-                .with("collection", ARCHIVE_COLLECTION)
-                .with("fileName", "default.log.1")
-                .with("ifNoneMatch", "*")
-                .returns()
-                .statusCode(HttpStatus.SC_NOT_IMPLEMENTED);
-    }
-
-    /**
      * 存在しないログファイルに対するGETで404が返却されること.
      */
     @Test
