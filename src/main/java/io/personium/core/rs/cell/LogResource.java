@@ -59,15 +59,18 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.PROPFIND;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
-import io.personium.core.eventlog.EventUtils;
 import io.personium.core.eventlog.ArchiveLogCollection;
 import io.personium.core.eventlog.ArchiveLogFile;
+import io.personium.core.eventlog.EventUtils;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
+import io.personium.core.model.file.BinaryDataAccessException;
+import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.utils.ResourceUtils;
 
 /**
@@ -353,13 +356,64 @@ public class LogResource {
 
     /**
      * Delete log file.
+     * @param logCollection Collection name
+     * @param fileName fileName
      * @return response
      */
     @Path("{logCollection}/{filename}")
     @WriteAPI
     @DELETE
-    public final Response deleteLogFile() {
-        throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
+    public final Response deleteLogFile(@PathParam("logCollection") final String logCollection,
+            @PathParam("filename") final String fileName) {
+
+        //Access control
+        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG);
+
+        //Check the collection name of the event log
+        if (CURRENT_COLLECTION.equals(logCollection)) {
+            throw PersoniumCoreException.Event.CURRENT_FILE_CANNOT_DELETE;
+        } else if (!isValidLogCollection(logCollection)) {
+            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(logCollection);
+        }
+
+        //If the file name is other than default.log, return 404
+        if (!isValidLogFile(logCollection, fileName)) {
+            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(fileName);
+        }
+
+        String cellId = davRsCmp.getCell().getId();
+        String owner = davRsCmp.getCell().getOwner();
+
+        //Delete event log file
+        StringBuilder logFileName = EventUtils.getEventLogDir(cellId, owner);
+        logFileName.append(logCollection);
+        logFileName.append(File.separator);
+        logFileName.append(fileName);
+        deleteLog(logCollection, logFileName.toString());
+
+        // respond 204
+        return Response.noContent().build();
+    }
+
+    private void deleteLog(final String logCollection, String logFileName) {
+        String archiveLogFileName = logFileName + ".zip";
+
+        // File existence check.
+        File logFile = new File(archiveLogFileName);
+        if (!logFile.isFile()) {
+            String[] split = archiveLogFileName.split(File.separator);
+            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(split[split.length - 1]);
+        }
+
+        // File delete.
+        try {
+            BinaryDataAccessor accessor = new BinaryDataAccessor("", null,
+                    PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
+            accessor.deleteWithFullPath(archiveLogFileName);
+        } catch (BinaryDataAccessException e) {
+            log.info("Failed delete eventLog : " + e.getMessage());
+            throw PersoniumCoreException.Event.FILE_DELETE_FAILED;
+        }
     }
 
     /**

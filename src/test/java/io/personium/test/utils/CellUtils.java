@@ -578,6 +578,22 @@ public class CellUtils {
     }
 
     /**
+     * Utility to delete event.
+     * @param cellName cell name
+     * @param collection Log type（"current" or "archive")
+     * @param fileName log path("default.log" or "default.log.{no}")
+     * @return PersoniumResponse
+     * @throws PersoniumException Exception
+     */
+    public static PersoniumResponse deleteLog(String cellName, String collection, String fileName)
+            throws PersoniumException {
+        PersoniumRestAdapter adaper = new PersoniumRestAdapter();
+        HashMap<String, String> header = new HashMap<String, String>();
+        header.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
+        return adaper.del(UrlUtils.cellRoot(cellName) + "__log/" + collection + "/" + fileName, header);
+    }
+
+    /**
      * eventのGETを行うユーティリティ.
      * @param cellName セル名
      * @param fileName ログのパス("default.log" or "default.log.{no}")
