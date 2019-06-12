@@ -389,13 +389,13 @@ public class LogResource {
         logFileName.append(logCollection);
         logFileName.append(File.separator);
         logFileName.append(fileName);
-        deleteLog(logCollection, logFileName.toString());
+        deleteLogArchive(logFileName.toString());
 
         // respond 204
         return Response.noContent().build();
     }
 
-    private void deleteLog(final String logCollection, String logFileName) {
+    private void deleteLogArchive(String logFileName) {
         String archiveLogFileName = logFileName + ".zip";
 
         // File existence check.
