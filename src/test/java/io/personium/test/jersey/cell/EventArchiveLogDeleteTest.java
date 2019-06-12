@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -119,6 +118,11 @@ public class EventArchiveLogDeleteTest extends ODataCommon {
 
         } finally {
             // delete test cell.
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                System.out.println("");
+            }
             Setup.cellBulkDeletion(TEST_CELL);
         }
     }
