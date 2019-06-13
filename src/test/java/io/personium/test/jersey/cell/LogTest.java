@@ -52,7 +52,6 @@ import io.personium.test.utils.TResponse;
 @Category({Unit.class, Integration.class, Regression.class })
 public class LogTest extends ODataCommon {
 
-    private static final String ARCHIVE_COLLECTION = "archive";
     private static final String DEFAULT_LOG = "default.log";
     private static final String CURRENT_COLLECTION = "current";
 

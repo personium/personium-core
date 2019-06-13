@@ -385,18 +385,22 @@ public class LogResource {
         String owner = davRsCmp.getCell().getOwner();
 
         //Delete event log file
-        StringBuilder logFileName = EventUtils.getEventLogDir(cellId, owner);
-        logFileName.append(logCollection);
-        logFileName.append(File.separator);
-        logFileName.append(fileName);
-        deleteLogArchive(logFileName.toString());
+        StringBuilder logFilePath = EventUtils.getEventLogDir(cellId, owner);
+        logFilePath.append(logCollection);
+        logFilePath.append(File.separator);
+        logFilePath.append(fileName);
+        deleteLogArchive(logFilePath.toString());
 
         // respond 204
         return Response.noContent().build();
     }
 
-    private void deleteLogArchive(String logFileName) {
-        String archiveLogFileName = logFileName + ".zip";
+    /**
+     * Delete log archive.
+     * @param logFilePath log file path
+     */
+    private void deleteLogArchive(String logFilePath) {
+        String archiveLogFileName = logFilePath + ".zip";
 
         // File existence check.
         File logFile = new File(archiveLogFileName);
