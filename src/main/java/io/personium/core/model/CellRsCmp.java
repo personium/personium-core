@@ -19,6 +19,7 @@ package io.personium.core.model;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +32,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.wink.webdav.model.Propfind;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import io.personium.core.PersoniumCoreAuthzException;
@@ -47,6 +51,8 @@ import io.personium.core.utils.UriUtils;
  * A class that performs processing except delegation of processing from JaxRS Resource object excluding Dav related persistence.
  */
 public class CellRsCmp extends DavRsCmp {
+    /** Logger. */
+    static Logger log = LoggerFactory.getLogger(CellRsCmp.class);
 
     /** Name of property in which the URL of the relay destination is described. */
     private static final String RELAY_HTML_URL = "relayhtmlurl";
@@ -168,6 +174,15 @@ public class CellRsCmp extends DavRsCmp {
             }
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected List<org.apache.wink.webdav.model.Response> createChildrenDavResponseList(String reqUri,
+            Propfind propfind, boolean canAclRead) {
+        // Resources directly below Cell are not displayed.
+        return new ArrayList<>();
     }
 
     /**
