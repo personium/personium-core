@@ -37,7 +37,6 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -466,8 +465,6 @@ public class ODataSentMessageResource extends ODataMessageResource {
             return properties;
         } catch (Exception ioe) {
             throw PersoniumCoreException.SentMessage.SM_CONNECTION_ERROR.reason(ioe);
-        } finally {
-            HttpClientUtils.closeQuietly(objResponse);
         }
 
     }
