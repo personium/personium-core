@@ -36,10 +36,11 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -429,6 +430,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
         String requestUrl = requestCellUrl + "__message/port";
 
         //Acquire request header, add content below
+        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
         HttpPost req = new HttpPost(requestUrl);
 
         //Request body
@@ -438,6 +440,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
                     jsonBody.toJSONString(),
                     ContentType.APPLICATION_JSON.withCharset(StandardCharsets.UTF_8));
         } catch (UnsupportedCharsetException e) {
+            HttpClientUtils.closeQuietly(client);
             throw PersoniumCoreException.SentMessage.SM_BODY_PARSE_ERROR.reason(e);
         }
         req.setEntity(body);
@@ -448,7 +451,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
 
         //Throw a request
         HttpResponse objResponse = null;
-        try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE)) {
+        try {
             objResponse = client.execute(req);
 
             //Create Request Result
@@ -465,6 +468,9 @@ public class ODataSentMessageResource extends ODataMessageResource {
             return properties;
         } catch (Exception ioe) {
             throw PersoniumCoreException.SentMessage.SM_CONNECTION_ERROR.reason(ioe);
+        } finally {
+            HttpClientUtils.closeQuietly(objResponse);
+            HttpClientUtils.closeQuietly(client);
         }
 
     }
