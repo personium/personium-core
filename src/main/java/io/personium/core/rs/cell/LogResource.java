@@ -327,6 +327,7 @@ public class LogResource {
                 throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(split[split.length - 1]);
             } catch (IOException e) {
                 log.info("Failed to read archive entry : " + e.getMessage());
+                IOUtils.closeQuietly(bis);
                 throw PersoniumCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
             }
         }
