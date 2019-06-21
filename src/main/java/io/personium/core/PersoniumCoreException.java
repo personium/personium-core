@@ -790,6 +790,10 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException REQUEST_FIELD_FORMAT_ERROR = create("PR400-EV-0004");
         /**
+         * When the current event log file can not be deleted.
+         */
+        public static final PersoniumCoreException CURRENT_FILE_CANNOT_DELETE = create("PR400-EV-0005");
+        /**
          * Http response output failed.
          */
         public static final PersoniumCoreException EVENT_RESPONSE_FAILED = create("PR500-EV-0001");
@@ -797,6 +801,10 @@ public class PersoniumCoreException extends RuntimeException {
          * When the compressed event log file can not be opened.
          */
         public static final PersoniumCoreException ARCHIVE_FILE_CANNOT_OPEN = create("PR500-EV-0002");
+        /**
+         * File delete failed.
+         */
+        public static final PersoniumCoreException FILE_DELETE_FAILED = create("PR500-EV-0003");
 
     }
 
