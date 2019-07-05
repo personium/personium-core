@@ -440,6 +440,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
                     jsonBody.toJSONString(),
                     ContentType.APPLICATION_JSON.withCharset(StandardCharsets.UTF_8));
         } catch (UnsupportedCharsetException e) {
+            HttpClientUtils.closeQuietly(client);
             throw PersoniumCoreException.SentMessage.SM_BODY_PARSE_ERROR.reason(e);
         }
         req.setEntity(body);

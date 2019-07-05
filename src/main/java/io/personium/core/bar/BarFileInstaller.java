@@ -340,6 +340,7 @@ public class BarFileInstaller {
                 try {
                     sync(((FileOutputStream) outStream).getFD());
                 } catch (Exception e) {
+                    IOUtils.closeQuietly(outStream);
                     throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(e.getMessage());
                 }
             }
