@@ -51,9 +51,9 @@ public class CrossDomainTest extends PersoniumTest {
     static final String ODATA_COL = "odatacol";
     static final String CROSSDOMAIN_XML = "<?xml version=\"1.0\"?>"
             + "<!DOCTYPE cross-domain-policy SYSTEM \"https://www.adobe.com/xml/dtds/cross-domain-policy.dtd\">"
-            + "  <cross-domain-policy>"
-            + "    <site-control permitted-cross-domain-policies=\"all\"/>"
-            + "    <allow-access-from domain=\"*\"/>"
+            + "<cross-domain-policy>"
+            + "  <site-control permitted-cross-domain-policies=\"all\"/>"
+            + "  <allow-access-from domain=\"*\"/>"
             + "  <allow-http-request-headers-from domain=\"*\" headers=\"*\"/>"
             + "</cross-domain-policy>";
 
