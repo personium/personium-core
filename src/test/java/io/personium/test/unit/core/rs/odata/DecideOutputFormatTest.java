@@ -157,18 +157,23 @@ public class DecideOutputFormatTest {
      * format指定なしでacceptにxmlと未サポートの値を指定した場合415エラーが返却されること.
      */
     @Test
-    public final void format指定なしでacceptにxmlと未サポートの値を指定した場合415エラーが返却されること() {
+    public final void format指定なしでacceptにxmlと未サポートの値を指定した場合xmlが返却されること() {
         ODataEntityResource odataEntityResource = new ODataEntityResource();
 
-        try {
-            odataEntityResource.decideOutputFormat(
+        MediaType type = odataEntityResource.decideOutputFormat(
                      MediaType.APPLICATION_ATOM_XML + "," + "INVALID_VALUE", null);
-            fail();
-        } catch (PersoniumCoreException e) {
-            assertEquals("PR415-OD-0001", e.getCode());
-        } catch (Exception e) {
-            fail();
-        }
+        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+    }
+
+    /**
+     * format指定なしでacceptにjsonとtext/plainと*を指定した場合jsonが返却されること.
+     */
+    @Test
+    public final void format指定なしでacceptにjsonとtextとアスタリスクを指定した場合xmlが返却されること() {
+        ODataEntityResource odataEntityResource = new ODataEntityResource();
+        MediaType type = odataEntityResource.decideOutputFormat(
+                MediaType.APPLICATION_JSON + "," + MediaType.TEXT_PLAIN_TYPE +  "," + MediaType.WILDCARD, null);
+        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
     }
 
     /**

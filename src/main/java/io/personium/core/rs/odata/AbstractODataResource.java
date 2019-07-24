@@ -26,10 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -191,21 +191,16 @@ public abstract class AbstractODataResource {
      * @return output format ("application / json" or "application / atom + xml")
      */
     private MediaType decideOutputFormatFromHeaderValues(String acceptHeaderValue) {
-        MediaType mediaType = null;
-        StringTokenizer st = new StringTokenizer(acceptHeaderValue, ",");
-        while (st.hasMoreTokens()) {
-            String accept = truncateAfterSemicolon(st.nextToken());
-            if (isAcceptXml(accept)) {
-                mediaType = MediaType.APPLICATION_ATOM_XML_TYPE;
-            } else if (isAcceptJson(accept)) {
-                if (mediaType == null) {
-                    mediaType = MediaType.APPLICATION_JSON_TYPE;
-                }
-            } else {
-                throw PersoniumCoreException.OData.UNSUPPORTED_MEDIA_TYPE.params(acceptHeaderValue);
-            }
+        String[] types = Stream.of(acceptHeaderValue.split(","))
+                .map(this::truncateAfterSemicolon)
+                .toArray(String[]::new);
+        if (Stream.of(types).anyMatch(this::isAcceptXml)) {
+            return MediaType.APPLICATION_ATOM_XML_TYPE;
+        } else if (Stream.of(types).anyMatch(this::isAcceptJson)) {
+            return MediaType.APPLICATION_JSON_TYPE;
+        } else {
+            throw PersoniumCoreException.OData.UNSUPPORTED_MEDIA_TYPE.params(acceptHeaderValue);
         }
-        return mediaType;
     }
 
     /**
@@ -214,12 +209,8 @@ public abstract class AbstractODataResource {
      * @return String up to semicolon
      */
     private String truncateAfterSemicolon(String source) {
-        String result = source;
-        int index = source.indexOf(";");
-        if (index >= 0) {
-            result = source.substring(0, index);
-        }
-        return result;
+        String[] splited = source.split(";");
+        return splited[0];
     }
 
     private boolean isAcceptXml(String accept) {
