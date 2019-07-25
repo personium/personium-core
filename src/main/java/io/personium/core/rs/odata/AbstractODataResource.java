@@ -213,7 +213,7 @@ public abstract class AbstractODataResource {
      * @return String up to semicolon
      */
     private String truncateAfterSemicolon(String source) {
-        String[] splited = source.split("[ \\t]*;", 2);
+        String[] splited = source.split("[ \t]*;", 2);
         return splited[0];
     }
 
