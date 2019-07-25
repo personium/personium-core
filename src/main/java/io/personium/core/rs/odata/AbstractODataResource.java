@@ -147,7 +147,8 @@ public abstract class AbstractODataResource {
 
     /**
      * Determine the ContentType to return.
-     * @param accept Content of the Accept header
+     * @param accept Content of the Accept header;
+     *        Note that quality values like 'q=0.9' are ignored to determine.
      * @param format $ format parameter
      * @return Content-Type to return
      */
