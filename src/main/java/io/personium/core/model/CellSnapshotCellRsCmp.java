@@ -16,6 +16,12 @@
  */
 package io.personium.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.wink.webdav.model.Propfind;
+
 import io.personium.core.auth.AccessContext;
 
 /**
@@ -48,5 +54,19 @@ public class CellSnapshotCellRsCmp extends CellRsCmp {
             cellUrl = cellUrl.substring(0, cellUrl.length() - 1);
         }
         return cellUrl + "/" + SNAPSHOT_ENDPOINT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected List<org.apache.wink.webdav.model.Response> createChildrenDavResponseList(String reqUri,
+            Propfind propfind, boolean canAclRead) {
+        List<org.apache.wink.webdav.model.Response> resList = new ArrayList<>();
+        Map<String, DavCmp> childrenMap = this.davCmp.getChildren();
+        for (String childName : childrenMap.keySet()) {
+            DavCmp child = childrenMap.get(childName);
+            resList.add(createDavResponse(childName, reqUri + "/" + child.getName(), child, propfind, canAclRead));
+        }
+        return resList;
     }
 }
