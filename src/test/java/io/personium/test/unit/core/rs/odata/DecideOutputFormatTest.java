@@ -169,11 +169,11 @@ public class DecideOutputFormatTest {
      * format指定なしでacceptにjsonとtext/plainと*を指定した場合jsonが返却されること.
      */
     @Test
-    public final void format指定なしでacceptにjsonとtextとアスタリスクを指定した場合xmlが返却されること() {
+    public final void format指定なしでacceptにjsonとtextとアスタリスクを指定した場合jsonが返却されること() {
         ODataEntityResource odataEntityResource = new ODataEntityResource();
         MediaType type = odataEntityResource.decideOutputFormat(
                 MediaType.APPLICATION_JSON + "," + MediaType.TEXT_PLAIN_TYPE +  "," + MediaType.WILDCARD, null);
-        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+        assertEquals(MediaType.APPLICATION_JSON_TYPE, type);
     }
 
     /**

@@ -198,6 +198,8 @@ public abstract class AbstractODataResource {
             return MediaType.APPLICATION_ATOM_XML_TYPE;
         } else if (Stream.of(types).anyMatch(this::isAcceptJson)) {
             return MediaType.APPLICATION_JSON_TYPE;
+        } else if (Stream.of(types).anyMatch(this::isAcceptWildcard)) {
+            return MediaType.APPLICATION_ATOM_XML_TYPE;
         } else {
             throw PersoniumCoreException.OData.UNSUPPORTED_MEDIA_TYPE.params(acceptHeaderValue);
         }
@@ -215,12 +217,15 @@ public abstract class AbstractODataResource {
 
     private boolean isAcceptXml(String accept) {
         return accept.equals(MediaType.APPLICATION_ATOM_XML)
-                || accept.equals(MediaType.APPLICATION_XML)
-                || accept.equals(MediaType.WILDCARD);
+                || accept.equals(MediaType.APPLICATION_XML);
     }
 
     private boolean isAcceptJson(String accept) {
         return accept.equals(MediaType.APPLICATION_JSON);
+    }
+
+    private boolean isAcceptWildcard(String accept) {
+        return accept.equals(MediaType.WILDCARD);
     }
 
     /**
