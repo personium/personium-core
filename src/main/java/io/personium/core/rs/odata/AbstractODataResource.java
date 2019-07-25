@@ -191,7 +191,7 @@ public abstract class AbstractODataResource {
      * @return output format ("application / json" or "application / atom + xml")
      */
     private MediaType decideOutputFormatFromHeaderValues(String acceptHeaderValue) {
-        String[] types = Stream.of(acceptHeaderValue.split(","))
+        String[] types = Stream.of(acceptHeaderValue.split("[ \t]*,[ \t]*"))
                 .map(this::truncateAfterSemicolon)
                 .toArray(String[]::new);
         if (Stream.of(types).anyMatch(this::isAcceptXml)) {
@@ -211,7 +211,7 @@ public abstract class AbstractODataResource {
      * @return String up to semicolon
      */
     private String truncateAfterSemicolon(String source) {
-        String[] splited = source.split(";");
+        String[] splited = source.split("[ \\t]*;", 2);
         return splited[0];
     }
 
