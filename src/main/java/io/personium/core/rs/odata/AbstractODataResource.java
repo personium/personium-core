@@ -37,6 +37,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.odata4j.core.NamedValue;
 import org.odata4j.core.NamespacedAnnotation;
@@ -156,7 +157,7 @@ public abstract class AbstractODataResource {
         MediaType mediaType = null;
         if (format != null) {
             mediaType = decideOutputFormatFromQueryValue(format);
-        } else if (accept != null) {
+        } else if (!StringUtils.isEmpty(accept)) {
             mediaType = decideOutputFormatFromHeaderValues(accept);
         }
         if (mediaType == null) {
