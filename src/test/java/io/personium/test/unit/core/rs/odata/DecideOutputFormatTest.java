@@ -101,6 +101,30 @@ public class DecideOutputFormatTest {
     }
 
     /**
+     * format指定なしでacceptにJSONとATOM_XMLを空白ありで指定した場合XMLが返却されること.
+     */
+    @Test
+    public final void format指定なしでacceptにJSONとATOM_XMLを空白ありで指定した場合XMLが返却されること() {
+        ODataEntityResource odataEntityResource = new ODataEntityResource();
+
+        MediaType type = odataEntityResource.decideOutputFormat(
+                MediaType.APPLICATION_JSON + " , " + MediaType.APPLICATION_ATOM_XML, null);
+        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+    }
+
+    /**
+     * format指定なしでacceptにJSONとATOM_XMLをタブありで指定した場合XMLが返却されること.
+     */
+    @Test
+    public final void format指定なしでacceptにJSONとATOM_XMLをタブありで指定した場合XMLが返却されること() {
+        ODataEntityResource odataEntityResource = new ODataEntityResource();
+
+        MediaType type = odataEntityResource.decideOutputFormat(
+                MediaType.APPLICATION_JSON + "\t,\t" + MediaType.APPLICATION_ATOM_XML, null);
+        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+    }
+
+    /**
      * acceptのセミコロン以降を無視すること.
      */
     @Test
@@ -109,6 +133,30 @@ public class DecideOutputFormatTest {
 
         MediaType type = odataEntityResource.decideOutputFormat(
                 "application/xml;q=0.9,*/*;q=0.8", null);
+        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+    }
+
+    /**
+     * acceptの空白とセミコロン以降を無視すること.
+     */
+    @Test
+    public final void acceptの空白とセミコロン以降を無視すること() {
+        ODataEntityResource odataEntityResource = new ODataEntityResource();
+
+        MediaType type = odataEntityResource.decideOutputFormat(
+                "application/xml ;q=0.9,*/* ;q=0.8", null);
+        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+    }
+
+    /**
+     * acceptのタブとセミコロン以降を無視すること.
+     */
+    @Test
+    public final void acceptのタブとセミコロン以降を無視すること() {
+        ODataEntityResource odataEntityResource = new ODataEntityResource();
+
+        MediaType type = odataEntityResource.decideOutputFormat(
+                "application/xml\t;q=0.9,*/*\t;q=0.8", null);
         assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
     }
 
@@ -157,18 +205,23 @@ public class DecideOutputFormatTest {
      * format指定なしでacceptにxmlと未サポートの値を指定した場合415エラーが返却されること.
      */
     @Test
-    public final void format指定なしでacceptにxmlと未サポートの値を指定した場合415エラーが返却されること() {
+    public final void format指定なしでacceptにxmlと未サポートの値を指定した場合xmlが返却されること() {
         ODataEntityResource odataEntityResource = new ODataEntityResource();
 
-        try {
-            odataEntityResource.decideOutputFormat(
+        MediaType type = odataEntityResource.decideOutputFormat(
                      MediaType.APPLICATION_ATOM_XML + "," + "INVALID_VALUE", null);
-            fail();
-        } catch (PersoniumCoreException e) {
-            assertEquals("PR415-OD-0001", e.getCode());
-        } catch (Exception e) {
-            fail();
-        }
+        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+    }
+
+    /**
+     * format指定なしでacceptにjsonとtext/plainと*を指定した場合jsonが返却されること.
+     */
+    @Test
+    public final void format指定なしでacceptにjsonとtextとアスタリスクを指定した場合jsonが返却されること() {
+        ODataEntityResource odataEntityResource = new ODataEntityResource();
+        MediaType type = odataEntityResource.decideOutputFormat(
+                MediaType.APPLICATION_JSON + "," + MediaType.TEXT_PLAIN_TYPE +  "," + MediaType.WILDCARD, null);
+        assertEquals(MediaType.APPLICATION_JSON_TYPE, type);
     }
 
     /**
