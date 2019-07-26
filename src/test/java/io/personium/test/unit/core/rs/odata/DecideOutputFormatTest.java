@@ -156,7 +156,7 @@ public class DecideOutputFormatTest {
         ODataEntityResource odataEntityResource = new ODataEntityResource();
 
         MediaType type = odataEntityResource.decideOutputFormat(
-                "application/xml\t;q=0.9,*/\t;q=0.8", null);
+                "application/xml\t;q=0.9,*/*\t;q=0.8", null);
         assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
     }
 
