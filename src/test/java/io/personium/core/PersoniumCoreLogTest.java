@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 
 /**
- * EsModelの単体テストケース.
+ * PersoniumCoreLogの単体テストケース.
  */
 
 @RunWith(PersoniumIntegTestRunner.class)
