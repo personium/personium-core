@@ -360,6 +360,7 @@ public final class PersoniumCoreLog {
     String code;
     Severity severity;
     Throwable reason;
+    long startTime = 0L;
 
     /**
      * Force load inner class.
@@ -374,20 +375,31 @@ public final class PersoniumCoreLog {
 
     /**
      * constructor.
-     * @param severity error level
-     * @param message error message
+     * @param code log code
+     * @param severity log level
+     * @param message message
      */
-    PersoniumCoreLog(final String code,
-            final Severity severity,
-            final String message) {
+    PersoniumCoreLog(final String code, final Severity severity, final String message) {
         this.code = code;
         this.severity = severity;
         this.message = message;
     }
 
     /**
+     * constructor.
+     * @param code log code
+     * @param severity log level
+     * @param message message
+     * @param reason error reason
+     */
+    PersoniumCoreLog(final String code, final Severity severity, final String message, final Throwable reason) {
+        this(code, severity, message);
+        this.reason = reason;
+    }
+
+    /**
      * Factory method.
-     * @param code error code
+     * @param code log code
      * @return PersoniumCoreLog
      */
     public static PersoniumCoreLog create(String code) {
@@ -405,8 +417,8 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     * Return error code.
-     * @return error code
+     * Return log code.
+     * @return log code
      */
     public String getCode() {
         return this.code;
@@ -432,10 +444,7 @@ public final class PersoniumCoreLog {
      */
     public PersoniumCoreLog reason(final Throwable t) {
         //Make a clone
-        PersoniumCoreLog ret = new PersoniumCoreLog(this.code, this.severity, this.message);
-        //Set cause Exception
-        ret.reason = t;
-        return ret;
+        return new PersoniumCoreLog(this.code, this.severity, this.message, t);
     }
 
     /**
@@ -445,10 +454,42 @@ public final class PersoniumCoreLog {
      * 2012-09-09 11:23:47.029 [main] [INFO ] CoreLog [io.personium.core.CoreLogTest#test:22] - JSON Parse Error.
      */
     public void writeLog() {
-
         StackTraceElement[] ste = new Throwable().getStackTrace();
-        String logInfo = String.format("[%s] - [%s#%s:%s] - %s",
+        doWriteLog("[%s] - [%s#%s:%s] - %s",
                 this.code, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber(), this.message);
+    }
+
+    /**
+     * Log output with time measurement.
+     * 2012-09-09 11:23:47.029 [main] [INFO ] CoreLog - [Start] - [io.personium.core.CoreLogTest#test:22] - JSON Parse Error.
+     */
+    public void writeStartLog() {
+        StackTraceElement[] ste = new Throwable().getStackTrace();
+        this.startTime = System.currentTimeMillis();
+        doWriteLog("[%s] - [Start] - [%s#%s:%s] - %s",
+                this.code, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber(), this.message);
+    }
+
+    /**
+     * Log output with time measurement.
+     * Output example)
+     * 2012-09-09 11:23:47.029 [main] [INFO ] CoreLog - [End: 10ms] - [io.personium.core.CoreLogTest#test:22] - JSON Parse Error.
+     */
+    public void writeEndLog() {
+        StackTraceElement[] ste = new Throwable().getStackTrace();
+        final long elapsedTime;
+        if (this.startTime == 0L) {
+            elapsedTime = -1;
+        } else {
+            elapsedTime = System.currentTimeMillis() - this.startTime;
+        }
+        doWriteLog("[%s] - [End: %dms] - [%s#%s:%s] - %s",
+                this.code, elapsedTime, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber(),
+                this.message);
+    }
+
+    private void doWriteLog(String msgFormat, Object... params) {
+        String logInfo = String.format(msgFormat, params);
         switch (this.severity) {
         case INFO:
             log.info(logInfo, this.reason);
@@ -466,4 +507,5 @@ public final class PersoniumCoreLog {
             log.error("Message Severity Not Defined");
         }
     }
+
 }
