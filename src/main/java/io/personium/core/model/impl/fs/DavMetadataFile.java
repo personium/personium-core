@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreLog;
 
 /**
  * a class for handling internal fs file storing Dav metadata.
@@ -49,10 +50,11 @@ public class DavMetadataFile {
     private static final long META_LOAD_RETRY_WAIT = 100L;
     /** Maximum number of metafile reading retries. */
     private static final int META_LOAD_RETRY_MAX = 5;
+    private static final int KILO_BYTES = 1000;
 
     File file;
-
     JSONObject json = new JSONObject();
+    private final PersoniumCoreLog fileOperationLog = PersoniumCoreLog.Dav.FILE_OPERATION.create();
 
     /** JSON Key for ID. */
     private static final String KEY_ID = "i";
@@ -208,9 +210,12 @@ public class DavMetadataFile {
      * save to the file.
      */
     public void save() {
-        log.debug("save started.");
         this.incrementVersion();
         String jsonStr = JSONObject.toJSONString(this.getJSON());
+
+        this.fileOperationLog.setParams(this.file.toPath(), jsonStr.getBytes(Charsets.UTF_8).length / KILO_BYTES);
+        this.fileOperationLog.writeStartLog();
+
         try {
             if (PersoniumUnitConfig.getFsyncEnabled()) {
                 Files.write(this.file.toPath(), jsonStr.getBytes(Charsets.UTF_8),
@@ -221,7 +226,7 @@ public class DavMetadataFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        log.debug("save ended.");
+        this.fileOperationLog.writeEndLog();
     }
 
     private void incrementVersion() {
