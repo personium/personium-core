@@ -188,6 +188,16 @@ public final class PersoniumCoreLog {
     }
 
     /**
+     * Service collection.
+     */
+    public static class ServiceCollection {
+        /**
+         * Personium-Engine reley starts/ends.
+         */
+        public static final PersoniumCoreLog SC_ENGINE_RELAY = create("PL-SC-0001");
+    }
+
+    /**
      * Server internal error.
      * Throw when a process can not be continued due to a server side failure or bug, which is to indicate the cause of the problem. Basically, when exceptions occur in category of WARN or more log output
      */
@@ -371,6 +381,7 @@ public final class PersoniumCoreLog {
         new Server();
         new Dav();
         new Misc();
+        new ServiceCollection();
     }
 
     /**
