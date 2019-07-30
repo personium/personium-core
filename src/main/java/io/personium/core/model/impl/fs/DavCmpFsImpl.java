@@ -116,12 +116,14 @@ public class DavCmpFsImpl implements DavCmp {
     DavCmpFsImpl parent;
     List<String> ownerRepresentativeAccounts = new ArrayList<String>();
     boolean isPhantom = false;
+    private final PersoniumCoreLog fileOperationLog = PersoniumCoreLog.Dav.FILE_OPERATION.create();
 
     /**
      * Fixed File Name for storing file.
      */
     public static final String CONTENT_FILE_NAME = "content";
     private static final String TEMP_FILE_NAME = "tmp";
+    private static final int KILO_BYTES = 1000;
 
     /*
      * logger.
@@ -579,6 +581,8 @@ public class DavCmpFsImpl implements DavCmp {
         DataCryptor cryptor = new DataCryptor(getCellId());
         input = cryptor.encode(inputStream, PersoniumUnitConfig.isDavEncryptEnabled());
 
+        this.fileOperationLog.setParams(getContentFilePath(), 0);
+        this.fileOperationLog.writeStartLog();
         BufferedInputStream bufferedInput = new BufferedInputStream(input);
         try {
             // create new directory.
@@ -592,6 +596,9 @@ public class DavCmpFsImpl implements DavCmp {
                 writtenBytes = ((CipherInputStream) input).getReadLengthBeforEncryption();
                 encryptionType = DataCryptor.ENCRYPTION_TYPE_AES;
             }
+            this.fileOperationLog.setParams(getContentFilePath(), writtenBytes / KILO_BYTES);
+            this.fileOperationLog.writeEndLog();
+
             // create new metadata file.
             this.metaFile = DavMetadataFile.prepareNewFile(this, DavCmp.TYPE_DAV_FILE);
             this.metaFile.setContentType(contentType);
@@ -630,6 +637,8 @@ public class DavCmpFsImpl implements DavCmp {
             throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
         }
 
+        this.fileOperationLog.setParams(getContentFilePath(), 0);
+        this.fileOperationLog.writeStartLog();
         try {
             // Update Content
             InputStream input = inputStream;
@@ -649,6 +658,8 @@ public class DavCmpFsImpl implements DavCmp {
                 writtenBytes = ((CipherInputStream) input).getReadLengthBeforEncryption();
                 encryptionType = DataCryptor.ENCRYPTION_TYPE_AES;
             }
+            this.fileOperationLog.setParams(getContentFilePath(), writtenBytes / KILO_BYTES);
+            this.fileOperationLog.writeEndLog();
 
             // Update Metadata
             this.metaFile.setUpdated(now);
@@ -680,8 +691,9 @@ public class DavCmpFsImpl implements DavCmp {
         //Range header analysis processing
         final RangeHeaderHandler range = RangeHeaderHandler.parse(rangeHeaderField, fileSize);
 
+        this.fileOperationLog.setParams(fileFullPath, fileSize / KILO_BYTES);
+        this.fileOperationLog.writeStartLog();
         try {
-
             //Differentiate between processing with Range header specification
             if (!range.isValid()) {
                 //Return whole file
@@ -705,6 +717,7 @@ public class DavCmpFsImpl implements DavCmp {
                     res = davFileResponseForRange(sout, contentType, range);
                 }
             }
+            this.fileOperationLog.writeEndLog();
             return res.header(HttpHeaders.ETAG, getEtag()).header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES,
                     RangeHeaderHandler.BYTES_UNIT);
 
@@ -987,11 +1000,16 @@ public class DavCmpFsImpl implements DavCmp {
      * Exec delete.
      */
     protected void doDelete() {
+        this.fileOperationLog.setParams(getContentFilePath(), getContentLength() / KILO_BYTES);
+        this.fileOperationLog.writeStartLog();
+
         try {
             FileUtils.deleteDirectory(this.fsDir);
         } catch (IOException e) {
             throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(e);
         }
+
+        this.fileOperationLog.writeEndLog();
     }
 
     /**
