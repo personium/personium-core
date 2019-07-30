@@ -72,6 +72,12 @@ public final class PersoniumCoreLog {
          * {0}: UUID of binary data
          */
         public static final PersoniumCoreLog FILE_DELETE_FAIL = create("PL-DV-0004");
+        /**
+         * Write file.
+         * {0}: File path
+         * {1}: File size
+         */
+        public static final PersoniumCoreLog FILE_OPERATION = create("PL-DV-0005");
     }
 
     /**
@@ -428,6 +434,14 @@ public final class PersoniumCoreLog {
     }
 
     /**
+     * It creates a new log instance.
+     * @return PersoniumCoreLog
+     */
+    public PersoniumCoreLog create() {
+        return new PersoniumCoreLog(this.code, this.severity, this.message);
+    }
+
+    /**
      * Return log code.
      * @return log code
      */
@@ -446,6 +460,15 @@ public final class PersoniumCoreLog {
         //Create a message replacement clone
         PersoniumCoreLog ret = new PersoniumCoreLog(this.code, this.severity, ms);
         return ret;
+    }
+
+    /**
+     * It set a message with a parameter substitution, and the expression of {1} {2} etc. on the error message is a keyword for parameter substitution.
+     * @param params Additional message
+     */
+    public void setParams(final Object... params) {
+        String messageFormat = PersoniumCoreMessageUtils.getMessage(code);
+        this.message = MessageFormat.format(messageFormat, params);
     }
 
     /**
