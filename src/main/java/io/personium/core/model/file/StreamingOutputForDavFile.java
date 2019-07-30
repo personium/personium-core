@@ -32,6 +32,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
@@ -40,6 +41,9 @@ import io.personium.core.PersoniumUnitConfig;
 public class StreamingOutputForDavFile implements StreamingOutput {
 
     private static Logger logger = LoggerFactory.getLogger(StreamingOutputForDavFile.class);
+    private static final int KILO_BYTES = 1000;
+    private String fileFullPath;
+    private PersoniumCoreLog fileOperationLog = PersoniumCoreLog.Dav.FILE_OPERATION.create();
 
     /**
      * Maximum number of retries at the time of reading / writing Dav file, hard link creation / file name modification.
@@ -73,6 +77,7 @@ public class StreamingOutputForDavFile implements StreamingOutput {
         if (!Files.exists(Paths.get(fileFullPath))) {
             throw new BinaryDataNotFoundException(fileFullPath);
         }
+        this.fileFullPath = fileFullPath;
 
         //Generate a unique name to create a read-only hard link.
         String hardLinkName = UniqueNameComposer.compose(fileFullPath);
@@ -113,13 +118,19 @@ public class StreamingOutputForDavFile implements StreamingOutput {
         if (null == hardLinkInput) {
             throw new WebApplicationException(new BinaryDataNotFoundException(hardLinkPath.toString()));
         }
+        this.fileOperationLog.setParams(fileFullPath, 0);
+        this.fileOperationLog.writeStartLog();
+
+        int writtenBytes = 0;
         try {
-            IOUtils.copy(hardLinkInput, output);
+            writtenBytes = IOUtils.copy(hardLinkInput, output);
         } finally {
             IOUtils.closeQuietly(hardLinkInput);
             //Cleanup. Delete the reading hard link for yourself.
             Files.delete(hardLinkPath);
         }
+        this.fileOperationLog.setParams(fileFullPath, writtenBytes / KILO_BYTES);
+        this.fileOperationLog.writeEndLog();
     }
 
 }

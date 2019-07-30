@@ -37,6 +37,10 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
 
     private RangeHeaderHandler range = null;
     private long fileSize = 0;
+    private String fileFullPath;
+    private PersoniumCoreLog fileOperationLog = PersoniumCoreLog.Dav.FILE_OPERATION.create();
+
+    private static final int KILO_BYTES = 1000;
 
     /**
      * constructor.
@@ -55,10 +59,13 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
         super(fileFullPath, cellId, encryptionType);
         this.range = range;
         this.fileSize = fileSize;
+        this.fileFullPath = fileFullPath;
     }
 
     @Override
     public void write(OutputStream output) throws IOException, WebApplicationException {
+        this.fileOperationLog.setParams(fileFullPath, 0);
+        this.fileOperationLog.writeStartLog();
         try {
             //Because it does not correspond to MultiPart, it processes only the first byte-renge-set.
             int rangeIndex = 0;
@@ -84,6 +91,8 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
                 }
                 output.write((char) chr);
             }
+            this.fileOperationLog.setParams(fileFullPath, fileSize / KILO_BYTES);
+            this.fileOperationLog.writeEndLog();
         } finally {
             IOUtils.closeQuietly(hardLinkInput);
             Files.delete(hardLinkPath);
