@@ -61,6 +61,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MOVE;
@@ -90,6 +91,7 @@ public class PersoniumEngineSvcCollectionResource {
     DavCmp davCmp = null;
     DavCollectionResource dcr = null;
     DavRsCmp davRsCmp;
+    PersoniumCoreLog relayLog = null;
 
     /**
      * constructor.
@@ -483,26 +485,19 @@ public class PersoniumEngineSvcCollectionResource {
             }
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("[EngineRelay]" + req.getMethod() + " " + req.getURI());
-            Header[] reqHeaders = req.getAllHeaders();
-            for (int i = 0; i < reqHeaders.length; i++) {
-                log.debug("RelayHeader[" + reqHeaders[i].getName() + "] : " + reqHeaders[i].getValue());
-            }
-        }
-
         // prepare event
         PersoniumEvent event = createEvent(path);
         EventBus eventBus = this.davRsCmp.getAccessContext().getCell().getEventBus();
+
+        // write relay log
+        setRelayLog(req);
+        this.relayLog.writeStartLog();
+        debugRelayHeader(req);
 
         //Throw a request to the Engine
         HttpResponse objResponse = null;
         try {
             objResponse = client.execute(req);
-            // post event to EventBus
-            String info = Integer.toString(objResponse.getStatusLine().getStatusCode());
-            event.setInfo(info);
-            eventBus.post(event);
         } catch (ClientProtocolException e) {
             // post event to EventBus
             event.setInfo("500");
@@ -516,6 +511,12 @@ public class PersoniumEngineSvcCollectionResource {
             closeHttpClient(client, objResponse);
             throw PersoniumCoreException.ServiceCollection.SC_ENGINE_CONNECTION_ERROR.reason(ioe);
         }
+        this.relayLog.writeEndLog();
+
+        // post event to EventBus
+        String info = Integer.toString(objResponse.getStatusLine().getStatusCode());
+        event.setInfo(info);
+        eventBus.post(event);
 
         //Add status code
         ResponseBuilder res = Response.status(objResponse.getStatusLine().getStatusCode());
@@ -593,6 +594,19 @@ public class PersoniumEngineSvcCollectionResource {
             return null;
         }
         return getRequestKey(rsCmp.getParent());
+    }
+
+    private void setRelayLog(HttpUriRequest req) {
+        this.relayLog = PersoniumCoreLog.ServiceCollection.SC_ENGINE_RELAY.params(req.getMethod(), req.getURI());
+    }
+
+    private void debugRelayHeader(HttpUriRequest req) {
+        if (log.isDebugEnabled()) {
+            Header[] reqHeaders = req.getAllHeaders();
+            for (int i = 0; i < reqHeaders.length; i++) {
+                log.debug("RelayHeader[" + reqHeaders[i].getName() + "] : " + reqHeaders[i].getValue());
+            }
+        }
     }
 
     /**
