@@ -98,7 +98,7 @@ public final class PersoniumMeasurmentLog extends PersoniumCoreLog {
      * Log output with time measurement..
      * When outputting the log, display the class name, method name, number of lines, and measurement time of the log output source.
      * Output example)
-     * 2019-07-31 15:18:00.558 [main] [INFO ] PersoniumCoreLog [PL-SC-0002] - [io.personium.core.PersoniumMeasurementLogTest#ログ出力正常系のテスト:67] - [EngineRelay] End. (1000ms)
+     * 2019-07-31 15:18:00.558 [main] [INFO ] PersoniumCoreLog [PL-SC-0002] - [EngineRelay] End. (1000ms) - [io.personium.core.PersoniumMeasurementLogTest#testMethod:67]
      */
     public void writeLog() {
         if (this.startTime != 0L) {
@@ -106,8 +106,8 @@ public final class PersoniumMeasurmentLog extends PersoniumCoreLog {
             this.message = this.message.replaceFirst("%time", String.format("%d", elapsedTime));
         }
         StackTraceElement[] ste = new Throwable().getStackTrace();
-        doWriteLog("[%s] - [%s#%s:%s] - %s",
-                this.code, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber(), this.message);
+        doWriteLog("[%s] - %s - [%s#%s:%s]",
+                this.code, this.message, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber());
     }
 
 }

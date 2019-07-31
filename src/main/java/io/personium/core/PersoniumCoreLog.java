@@ -467,12 +467,12 @@ public class PersoniumCoreLog {
      * Log output.
      * When outputting the log, display the class name, method name, and the number of lines of the log output source.
      * Output example)
-     * 2012-09-09 11:23:47.029 [main] [INFO ] CoreLog [io.personium.core.CoreLogTest#test:22] - JSON Parse Error.
+     * 2019-07-31 18:27:05.834 [thread] [INFO ] PersoniumCoreLog [PL-ES-0002] - ESReq index=u0_unitadmin - [io.personium.core.model.impl.es.EsModel$2#handleEvent:57]
      */
     public void writeLog() {
         StackTraceElement[] ste = new Throwable().getStackTrace();
-        doWriteLog("[%s] - [%s#%s:%s] - %s",
-                this.code, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber(), this.message);
+        doWriteLog("[%s] - %s - [%s#%s:%s]",
+                this.code, this.message, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber());
     }
 
     /**
