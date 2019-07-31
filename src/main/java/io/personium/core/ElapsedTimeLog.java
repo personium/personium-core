@@ -29,8 +29,7 @@ public final class ElapsedTimeLog extends PersoniumCoreLog {
     public static class Dav {
         /**
          * Write file.
-         * {0}: File path
-         * {1}: File size
+         * {0}: File size
          */
         public static final ElapsedTimeLog FILE_OPERATION_END = create("PL-DV-0006");
     }
