@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreLog;
-import io.personium.core.PersoniumMeasurmentLog;
+import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
@@ -118,7 +118,7 @@ public class StreamingOutputForDavFile implements StreamingOutput {
         }
         // write start log
         PersoniumCoreLog.Dav.FILE_OPERATION_START.params("-").writeLog();
-        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.Dav.FILE_OPERATION_END.params();
+        ElapsedTimeLog endLog = ElapsedTimeLog.Dav.FILE_OPERATION_END.params();
         endLog.setStartTime();
 
         int writtenBytes = 0;
