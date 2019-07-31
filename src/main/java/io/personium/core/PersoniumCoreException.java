@@ -1014,6 +1014,13 @@ public class PersoniumCoreException extends RuntimeException {
          * {0} : Overview of failed processing
          */
         public static final PersoniumCoreException FILE_IO_ERROR = create("PR500-CM-0002");
+
+        /**
+         * Unchecked Invalid URL used internally.
+         * <p>
+         * {0} : URL
+         */
+        public static final PersoniumCoreException INVALID_URL = create("PR500-CM-0003");
     }
 
     /**

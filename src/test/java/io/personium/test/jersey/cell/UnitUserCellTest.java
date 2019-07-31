@@ -95,7 +95,7 @@ public class UnitUserCellTest extends PersoniumTest {
         // Override issuers in unitconfig.
         issuersBackup = PersoniumUnitConfig.get("io.personium.core.unitUser.issuers");
         PersoniumUnitConfig.set("io.personium.core.unitUser.issuers",
-                UriUtils.SCHEME_UNIT_URI + UNIT_USER_CELL + "/");
+        		UriUtils.SCHEME_LOCALUNIT + ":/" + UNIT_USER_CELL + "/");
 
         // Read role name from AccessContext
         Field admin = AccessContext.class.getDeclaredField("ROLE_UNIT_ADMIN");

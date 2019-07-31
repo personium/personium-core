@@ -98,7 +98,7 @@ public class BoxUrlTest extends ODataCommon {
             // Setupでセル1にBoxのSchemaとして登録されている urlをhttpからpersonium-localunitに一時的に更新。
             BoxUtils.update(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                     Setup.TEST_BOX1, "*", Setup.TEST_BOX1,
-                    UriUtils.SCHEME_UNIT_URI + Setup.TEST_CELL_SCHEMA1 + "/", HttpStatus.SC_NO_CONTENT);
+                    UriUtils.SCHEME_LOCALUNIT + ":/" + Setup.TEST_CELL_SCHEMA1 + "/", HttpStatus.SC_NO_CONTENT);
 
             // テスト実施
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
@@ -137,7 +137,7 @@ public class BoxUrlTest extends ODataCommon {
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
-            String localunitUrl = UriUtils.SCHEME_UNIT_URI + Setup.TEST_CELL_SCHEMA1 + "/";
+            String localunitUrl = UriUtils.SCHEME_LOCALUNIT + ":/" + Setup.TEST_CELL_SCHEMA1 + "/";
             res = rest.getAcceptEncodingGzip(
                     UrlUtils.boxUrl(Setup.TEST_CELL1, localunitUrl), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());

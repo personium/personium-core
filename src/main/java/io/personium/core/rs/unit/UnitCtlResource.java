@@ -67,7 +67,7 @@ public class UnitCtlResource extends ODataResource {
      * @param accessContext AccessContext
      */
     public UnitCtlResource(AccessContext accessContext) {
-        super(accessContext, UriUtils.SCHEME_UNIT_URI + "__ctl/",
+        super(accessContext, UriUtils.SCHEME_LOCALUNIT + ":/__ctl/",
                 ModelFactory.ODataCtl.unitCtl(accessContext));
         checkReferenceMode(accessContext);
     }

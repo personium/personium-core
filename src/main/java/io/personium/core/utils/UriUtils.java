@@ -20,6 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.PathSegment;
@@ -31,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
@@ -53,11 +56,22 @@ public class UriUtils {
     public static final String SCHEME_LOCALBOX = "personium-localbox";
 
     /** LOCAL_UNIT ADDITION. */
-    public static final String SCHEME_UNIT_URI = "personium-localunit:/";
     /** LOCAL_CELL ADDITION. */
-    public static final String SCHEME_CELL_URI = "personium-localcell:/";
+    public static final String SCHEME_CELL_URI = SCHEME_LOCALCELL + ":/";
     /** LOCAL_BOX ADDITION. */
-    public static final String SCHEME_BOX_URI = "personium-localbox:/";
+    public static final String SCHEME_BOX_URI = SCHEME_LOCALBOX + ":/";
+
+
+    /** Regular expression for matching localunit scheme with single colon */
+    public static final Pattern REGEX_LOCALUNIT_SINGLE_COLON
+    	= Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.*)$");
+
+    /** Regular expression for matching localunit scheme with double colons */
+    public static final Pattern REGEX_LOCALUNIT_DOUBLE_COLONS
+    	= Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.+?):(.*)$");
+
+    /** Regular expression for matching localunit scheme with double colons */
+    public static final String REGEX_HTTP_SUBDOMAIN = "^(http|https):\\/\\/(.+?)\\.(.*)$";
 
     /** SLASH. */
     public static final String STRING_SLASH = "/";
@@ -73,15 +87,17 @@ public class UriUtils {
      * @param unitUrl String
      * @param url String
      * @return ArrayList<String>
+     * @throws URISyntaxException
      */
-    public static List<String> getUrlVariations(String unitUrl, String url) {
+    public static List<String> getUrlVariations(String unitUrl, String url) throws PersoniumCoreException {
+        if (url == null || unitUrl == null) {
+        	throw PersoniumCoreException.Common.INVALID_URL.params("null");
+        }
         List<String> variations = new ArrayList<String>();
         variations.add(url);
-        if (url != null && unitUrl != null) {
-            String substitute = getUrlSubstitute(unitUrl, url);
-            if (!url.equals(substitute)) {
-                variations.add(substitute);
-            }
+        String substitute = getUrlSubstitute(unitUrl, url);
+        if (!url.equals(substitute)) {
+            variations.add(substitute);
         }
         return variations;
     }
@@ -91,14 +107,16 @@ public class UriUtils {
      * @param unitUrl String
      * @param url String
      * @return utl String
+     * @throws URISyntaxException
      */
     public static String getUrlSubstitute(String unitUrl, String url) {
-        if (url != null && unitUrl != null) {
-            if (url.startsWith(SCHEME_UNIT_URI)) {
-                url = convertSchemeFromLocalUnitToHttp(unitUrl, url);
-            } else {
-                url = convertSchemeFromHttpToLocalUnit(unitUrl, url);
-            }
+        if (url == null || unitUrl == null) {
+        	throw PersoniumCoreException.Common.INVALID_URL.params("null");
+        }
+        if (url.startsWith(SCHEME_LOCALUNIT)) {
+            url = convertSchemeFromLocalUnitToHttp(unitUrl, url);
+        } else {
+            url = convertSchemeFromHttpToLocalUnit(unitUrl, url);
         }
         return url;
     }
@@ -122,19 +140,42 @@ public class UriUtils {
      * @return url string with http(s) scheme
      */
     public static String convertSchemeFromLocalUnitToHttp(String unitUrl, String localUnitSchemeUrl) {
-        if (localUnitSchemeUrl != null && localUnitSchemeUrl.startsWith(SCHEME_UNIT_URI)) {
-            String pathBased = localUnitSchemeUrl.replaceFirst(SCHEME_UNIT_URI, unitUrl);
-            if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
-                return pathBased;
-            } else {
-                try {
-                    return convertPathBaseToFqdnBase(pathBased);
-                } catch (URISyntaxException e) {
-                    return localUnitSchemeUrl;
-                }
+        if (localUnitSchemeUrl == null || unitUrl == null) {
+        	throw PersoniumCoreException.Common.INVALID_URL.params("null");
+        }
+        Matcher localUnitDoubleColons = REGEX_LOCALUNIT_DOUBLE_COLONS.matcher(localUnitSchemeUrl);
+        Matcher localUnitSingleColon = REGEX_LOCALUNIT_SINGLE_COLON.matcher(localUnitSchemeUrl);
+        String pathBased = localUnitSchemeUrl;
+        if (localUnitDoubleColons.matches()) {
+            // when detected personium-localunit scheme with double colons
+            String cellName = localUnitDoubleColons.group(1);
+            String path = localUnitDoubleColons.group(2);
+            StringBuilder sb = new StringBuilder(unitUrl);
+            sb.append(cellName);
+            if (!path.startsWith(STRING_SLASH)) {
+                sb.append(STRING_SLASH);
+            }
+            sb.append(path);
+            pathBased = sb.toString();
+        } else if (localUnitSingleColon.matches()) {
+        	// when detected personium-localunit scheme with single colon
+            String path = localUnitSingleColon.group(1);
+            if (path.startsWith(STRING_SLASH) && unitUrl.endsWith(STRING_SLASH)) {
+                unitUrl = unitUrl.replaceFirst("/*$", "");
+            }
+            StringBuilder sb = new StringBuilder(unitUrl);
+            sb.append(path);
+            pathBased = sb.toString();
+        }
+        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
+            return pathBased;
+        } else {
+            try {
+                return convertPathBaseToFqdnBase(pathBased);
+            } catch (URISyntaxException e) {
+                return localUnitSchemeUrl;
             }
         }
-        return localUnitSchemeUrl;
     }
 
     /**
@@ -146,25 +187,54 @@ public class UriUtils {
      */
     public static String convertSchemeFromHttpToLocalUnit(String unitUrl, String url) {
         if (url == null) {
+        	throw PersoniumCoreException.Common.INVALID_URL.params("null");
+        }
+        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
+        	// path based
+            if (url.startsWith(unitUrl)) {
+                // convert when url is localunit
+                return url.replaceFirst(unitUrl, SCHEME_LOCALUNIT + ":/");
+            }
+            // return as-is when url is foreign
             return url;
+        } else {
+            // return with single colon syntax when url is unit level.
+            if (url.startsWith(unitUrl)) {
+                // convert when url is localunit
+                return url.replaceFirst(unitUrl, SCHEME_LOCALUNIT + ":/");
+            }
+            // return with double colon syntax when url is cell level.
+            URI uri;
+            try {
+	            uri = new URI(url);
+	        } catch (URISyntaxException e) {
+	        	throw PersoniumCoreException.Common.INVALID_URL.params(url).reason(e);
+	        }
+            URI unitUri;
+            try {
+                unitUri = new URI(unitUrl);
+            } catch (URISyntaxException e) {
+	            throw PersoniumCoreException.Common.INVALID_URL.params(unitUrl).reason(e);
+	        }
+            if (uri.getHost() == null) {
+                return url;
+            }
+            String host = uri.getHost();
+            String cellName = host.split("\\.")[0];
+            String unitDomain = host.replaceFirst(cellName + "\\.", "");
+            if (uri.getHost() == null) {
+                return url;
+            }
+            String unitHost = unitUri.getHost();
+            if (!unitDomain.contentEquals(unitHost)) {
+                // foreign URL
+                return url;
+            }
+            StringBuilder sb = new StringBuilder(SCHEME_LOCALUNIT);
+            sb.append(":").append(cellName).append(":");
+            sb.append(uri.getPath());
+            return sb.toString();
         }
-        if (url.startsWith(unitUrl)) {
-            return url.replaceFirst(unitUrl, SCHEME_UNIT_URI);
-        }
-
-        // convert to path based url
-        String pathBased;
-        try {
-            pathBased = convertFqdnBaseToPathBase(url);
-        } catch (URISyntaxException e) {
-            return url;
-        }
-
-        if (pathBased != null && pathBased.startsWith(unitUrl)) {
-            return pathBased.replaceFirst(unitUrl, SCHEME_UNIT_URI);
-        }
-
-        return url;
     }
 
     /**
