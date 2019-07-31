@@ -75,7 +75,6 @@ public class PersoniumCoreLog {
         /**
          * Write file.
          * {0}: File path
-         * {1}: File size
          */
         public static final PersoniumCoreLog FILE_OPERATION_START = create("PL-DV-0005");
     }
@@ -324,6 +323,8 @@ public class PersoniumCoreLog {
     public static class ServiceCollection {
         /**
          * Personium-Engine reley starts.
+         * {0}: HTTP Method
+         * {1}: Engine URL
          */
         public static final PersoniumCoreLog SC_ENGINE_RELAY_START = create("PL-SC-0001");
     }
