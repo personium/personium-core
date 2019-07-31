@@ -26,7 +26,7 @@ import io.personium.plugin.base.PluginMessageUtils.Severity;
 /**
  * Log message creation class.
  */
-public final class PersoniumCoreLog {
+public class PersoniumCoreLog {
 
     static Logger log = LoggerFactory.getLogger(PersoniumCoreLog.class);
 
@@ -77,7 +77,7 @@ public final class PersoniumCoreLog {
          * {0}: File path
          * {1}: File size
          */
-        public static final PersoniumCoreLog FILE_OPERATION = create("PL-DV-0005");
+        public static final PersoniumCoreLog FILE_OPERATION_START = create("PL-DV-0005");
     }
 
     /**
@@ -191,16 +191,6 @@ public final class PersoniumCoreLog {
          * {2}: User ID(username)
          */
         public static final PersoniumCoreLog ACCOUNT_IS_DEACTIVATED = create("PL-OI-0005");
-    }
-
-    /**
-     * Service collection.
-     */
-    public static class ServiceCollection {
-        /**
-         * Personium-Engine reley starts/ends.
-         */
-        public static final PersoniumCoreLog SC_ENGINE_RELAY = create("PL-SC-0001");
     }
 
     /**
@@ -321,6 +311,16 @@ public final class PersoniumCoreLog {
          */
         public static final PersoniumCoreLog WRITE_ADS_FAILURE_LOG_INFO = create("PL-SV-0021");
     }
+    /**
+     * Service collection.
+     */
+
+    public static class ServiceCollection {
+        /**
+         * Personium-Engine reley starts.
+         */
+        public static final PersoniumCoreLog SC_ENGINE_RELAY_START = create("PL-SC-0001");
+    }
 
     /**
      * ElasticSearch.
@@ -376,7 +376,6 @@ public final class PersoniumCoreLog {
     String code;
     Severity severity;
     Throwable reason;
-    long startTime = 0L;
 
     /**
      * Force load inner class.
@@ -434,14 +433,6 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     * It creates a new log instance.
-     * @return PersoniumCoreLog
-     */
-    public PersoniumCoreLog create() {
-        return new PersoniumCoreLog(this.code, this.severity, this.message);
-    }
-
-    /**
      * Return log code.
      * @return log code
      */
@@ -460,15 +451,6 @@ public final class PersoniumCoreLog {
         //Create a message replacement clone
         PersoniumCoreLog ret = new PersoniumCoreLog(this.code, this.severity, ms);
         return ret;
-    }
-
-    /**
-     * It set a message with a parameter substitution, and the expression of {1} {2} etc. on the error message is a keyword for parameter substitution.
-     * @param params Additional message
-     */
-    public void setParams(final Object... params) {
-        String messageFormat = PersoniumCoreMessageUtils.getMessage(code);
-        this.message = MessageFormat.format(messageFormat, params);
     }
 
     /**
@@ -494,31 +476,11 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     * Log output with time measurement.
+     * Write log with message format and params.
+     * @param msgFormat message format
+     * @param params parameters for message formatting
      */
-    public void writeStartLog() {
-        this.startTime = System.currentTimeMillis();
-        writeLog();
-    }
-
-    /**
-     * Log output with time measurement.
-     * Output example)
-     * 2012-09-09 11:23:47.029 [main] [INFO ] CoreLog - [Elapsed time: 10ms] - [io.personium.core.CoreLogTest#test:22] - JSON Parse Error.
-     */
-    public void writeEndLog() {
-        if (this.startTime == 0L) {
-            writeLog();
-            return;
-        }
-        StackTraceElement[] ste = new Throwable().getStackTrace();
-        final long elapsedTime = System.currentTimeMillis() - this.startTime;
-        doWriteLog("[%s] - [Elapsed time: %dms] - [%s#%s:%s] - %s",
-                this.code, elapsedTime, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber(),
-                this.message);
-    }
-
-    private void doWriteLog(String msgFormat, Object... params) {
+    protected void doWriteLog(String msgFormat, Object... params) {
         String logInfo = String.format(msgFormat, params);
         switch (this.severity) {
         case INFO:

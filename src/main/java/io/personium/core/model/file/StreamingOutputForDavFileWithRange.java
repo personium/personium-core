@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
+import io.personium.core.PersoniumMeasurmentLog;
 import io.personium.core.http.header.ByteRangeSpec;
 import io.personium.core.http.header.RangeHeaderHandler;
 
@@ -37,8 +38,6 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
 
     private RangeHeaderHandler range = null;
     private long fileSize = 0;
-    private String fileFullPath;
-    private PersoniumCoreLog fileOperationLog = PersoniumCoreLog.Dav.FILE_OPERATION.create();
 
     private static final int KILO_BYTES = 1000;
 
@@ -59,13 +58,15 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
         super(fileFullPath, cellId, encryptionType);
         this.range = range;
         this.fileSize = fileSize;
-        this.fileFullPath = fileFullPath;
     }
 
     @Override
     public void write(OutputStream output) throws IOException, WebApplicationException {
-        this.fileOperationLog.setParams(fileFullPath, 0);
-        this.fileOperationLog.writeStartLog();
+        // write start log
+        PersoniumCoreLog.Dav.FILE_OPERATION_START.params("-").writeLog();
+        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.Dav.FILE_OPERATION_END.params();
+        endLog.setStartTime();
+
         try {
             //Because it does not correspond to MultiPart, it processes only the first byte-renge-set.
             int rangeIndex = 0;
@@ -91,12 +92,15 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
                 }
                 output.write((char) chr);
             }
-            this.fileOperationLog.setParams(fileFullPath, fileSize / KILO_BYTES);
-            this.fileOperationLog.writeEndLog();
+
+            // write end log
+            endLog.setParams(last / KILO_BYTES);
+            endLog.writeLog();
         } finally {
             IOUtils.closeQuietly(hardLinkInput);
             Files.delete(hardLinkPath);
         }
+
     }
 
 }

@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
+import io.personium.core.PersoniumMeasurmentLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MOVE;
@@ -91,7 +92,6 @@ public class PersoniumEngineSvcCollectionResource {
     DavCmp davCmp = null;
     DavCollectionResource dcr = null;
     DavRsCmp davRsCmp;
-    PersoniumCoreLog relayLog = null;
 
     /**
      * constructor.
@@ -490,9 +490,11 @@ public class PersoniumEngineSvcCollectionResource {
         EventBus eventBus = this.davRsCmp.getAccessContext().getCell().getEventBus();
 
         // write relay log
-        setRelayLog(req);
-        this.relayLog.writeStartLog();
+        PersoniumCoreLog.ServiceCollection.SC_ENGINE_RELAY_START
+            .params(req.getMethod(), req.getURI()).writeLog();
         debugRelayHeader(req);
+        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.ServiceCollection.SC_ENGINE_RELAY_END.params();
+        endLog.setStartTime();
 
         //Throw a request to the Engine
         HttpResponse objResponse = null;
@@ -511,7 +513,7 @@ public class PersoniumEngineSvcCollectionResource {
             closeHttpClient(client, objResponse);
             throw PersoniumCoreException.ServiceCollection.SC_ENGINE_CONNECTION_ERROR.reason(ioe);
         }
-        this.relayLog.writeEndLog();
+        endLog.writeLog();
 
         // post event to EventBus
         String info = Integer.toString(objResponse.getStatusLine().getStatusCode());
@@ -594,10 +596,6 @@ public class PersoniumEngineSvcCollectionResource {
             return null;
         }
         return getRequestKey(rsCmp.getParent());
-    }
-
-    private void setRelayLog(HttpUriRequest req) {
-        this.relayLog = PersoniumCoreLog.ServiceCollection.SC_ENGINE_RELAY.params(req.getMethod(), req.getURI());
     }
 
     private void debugRelayHeader(HttpUriRequest req) {

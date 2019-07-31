@@ -34,6 +34,7 @@ import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreLog;
+import io.personium.core.PersoniumMeasurmentLog;
 
 /**
  * a class for handling internal fs file storing Dav metadata.
@@ -54,7 +55,6 @@ public class DavMetadataFile {
 
     File file;
     JSONObject json = new JSONObject();
-    private final PersoniumCoreLog fileOperationLog = PersoniumCoreLog.Dav.FILE_OPERATION.create();
 
     /** JSON Key for ID. */
     private static final String KEY_ID = "i";
@@ -213,8 +213,10 @@ public class DavMetadataFile {
         this.incrementVersion();
         String jsonStr = JSONObject.toJSONString(this.getJSON());
 
-        this.fileOperationLog.setParams(this.file.toPath(), jsonStr.getBytes(Charsets.UTF_8).length / KILO_BYTES);
-        this.fileOperationLog.writeStartLog();
+        // write start log
+        PersoniumCoreLog.Dav.FILE_OPERATION_START.params(this.file.toPath()).writeLog();
+        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.Dav.FILE_OPERATION_END.params();
+        endLog.setStartTime();
 
         try {
             if (PersoniumUnitConfig.getFsyncEnabled()) {
@@ -226,7 +228,10 @@ public class DavMetadataFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        this.fileOperationLog.writeEndLog();
+
+        // write end log
+        endLog.setParams(jsonStr.getBytes(Charsets.UTF_8).length / KILO_BYTES);
+        endLog.writeLog();
     }
 
     private void incrementVersion() {
