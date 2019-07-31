@@ -26,7 +26,7 @@ import io.personium.plugin.base.PluginMessageUtils.Severity;
 /**
  * Log message creation class.
  */
-public final class PersoniumCoreLog {
+public class PersoniumCoreLog {
 
     static Logger log = LoggerFactory.getLogger(PersoniumCoreLog.class);
 
@@ -72,6 +72,11 @@ public final class PersoniumCoreLog {
          * {0}: UUID of binary data
          */
         public static final PersoniumCoreLog FILE_DELETE_FAIL = create("PL-DV-0004");
+        /**
+         * Write file.
+         * {0}: File path
+         */
+        public static final PersoniumCoreLog FILE_OPERATION_START = create("PL-DV-0005");
     }
 
     /**
@@ -304,6 +309,24 @@ public final class PersoniumCoreLog {
          * {0}: log information
          */
         public static final PersoniumCoreLog WRITE_ADS_FAILURE_LOG_INFO = create("PL-SV-0021");
+        /**
+         * Information of RequestKey.
+         * {0}: received or generated
+         * {1}: RequestKey
+         */
+        public static final PersoniumCoreLog REQUEST_KEY = create("PL-SV-0022");
+    }
+    /**
+     * Service collection.
+     */
+
+    public static class ServiceCollection {
+        /**
+         * Personium-Engine reley starts.
+         * {0}: HTTP Method
+         * {1}: Engine URL
+         */
+        public static final PersoniumCoreLog SC_ENGINE_RELAY_START = create("PL-SC-0001");
     }
 
     /**
@@ -370,24 +393,36 @@ public final class PersoniumCoreLog {
         new Server();
         new Dav();
         new Misc();
+        new ServiceCollection();
     }
 
     /**
      * constructor.
-     * @param severity error level
-     * @param message error message
+     * @param code log code
+     * @param severity log level
+     * @param message message
      */
-    PersoniumCoreLog(final String code,
-            final Severity severity,
-            final String message) {
+    PersoniumCoreLog(final String code, final Severity severity, final String message) {
         this.code = code;
         this.severity = severity;
         this.message = message;
     }
 
     /**
+     * constructor.
+     * @param code log code
+     * @param severity log level
+     * @param message message
+     * @param reason error reason
+     */
+    PersoniumCoreLog(final String code, final Severity severity, final String message, final Throwable reason) {
+        this(code, severity, message);
+        this.reason = reason;
+    }
+
+    /**
      * Factory method.
-     * @param code error code
+     * @param code log code
      * @return PersoniumCoreLog
      */
     public static PersoniumCoreLog create(String code) {
@@ -405,8 +440,8 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     * Return error code.
-     * @return error code
+     * Return log code.
+     * @return log code
      */
     public String getCode() {
         return this.code;
@@ -432,23 +467,28 @@ public final class PersoniumCoreLog {
      */
     public PersoniumCoreLog reason(final Throwable t) {
         //Make a clone
-        PersoniumCoreLog ret = new PersoniumCoreLog(this.code, this.severity, this.message);
-        //Set cause Exception
-        ret.reason = t;
-        return ret;
+        return new PersoniumCoreLog(this.code, this.severity, this.message, t);
     }
 
     /**
      * Log output.
      * When outputting the log, display the class name, method name, and the number of lines of the log output source.
      * Output example)
-     * 2012-09-09 11:23:47.029 [main] [INFO ] CoreLog [io.personium.core.CoreLogTest#test:22] - JSON Parse Error.
+     * 2019-07-31 18:27:05.834 [thread] [INFO ] PersoniumCoreLog [PL-ES-0002] - ESReq index=u0_unitadmin - [io.personium.core.model.impl.es.EsModel$2#handleEvent:57]
      */
     public void writeLog() {
-
         StackTraceElement[] ste = new Throwable().getStackTrace();
-        String logInfo = String.format("[%s] - [%s#%s:%s] - %s",
-                this.code, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber(), this.message);
+        doWriteLog("[%s] - %s - [%s#%s:%s]",
+                this.code, this.message, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber());
+    }
+
+    /**
+     * Write log with message format and params.
+     * @param msgFormat message format
+     * @param params parameters for message formatting
+     */
+    protected void doWriteLog(String msgFormat, Object... params) {
+        String logInfo = String.format(msgFormat, params);
         switch (this.severity) {
         case INFO:
             log.info(logInfo, this.reason);
@@ -466,4 +506,5 @@ public final class PersoniumCoreLog {
             log.error("Message Severity Not Defined");
         }
     }
+
 }

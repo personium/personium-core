@@ -32,6 +32,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.core.PersoniumCoreLog;
+import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
@@ -40,6 +42,7 @@ import io.personium.core.PersoniumUnitConfig;
 public class StreamingOutputForDavFile implements StreamingOutput {
 
     private static Logger logger = LoggerFactory.getLogger(StreamingOutputForDavFile.class);
+    private static final int KILO_BYTES = 1000;
 
     /**
      * Maximum number of retries at the time of reading / writing Dav file, hard link creation / file name modification.
@@ -113,13 +116,22 @@ public class StreamingOutputForDavFile implements StreamingOutput {
         if (null == hardLinkInput) {
             throw new WebApplicationException(new BinaryDataNotFoundException(hardLinkPath.toString()));
         }
+        // write start log
+        PersoniumCoreLog.Dav.FILE_OPERATION_START.params("-").writeLog();
+        ElapsedTimeLog endLog = ElapsedTimeLog.Dav.FILE_OPERATION_END.params();
+        endLog.setStartTime();
+
+        int writtenBytes = 0;
         try {
-            IOUtils.copy(hardLinkInput, output);
+            writtenBytes = IOUtils.copy(hardLinkInput, output);
         } finally {
             IOUtils.closeQuietly(hardLinkInput);
             //Cleanup. Delete the reading hard link for yourself.
             Files.delete(hardLinkPath);
         }
+        // write end log
+        endLog.setParams(writtenBytes / KILO_BYTES);
+        endLog.writeLog();
     }
 
 }
