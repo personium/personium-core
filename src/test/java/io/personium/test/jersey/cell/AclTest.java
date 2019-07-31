@@ -128,7 +128,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
         } finally {
             // ACLの設定を元に戻す
@@ -185,7 +185,7 @@ public class AclTest extends AbstractCase {
             StringBuffer sb = new StringBuffer(resorce);
             sb.deleteCharAt(resorce.length() - 1);
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                     UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                     UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
             // Boxの作成
             BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
@@ -282,7 +282,7 @@ public class AclTest extends AbstractCase {
             StringBuffer sb = new StringBuffer(resorce);
             sb.deleteCharAt(resorce.length() - 1);
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                     UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                     UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
             // Boxの作成
             BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
@@ -359,7 +359,7 @@ public class AclTest extends AbstractCase {
             StringBuffer sb = new StringBuffer(resorce);
             sb.deleteCharAt(resorce.length() - 1);
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                     UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                     UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
             // Boxの作成
             BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
@@ -436,7 +436,7 @@ public class AclTest extends AbstractCase {
             StringBuffer sb = new StringBuffer(resorce);
             sb.deleteCharAt(resorce.length() - 1);
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                     UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                     UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
             // Boxの作成
             BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
@@ -557,7 +557,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
         } finally {
             // ACLの設定を元に戻す
@@ -630,7 +630,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
             // PROPPATCH設定実行
             DavResourceUtils.setProppatch(TEST_CELL1, TOKEN, HttpStatus.SC_MULTI_STATUS, "author1", "hoge1");
@@ -667,7 +667,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
         } finally {
             // ACLの設定を元に戻す
             Http.request("cell/acl-default.txt")
@@ -731,7 +731,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
         } finally {
             // ACLの設定を元に戻す
@@ -797,7 +797,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
         } finally {
             // ロールの削除

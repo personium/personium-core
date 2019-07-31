@@ -896,12 +896,12 @@ public class AccessContext {
 
             //Take role information and if you have unit admin roll, promote to unit admin.
             List<Role> roles = tca.getRoles();
-            Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.DEFAULT_BOX_NAME, null, tca.getIssuer());
+            Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.MAIN_BOX_NAME, null, tca.getIssuer());
             String unitAdminRoleUrl = unitAdminRole.createUrl();
-            Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.DEFAULT_BOX_NAME,
+            Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.MAIN_BOX_NAME,
                     null, tca.getIssuer());
             String cellContentsReaderUrl = cellContentsReaderRole.createUrl();
-            Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.DEFAULT_BOX_NAME,
+            Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.MAIN_BOX_NAME,
                     null, tca.getIssuer());
             String cellContentsAdminUrl = cellContentsAdminRole.createUrl();
 

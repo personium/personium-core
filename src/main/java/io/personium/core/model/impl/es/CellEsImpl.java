@@ -329,7 +329,7 @@ public class CellEsImpl implements Cell {
         }
 
         // check that Main Box is empty
-        Box defaultBox = this.getBoxForName(Box.DEFAULT_BOX_NAME);
+        Box defaultBox = this.getBoxForName(Box.MAIN_BOX_NAME);
         BoxCmp defaultBoxCmp = ModelFactory.boxCmp(defaultBox);
         if (!defaultBoxCmp.isEmpty()) {
             return false;
@@ -433,7 +433,7 @@ public class CellEsImpl implements Cell {
 
     @Override
     public Box getBoxForName(String boxName) {
-        if (Box.DEFAULT_BOX_NAME.equals(boxName)) {
+        if (Box.MAIN_BOX_NAME.equals(boxName)) {
             return new Box(this, null);
         }
 
@@ -668,7 +668,7 @@ public class CellEsImpl implements Cell {
         Map<String, Object> query = QueryMapFactory.filteredQuery(null, QueryMapFactory.mustQuery(queries));
 
         List<Map<String, Object>> filters = new ArrayList<Map<String, Object>>();
-        if (!(Box.DEFAULT_BOX_NAME.equals(role.getBoxName()))) {
+        if (!(Box.MAIN_BOX_NAME.equals(role.getBoxName()))) {
             //Add search queries when Role is tied to a box
             Box targetBox = this.getBoxForName(role.getBoxName());
             if (targetBox == null) {

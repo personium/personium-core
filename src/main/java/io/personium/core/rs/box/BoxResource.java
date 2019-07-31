@@ -443,7 +443,7 @@ public class BoxResource {
             //TODO findBugs countermeasure ↓
             log.debug(requestKey);
 
-            if (Box.DEFAULT_BOX_NAME.equals(this.boxName)) {
+            if (Box.MAIN_BOX_NAME.equals(this.boxName)) {
                 throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
             }
 

@@ -678,7 +678,7 @@ public class MoveODataCollectionAclTest extends PersoniumTest {
         privileges.add("read");
         privileges.add("write");
         acl.getAce().add(DavResourceUtils.createAce(false, ROLE_COMB_PRIVILEGE, privileges));
-        acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.DEFAULT_BOX_NAME));
+        acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.MAIN_BOX_NAME));
 
         DavResourceUtils.setAcl(MASTER_TOKEN, CELL_NAME, BOX_NAME, collection, acl, HttpStatus.SC_OK);
     }
@@ -693,7 +693,7 @@ public class MoveODataCollectionAclTest extends PersoniumTest {
     private void setAcl(String collection, String role, String privilege) throws JAXBException {
         Acl acl = new Acl();
         acl.getAce().add(DavResourceUtils.createAce(false, role, privilege));
-        acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.DEFAULT_BOX_NAME));
+        acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.MAIN_BOX_NAME));
         DavResourceUtils.setAcl(MASTER_TOKEN, CELL_NAME, BOX_NAME, collection, acl, HttpStatus.SC_OK);
     }
 

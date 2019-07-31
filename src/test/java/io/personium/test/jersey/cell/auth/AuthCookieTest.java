@@ -568,7 +568,7 @@ public class AuthCookieTest extends PersoniumTest {
 
             // ACL作成
             DavResourceUtils.setACLwithRoleBaseUrl(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, boxName, colName,
-                    "none", UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, "role2"), "<D:read/>",
+                    "none", UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, "role2"), "<D:read/>",
                     HttpStatus.SC_OK);
 
             // パスワード認証要求、クッキーを取得
@@ -607,7 +607,7 @@ public class AuthCookieTest extends PersoniumTest {
 
             // ACL作成
             DavResourceUtils.setACLwithRoleBaseUrl(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, boxName, colName,
-                    "none", UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, "role2"), "<D:read/>",
+                    "none", UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, "role2"), "<D:read/>",
                     HttpStatus.SC_OK);
 
             // パスワード認証要求、クッキーを取得
@@ -660,7 +660,7 @@ public class AuthCookieTest extends PersoniumTest {
 
             // ACL作成
             DavResourceUtils.setACLwithRoleBaseUrl(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, boxName, colName,
-                    "none", UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, "role1"), "<D:read-properties/>",
+                    "none", UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, "role1"), "<D:read-properties/>",
                     HttpStatus.SC_OK);
 
             // パスワード認証要求、クッキーを取得
@@ -701,7 +701,7 @@ public class AuthCookieTest extends PersoniumTest {
 
             // ACL作成
             DavResourceUtils.setACLwithRoleBaseUrl(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, boxName, colName,
-                    "none", UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, "role1"), "<D:read-properties/>",
+                    "none", UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, "role1"), "<D:read-properties/>",
                     HttpStatus.SC_OK);
 
             // パスワード認証要求、クッキーを取得
@@ -901,7 +901,7 @@ public class AuthCookieTest extends PersoniumTest {
         DavResourceUtils.createODataCollection(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED, LOCAL_CELL,
                 "box1", "setodata");
         DavResourceUtils.setACLwithRoleBaseUrl(AbstractCase.MASTER_TOKEN_NAME, LOCAL_CELL, "box1", "setodata",
-                "none", UrlUtils.roleResource(LOCAL_CELL, Box.DEFAULT_BOX_NAME, "appadmin"), "<D:read />",
+                "none", UrlUtils.roleResource(LOCAL_CELL, Box.MAIN_BOX_NAME, "appadmin"), "<D:read />",
                 HttpStatus.SC_OK);
     }
 

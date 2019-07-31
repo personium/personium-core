@@ -678,16 +678,16 @@ public class SchemaAuthTest extends PersoniumTest {
         try {
             // テスト用のファイルをPUT
             DavResourceUtils.createWebDavFile(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "box/dav-put.txt",
-                    "hoge", Box.DEFAULT_BOX_NAME, DAV_RESOURCE, -1);
+                    "hoge", Box.MAIN_BOX_NAME, DAV_RESOURCE, -1);
             // ACL設定
             DavResourceUtils.setACL(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, DAV_RESOURCE,
-                    "box/acl-all-none-schema-level.txt", Box.DEFAULT_BOX_NAME, "");
+                    "box/acl-all-none-schema-level.txt", Box.MAIN_BOX_NAME, "");
 
-            this.checkResourcesWithSchema("", DAV_RESOURCE, tokenStr, Box.DEFAULT_BOX_NAME, TEST_CELL1);
+            this.checkResourcesWithSchema("", DAV_RESOURCE, tokenStr, Box.MAIN_BOX_NAME, TEST_CELL1);
         } finally {
             // テスト用のファイルを削除
             DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", Setup.TEST_CELL1,
-                    AbstractCase.MASTER_TOKEN_NAME, DAV_RESOURCE, -1, Box.DEFAULT_BOX_NAME);
+                    AbstractCase.MASTER_TOKEN_NAME, DAV_RESOURCE, -1, Box.MAIN_BOX_NAME);
         }
     }
 

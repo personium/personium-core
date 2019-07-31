@@ -36,7 +36,7 @@ import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 
 /**
- * UnitUserでCellをCRUDするテスト.
+ * MainBoxに関するテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
@@ -77,21 +77,21 @@ public class DefaultBoxTest extends PersoniumTest {
     }
 
     /**
-     * セル作成時にデフォルトボックスが生成されることの確認.
+     * セル作成時にMain Boxが生成されることの確認.
      */
     @Test
-    public final void セル作成時にデフォルトボックスが生成されることの確認() {
+    public final void セル作成時にMainBoxが生成されることの確認() {
         try {
             // セル作成
             CellUtils.create(CELL_NAME, TOKEN, HttpStatus.SC_CREATED);
 
             // デフォルトボックスに対してMKCOLを実行して、ボックスの存在及び子要素が作成できることを確認
-            DavResourceUtils.createWebDavCollection("box/mkcol.txt", CELL_NAME, Box.DEFAULT_BOX_NAME + "/" + COL_NAME,
+            DavResourceUtils.createWebDavCollection("box/mkcol.txt", CELL_NAME, Box.MAIN_BOX_NAME + "/" + COL_NAME,
                     TOKEN,
                     HttpStatus.SC_CREATED);
         } finally {
             // コレクションの削除
-            DavResourceUtils.deleteCollection(CELL_NAME, Box.DEFAULT_BOX_NAME, COL_NAME, TOKEN, -1);
+            DavResourceUtils.deleteCollection(CELL_NAME, Box.MAIN_BOX_NAME, COL_NAME, TOKEN, -1);
 
             // セル削除
             CellUtils.delete(TOKEN, CELL_NAME, -1);
@@ -99,24 +99,24 @@ public class DefaultBoxTest extends PersoniumTest {
     }
 
     /**
-     * デフォルトボックス配下にデータが存在するとセルが削除できないことの確認.
+     * Main Box配下にデータが存在するとセルが削除できないことの確認.
      */
     @Test
-    public final void デフォルトボックス配下にデータが存在するとセルが削除できないことの確認() {
+    public final void MainBox配下にデータが存在するとセルが削除できないことの確認() {
         try {
             // セル作成
             CellUtils.create(CELL_NAME, TOKEN, HttpStatus.SC_CREATED);
 
-            // デフォルトボックスにコレクションを作成
-            DavResourceUtils.createWebDavCollection("box/mkcol.txt", CELL_NAME, Box.DEFAULT_BOX_NAME + "/" + COL_NAME,
+            // Main Boxにコレクションを作成
+            DavResourceUtils.createWebDavCollection("box/mkcol.txt", CELL_NAME, Box.MAIN_BOX_NAME + "/" + COL_NAME,
                     TOKEN,
                     HttpStatus.SC_CREATED);
 
-            // デフォルトボックスにコレクションがあるためセル削除が失敗すること
+            // Main Boxにコレクションがあるためセル削除が失敗すること
             CellUtils.delete(TOKEN, CELL_NAME, HttpStatus.SC_CONFLICT);
         } finally {
             // コレクションの削除
-            DavResourceUtils.deleteCollection(CELL_NAME, Box.DEFAULT_BOX_NAME, COL_NAME, TOKEN, -1);
+            DavResourceUtils.deleteCollection(CELL_NAME, Box.MAIN_BOX_NAME, COL_NAME, TOKEN, -1);
 
             // セル削除
             CellUtils.delete(TOKEN, CELL_NAME, -1);

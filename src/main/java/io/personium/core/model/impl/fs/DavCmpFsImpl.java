@@ -1153,7 +1153,7 @@ public class DavCmpFsImpl implements DavCmp {
             //In case of Cell level ACL, the resource URL of default box
             //Since cell URLs are attached with slashes in concatenation, erase the URL if it ends with a slash.
             result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl().replaceFirst("/$", ""),
-                    Box.DEFAULT_BOX_NAME, "");
+                    Box.MAIN_BOX_NAME, "");
         }
         return result;
     }

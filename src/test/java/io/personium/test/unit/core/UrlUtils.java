@@ -444,7 +444,7 @@ public final class UrlUtils {
     public static String roleResource(final String cellName, final String boxName, final String roleName) {
         String box = null;
         if (boxName == null) {
-            box = Box.DEFAULT_BOX_NAME;
+            box = Box.MAIN_BOX_NAME;
         } else {
             box = boxName;
         }

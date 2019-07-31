@@ -409,7 +409,7 @@ public class TokenEndPointResource {
         //Give # c if the role is a confidential value
         String confidentialRoleUrl = String.format(
                 OAuth2Helper.Key.CONFIDENTIAL_ROLE_URL_FORMAT,
-                tcToken.getIssuer(), Box.DEFAULT_BOX_NAME);
+                tcToken.getIssuer(), Box.MAIN_BOX_NAME);
         for (Role role : tcToken.getRoles()) {
             if (confidentialRoleUrl.equals(role.createUrl())) {
                 //Successful authentication.

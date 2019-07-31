@@ -341,8 +341,8 @@ public class AuthzUtils {
 
         paramsList.add(AuthResourceUtils.getJavascript("ajax.js"));
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-        paramsList.add(clientId + Box.DEFAULT_BOX_NAME + "/profile.json");
-        paramsList.add(cellUrl + Box.DEFAULT_BOX_NAME + "/profile.json");
+        paramsList.add(clientId + Box.MAIN_BOX_NAME + "/profile.json");
+        paramsList.add(cellUrl + Box.MAIN_BOX_NAME + "/profile.json");
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
         paramsList.add(cellUrl + "__authz");
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0002"));
@@ -378,8 +378,8 @@ public class AuthzUtils {
 
         paramsList.add(AuthResourceUtils.getJavascript("ajax.js"));
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-        paramsList.add(clientId + Box.DEFAULT_BOX_NAME + "/profile.json");
-        paramsList.add(cellUrl + Box.DEFAULT_BOX_NAME + "/profile.json");
+        paramsList.add(clientId + Box.MAIN_BOX_NAME + "/profile.json");
+        paramsList.add(cellUrl + Box.MAIN_BOX_NAME + "/profile.json");
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
         paramsList.add(cellUrl + "__authz");
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0006"));

@@ -93,7 +93,7 @@ public class Box {
     /**
      * main box name.
      */
-    public static final String DEFAULT_BOX_NAME = "__";
+    public static final String MAIN_BOX_NAME = "__";
 
     /**
      * Constructor.
@@ -104,7 +104,7 @@ public class Box {
         this.cell = cell;
         if (entity == null) {
             // Process for the MAIN BOX
-            this.name = Box.DEFAULT_BOX_NAME;
+            this.name = Box.MAIN_BOX_NAME;
             // Schema URL of MAIN BOX is the URL of its own cell
             this.schema = cell.getUrl();
             // Internal ID of MAIN BOX will be together with the ID of the cell.

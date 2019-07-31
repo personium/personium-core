@@ -336,7 +336,7 @@ public class BarInstallTest extends PersoniumTest {
     @Test
     public final void メインボックスに対してbarインストールすると405エラーとなること() {
         String reqCell = Setup.TEST_CELL1;
-        String reqPath = Box.DEFAULT_BOX_NAME;
+        String reqPath = Box.MAIN_BOX_NAME;
 
         TResponse res = null;
         File barFile = new File(RESOURCE_PATH + BAR_FILE_MINIMUM);

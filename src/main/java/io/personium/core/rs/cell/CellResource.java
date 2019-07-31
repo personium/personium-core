@@ -385,7 +385,7 @@ public class CellResource {
      */
     @Path("__")
     public BoxResource box(@Context final Request jaxRsRequest) {
-        return new BoxResource(this.cell, Box.DEFAULT_BOX_NAME, this.accessContext,
+        return new BoxResource(this.cell, Box.MAIN_BOX_NAME, this.accessContext,
                 this.cellRsCmp, jaxRsRequest);
     }
 
