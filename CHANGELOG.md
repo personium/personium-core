@@ -1,3 +1,11 @@
+## 1.7.16
+BUG FIXES:
+* Even if Depth:1 is specified in "Retrieve cell snapshot file setting" API, it is ignored. ([#439](https://github.com/personium/personium-core/issues/439))
+* If Accept request header contains extra values, 409 is returned ([#435](https://github.com/personium/personium-core/issues/435))
+
+IMPROVEMENTS:
+* Fix crossdomain.xml error in Eclipse. ([#448](https://github.com/personium/personium-core/issues/444))
+
 ## 1.7.15
 BUG FIXES:
 * Implementation of log file deletion API([#270](https://github.com/personium/personium-core/issues/270))
