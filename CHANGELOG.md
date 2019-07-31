@@ -1,3 +1,7 @@
+## 1.7.8d
+IMPROVEMENTS:
+* Add IO logging with IO time. ([#446](https://github.com/personium/personium-core/issues/446))
+
 ## 1.7.8c
 BUG FIXES:
 * FIX: Close opened resources properly. ([#436](https://github.com/personium/personium-core/issues/436))
