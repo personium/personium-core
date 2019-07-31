@@ -477,6 +477,7 @@ public class PersoniumUnitConfig {
     static {
         //Forcibly load various message output classes
         PersoniumCoreLog.loadConfig();
+        PersoniumMeasurmentLog.loadConfig();
         PersoniumCoreException.loadConfig();
         PersoniumCoreAuthnException.loadConfig();
     }
