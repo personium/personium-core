@@ -310,6 +310,12 @@ public class PersoniumCoreLog {
          * {0}: log information
          */
         public static final PersoniumCoreLog WRITE_ADS_FAILURE_LOG_INFO = create("PL-SV-0021");
+        /**
+         * Information of RequestKey.
+         * {0}: received or generated
+         * {1}: RequestKey
+         */
+        public static final PersoniumCoreLog REQUEST_KEY = create("PL-SV-0022");
     }
     /**
      * Service collection.
