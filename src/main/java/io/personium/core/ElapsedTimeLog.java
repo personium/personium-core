@@ -21,7 +21,7 @@ import java.text.MessageFormat;
 /**
  * Log message with measurement creation class.
  */
-public final class PersoniumMeasurmentLog extends PersoniumCoreLog {
+public final class ElapsedTimeLog extends PersoniumCoreLog {
 
     /**
      * WebDAV related.
@@ -32,7 +32,7 @@ public final class PersoniumMeasurmentLog extends PersoniumCoreLog {
          * {0}: File path
          * {1}: File size
          */
-        public static final PersoniumMeasurmentLog FILE_OPERATION_END = create("PL-DV-0006");
+        public static final ElapsedTimeLog FILE_OPERATION_END = create("PL-DV-0006");
     }
 
     /**
@@ -42,12 +42,12 @@ public final class PersoniumMeasurmentLog extends PersoniumCoreLog {
         /**
          * Personium-Engine reley ends.
          */
-        public static final PersoniumMeasurmentLog SC_ENGINE_RELAY_END = create("PL-SC-0002");
+        public static final ElapsedTimeLog SC_ENGINE_RELAY_END = create("PL-SC-0002");
     }
 
     private long startTime = 0L;
 
-    PersoniumMeasurmentLog(PersoniumCoreLog coreLog) {
+    ElapsedTimeLog(PersoniumCoreLog coreLog) {
         super(coreLog.code, coreLog.severity, coreLog.message);
     }
 
@@ -65,8 +65,8 @@ public final class PersoniumMeasurmentLog extends PersoniumCoreLog {
      * @param params Additional message
      * @return PersoniumMeasurmentLog
      */
-    public PersoniumMeasurmentLog params(final Object... params) {
-        return new PersoniumMeasurmentLog(super.params(params));
+    public ElapsedTimeLog params(final Object... params) {
+        return new ElapsedTimeLog(super.params(params));
     }
 
     /**
@@ -83,8 +83,8 @@ public final class PersoniumMeasurmentLog extends PersoniumCoreLog {
      * @param code log code
      * @return PersoniumMeasurmentLog
      */
-    public static PersoniumMeasurmentLog create(String code) {
-        return new PersoniumMeasurmentLog(PersoniumCoreLog.create(code));
+    public static ElapsedTimeLog create(String code) {
+        return new ElapsedTimeLog(PersoniumCoreLog.create(code));
     }
 
     /**

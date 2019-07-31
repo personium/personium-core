@@ -67,7 +67,7 @@ import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
-import io.personium.core.PersoniumMeasurmentLog;
+import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -585,7 +585,7 @@ public class DavCmpFsImpl implements DavCmp {
 
         // write start log
         PersoniumCoreLog.Dav.FILE_OPERATION_START.params(getContentFilePath()).writeLog();
-        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.Dav.FILE_OPERATION_END.params();
+        ElapsedTimeLog endLog = ElapsedTimeLog.Dav.FILE_OPERATION_END.params();
         endLog.setStartTime();
 
         BufferedInputStream bufferedInput = new BufferedInputStream(input);
@@ -648,7 +648,7 @@ public class DavCmpFsImpl implements DavCmp {
 
         // Write start log
         PersoniumCoreLog.Dav.FILE_OPERATION_START.params(getContentFilePath()).writeLog();
-        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.Dav.FILE_OPERATION_END.params();
+        ElapsedTimeLog endLog = ElapsedTimeLog.Dav.FILE_OPERATION_END.params();
         endLog.setStartTime();
         try {
             // Update Content
@@ -708,7 +708,7 @@ public class DavCmpFsImpl implements DavCmp {
 
         // write start log
         PersoniumCoreLog.Dav.FILE_OPERATION_START.params(fileFullPath).writeLog();
-        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.Dav.FILE_OPERATION_END.params();
+        ElapsedTimeLog endLog = ElapsedTimeLog.Dav.FILE_OPERATION_END.params();
         endLog.setStartTime();
         try {
             //Differentiate between processing with Range header specification
@@ -1022,7 +1022,7 @@ public class DavCmpFsImpl implements DavCmp {
     protected void doDelete() {
         // write start log
         PersoniumCoreLog.Dav.FILE_OPERATION_START.params(getContentFilePath()).writeLog();
-        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.Dav.FILE_OPERATION_END.params();
+        ElapsedTimeLog endLog = ElapsedTimeLog.Dav.FILE_OPERATION_END.params();
         endLog.setStartTime();
 
         try {
