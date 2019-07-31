@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
-import io.personium.core.PersoniumMeasurmentLog;
+import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MOVE;
@@ -483,7 +483,7 @@ public class PersoniumEngineSvcCollectionResource {
         PersoniumCoreLog.ServiceCollection.SC_ENGINE_RELAY_START
             .params(req.getMethod(), req.getURI()).writeLog();
         debugRelayHeader(req);
-        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.ServiceCollection.SC_ENGINE_RELAY_END.params();
+        ElapsedTimeLog endLog = ElapsedTimeLog.ServiceCollection.SC_ENGINE_RELAY_END.params();
         endLog.setStartTime();
 
         //Throw a request to the Engine

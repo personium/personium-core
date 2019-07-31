@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
-import io.personium.core.PersoniumMeasurmentLog;
+import io.personium.core.ElapsedTimeLog;
 
 /**
  * a class for handling internal fs file storing Dav metadata.
@@ -211,7 +211,7 @@ public class DavMetadataFile {
 
         // write start log
         PersoniumCoreLog.Dav.FILE_OPERATION_START.params(this.file.toPath()).writeLog();
-        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.Dav.FILE_OPERATION_END.params();
+        ElapsedTimeLog endLog = ElapsedTimeLog.Dav.FILE_OPERATION_END.params();
         endLog.setStartTime();
 
         try {

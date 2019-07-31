@@ -27,7 +27,7 @@ import org.apache.commons.io.IOUtils;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
-import io.personium.core.PersoniumMeasurmentLog;
+import io.personium.core.ElapsedTimeLog;
 import io.personium.core.http.header.ByteRangeSpec;
 import io.personium.core.http.header.RangeHeaderHandler;
 
@@ -64,7 +64,7 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
     public void write(OutputStream output) throws IOException, WebApplicationException {
         // write start log
         PersoniumCoreLog.Dav.FILE_OPERATION_START.params("-").writeLog();
-        PersoniumMeasurmentLog endLog = PersoniumMeasurmentLog.Dav.FILE_OPERATION_END.params();
+        ElapsedTimeLog endLog = ElapsedTimeLog.Dav.FILE_OPERATION_END.params();
         endLog.setStartTime();
 
         try {
