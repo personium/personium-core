@@ -735,7 +735,7 @@ public class DavCmpFsImpl implements DavCmp {
                 }
             }
             // write end log
-            endLog.setParams(fileSize);
+            endLog.setParams(fileSize / KILO_BYTES);
             endLog.writeLog();
 
             return res.header(HttpHeaders.ETAG, getEtag()).header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES,
