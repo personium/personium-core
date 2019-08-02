@@ -193,9 +193,18 @@ public class DavMetadataFile {
      * load from the file.
      */
     private void doLoad() throws PersoniumCoreException {
+        // write start log
+        PersoniumCoreLog.Dav.FILE_OPERATION_START.params(file.toPath()).writeLog();
+        ElapsedTimeLog endLog = ElapsedTimeLog.Dav.FILE_OPERATION_END.params();
+        endLog.setStartTime();
+
         try (Reader reader = Files.newBufferedReader(file.toPath(), Charsets.UTF_8)) {
             JSONParser parser = new JSONParser();
             this.json = (JSONObject) parser.parse(reader);
+            // write end log
+            int jsonSize = this.json.toJSONString().getBytes(Charsets.UTF_8).length;
+            endLog.setParams(jsonSize / KILO_BYTES);
+            endLog.writeLog();
         } catch (IOException | ParseException e) {
             // IO failure or JSON is broken
             throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e);
