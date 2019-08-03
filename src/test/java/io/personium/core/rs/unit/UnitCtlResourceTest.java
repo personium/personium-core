@@ -87,7 +87,7 @@ public class UnitCtlResourceTest {
         doReturn("http://personiumunit/").when(accessContext).getBaseUri();
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("personium-localunit:/admincell/#admin").when(UriUtils.class,
-                "convertSchemeFromHttpToLocalUnit", "http://personiumunit/", "http://personiumunit/admincell/#admin");
+                "convertSchemeFromHttpToLocalUnit", "http://personiumunit/admincell/#admin");
 
         doNothing().when(oEntityWrapper).put("Owner", "personium-localunit:/admincell/#admin");
 
@@ -323,7 +323,7 @@ public class UnitCtlResourceTest {
         doReturn("http://personiumunit/").when(ac).getBaseUri();
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("http://personiumunit/admincell/#admin").when(UriUtils.class,
-                "convertSchemeFromLocalUnitToHttp", "http://personiumunit/", "personium-localunit:/admincell/#admin");
+                "convertSchemeFromLocalUnitToHttp", "personium-localunit:/admincell/#admin");
 
         doReturn(AccessContext.TYPE_UNIT_MASTER).when(ac).getType();
 
@@ -362,7 +362,7 @@ public class UnitCtlResourceTest {
         doReturn("http://personiumunit/").when(ac).getBaseUri();
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("http://personiumunit/admincell/#admin").when(UriUtils.class,
-                "convertSchemeFromLocalUnitToHttp", "http://personiumunit/", "personium-localunit:/admincell/#admin");
+                "convertSchemeFromLocalUnitToHttp", "personium-localunit:/admincell/#admin");
 
         doReturn(AccessContext.TYPE_UNIT_USER).when(ac).getType();
 
@@ -403,7 +403,7 @@ public class UnitCtlResourceTest {
         doReturn("http://personiumunit/").when(ac).getBaseUri();
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("http://personiumunit/admincell/#admin").when(UriUtils.class,
-                "convertSchemeFromLocalUnitToHttp", "http://personiumunit/", "personium-localunit:/admincell/#admin");
+                "convertSchemeFromLocalUnitToHttp", "personium-localunit:/admincell/#admin");
 
         doReturn(AccessContext.TYPE_UNIT_USER).when(ac).getType();
 

@@ -69,7 +69,7 @@ import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Unit;
 
 /**
- * MessageODataProducerユニットテストクラス.
+ * MessageODataProducer unit tests.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ MessageODataProducer.class, Box.class, UriUtils.class })
@@ -820,7 +820,7 @@ public class MessageODataProducerTest {
 
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("http://personium/dummyAppCell/__relation/__/dummyRelation").when(
-                UriUtils.class, "convertSchemeFromLocalUnitToHttp", "http://personium", requestRelation);
+                UriUtils.class, "convertSchemeFromLocalUnitToHttp", requestRelation);
 
         // --------------------
         // Expected result
@@ -862,7 +862,7 @@ public class MessageODataProducerTest {
 
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn(requestRelation).when(
-                UriUtils.class, "convertSchemeFromLocalUnitToHttp", "http://personium", requestRelation);
+                UriUtils.class, "convertSchemeFromLocalUnitToHttp", requestRelation);
 
         // --------------------
         // Expected result
@@ -904,7 +904,7 @@ public class MessageODataProducerTest {
 
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("http://personium/dummyAppCell/__relation/__/dummyRelation").when(
-            UriUtils.class, "convertSchemeFromLocalUnitToHttp", "http://personium", requestRelation);
+            UriUtils.class, "convertSchemeFromLocalUnitToHttp", requestRelation);
 
         Box mockBox = PowerMockito.mock(Box.class);
         doReturn("dummyBoxName").when(mockBox).getName();
@@ -950,7 +950,7 @@ public class MessageODataProducerTest {
 
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn(requestRelation).when(
-                UriUtils.class, "convertSchemeFromLocalUnitToHttp", "http://personium", requestRelation);
+                UriUtils.class, "convertSchemeFromLocalUnitToHttp", requestRelation);
 
         // --------------------
         // Expected result
@@ -992,7 +992,7 @@ public class MessageODataProducerTest {
 
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("http://personium/dummyAppCell/__relation/__/dummyRelation").when(
-                UriUtils.class, "convertSchemeFromLocalUnitToHttp", "http://personium", requestRelation);
+                UriUtils.class, "convertSchemeFromLocalUnitToHttp", requestRelation);
 
         doReturn(null).when(mockCell).getBoxForSchema("http://personium/dummyAppCell/");
 
