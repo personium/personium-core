@@ -152,8 +152,7 @@ public class TokenEndPointResource {
         String pCookie = formParams.getFirst("p_cookie");
 
         // Accept unit local scheme url.
-        String target = UriUtils.convertSchemeFromLocalUnitToHttp(
-                cell.getUnitUrl(), pTarget);
+        String target = UriUtils.convertSchemeFromLocalUnitToHttp(pTarget);
         //If p_target is not a URL, it creates a vulnerability of header injection. (Such as a line feed code is included)
         target = this.checkPTarget(target);
 

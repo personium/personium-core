@@ -532,7 +532,7 @@ public class AccessContext {
      */
     public void checkSchemaMatches(Box box) {
         if (box != null) {
-            String boxSchema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema());
+            String boxSchema = UriUtils.convertSchemeFromLocalUnitToHttp(box.getSchema());
             String tokenSchema = getSchema();
 
             // Do not check if box schema is not set.
@@ -887,8 +887,8 @@ public class AccessContext {
 
         String issuer = tca.getIssuer();
         if ((tca.getTarget().equals(baseUri) || tca.getTarget().equals(escapedBaseUri))
-                && (PersoniumUnitConfig.checkUnitUserIssuers(issuer, baseUri)
-                        || PersoniumUnitConfig.checkUnitUserIssuers(issuer, escapedBaseUri))) {
+                && (PersoniumUnitConfig.checkUnitUserIssuers(issuer)
+                        || PersoniumUnitConfig.checkUnitUserIssuers(issuer))) {
             //Processing unit user tokens
             ret.accessType = TYPE_UNIT_USER;
             ret.subject = tca.getSubject();

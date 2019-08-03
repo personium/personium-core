@@ -136,7 +136,7 @@ public class CellEsImpl implements Cell {
         CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", cellName);
         if (cell != null) {
             cell.url = PersoniumUnitConfig.getBaseUrl() + cell.name + "/";
-            cell.owner = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), cell.owner);
+            cell.owner = UriUtils.convertSchemeFromLocalUnitToHttp(cell.owner);
         }
         return cell;
     }
@@ -466,7 +466,7 @@ public class CellEsImpl implements Cell {
     @Override
     public Box getBoxForSchema(String boxSchema) {
         //Retrieving the schema name list (including aliases)
-        List<String> boxSchemas = UriUtils.getUrlVariations(this.getUnitUrl(), boxSchema);
+        List<String> boxSchemas = UriUtils.getUrlVariations(boxSchema);
 
         ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
         for (int i = 0; i < boxSchemas.size(); i++) {
@@ -773,7 +773,7 @@ public class CellEsImpl implements Cell {
             //Number of search result output setting
             QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
 
-            List<String> list = UriUtils.getUrlVariations(this.getUnitUrl(), extCell);
+            List<String> list = UriUtils.getUrlVariations(extCell);
             for (int i = 0; i < list.size(); i++) {
                 String extCellUrl = list.get(i);
                 try {
@@ -822,7 +822,7 @@ public class CellEsImpl implements Cell {
         EntitiesResponse response = null;
         //Number of search result output setting
         QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
-        List<String> list = UriUtils.getUrlVariations(this.getUnitUrl(), extCell);
+        List<String> list = UriUtils.getUrlVariations(extCell);
         for (int i = 0; i < list.size(); i++) {
             try {
                 String extCellUrl = list.get(i);

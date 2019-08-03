@@ -16,9 +16,9 @@
  */
 package io.personium.core.rs.box;
 
-import java.net.URI;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -187,8 +187,7 @@ public abstract class StreamResource {
      */
     private String createDestination(String name) {
         // convert to localunit url
-        String localunit = UriUtils.convertSchemeFromHttpToLocalUnit(this.davRsCmp.getCell().getUnitUrl(),
-                                                                     getUrl(name));
+        String localunit = UriUtils.convertSchemeFromHttpToLocalUnit(getUrl(name));
         try {
             URI uri = new URI(localunit);
             return Stream.of(uri.getPath().split(Pattern.quote("/")))

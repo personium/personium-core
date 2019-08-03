@@ -234,7 +234,7 @@ public class SnapshotFileImportRunner implements Runnable {
         Map<String, Object> s = (Map<String, Object>) map.get(OEntityDocHandler.KEY_STATIC_FIELDS);
         s.put("Name", targetCell.getName());
         Map<String, Object> h = (Map<String, Object>) map.get(OEntityDocHandler.KEY_HIDDEN_FIELDS);
-        String owner = UriUtils.convertSchemeFromHttpToLocalUnit(targetCell.getUnitUrl(), targetCell.getOwner());
+        String owner = UriUtils.convertSchemeFromHttpToLocalUnit(targetCell.getOwner());
         h.put("Owner", owner);
         map.put(OEntityDocHandler.KEY_UPDATED, System.currentTimeMillis());
 

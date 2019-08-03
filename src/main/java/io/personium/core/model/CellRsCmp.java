@@ -217,7 +217,7 @@ public class CellRsCmp extends DavRsCmp {
         }
 
         // Convert personium-localunit and personium-localcell.
-        relayHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), relayHtmlUrl);
+        relayHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(relayHtmlUrl);
         relayHtmlUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), relayHtmlUrl);
 
         // Validate relayHtmlUrl.
@@ -245,7 +245,7 @@ public class CellRsCmp extends DavRsCmp {
         }
 
         // Convert personium-localunit and personium-localcell.
-        authorizationHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), authorizationHtmlUrl);
+        authorizationHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(authorizationHtmlUrl);
         authorizationHtmlUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), authorizationHtmlUrl);
 
         // Validate relayHtmlUrl.
@@ -274,8 +274,7 @@ public class CellRsCmp extends DavRsCmp {
         }
 
         // Convert personium-localunit and personium-localcell.
-        authorizationPasswordHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(),
-                authorizationPasswordHtmlUrl);
+        authorizationPasswordHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(authorizationPasswordHtmlUrl);
         authorizationPasswordHtmlUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(),
                 authorizationPasswordHtmlUrl);
 

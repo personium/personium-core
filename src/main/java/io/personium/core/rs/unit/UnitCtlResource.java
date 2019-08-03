@@ -135,7 +135,7 @@ public class UnitCtlResource extends ODataResource {
             // If there is a Subject value in UnitUserToken, set that value to Owner.
             String subject = this.getAccessContext().getSubject();
             if (subject != null) {
-                String owner = UriUtils.convertSchemeFromHttpToLocalUnit(getAccessContext().getBaseUri(), subject);
+                String owner = UriUtils.convertSchemeFromHttpToLocalUnit(subject);
                 oEntityWrapper.put("Owner", owner);
             }
         }
@@ -236,7 +236,7 @@ public class UnitCtlResource extends ODataResource {
     @Override
     public void checkAccessContextPerEntity(AccessContext ac, OEntityWrapper oew) {
         Map<String, Object> meta = oew.getMetadata();
-        String owner = UriUtils.convertSchemeFromLocalUnitToHttp(ac.getBaseUri(), (String) meta.get("Owner"));
+        String owner = UriUtils.convertSchemeFromLocalUnitToHttp((String) meta.get("Owner"));
 
         // In case of master token, no check is required.
         if (AccessContext.TYPE_UNIT_MASTER.equals(ac.getType())
