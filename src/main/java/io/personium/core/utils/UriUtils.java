@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -134,13 +135,14 @@ public class UriUtils {
 
     /**
      * Convert scheme from LocalUnit to http(s).
+     * If the he given value does not match localunit schem, the given value is returned as-is.
      * @param unitUrl unit url
      * @param localUnitSchemeUrl local unit url
      * @return url string with http(s) scheme
      */
     public static String convertSchemeFromLocalUnitToHttp(String localUnitSchemeUrl) {
         if (localUnitSchemeUrl == null) {
-        	throw PersoniumCoreException.Common.INVALID_URL.params("null");
+        	return null;
         }
         String unitUrl = PersoniumUnitConfig.getBaseUrl();
         Matcher localUnitDoubleColons = REGEX_LOCALUNIT_DOUBLE_COLONS.matcher(localUnitSchemeUrl);
@@ -180,24 +182,26 @@ public class UriUtils {
 
     /**
      * Convert scheme from http(s) to LocalUnit.
-     * Convert only if the target URL matches UnitURL.
+     * Convert only if the target URL matches UnitURL, otherwise just return the given value as-is.
      * @param unitUrl unit url
      * @param url target url
      * @return url string with local unit scheme
      */
     public static String convertSchemeFromHttpToLocalUnit(String url) {
         if (url == null) {
-        	throw PersoniumCoreException.Common.INVALID_URL.params("null");
+        	return null;
         }
         String unitUrl = PersoniumUnitConfig.getBaseUrl();
         if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
         	// path based
-            if (url.startsWith(unitUrl)) {
-                // convert when url is localunit
-                return url.replaceFirst(unitUrl, SCHEME_LOCALUNIT + ":/");
+            if (!url.startsWith(unitUrl)) {
+                // return as-is when url is foreign
+                return url;
             }
-            // return as-is when url is foreign
-            return url;
+            // convert when url is localunit
+            String ret = url.replaceFirst(unitUrl, SCHEME_LOCALUNIT + ":/");
+            ret = ret.replaceFirst("\\:\\/(.+?)\\/", ":$1:/");
+            return ret;
         } else {
             // return with single colon syntax when url is unit level.
             if (url.startsWith(unitUrl)) {
@@ -514,6 +518,32 @@ public class UriUtils {
         @Override
         public URI relativize(URI uri) {
             return this.core.relativize(uri);
+        }
+    }
+
+    public static boolean equalIgnoringPort(String url1, String url2) {
+
+        try {
+            URI u1 = new URI(url1);
+            URI u2 = new URI(url2);
+            if (!Objects.equals(u1.getHost(), u2.getHost())) {
+                return false;
+            }
+            if (!Objects.equals(u1.getScheme(), u2.getScheme())) {
+                return false;
+            }
+            if (!Objects.equals(u1.getPath(), u2.getPath())) {
+                return false;
+            }
+            if (!Objects.equals(u1.getFragment(), u2.getFragment())) {
+                return false;
+            }
+            if (!Objects.equals(u1.getQuery(), u2.getQuery())) {
+                return false;
+            }
+            return true;
+        } catch (URISyntaxException e) {
+            return false;
         }
     }
 }

@@ -656,7 +656,7 @@ public class CellEsImpl implements Cell {
         }
 
         //It is not permitted to designate the cell URL portion of the role resource different from the cell URL of the ACL setting target
-        if (!(this.getUrl().equals(role.getBaseUrl()))) {
+        if (!UriUtils.equalIgnoringPort(this.getUrl(), role.getBaseUrl())) {
             PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Cell different").writeLog();
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
