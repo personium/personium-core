@@ -99,13 +99,6 @@ public class UriUtilsTest {
              .when(PersoniumUnitConfig.class, "isPathBasedCellUrlEnabled");
         PowerMockito.doReturn("https://host.domain/")
             .when(PersoniumUnitConfig.class, "getBaseUrl");
-        /*
-        PowerMockito.spy(UriUtils.class);
-        PowerMockito.doReturn("http://cell.host.domain/")
-                    .when(UriUtils.class, "convertPathBaseToFqdnBase", "http://host.domain/cell/");
-        PowerMockito.doReturn("https://cell.host.domain/")
-                    .when(UriUtils.class, "convertPathBaseToFqdnBase", "https://host.domain/cell/");
-                    */
 
         // Single Colon
         assertThat(
@@ -161,10 +154,30 @@ public class UriUtilsTest {
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_is_fqdn_base() throws Exception {
         PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.doReturn(false)
+            .when(PersoniumUnitConfig.class, "isPathBasedCellUrlEnabled");
         PowerMockito.doReturn("http://unit.example/")
             .when(PersoniumUnitConfig.class, "getBaseUrl");
-        String actual = UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/");
-        assertThat(actual, is("personium-localunit:cell:/"));
+        assertThat(
+            UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/"),
+            is("personium-localunit:cell:/"));
+    }
+    /**
+     * Test convertSchemeFromHttpToLocalUnit().
+     * normal.
+     * url is path base.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void convertSchemeFromHttpToLocalUnit_Normal_url_is_path_base() throws Exception {
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.doReturn(true)
+            .when(PersoniumUnitConfig.class, "isPathBasedCellUrlEnabled");
+        PowerMockito.doReturn("http://unit.example/")
+            .when(PersoniumUnitConfig.class, "getBaseUrl");
+        assertThat(
+            UriUtils.convertSchemeFromHttpToLocalUnit("http://unit.example/cell/"),
+            is("personium-localunit:cell:/"));
     }
 
     /**
@@ -178,11 +191,7 @@ public class UriUtilsTest {
         PowerMockito.spy(PersoniumUnitConfig.class);
         PowerMockito.doReturn("http://unit.example/")
             .when(PersoniumUnitConfig.class, "getBaseUrl");
-/*
-        PowerMockito.spy(UriUtils.class);
-        PowerMockito.doReturn("http://otherdomain/otherhost/cell/")
-                    .when(UriUtils.class, "convertFqdnBaseToPathBase", "http://otherhost.otherdomain/cell/");
-                    */
+
         assertThat(
                 UriUtils.convertSchemeFromHttpToLocalUnit("http://otherhost.otherdomain/cell/"),
                 is("http://otherhost.otherdomain/cell/"));
