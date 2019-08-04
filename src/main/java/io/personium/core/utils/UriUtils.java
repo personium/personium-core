@@ -90,10 +90,10 @@ public class UriUtils {
      * @throws URISyntaxException
      */
     public static List<String> getUrlVariations(String url) throws PersoniumCoreException {
-        if (url == null) {
-        	throw PersoniumCoreException.Common.INVALID_URL.params("null");
-        }
         List<String> variations = new ArrayList<String>();
+        if (url == null) {
+            return variations;
+        }
         variations.add(url);
         String substitute = getUrlSubstitute(url);
         if (!url.equals(substitute)) {
