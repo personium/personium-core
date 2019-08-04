@@ -1033,7 +1033,7 @@ public class DavCmpFsImpl implements DavCmp {
      * @return instance of accessor
      */
     protected BinaryDataAccessor getBinaryDataAccessor() {
-        String owner = cell.getOwner();
+        String owner = cell.getOwnerNormalized();
         String unitUserName = null;
         if (owner == null) {
             unitUserName = AccessContext.TYPE_ANONYMOUS;

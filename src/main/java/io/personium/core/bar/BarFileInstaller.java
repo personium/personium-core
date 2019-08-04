@@ -311,7 +311,7 @@ public class BarFileInstaller {
     private File storeTemporaryBarFile(InputStream inStream) {
 
         //If there is no directory to store the bar file, it creates it.
-        String unitUserName = BarFileUtils.getUnitUserName(this.cell.getOwner());
+        String unitUserName = BarFileUtils.getUnitUserName(this.cell.getOwnerNormalized());
         File barFileDir = new File(new File(barTempDir, unitUserName), "bar");
         if (!barFileDir.exists() && !barFileDir.mkdirs()) {
             String message = "unable create directory: " + barFileDir.getAbsolutePath();

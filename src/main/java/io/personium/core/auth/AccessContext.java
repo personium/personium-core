@@ -396,7 +396,7 @@ public class AccessContext {
                 || TYPE_UNIT_ADMIN.equals(type)) {
             return true;
         } else if ((TYPE_UNIT_USER.equals(type) || TYPE_UNIT_LOCAL.equals(type))
-                && getSubject().equals(getCell().getOwner())) {
+                && getSubject().equals(getCell().getOwnerNormalized())) {
             //↑ Unit user, Unit For local unit users, this is valid only when the unit owner name included in the token and the cell owner to be processed match.
             return true;
         }
@@ -414,7 +414,7 @@ public class AccessContext {
             return true;
         } else if (TYPE_UNIT_ADMIN.equals(type)
                 || ((TYPE_UNIT_USER.equals(type) || TYPE_UNIT_LOCAL.equals(type)) //NOPMD - To maintain readability
-                        && getSubject().equals(getCell().getOwner()))) {
+                        && getSubject().equals(getCell().getOwnerNormalized()))) {
             // In the case of a UnitUser or UnitLocal, it is effective only when the unit owner name included
             // in the processing target cell owner and the token matches.
 

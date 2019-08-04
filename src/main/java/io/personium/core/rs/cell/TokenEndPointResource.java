@@ -155,6 +155,7 @@ public class TokenEndPointResource {
         if (target != null) {
             this.checkURL(target);
             target = this.addTrainlingSlash(target);
+            // TODO should do more normalization.
         }
 
         // Do not issue cookie if p_target exists, regardless of the p_cookie parameter.
@@ -641,13 +642,13 @@ public class TokenEndPointResource {
                 throw PersoniumCoreAuthnException.NOT_ALLOWED_REPRESENT_OWNER.realm(this.cell.getUrl());
             }
             //Do not promote cells for which the owner of the cell is not set.
-            if (cell.getOwner() == null) {
+            if (cell.getOwnerNormalized() == null) {
                 throw PersoniumCoreAuthnException.NO_CELL_OWNER.realm(this.cell.getUrl());
             }
 
             //uluut issuance processing
             UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt, expiresIn,
-                    cell.getOwner(), cell.getUnitUrl());
+                    cell.getOwnerNormalized(), cell.getUnitUrl());
 
             return this.responseAuthSuccess(uluut, null, issuedAt);
         } else {
@@ -903,13 +904,13 @@ public class TokenEndPointResource {
                         .realm(this.cell.getUrl());
             }
             //Do not promote cells for which the owner of the cell is not set.
-            if (cell.getOwner() == null) {
+            if (cell.getOwnerNormalized() == null) {
                 throw PersoniumCoreAuthnException.NO_CELL_OWNER.realm(this.cell.getUrl());
             }
 
             //uluut issuance processing
             UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt, expiresIn,
-                    cell.getOwner(), cell.getUnitUrl());
+                    cell.getOwnerNormalized(), cell.getUnitUrl());
             return this.responseAuthSuccess(uluut, null, issuedAt);
         }
 

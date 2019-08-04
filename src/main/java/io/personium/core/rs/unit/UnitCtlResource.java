@@ -187,7 +187,7 @@ public class UnitCtlResource extends ODataResource {
     public void afterDelete(final String entitySetName, final OEntityKey oEntityKey) {
         if (Cell.EDM_TYPE_NAME.equals(entitySetName)) {
             //Delete event log if it exists under Cell
-            String owner = cell.getOwner();
+            String owner = cell.getOwnerNormalized();
             try {
                 EventUtils.deleteEventLog(this.cell.getId(), owner);
             } catch (BinaryDataAccessException e) {

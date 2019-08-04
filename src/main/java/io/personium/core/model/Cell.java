@@ -104,11 +104,16 @@ public interface Cell {
     String getUnitUrl();
 
     /**
-     * It gets the URI of the Cell of the Owner Unit User.
-     * @return Cell name
+     * Returns the normalized URI of the owner Unit User of this Cell.
+     * @return normalized owner url.
      */
-    String getOwner();
+    String getOwnerNormalized();
 
+    /**
+     * Returns the raw URI of the owner Unit User of this Cell.
+     * @return raw owner url.
+     */
+    String getOwnerRaw();
     /**
      * It gets the prefix without Unit User name of the Cell.
      * @return .
@@ -209,4 +214,6 @@ public interface Cell {
      * @return internal id of the given role
      */
     String roleResourceUrlToId(String roleUrl, String baseUrl);
+
+
 }

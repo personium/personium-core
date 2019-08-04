@@ -129,7 +129,7 @@ public class CellResource {
     private void checkReferenceMode() {
         Cell cellObj = accessContext.getCell();
         String unitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
-        String owner = cellObj.getOwner();
+        String owner = cellObj.getOwnerNormalized();
 
         if (owner == null) {
             owner = "anon";
@@ -224,7 +224,7 @@ public class CellResource {
         }
         //Confirm the access authority
         //Unit Master, Unit User, Unit Local Unit User except authority error
-        String cellOwner = this.cell.getOwner();
+        String cellOwner = this.cell.getOwnerNormalized();
         checkAccessContextForCellBulkDeletion(cellOwner);
 
         String cellId = this.cell.getId();

@@ -136,7 +136,6 @@ public class CellEsImpl implements Cell {
         CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", cellName);
         if (cell != null) {
             cell.url = PersoniumUnitConfig.getBaseUrl() + cell.name + "/";
-            cell.owner = UriUtils.convertSchemeFromLocalUnitToHttp(cell.owner);
         }
         return cell;
     }
@@ -262,7 +261,7 @@ public class CellEsImpl implements Cell {
             return UriUtils.convertPathBaseToFqdnBase(url);
         } catch (URISyntaxException e) {
             // Usually it does not occur.
-            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR.reason(e);
         }
     }
 
@@ -284,9 +283,14 @@ public class CellEsImpl implements Cell {
     }
 
     @Override
-    public String getOwner() {
+    public String getOwnerNormalized() {
+        return UriUtils.convertSchemeFromLocalUnitToHttp(this.owner);
+    }
+    @Override
+    public String getOwnerRaw() {
         return this.owner;
     }
+
 
     @Override
     public String getDataBundleNameWithOutPrefix() {
@@ -374,7 +378,7 @@ public class CellEsImpl implements Cell {
 
         // Delete event log file.
         try {
-            EventUtils.deleteEventLog(this.getId(), this.getOwner());
+            EventUtils.deleteEventLog(this.getId(), this.getOwnerNormalized());
         } catch (BinaryDataAccessException e) {
             // If the deletion fails, output a log and continue processing.
             log.warn("Delete EventLog Failed." + cellInfoLog, e);
