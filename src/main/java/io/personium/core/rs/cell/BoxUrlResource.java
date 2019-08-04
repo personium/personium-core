@@ -36,7 +36,6 @@ import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.utils.ODataUtils;
-import io.personium.core.utils.UriUtils;
 
 /**
  * JOX-RS Resource for obtaining Box URL.
@@ -87,7 +86,6 @@ public class BoxUrlResource {
         if (schema == null || schema.length() == 0) {
             box = this.cellRsCmp.getBox();
         } else {
-            schema = UriUtils.resolveLocalUnit(schema);
             //Acquire Box from schema information
             box = this.cellRsCmp.getCell().getBoxForSchema(schema);
         }
