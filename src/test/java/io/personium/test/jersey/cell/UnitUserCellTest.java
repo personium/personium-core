@@ -80,7 +80,7 @@ public class UnitUserCellTest extends PersoniumTest {
     private static String issuersBackup = "";
 
     /**
-     * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
+     * Constructor. テスト対象のパッケージをsuperに渡す必要がある
      */
     public UnitUserCellTest() {
         super(new PersoniumCoreApplication());
@@ -144,7 +144,7 @@ public class UnitUserCellTest extends PersoniumTest {
     @Test
     public void ユニットユーザートークンでセル作成を行いオーナーが設定されることを確認() {
         try {
-            // 本テスト用セルの作成
+            // 本テスト用 Unit User Cell の作成
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
 
             // アカウント追加

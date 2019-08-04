@@ -90,13 +90,9 @@ import io.personium.plugin.base.auth.AuthPluginException;
 import io.personium.plugin.base.auth.AuthenticatedIdentity;
 
 /**
- * JAX-RS Resource class for authentication.
+ * JAX-RS Resource class for Token Endpoint.
  */
 public class TokenEndPointResource {
-    // core issue #223
-    // "issuer" in the token may be interpreted by other units.
-    // For that reason, "path based cell url" is set for "issuer" regardless of unit property setting.
-
     static Logger log = LoggerFactory.getLogger(TokenEndPointResource.class);
 
     private final Cell cell;
@@ -119,10 +115,11 @@ public class TokenEndPointResource {
     }
 
     /**
-     * OAuth2.0 Token Endpoint. <h2>Issue some kinds of tokens.</h2>
+     * OAuth2.0 Token Endpoint.
+     * Issues differnt kinds of tokens depending on the parameters.
      * <ul>
-     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
-     * <li> Issue CellLocal if scope does not exist. </ li>
+     * <li> If p_target parameter exists, it issues Trans-Cell access token targeting at the specified URL. </ li>
+     * <li> If p_target parameter is not specified, it issues Cell-local access token. </ li>
      * </ul>
      * @param uriInfo  URI information
      * @param authzHeader Authorization Header
@@ -151,11 +148,16 @@ public class TokenEndPointResource {
         String rTokenExpiresInStr = formParams.getFirst(Key.REFRESH_TOKEN_EXPIRES_IN);
         String pCookie = formParams.getFirst("p_cookie");
 
-        // Accept unit local scheme url.
+        // relsolve personium-localunit scheme url.
         String target = UriUtils.convertSchemeFromLocalUnitToHttp(pTarget);
-        //If p_target is not a URL, it creates a vulnerability of header injection. (Such as a line feed code is included)
-        target = this.checkPTarget(target);
+        //Check the given target to prevent security attacks such as Header Injection.
+        //eg. If p_target is not a URL and include line feed code, it creates a vulnerability of header injection.
+        if (target != null) {
+            this.checkURL(target);
+            target = this.addTrainlingSlash(target);
+        }
 
+        // Do not issue cookie if p_target exists, regardless of the p_cookie parameter.
         if (null != pTarget) {
             issueCookie = false;
         } else {
@@ -166,8 +168,8 @@ public class TokenEndPointResource {
         this.ipaddress = xForwardedFor;
 
         String schema = null;
-        //First, check if you want to authenticate Client
-        //If neither Scope nor authzHeader nor clientId exists, it is assumed that Client authentication is not performed.
+        // Authenticate client first if necessary.
+        // If neither Scope nor authzHeader nor clientId exists, client authentication is not performed.
         if (clientId != null || authzHeader != null) {
             schema = clientAuth(clientId, clientSecret, authzHeader, cell.getUrl());
         }
@@ -313,28 +315,28 @@ public class TokenEndPointResource {
     }
 
     /**
-     * checkPTarget.
+     * check p_target parameter for security.
      */
-    private String checkPTarget(final String pTarget) {
-        String target = pTarget;
-        if (target != null) {
-            try {
-                new URL(target);
-                if (!target.endsWith("/")) {
-                    target = target + "/";
-                }
-                if (target.contains("\n") || target.contains("\r")) {
-                    //Error when p_target is not a URL
-                    throw PersoniumCoreAuthnException.INVALID_TARGET
-                            .realm(this.cell.getUrl());
-                }
-            } catch (MalformedURLException e) {
+    private void checkURL(final String url) {
+        try {
+            new URL(url);
+            if (url.contains("\n") || url.contains("\r")) {
                 //Error when p_target is not a URL
                 throw PersoniumCoreAuthnException.INVALID_TARGET
                         .realm(this.cell.getUrl());
             }
+        } catch (MalformedURLException e) {
+            //Error when p_target is not a URL
+            throw PersoniumCoreAuthnException.INVALID_TARGET
+                    .realm(this.cell.getUrl());
         }
-        return target;
+    }
+
+    private String addTrainlingSlash(final String url) {
+        if (!url.endsWith("/")) {
+            return url + "/";
+        }
+        return url;
     }
 
     /**

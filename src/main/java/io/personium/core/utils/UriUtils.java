@@ -136,7 +136,6 @@ public class UriUtils {
     /**
      * Convert scheme from LocalUnit to http(s).
      * If the he given value does not match localunit schem, the given value is returned as-is.
-     * @param unitUrl unit url
      * @param localUnitSchemeUrl local unit url
      * @return url string with http(s) scheme
      */
