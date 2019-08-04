@@ -546,4 +546,8 @@ public class UriUtils {
             return false;
         }
     }
+
+    public static String resolveLocalUnit(String url) {
+        return UriUtils.convertSchemeFromLocalUnitToHttp(url);
+    }
 }

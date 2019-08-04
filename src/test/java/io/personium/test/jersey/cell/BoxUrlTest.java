@@ -137,9 +137,9 @@ public class BoxUrlTest extends ODataCommon {
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
-            String localunitUrl = UriUtils.SCHEME_LOCALUNIT + ":/" + Setup.TEST_CELL_SCHEMA1 + "/";
-            res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, localunitUrl), requestheaders);
+            String localunitUrl = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+            String boxUrlApiUrl = UrlUtils.boxUrl(Setup.TEST_CELL1, localunitUrl);
+            res = rest.getAcceptEncodingGzip(boxUrlApiUrl , requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1 + "/"),
                     res.getFirstHeader(HttpHeaders.LOCATION));
