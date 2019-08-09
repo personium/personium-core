@@ -1,3 +1,7 @@
+## 1.7.17
+IMPROVEMENTS:
+* Add IO logging with IO time. ([#446](https://github.com/personium/personium-core/issues/446))
+
 ## 1.7.16
 BUG FIXES:
 * Even if Depth:1 is specified in "Retrieve cell snapshot file setting" API, it is ignored. ([#439](https://github.com/personium/personium-core/issues/439))
