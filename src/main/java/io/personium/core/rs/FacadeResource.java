@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Cell;
@@ -95,6 +96,13 @@ public class FacadeResource {
             log.debug("    X-Personium-Via: " + headerPersoniumVia);
         }
 
+        String requestKey = ResourceUtils.validateXPersoniumRequestKey(headerPersoniumRequestKey);
+        if (headerPersoniumRequestKey == null) {
+            PersoniumCoreLog.Server.REQUEST_KEY.params("generated", requestKey).writeLog();
+        } else {
+            PersoniumCoreLog.Server.REQUEST_KEY.params("received", headerPersoniumRequestKey).writeLog();
+        }
+
         if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
             return new UnitResource(cookieAuthValue, cookiePeer, headerAuthz, headerHost,
                     headerPersoniumUnitUser, uriInfo);
@@ -122,10 +130,7 @@ public class FacadeResource {
 
             CellLockManager.incrementReferenceCount(cell.getId());
             httpServletRequest.setAttribute("cellId", cell.getId());
-            String requestKey = ResourceUtils.validateXPersoniumRequestKey(headerPersoniumRequestKey);
-            if (headerPersoniumRequestKey == null) {
-                log.debug("    Create RequestKey: " + requestKey);
-            }
+
             return new CellResource(ac, requestKey,
                     headerPersoniumEventId, headerPersoniumRuleChain, headerPersoniumVia, httpServletRequest);
         }
