@@ -150,6 +150,7 @@ public class TokenEndPointResource {
 
         // relsolve personium-localunit scheme url.
         String target = UriUtils.convertSchemeFromLocalUnitToHttp(pTarget);
+
         //Check the given target to prevent security attacks such as Header Injection.
         //eg. If p_target is not a URL and include line feed code, it creates a vulnerability of header injection.
         if (target != null) {
@@ -369,6 +370,9 @@ public class TokenEndPointResource {
                         .realm(cellUrl);
             }
         }
+
+        // relsolve personium-localunit scheme url.
+        targetClientId = UriUtils.resolveLocalUnit(targetClientId);
 
         //Check pw
         //· Since PW is a SAML token, it is parsed.
