@@ -43,6 +43,7 @@ import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.Privilege;
+import io.personium.core.utils.UriUtils;
 
 /**
  * A model object representing an ACL.
@@ -93,7 +94,7 @@ public final class Acl {
      * @param base baseUrl
      */
     public void setBase(String base) {
-        this.base = base;
+        this.base = UriUtils.convertSchemeFromHttpToLocalUnit(base);
     }
 
     /**
@@ -101,7 +102,7 @@ public final class Acl {
      * @return base
      */
     public String getBase() {
-        return base;
+        return UriUtils.convertSchemeFromLocalUnitToHttp(base);
     }
 
     /**
