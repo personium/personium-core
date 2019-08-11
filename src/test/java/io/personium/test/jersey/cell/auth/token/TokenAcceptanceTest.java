@@ -16,6 +16,7 @@
  */
 package io.personium.test.jersey.cell.auth.token;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -77,6 +78,37 @@ public class TokenAcceptanceTest extends PersoniumTest {
     }
 
     /**
+     * Should_FailRefreshingToken_When_NewClientSpecifiedForTokenWithoutSchema.
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws TokenRootCrtException
+     * @throws TokenDsigException
+     * @throws TokenParseException
+     */
+    @Test
+    public final void Should_FailRefreshingToken_When_NewClientSpecifiedForTokenWithoutSchema()
+            throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
+        String appCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String appCellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit);
+        String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
+
+        // Generate Refresh Token without schema (schema null)
+        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", null);
+
+        // Generate AppAuth Token
+        List<Role> roleList = new ArrayList<Role>();
+        TransCellAccessToken appAuthToken = new TransCellAccessToken(appCellUrl, appCellUrl + "#account1", usrCellUrl, roleList ,null);
+
+        // Refresh Token
+        HttpResponse res  = refreshToken(usrCellUrl, clrt.toTokenString(), null, appCellUrl, appAuthToken.toTokenString());
+        // Should be error
+        assertEquals(401, res.getStatusLine().getStatusCode());
+        log.info(parseJsonResponse(res).toString());
+
+    }
+
+    /**
      * Should_FailRefreshingToken_When_ClientIdNotMatchesSchemaInRefreshToken.
      * @throws IOException
      * @throws ClientProtocolException
@@ -87,24 +119,26 @@ public class TokenAcceptanceTest extends PersoniumTest {
     @Test
     public final void Should_FailRefreshingToken_When_ClientIdNotMatchesSchemaInRefreshToken()
             throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
-        String appCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String appCellLocalUnit1 = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String appCellLocalUnit2 = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA2 + ":/";
         String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
-        String appCellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit);
+        String appCellUrl1 = UriUtils.resolveLocalUnit(appCellLocalUnit1);
+        String appCellUrl2 = UriUtils.resolveLocalUnit(appCellLocalUnit2);
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
-        // Generate Refresh Token
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl);
+        // Generate Refresh Token without schema
+        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl2);
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
-        TransCellAccessToken appAuthToken = new TransCellAccessToken(appCellUrl, appCellUrl + "#account1", usrCellUrl, roleList ,null);
+        TransCellAccessToken appAuthToken = new TransCellAccessToken(appCellUrl1, appCellUrl1 + "#account1", usrCellUrl, roleList ,null);
 
         // Refresh Token
-        JsonObject res  = this.refreshToken(usrCellUrl, clrt.toTokenString(), appCellUrl, appCellUrl, appAuthToken.toTokenString());
-        log.info(res.toString());
+        HttpResponse res  = refreshToken(usrCellUrl, clrt.toTokenString(), appCellUrl2, appCellUrl1, appAuthToken.toTokenString());
 
         // Should be error
-
+        assertEquals(401, res.getStatusLine().getStatusCode());
+        log.info(parseJsonResponse(res).toString());
     }
 
 
@@ -132,8 +166,11 @@ public class TokenAcceptanceTest extends PersoniumTest {
         TransCellAccessToken appAuthToken = new TransCellAccessToken(appCellUrl, appCellUrl + "#account1", usrCellUrl, roleList ,null);
 
         // Refresh Token
-        JsonObject res  = this.refreshToken(usrCellUrl, clrt.toTokenString(), appCellUrl, appCellUrl, appAuthToken.toTokenString());
-        String at = res.getString(OAuth2Helper.Key.ACCESS_TOKEN);
+        HttpResponse res = refreshToken(usrCellUrl, clrt.toTokenString(), appCellUrl, appCellUrl, appAuthToken.toTokenString());
+        assertEquals(200, res.getStatusLine().getStatusCode());
+        JsonObject j  = parseJsonResponse(res);
+
+        String at = j.getString(OAuth2Helper.Key.ACCESS_TOKEN);
         log.info(at);
 
         TransCellAccessToken tcat = TransCellAccessToken.parse(at);
@@ -144,12 +181,81 @@ public class TokenAcceptanceTest extends PersoniumTest {
         assertTrue(aud.startsWith("http"));
     }
 
-    private JsonObject refreshToken(String cellUrl, String refreshToken, String pTarget)
+    /**
+     * Should_FailRefrehingToken__When_RefreshTokenHasSchemaButNoAppAuth.
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws TokenRootCrtException
+     * @throws TokenDsigException
+     * @throws TokenParseException
+     */
+    @Test
+    public final void Should_FailRefrehingToken__When_RefreshTokenHasSchemaButNoAppAuth()
+            throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
+        String appCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String appCellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit);
+        String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
+
+        // Generate Refresh Token
+        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl);
+
+        // Refresh Token
+        HttpResponse res = refreshToken(usrCellUrl, clrt.toTokenString(), null);
+        assertEquals(401, res.getStatusLine().getStatusCode());
+    }
+
+
+    /**
+     * Should_SuccessRefrehingToken__When_ClientIdNullAndRefreshTokenWithoutSchema.
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws TokenRootCrtException
+     * @throws TokenDsigException
+     * @throws TokenParseException
+     */
+    @Test
+    public final void Should_SuccessRefrehingToken__When_ClientIdNullAndRefreshTokenWithoutSchema()
+            throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
+        String appCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String appCellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit);
+        String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
+
+        // Generate Refresh Token
+        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", null);
+
+        // Refresh Token
+        HttpResponse res = refreshToken(usrCellUrl, clrt.toTokenString(), appCellUrl);
+        assertEquals(200, res.getStatusLine().getStatusCode());
+        JsonObject j  = parseJsonResponse(res);
+
+        String at = j.getString(OAuth2Helper.Key.ACCESS_TOKEN);
+        log.info(at);
+
+        TransCellAccessToken tcat = TransCellAccessToken.parse(at);
+        String aud = tcat.getTarget();
+        log.info(aud);
+
+        assertFalse(aud.startsWith(UriUtils.SCHEME_LOCALUNIT));
+        assertTrue(aud.startsWith("http"));
+    }
+
+
+    private static JsonObject parseJsonResponse(HttpResponse res) {
+        try (InputStream is = res.getEntity().getContent()){
+            return Json.createReader(is).readObject();
+        } catch (UnsupportedOperationException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static HttpResponse refreshToken(String cellUrl, String refreshToken, String pTarget)
             throws ClientProtocolException, IOException {
         return refreshToken(cellUrl, refreshToken, pTarget, null, null);
     }
 
-    private JsonObject refreshToken(String cellUrl, String refreshToken, String pTarget, String clientId, String clientSecret)
+    private static HttpResponse refreshToken(String cellUrl, String refreshToken, String pTarget, String clientId, String clientSecret)
             throws ClientProtocolException, IOException {
         HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_DEFAULT);
 
@@ -177,14 +283,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
 
         HttpEntity reqEntity = new StringEntity(sb.toString());
         post.setEntity(reqEntity);
-        HttpResponse res = client.execute(post);
-
-        try (InputStream is = res.getEntity().getContent()){
-            return Json.createReader(is).readObject();
-        }
+        return client.execute(post);
     }
-
-
-
 }
 

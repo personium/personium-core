@@ -38,9 +38,6 @@ import io.personium.plugin.base.auth.AuthPluginException;
 /**
  * Log message creation class.
  */
-/**
- * @author naoki
- */
 @SuppressWarnings("serial")
 public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
@@ -134,6 +131,18 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      */
     public static final PersoniumCoreAuthnException PASSWORD_CHANGE_REQUIRED =
             create("PR401-AN-0001", Error.UNAUTHORIZED_CLIENT);
+
+    /**
+     * Authenticated Client does not match the refresh token.
+     */
+    public static final PersoniumCoreAuthnException CLIENT_MISMATCH_FOR_REFRESH =
+            create("PR401-AN-0020", Error.INVALID_CLIENT);
+    /**
+     * Client auth required to refresh the token.
+     */
+    public static final PersoniumCoreAuthnException CLIENT_AUTH_REQUIRED =
+            create("PR401-AN-0021", Error.INVALID_CLIENT);
+
 
     /**
      * NetWork related error.

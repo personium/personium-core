@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.ws.rs.HeaderParam;
@@ -633,6 +634,15 @@ public class TokenEndPointResource {
         if (token.isRefreshExpired()) {
             throw PersoniumCoreAuthnException.TOKEN_EXPIRED.realm(this.cell.getUrl());
         }
+        String tSchema = token.getSchema();
+
+
+        if (!(Objects.equals(schema, tSchema) || schema == null && StringUtils.isEmpty(tSchema))) {
+            if (schema == null) {
+                throw PersoniumCoreAuthnException.CLIENT_AUTH_REQUIRED;
+            }
+            throw PersoniumCoreAuthnException.CLIENT_MISMATCH_FOR_REFRESH.params(schema);
+        }
 
         long issuedAt = new Date().getTime();
 
@@ -655,30 +665,32 @@ public class TokenEndPointResource {
                     cell.getOwnerNormalized(), cell.getUnitUrl());
 
             return this.responseAuthSuccess(uluut, null, issuedAt);
-        } else {
-            //Regenerate AccessToken and RefreshToken from received Refresh Token
-            IRefreshToken rToken = (IRefreshToken) token;
-            rToken = rToken.refreshRefreshToken(issuedAt, rTokenExpiresIn);
-
-            IAccessToken aToken = null;
-            if (rToken instanceof CellLocalRefreshToken) {
-                String subject = rToken.getSubject();
-                List<Role> roleList = cell.getRoleListForAccount(subject);
-                aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target, getIssuerUrl(), roleList, schema);
-            } else {
-                //Ask CELL to determine the role of you from the role of the token issuer.
-                List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
-                aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target,
-                        getIssuerUrl(), rolesHere, schema);
-            }
-
-            if (aToken instanceof TransCellAccessToken) {
-                log.debug("reissuing TransCell Token");
-                // aToken.addRole("admin");
-                // return this.responseAuthSuccess(tcToken);
-            }
-            return this.responseAuthSuccess(aToken, rToken, issuedAt);
         }
+
+
+
+        //Regenerate AccessToken and RefreshToken from received Refresh Token
+        IRefreshToken rToken = (IRefreshToken) token;
+        rToken = rToken.refreshRefreshToken(issuedAt, rTokenExpiresIn);
+
+        IAccessToken aToken = null;
+        if (rToken instanceof CellLocalRefreshToken) {
+            String subject = rToken.getSubject();
+            List<Role> roleList = cell.getRoleListForAccount(subject);
+            aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target, getIssuerUrl(), roleList, schema);
+        } else {
+            //Ask CELL to determine the role of you from the role of the token issuer.
+            List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
+            aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target,
+                    getIssuerUrl(), rolesHere, schema);
+        }
+
+        if (aToken instanceof TransCellAccessToken) {
+            log.debug("reissuing TransCell Token");
+            // aToken.addRole("admin");
+            // return this.responseAuthSuccess(tcToken);
+        }
+        return this.responseAuthSuccess(aToken, rToken, issuedAt);
     }
 
     private Response responseAuthSuccess(final IAccessToken accessToken, final IRefreshToken refreshToken,
