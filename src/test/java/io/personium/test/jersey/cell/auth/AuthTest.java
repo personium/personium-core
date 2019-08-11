@@ -1410,12 +1410,11 @@ public class AuthTest extends PersoniumTest {
     }
 
     /**
-     * １７．スキーマ付き自セルリフレッシュートランスセルトークン.
      */
     @Test
     public void スキーマ付き自セルリフレッシュートランスセルトークン() {
         try {
-            // Authenticate to user cell
+            // Authenticate at TEST_CELL1 without app auth
             TResponse res =
                     Http.request("authn/password-cl-c0.txt")
                             .with("remoteCell", TEST_CELL1)
@@ -1434,7 +1433,7 @@ public class AuthTest extends PersoniumTest {
                 fail();
             }
 
-            // Authenticate to app cell
+            // App Auth Token for TEST_CELL1
             TResponse res2 =
                     Http.request("authn/password-tc-c0.txt")
                             .with("remoteCell", TEST_APP_CELL1)
@@ -1447,7 +1446,7 @@ public class AuthTest extends PersoniumTest {
             String schemaTransCellAccessToken = (String) res2.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
 
             // ------------------------------
-            // Schema authentication (body)
+            // refresh at TEST_CELL1 adding app auth (body)
             // ------------------------------
             TResponse res3 = Http.request("authn/refresh-tc-cp.txt")
                     .with("remoteCell", TEST_CELL1)
@@ -1470,7 +1469,7 @@ public class AuthTest extends PersoniumTest {
             assertThat(aToken.getSubject(), is(UrlUtils.cellRoot(TEST_CELL1) + "#account1"));
 
             // ------------------------------
-            // Schema authentication (header)
+            // refresh at TEST_CELL1 adding app auth  (header)
             // ------------------------------
             String schemaTransCellAccessTokenHeader = PersoniumCoreUtils.createBasicAuthzHeader(
                     UrlUtils.cellRoot(TEST_APP_CELL1), schemaTransCellAccessToken);
