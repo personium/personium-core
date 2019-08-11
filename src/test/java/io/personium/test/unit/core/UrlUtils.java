@@ -444,7 +444,7 @@ public final class UrlUtils {
     public static String roleResource(final String cellName, final String boxName, final String roleName) {
         String box = null;
         if (boxName == null) {
-            box = Box.DEFAULT_BOX_NAME;
+            box = Box.MAIN_BOX_NAME;
         } else {
             box = boxName;
         }
@@ -502,7 +502,7 @@ public final class UrlUtils {
      * @return unit local RelationClassURL
      */
     public static String unitLocalRelationClassUrl(final String cellName, final String relationName) {
-        return String.format("%s%s/__relation/__/%s", UriUtils.SCHEME_UNIT_URI, cellName, relationName);
+        return String.format("%s%s/__relation/__/%s", UriUtils.SCHEME_LOCALUNIT + ":/", cellName, relationName);
     }
 
     /**
@@ -522,7 +522,7 @@ public final class UrlUtils {
      * @return unit local RoleClassURL
      */
     public static String unitLocalRoleClassUrl(final String cellName, final String roleName) {
-        return String.format("%s%s/__role/__/%s", UriUtils.SCHEME_UNIT_URI, cellName, roleName);
+        return String.format("%s%s/__role/__/%s", UriUtils.SCHEME_LOCALUNIT + ":/", cellName, roleName);
     }
 
     /**

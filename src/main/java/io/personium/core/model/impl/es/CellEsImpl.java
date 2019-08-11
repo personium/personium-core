@@ -136,7 +136,6 @@ public class CellEsImpl implements Cell {
         CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", cellName);
         if (cell != null) {
             cell.url = PersoniumUnitConfig.getBaseUrl() + cell.name + "/";
-            cell.owner = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), cell.owner);
         }
         return cell;
     }
@@ -262,7 +261,7 @@ public class CellEsImpl implements Cell {
             return UriUtils.convertPathBaseToFqdnBase(url);
         } catch (URISyntaxException e) {
             // Usually it does not occur.
-            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR.reason(e);
         }
     }
 
@@ -284,9 +283,14 @@ public class CellEsImpl implements Cell {
     }
 
     @Override
-    public String getOwner() {
+    public String getOwnerNormalized() {
+        return UriUtils.convertSchemeFromLocalUnitToHttp(this.owner);
+    }
+    @Override
+    public String getOwnerRaw() {
         return this.owner;
     }
+
 
     @Override
     public String getDataBundleNameWithOutPrefix() {
@@ -329,7 +333,7 @@ public class CellEsImpl implements Cell {
         }
 
         // check that Main Box is empty
-        Box defaultBox = this.getBoxForName(Box.DEFAULT_BOX_NAME);
+        Box defaultBox = this.getBoxForName(Box.MAIN_BOX_NAME);
         BoxCmp defaultBoxCmp = ModelFactory.boxCmp(defaultBox);
         if (!defaultBoxCmp.isEmpty()) {
             return false;
@@ -374,7 +378,7 @@ public class CellEsImpl implements Cell {
 
         // Delete event log file.
         try {
-            EventUtils.deleteEventLog(this.getId(), this.getOwner());
+            EventUtils.deleteEventLog(this.getId(), this.getOwnerNormalized());
         } catch (BinaryDataAccessException e) {
             // If the deletion fails, output a log and continue processing.
             log.warn("Delete EventLog Failed." + cellInfoLog, e);
@@ -433,7 +437,7 @@ public class CellEsImpl implements Cell {
 
     @Override
     public Box getBoxForName(String boxName) {
-        if (Box.DEFAULT_BOX_NAME.equals(boxName)) {
+        if (Box.MAIN_BOX_NAME.equals(boxName)) {
             return new Box(this, null);
         }
 
@@ -466,7 +470,7 @@ public class CellEsImpl implements Cell {
     @Override
     public Box getBoxForSchema(String boxSchema) {
         //Retrieving the schema name list (including aliases)
-        List<String> boxSchemas = UriUtils.getUrlVariations(this.getUnitUrl(), boxSchema);
+        List<String> boxSchemas = UriUtils.getUrlVariations(boxSchema);
 
         ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
         for (int i = 0; i < boxSchemas.size(); i++) {
@@ -656,7 +660,7 @@ public class CellEsImpl implements Cell {
         }
 
         //It is not permitted to designate the cell URL portion of the role resource different from the cell URL of the ACL setting target
-        if (!(this.getUrl().equals(role.getBaseUrl()))) {
+        if (!UriUtils.equalIgnoringPort(this.getUrl(), role.getBaseUrl())) {
             PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Cell different").writeLog();
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
@@ -668,7 +672,7 @@ public class CellEsImpl implements Cell {
         Map<String, Object> query = QueryMapFactory.filteredQuery(null, QueryMapFactory.mustQuery(queries));
 
         List<Map<String, Object>> filters = new ArrayList<Map<String, Object>>();
-        if (!(Box.DEFAULT_BOX_NAME.equals(role.getBoxName()))) {
+        if (!(Box.MAIN_BOX_NAME.equals(role.getBoxName()))) {
             //Add search queries when Role is tied to a box
             Box targetBox = this.getBoxForName(role.getBoxName());
             if (targetBox == null) {
@@ -773,7 +777,7 @@ public class CellEsImpl implements Cell {
             //Number of search result output setting
             QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
 
-            List<String> list = UriUtils.getUrlVariations(this.getUnitUrl(), extCell);
+            List<String> list = UriUtils.getUrlVariations(extCell);
             for (int i = 0; i < list.size(); i++) {
                 String extCellUrl = list.get(i);
                 try {
@@ -822,7 +826,7 @@ public class CellEsImpl implements Cell {
         EntitiesResponse response = null;
         //Number of search result output setting
         QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
-        List<String> list = UriUtils.getUrlVariations(this.getUnitUrl(), extCell);
+        List<String> list = UriUtils.getUrlVariations(extCell);
         for (int i = 0; i < list.size(); i++) {
             try {
                 String extCellUrl = list.get(i);

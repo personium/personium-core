@@ -64,7 +64,7 @@ public class TokenEndPointResourceTest {
      * Before.
      */
     @Before
-    public void befor() {
+    public void before() {
         tokenEndPointResource = spy(new TokenEndPointResource(null, null));
     }
 

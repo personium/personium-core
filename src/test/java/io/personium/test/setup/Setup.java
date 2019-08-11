@@ -357,7 +357,7 @@ public class Setup extends AbstractCase {
         for (int i = 0; i < NUM_ROLES; i++) {
             // ExtRole作成
             ExtRoleConfig extRole = new ExtRoleConfig();
-            extRole.extRole = UrlUtils.roleResource(extCell, Box.DEFAULT_BOX_NAME, "role" + i);
+            extRole.extRole = UrlUtils.roleResource(extCell, Box.MAIN_BOX_NAME, "role" + i);
             extRole.relationName = CELL_RELATION;
             extRole.relationBoxName = null;
             extRoles.add(extRole);

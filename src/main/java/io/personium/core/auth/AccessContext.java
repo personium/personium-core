@@ -396,7 +396,7 @@ public class AccessContext {
                 || TYPE_UNIT_ADMIN.equals(type)) {
             return true;
         } else if ((TYPE_UNIT_USER.equals(type) || TYPE_UNIT_LOCAL.equals(type))
-                && getSubject().equals(getCell().getOwner())) {
+                && getSubject().equals(getCell().getOwnerNormalized())) {
             //↑ Unit user, Unit For local unit users, this is valid only when the unit owner name included in the token and the cell owner to be processed match.
             return true;
         }
@@ -414,7 +414,7 @@ public class AccessContext {
             return true;
         } else if (TYPE_UNIT_ADMIN.equals(type)
                 || ((TYPE_UNIT_USER.equals(type) || TYPE_UNIT_LOCAL.equals(type)) //NOPMD - To maintain readability
-                        && getSubject().equals(getCell().getOwner()))) {
+                        && getSubject().equals(getCell().getOwnerNormalized()))) {
             // In the case of a UnitUser or UnitLocal, it is effective only when the unit owner name included
             // in the processing target cell owner and the token matches.
 
@@ -532,7 +532,7 @@ public class AccessContext {
      */
     public void checkSchemaMatches(Box box) {
         if (box != null) {
-            String boxSchema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema());
+            String boxSchema = UriUtils.convertSchemeFromLocalUnitToHttp(box.getSchema());
             String tokenSchema = getSchema();
 
             // Do not check if box schema is not set.
@@ -887,8 +887,8 @@ public class AccessContext {
 
         String issuer = tca.getIssuer();
         if ((tca.getTarget().equals(baseUri) || tca.getTarget().equals(escapedBaseUri))
-                && (PersoniumUnitConfig.checkUnitUserIssuers(issuer, baseUri)
-                        || PersoniumUnitConfig.checkUnitUserIssuers(issuer, escapedBaseUri))) {
+                && (PersoniumUnitConfig.checkUnitUserIssuers(issuer)
+                        || PersoniumUnitConfig.checkUnitUserIssuers(issuer))) {
             //Processing unit user tokens
             ret.accessType = TYPE_UNIT_USER;
             ret.subject = tca.getSubject();
@@ -896,12 +896,12 @@ public class AccessContext {
 
             //Take role information and if you have unit admin roll, promote to unit admin.
             List<Role> roles = tca.getRoles();
-            Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.DEFAULT_BOX_NAME, null, tca.getIssuer());
+            Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.MAIN_BOX_NAME, null, tca.getIssuer());
             String unitAdminRoleUrl = unitAdminRole.createUrl();
-            Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.DEFAULT_BOX_NAME,
+            Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.MAIN_BOX_NAME,
                     null, tca.getIssuer());
             String cellContentsReaderUrl = cellContentsReaderRole.createUrl();
-            Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.DEFAULT_BOX_NAME,
+            Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.MAIN_BOX_NAME,
                     null, tca.getIssuer());
             String cellContentsAdminUrl = cellContentsAdminRole.createUrl();
 

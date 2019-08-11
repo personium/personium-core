@@ -101,9 +101,9 @@ public class AuthCheckTest extends PersoniumTest {
     static final String EXTCELL_URL = UrlUtils.extCellResource(CELL_NAME1, UrlUtils.cellRoot(CELL_NAME2));
     static final String ROLE_URI = UrlUtils.roleUrl(CELL_NAME1, null, ROLE_NAME);
     static final String RELATION_BOX_NAME = null;
-    static final String EXTROLE_NAME1 = UrlUtils.roleResource(APP_CELL_NAME, Box.DEFAULT_BOX_NAME, ROLE_NAME1);
-    static final String EXTROLE_NAME2 = UrlUtils.roleResource(CELL_NAME2, Box.DEFAULT_BOX_NAME, ROLE_NAME2);
-    static final String EXTROLE_NAME4 = UrlUtils.roleResource(APP_CELL_NAME, Box.DEFAULT_BOX_NAME, ROLE_NAME4);
+    static final String EXTROLE_NAME1 = UrlUtils.roleResource(APP_CELL_NAME, Box.MAIN_BOX_NAME, ROLE_NAME1);
+    static final String EXTROLE_NAME2 = UrlUtils.roleResource(CELL_NAME2, Box.MAIN_BOX_NAME, ROLE_NAME2);
+    static final String EXTROLE_NAME4 = UrlUtils.roleResource(APP_CELL_NAME, Box.MAIN_BOX_NAME, ROLE_NAME4);
 
     /**
      * コンストラクタ.
@@ -158,7 +158,7 @@ public class AuthCheckTest extends PersoniumTest {
             TransCellAccessToken aToken = TransCellAccessToken.parse(transCellAccessToken);
 
             // 取得トークン内のロール確認
-            assertEquals(UrlUtils.roleResource(testCellName, Box.DEFAULT_BOX_NAME, roleNameNoneBox),
+            assertEquals(UrlUtils.roleResource(testCellName, Box.MAIN_BOX_NAME, roleNameNoneBox),
                     aToken.getRoles().get(0).createUrl());
         } finally {
 
@@ -381,7 +381,7 @@ public class AuthCheckTest extends PersoniumTest {
             String token1RoleUrl = tokenRoles1.get(0).createUrl();
 
             // 取得トークン内のロール確認
-            assertEquals(UrlUtils.roleResource(testCellName1, Box.DEFAULT_BOX_NAME, roleName), token1RoleUrl);
+            assertEquals(UrlUtils.roleResource(testCellName1, Box.MAIN_BOX_NAME, roleName), token1RoleUrl);
 
             // テスト２（user3でのアクセス時にTCAT内にrole2が入っていないこと）
             List<Role> tokenRoles2 = this.checkTransCellAccessToken(testCellName1,
@@ -505,7 +505,7 @@ public class AuthCheckTest extends PersoniumTest {
             // テスト環境がロール１つのため、１以外はテスト失敗
             assertEquals(1, tokenRoles1.size());
             // 取得トークン内のロール確認
-            assertEquals(UrlUtils.roleResource(CELL_NAME1, Box.DEFAULT_BOX_NAME, ROLE_NAME),
+            assertEquals(UrlUtils.roleResource(CELL_NAME1, Box.MAIN_BOX_NAME, ROLE_NAME),
                     tokenRoles1.get(0).createUrl());
 
             // テスト２（user2でのアクセス時にTCAT内にdoctorが入っていること）
@@ -514,7 +514,7 @@ public class AuthCheckTest extends PersoniumTest {
             // テスト環境がロール１つのため、１以外はテスト失敗
             assertEquals(1, tokenRoles2.size());
             // 取得トークン内のロール確認
-            assertEquals(UrlUtils.roleResource(CELL_NAME1, Box.DEFAULT_BOX_NAME, ROLE_NAME),
+            assertEquals(UrlUtils.roleResource(CELL_NAME1, Box.MAIN_BOX_NAME, ROLE_NAME),
                     tokenRoles2.get(0).createUrl());
 
             // テスト３（user3でのアクセス時にTCAT内にdoctorが入っていないこと）

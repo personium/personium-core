@@ -1012,9 +1012,9 @@ public class AuthzEndPointResource {
             //title
             paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
             //Ansel's profile.json
-            paramsList.add(clientId + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
+            paramsList.add(clientId + Box.MAIN_BOX_NAME + PROFILE_JSON_NAME);
             //Data cell profile.json
-            paramsList.add(cell.getUrl() + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
+            paramsList.add(cell.getUrl() + Box.MAIN_BOX_NAME + PROFILE_JSON_NAME);
             //title
             paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
             //Callee
@@ -1084,9 +1084,9 @@ public class AuthzEndPointResource {
             //title
             paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
             //Ansel's profile.json
-            paramsList.add(clientId + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
+            paramsList.add(clientId + Box.MAIN_BOX_NAME + PROFILE_JSON_NAME);
             //Data cell profile.json
-            paramsList.add(cell.getUrl() + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
+            paramsList.add(cell.getUrl() + Box.MAIN_BOX_NAME + PROFILE_JSON_NAME);
             //title
             paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
             //Callee

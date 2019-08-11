@@ -125,7 +125,7 @@ public class AuthTest extends PersoniumTest {
     static final int READ_PROP = 7;
 
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public AuthTest() {
         super(new PersoniumCoreApplication());
@@ -394,22 +394,23 @@ public class AuthTest extends PersoniumTest {
     public final void ターゲットhttp外部セルのurlがlocalunitの場合でもトークン発行できること_外部セルにロールが直接わりあてられている場合() {
         String httpCell1Url = UrlUtils.cellRoot(TEST_CELL1);
         String httpCell2Url = UrlUtils.cellRoot(TEST_CELL2);
-        String localunitCell1Url = "personium-localunit:/" + TEST_CELL1 + "/";
+        String localunitCell1Url = "personium-localunit:" + TEST_CELL1 + ":/";
         String transCellAccessToken = null;
         String testfile = "testfile.txt";
         String testrole = "transCellTestRole";
         String roleUrl = UrlUtils.roleUrl(TEST_CELL2, null, testrole);
-        // main box を使用（box1にはACL設定がありテストには不適切であるため）
+        // use main box (box1 has ACL settings and not suitable for testing)
         String testBox = "__";
 
-        // dcTargetの値がhttpの場合
+        // When p_target is http URL
         try {
-            // テスト準備  （MASTER_TOKENで実施）
-            // 1.ExtCell更新
-            // Setupでセル２に外部セルとして登録されているセル１のhttpのURLをpersonium-localunitに一時的に更新。
+            // Preparing Test (with MASTER_TOKEN)
+            // 1. Update ExtCell
+            //  temporarily update the preregistered (by Setup) ExtCell entry on cell 2 that points to cell 1
+            //  using http URL, so that it will point to the same cell but using personium-localunit scheme.
             ExtCellUtils.update(MASTER_TOKEN, TEST_CELL2, httpCell1Url, localunitCell1Url, HttpStatus.SC_NO_CONTENT);
 
-            // Role作成
+            //   Create Role
             RoleUtils.create(TEST_CELL2, MASTER_TOKEN, testrole, HttpStatus.SC_CREATED);
 
             // 2.セル2の設定として、この外部セルにロール１を割当。
@@ -518,7 +519,7 @@ public class AuthTest extends PersoniumTest {
     public final void 外部セルのurlがlocalunitの場合でもトークン発行できること_外部セルにリレーションが割り当てられさらにリレーションにロールが割り当てられている場合() {
         String httpCell1Url = UrlUtils.cellRoot(TEST_CELL1);
         String httpCell2Url = UrlUtils.cellRoot(TEST_CELL2);
-        String localunitCell1Url = "personium-localunit:/" + TEST_CELL1 + "/";
+        String localunitCell1Url = "personium-localunit:" + TEST_CELL1 + ":/";
         String transCellAccessToken = null;
         String testfile = "testfile.txt";
         String testrole = "transCellTestRole";
@@ -526,7 +527,7 @@ public class AuthTest extends PersoniumTest {
         // main box を使用（box1にはACL設定がありテストには不適切であるため）
         String testBox = "__";
 
-        // dcTargetの値がhttpの場合
+        // When p_target URL is http
         try {
             // テスト準備  （MASTER_TOKENで実施）
             // 1.ExtCell更新

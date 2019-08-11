@@ -67,7 +67,7 @@ public class UnitCtlResource extends ODataResource {
      * @param accessContext AccessContext
      */
     public UnitCtlResource(AccessContext accessContext) {
-        super(accessContext, UriUtils.SCHEME_UNIT_URI + "__ctl/",
+        super(accessContext, UriUtils.SCHEME_LOCALUNIT + ":/__ctl/",
                 ModelFactory.ODataCtl.unitCtl(accessContext));
         checkReferenceMode(accessContext);
     }
@@ -135,7 +135,7 @@ public class UnitCtlResource extends ODataResource {
             // If there is a Subject value in UnitUserToken, set that value to Owner.
             String subject = this.getAccessContext().getSubject();
             if (subject != null) {
-                String owner = UriUtils.convertSchemeFromHttpToLocalUnit(getAccessContext().getBaseUri(), subject);
+                String owner = UriUtils.convertSchemeFromHttpToLocalUnit(subject);
                 oEntityWrapper.put("Owner", owner);
             }
         }
@@ -187,7 +187,7 @@ public class UnitCtlResource extends ODataResource {
     public void afterDelete(final String entitySetName, final OEntityKey oEntityKey) {
         if (Cell.EDM_TYPE_NAME.equals(entitySetName)) {
             //Delete event log if it exists under Cell
-            String owner = cell.getOwner();
+            String owner = cell.getOwnerNormalized();
             try {
                 EventUtils.deleteEventLog(this.cell.getId(), owner);
             } catch (BinaryDataAccessException e) {
@@ -236,7 +236,7 @@ public class UnitCtlResource extends ODataResource {
     @Override
     public void checkAccessContextPerEntity(AccessContext ac, OEntityWrapper oew) {
         Map<String, Object> meta = oew.getMetadata();
-        String owner = UriUtils.convertSchemeFromLocalUnitToHttp(ac.getBaseUri(), (String) meta.get("Owner"));
+        String owner = UriUtils.convertSchemeFromLocalUnitToHttp((String) meta.get("Owner"));
 
         // In case of master token, no check is required.
         if (AccessContext.TYPE_UNIT_MASTER.equals(ac.getType())

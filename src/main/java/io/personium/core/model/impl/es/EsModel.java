@@ -203,7 +203,7 @@ public class EsModel {
     }
 
     static EntitySetAccessor cell(final Cell cell, final String type) {
-        String userUri = cell.getOwner();
+        String userUri = cell.getOwnerNormalized();
         return new ODataEntityAccessor(idxUser(userUri), type, cell.getId());
     }
 
@@ -222,7 +222,7 @@ public class EsModel {
      * @return Type object
      */
     public static ODataLinkAccessor cellCtlLink(final Cell cell) {
-        String userUri = cell.getOwner();
+        String userUri = cell.getOwnerNormalized();
         return new ODataLinkAccessor(idxUser(userUri), TYPE_CTL_LINK, cell.getId());
     }
 
@@ -245,7 +245,7 @@ public class EsModel {
      * @return BulkDataAccessor
      */
     public static DataSourceAccessor batch(final Cell cell) {
-        return new DataSourceAccessor(idxUser(cell.getOwner()));
+        return new DataSourceAccessor(idxUser(cell.getOwnerNormalized()));
     }
 
     /**

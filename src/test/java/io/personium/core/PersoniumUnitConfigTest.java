@@ -19,13 +19,12 @@ package io.personium.core;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.test.categories.Unit;
@@ -51,8 +50,8 @@ public class PersoniumUnitConfigTest {
 
         PowerMockito.doReturn("host.domain").when(PersoniumCoreUtils.class, "getFQDN");
         PowerMockito.doReturn("https").when(PersoniumUnitConfig.class, "getUnitScheme");
-        PowerMockito.doReturn(-1).when(PersoniumUnitConfig.class, "getUnitPort");
-        assertThat(PersoniumUnitConfig.getBaseUrl(), is("https://host.domain/"));
+        PowerMockito.doReturn(9998).when(PersoniumUnitConfig.class, "getUnitPort");
+        assertThat(PersoniumUnitConfig.getBaseUrl(), is("https://host.domain:9998/"));
 
         PowerMockito.doReturn("host.domain").when(PersoniumCoreUtils.class, "getFQDN");
         PowerMockito.doReturn("http").when(PersoniumUnitConfig.class, "getUnitScheme");

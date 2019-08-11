@@ -745,7 +745,7 @@ public class ODataCollectionAccessControlTest extends PersoniumTest {
         for (String privilege : privileges) {
             acl.getAce().add(DavResourceUtils.createAce(false, role, privilege));
         }
-        acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.DEFAULT_BOX_NAME));
+        acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.MAIN_BOX_NAME));
         return DavResourceUtils.setAcl(token, CELL_NAME, BOX_NAME, collection, acl, code);
     }
 

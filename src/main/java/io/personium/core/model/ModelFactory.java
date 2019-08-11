@@ -26,7 +26,6 @@ import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
 import io.personium.core.model.impl.fs.BoxCmpFsImpl;
 import io.personium.core.model.impl.fs.CellCmpFsImpl;
 import io.personium.core.model.impl.fs.CellSnapshotCellCmpFsImpl;
-import io.personium.core.odata.PersoniumODataProducer;
 
 /**
  * Factory class of model object.
@@ -105,20 +104,20 @@ public final class ModelFactory {
      */
     public static class ODataCtl {
         /**
-         * Returns the ODataProducer handling the Unit management entity.
+         * Returns the ODataProducer handling the Unit control objects.
          * @param ac access context
-         * @return Unit ODataProducer handling management entities
+         * @return UnitCtlODataProducer
          */
-        public static PersoniumODataProducer unitCtl(AccessContext ac) {
+        public static UnitCtlODataProducer unitCtl(AccessContext ac) {
             return new UnitCtlODataProducer(ac);
         }
 
         /**
-         * Returns the ODataProducer handling the Cell management entity.
+         * Returns the ODataProducer handling the Cell control objects.
          * @param cell Cell's Cell
-         * @return ODataProducer handling Cell management entities
+         * @return CellCtlODataProducer
          */
-        public static PersoniumODataProducer cellCtl(final Cell cell) {
+        public static CellCtlODataProducer cellCtl(final Cell cell) {
             return new CellCtlODataProducer(cell);
         }
 
@@ -126,9 +125,9 @@ public final class ModelFactory {
          * Return ODataProducer for producing OData about message.
          * @param cell target cell object
          * @param davRsCmp DavRsCmp
-         * @return PersoniumODataProducer MessageODataProducer
+         * @return MessageODataProducer MessageODataProducer
          */
-        public static PersoniumODataProducer message(final Cell cell, final DavRsCmp davRsCmp) {
+        public static MessageODataProducer message(final Cell cell, final DavRsCmp davRsCmp) {
             return new MessageODataProducer(cell, davRsCmp);
         }
 
@@ -136,9 +135,9 @@ public final class ModelFactory {
          * Return ODataProducer of user data schema.
          * @param cell Cell
          * @param davCmp DavCmp
-         * @return ODataProducer
+         * @return UserSchemaODataProducer
          */
-        public static PersoniumODataProducer userSchema(final Cell cell, final DavCmp davCmp) {
+        public static UserSchemaODataProducer userSchema(final Cell cell, final DavCmp davCmp) {
             return new UserSchemaODataProducer(cell, davCmp);
         }
 
@@ -146,9 +145,9 @@ public final class ModelFactory {
          * Return ODataProducer of user data.
          * @param cell Cell
          * @param davCmp DavCmp
-         * @return ODataProducer
+         * @return UserDataODataProducer
          */
-        public static PersoniumODataProducer userData(final Cell cell, final DavCmp davCmp) {
+        public static UserDataODataProducer userData(final Cell cell, final DavCmp davCmp) {
             return new UserDataODataProducer(cell, davCmp);
         }
 

@@ -538,14 +538,14 @@ public class PersoniumUnitConfig {
         }
     }
 
-    private static boolean isSpaceSeparatedValueIncluded(String spaceSeparatedValue, String testValue, String unitUrl) {
+    private static boolean isSpaceSeparatedValueIncluded(String spaceSeparatedValue, String testValue) {
         if (testValue == null || spaceSeparatedValue == null) {
             return false;
         }
         String[] values = spaceSeparatedValue.split(" ");
         for (String val : values) {
             // Correspondence when "localunit" is set for issuers.
-            String convertedValue = UriUtils.convertSchemeFromLocalUnitToHttp(unitUrl, val);
+            String convertedValue = UriUtils.convertSchemeFromLocalUnitToHttp(val);
             if (testValue.equals(convertedValue)) {
                 return true;
             }
@@ -1614,8 +1614,8 @@ public class PersoniumUnitConfig {
      * @param unitUrl Unit URL
      * @return Included:true
      */
-    public static boolean checkUnitUserIssuers(String url, String unitUrl) {
-        return isSpaceSeparatedValueIncluded(getUnitUserIssuers(), url, unitUrl);
+    public static boolean checkUnitUserIssuers(String url) {
+        return isSpaceSeparatedValueIncluded(getUnitUserIssuers(), url);
     }
 
     /**

@@ -927,7 +927,7 @@ public class MoveFileAccessControlTest extends PersoniumTest {
         privileges.add("bind");
         privileges.add("unbind");
         acl.getAce().add(DavResourceUtils.createAce(false, ROLE_BIND_AND_UNBIND_PREVILEGE, privileges));
-        acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.DEFAULT_BOX_NAME));
+        acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.MAIN_BOX_NAME));
 
         DavResourceUtils.setAcl(MASTER_TOKEN, CELL_NAME, BOX_NAME, collection, acl, HttpStatus.SC_OK);
     }

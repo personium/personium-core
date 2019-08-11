@@ -88,19 +88,19 @@ public class BoxUrlTest extends ODataCommon {
     }
 
     /**
-     * 指定したローカルユニットschemaのBoxURLがLocalUnitで取得できること.
+     * URL of a box whose Schema URL is personium-localunit scheme should be obtained by querying with Http URL.
      */
     @Test
-    public final void schemaパラメタとしてhttpURLの指定でlocalunitURLをschemaとするBoxが取得できること() {
+    public final void URLofBox_withLocalUnitURLSchema_shouldBeObtainedBy_QueryingWith_HttpURL() {
         try {
-            // テスト準備
-            // スキーマ設定(Box更新)
+            // preparing test
+            // (Update Box and change Schema)
             // Setupでセル1にBoxのSchemaとして登録されている urlをhttpからpersonium-localunitに一時的に更新。
             BoxUtils.update(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                     Setup.TEST_BOX1, "*", Setup.TEST_BOX1,
-                    UriUtils.SCHEME_UNIT_URI + Setup.TEST_CELL_SCHEMA1 + "/", HttpStatus.SC_NO_CONTENT);
+                    UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/", HttpStatus.SC_NO_CONTENT);
 
-            // テスト実施
+            // Run Test
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
             PersoniumResponse res = null;
 
@@ -117,7 +117,7 @@ public class BoxUrlTest extends ODataCommon {
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
-            // Box Schema更新（元に戻す）
+            // Update Box Schema (restore)
             BoxUtils.update(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                     Setup.TEST_BOX1, "*", Setup.TEST_BOX1,
                     UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), HttpStatus.SC_NO_CONTENT);
@@ -125,10 +125,10 @@ public class BoxUrlTest extends ODataCommon {
     }
 
     /**
-     * schemaパラメタとしてhttpURLの指定でlocalunitURLをschemaとするBoxが取得できること.
+     * URL of a box whose Schema URL is Http scheme should be obtained by querying with personium-localunit URL.
      */
     @Test
-    public final void schemaパラメタとしてlocalunitURLの指定でhttpURLをschemaとするBoxが取得できること() {
+    public final void URLofBox_withHttpURLSchema_shouldBeObtainedBy_QueryingWith_LocalUnitURL() {
         try {
             // Setupを流用
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
@@ -137,9 +137,9 @@ public class BoxUrlTest extends ODataCommon {
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
-            String localunitUrl = UriUtils.SCHEME_UNIT_URI + Setup.TEST_CELL_SCHEMA1 + "/";
-            res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, localunitUrl), requestheaders);
+            String localunitUrl = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+            String boxUrlApiUrl = UrlUtils.boxUrl(Setup.TEST_CELL1, localunitUrl);
+            res = rest.getAcceptEncodingGzip(boxUrlApiUrl , requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1 + "/"),
                     res.getFirstHeader(HttpHeaders.LOCATION));

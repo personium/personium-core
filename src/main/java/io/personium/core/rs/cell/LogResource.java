@@ -279,7 +279,7 @@ public class LogResource {
         }
 
         String cellId = davRsCmp.getCell().getId();
-        String owner = davRsCmp.getCell().getOwner();
+        String owner = davRsCmp.getCell().getOwnerNormalized();
 
         //Get the path of the log file
         StringBuilder logFileName = EventUtils.getEventLogDir(cellId, owner);
@@ -383,7 +383,7 @@ public class LogResource {
         }
 
         String cellId = davRsCmp.getCell().getId();
-        String owner = davRsCmp.getCell().getOwner();
+        String owner = davRsCmp.getCell().getOwnerNormalized();
 
         //Delete event log file
         StringBuilder logFilePath = EventUtils.getEventLogDir(cellId, owner);

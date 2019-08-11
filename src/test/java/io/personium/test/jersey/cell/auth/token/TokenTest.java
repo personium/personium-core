@@ -47,7 +47,7 @@ import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 
 /**
- * トークンのテスト.
+ * Access Token Acceptance test.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
@@ -62,7 +62,7 @@ public class TokenTest extends PersoniumTest {
     static final int MILLISECS_IN_AN_MINITE = 60 * 1000;
 
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public TokenTest() {
         super(new PersoniumCoreApplication());

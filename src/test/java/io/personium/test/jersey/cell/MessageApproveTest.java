@@ -69,14 +69,14 @@ import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 
 /**
- * メッセージ承認APIのテスト.
+ * Message Approval API test.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class MessageApproveTest extends ODataCommon {
 
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public MessageApproveTest() {
         super(new PersoniumCoreApplication());

@@ -316,9 +316,9 @@ public class MessageODataProducer extends CellCtlODataProducer {
         if (extCellDocHandler == null) {
             String convertedTargetUrl;
             if (UriUtils.isLocalUnitUrl(targetUrl)) {
-                convertedTargetUrl = UriUtils.convertSchemeFromLocalUnitToHttp(this.cell.getUnitUrl(), targetUrl);
+                convertedTargetUrl = UriUtils.convertSchemeFromLocalUnitToHttp(targetUrl);
             } else {
-                convertedTargetUrl = UriUtils.convertSchemeFromHttpToLocalUnit(this.cell.getUnitUrl(), targetUrl);
+                convertedTargetUrl = UriUtils.convertSchemeFromHttpToLocalUnit(targetUrl);
             }
             Map<String, Object> convertedExtCellKeyMap = new HashMap<>();
             convertedExtCellKeyMap.put(Common.P_URL.getName(), convertedTargetUrl);
@@ -470,9 +470,9 @@ public class MessageODataProducer extends CellCtlODataProducer {
         if (extCellDocHandler == null) {
             String convertedTargetUrl;
             if (UriUtils.isLocalUnitUrl(targetUrl)) {
-                convertedTargetUrl = UriUtils.convertSchemeFromLocalUnitToHttp(this.cell.getUnitUrl(), targetUrl);
+                convertedTargetUrl = UriUtils.convertSchemeFromLocalUnitToHttp(targetUrl);
             } else {
-                convertedTargetUrl = UriUtils.convertSchemeFromHttpToLocalUnit(this.cell.getUnitUrl(), targetUrl);
+                convertedTargetUrl = UriUtils.convertSchemeFromHttpToLocalUnit(targetUrl);
             }
             Map<String, Object> convertedExtCellKeyMap = new HashMap<>();
             convertedExtCellKeyMap.put(Common.P_URL.getName(), convertedTargetUrl);
@@ -694,7 +694,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
         log.debug(String.format("ClassUrl = [%s]", classUrl));
 
         // convert localunitUrl to unitUrl
-        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), classUrl);
+        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(classUrl);
         Pattern pattern = Pattern.compile(regex);
         Matcher m = pattern.matcher(convertedRequestRelation);
         if (m.matches()) {
@@ -718,7 +718,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
         log.debug(String.format("RequestRelation = [%s]", classUrl));
 
         // convert localunitUrl to unitUrl
-        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), classUrl);
+        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(classUrl);
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(convertedRequestRelation);
         if (matcher.matches()) {

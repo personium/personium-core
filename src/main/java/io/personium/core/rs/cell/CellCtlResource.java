@@ -29,7 +29,6 @@ import org.odata4j.core.OEntityKey;
 import org.odata4j.core.OProperty;
 
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.CellPrivilege;
@@ -285,8 +284,7 @@ public final class CellCtlResource extends ODataResource {
                 }
             }
 
-            String error = validateRule(PersoniumUnitConfig.getBaseUrl(),
-                    external, subject, type, object, info, action, targetUrl, boxBound);
+            String error = validateRule(external, subject, type, object, info, action, targetUrl, boxBound);
             if (error != null) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(error);
             }
@@ -306,16 +304,15 @@ public final class CellCtlResource extends ODataResource {
      * @param boxBound flag of box bounded
      * @return property name of format error
      */
-    public static String validateRule(String unitUrl,
-            Boolean external, String subject,
+    public static String validateRule(Boolean external, String subject,
             String type, String object, String info, String action, String targetUrl, Boolean boxBound) {
 
         // check if convert scheme to localunit
-        String converted = UriUtils.convertSchemeFromHttpToLocalUnit(unitUrl, subject);
+        String converted = UriUtils.convertSchemeFromHttpToLocalUnit(subject);
         if (converted != null && !converted.equals(subject)) {
             return Rule.P_SUBJECT.getName();
         }
-        converted = UriUtils.convertSchemeFromHttpToLocalUnit(unitUrl, targetUrl);
+        converted = UriUtils.convertSchemeFromHttpToLocalUnit(targetUrl);
         if (converted != null && !converted.equals(targetUrl)) {
             return Rule.P_TARGETURL.getName();
         }
