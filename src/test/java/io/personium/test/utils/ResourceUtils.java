@@ -22,7 +22,6 @@ import java.io.File;
 
 import javax.ws.rs.core.MediaType;
 
-import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
 import io.personium.common.utils.PersoniumCoreUtils;
@@ -392,20 +391,6 @@ public class ResourceUtils {
         return res;
     }
 
-    /**
-     * リフレッシュトークン認証を実行するユーティリティー.
-     * @param cellName セル名
-     * @param refreshToken リフレッシュトークン
-     * @return レスポンス
-     */
-    public static TResponse refreshTokenAuthCl(String cellName, String refreshToken) {
-        TResponse res = Http.request("authn/refresh-cl.txt")
-                .with("remoteCell", cellName)
-                .with("refresh_token", refreshToken)
-                .returns()
-                .statusCode(HttpStatus.SC_OK);
-        return res;
-    }
 
     /**
      * ログ情報取得(PROPFIND).

@@ -100,6 +100,7 @@ public class TokenEndPointResourceTest {
                 "parse", refreshToken, cellUrl, host).thenReturn(mockOldRToken);
 
         PowerMockito.doReturn(false).when(mockOldRToken).isRefreshExpired();
+        PowerMockito.doReturn(schema).when(mockOldRToken).getSchema();
 
         CellLocalRefreshToken mockNewRToken = PowerMockito.mock(CellLocalRefreshToken.class);
         doReturn(mockNewRToken).when(mockOldRToken).refreshRefreshToken(anyLong(), anyLong());
@@ -172,6 +173,7 @@ public class TokenEndPointResourceTest {
                 "parse", refreshToken, cellUrl, host).thenReturn(mockOldRToken);
 
         PowerMockito.doReturn(false).when(mockOldRToken).isRefreshExpired();
+        PowerMockito.doReturn(schema).when(mockOldRToken).getSchema();
 
         TransCellRefreshToken mockNewRToken = PowerMockito.mock(TransCellRefreshToken.class);
         doReturn(mockNewRToken).when(mockOldRToken).refreshRefreshToken(anyLong(), anyLong());

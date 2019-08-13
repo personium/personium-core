@@ -53,7 +53,8 @@ import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
 
 /**
- * スキーマ認証のテスト.
+ * App auth tests.
+ * App auth used to be called schema auth.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
@@ -72,7 +73,7 @@ public class SchemaAuthTest extends PersoniumTest {
     static final String DEFAULT_PRIVILEGE = "<D:read/></D:privilege><D:privilege><D:write/>";
 
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public SchemaAuthTest() {
         super(new PersoniumCoreApplication());
@@ -83,7 +84,7 @@ public class SchemaAuthTest extends PersoniumTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
-    public final void スキーマ無しパスワード認証でセルローカルとリフレッシュトークン() throws TokenParseException {
+    public final void C00_スキーマ無しROPCでセルローカルとリフレッシュトークン() throws TokenParseException {
         // 認証
         JSONObject json = ResourceUtils.getLocalTokenByPassAuth(TEST_CELL1, "account2", "password2", -1);
 
@@ -100,7 +101,7 @@ public class SchemaAuthTest extends PersoniumTest {
         // WebDavのスキーマアクセス制御確認
         // 自分セルローカルトークン
         try {
-            this.cheacResourcesWithNoneSchema(DAV_COLLECTION, DAV_RESOURCE, tokenStr, TEST_CELL1);
+            this.checkDavAccessWithoutAppAuth(DAV_COLLECTION, DAV_RESOURCE, tokenStr, TEST_CELL1);
         } finally {
             // ACLとスキーマレベル設定を元に戻す
             this.setAclSchema(Setup.TEST_BOX1, DAV_COLLECTION, OAuth2Helper.SchemaLevel.NONE, TEST_CELL1);
@@ -108,60 +109,60 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * リソースに対して、スキーマ無しのトークンでアクセス制御を確認.
+     * access Dav resources with token without app auth and check the access control.
      */
-    private void cheacResourcesWithNoneSchema(String path, String file, String token, String cellPath) {
+    private void checkDavAccessWithoutAppAuth(String path, String file, String token, String cellPath) {
 
-        // スキーマ設定無し→アクセス可能
-        this.cheackResourceSchema(path, file, token, "", HttpStatus.SC_OK, Setup.TEST_BOX1, cellPath);
-        // スキーマ設定NONE→アクセス可能
-        this.cheackResourceSchema(path, file, token,
+        // Succeed: when p:requireSchemaAuthz does not present
+        this.checkResourceSchema(path, file, token, "", HttpStatus.SC_OK, Setup.TEST_BOX1, cellPath);
+        // Succeed: when p:requireSchemaAuthz value is NONE
+        this.checkResourceSchema(path, file, token,
                 OAuth2Helper.SchemaLevel.NONE, HttpStatus.SC_OK, Setup.TEST_BOX1, cellPath);
-        // スキーマ設定PUBLIC→アクセス不可
-        this.cheackResourceSchema(path, file, token,
+        // Fail: when p:requireSchemaAuthz value is PUBLIC
+        this.checkResourceSchema(path, file, token,
                 OAuth2Helper.SchemaLevel.PUBLIC, HttpStatus.SC_FORBIDDEN, Setup.TEST_BOX1, cellPath);
-        // スキーマ設定CONFIDENTIAL→アクセス不可
-        this.cheackResourceSchema(path, file, token,
+        // Fail: when p:requireSchemaAuthz value is CONFIDENTIAL
+        this.checkResourceSchema(path, file, token,
                 OAuth2Helper.SchemaLevel.CONFIDENTIAL, HttpStatus.SC_FORBIDDEN, Setup.TEST_BOX1, cellPath);
     }
 
     /**
-     * リソースに対して、スキーマ付トークンでアクセス制御を確認.
+     * access Dav resources with token with non confidential app auth and check the access control.
      */
     private void checkResourcesWithSchema(String path, String file, String token, String boxName, String cellPath) {
 
-        // スキーマ設定無し→アクセス可能
-        this.cheackResourceSchema(path, file, token, "", HttpStatus.SC_OK, boxName, cellPath);
-        // スキーマ設定NONE→アクセス可能
-        this.cheackResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.NONE, HttpStatus.SC_OK,
+        // Succeed: when p:requireSchemaAuthz does not present
+        this.checkResourceSchema(path, file, token, "", HttpStatus.SC_OK, boxName, cellPath);
+        // Succeed: when p:requireSchemaAuthz value is NONE
+        this.checkResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.NONE, HttpStatus.SC_OK,
                 boxName, cellPath);
-        // スキーマ設定PUBLIC→アクセス可能
-        this.cheackResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.PUBLIC, HttpStatus.SC_OK,
+        // Succeed: when p:requireSchemaAuthz value is PUBLIC
+        this.checkResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.PUBLIC, HttpStatus.SC_OK,
                 boxName, cellPath);
-        // スキーマ設定CONFIDENTIAL→アクセス不可
-        this.cheackResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.CONFIDENTIAL, HttpStatus.SC_FORBIDDEN,
+        // Fail: when p:requireSchemaAuthz value is CONFIDENTIAL
+        this.checkResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.CONFIDENTIAL, HttpStatus.SC_FORBIDDEN,
                 boxName, cellPath);
     }
 
     /**
-     * リソースに対していconfidentialRoleスキーマ付トークンでアクセス制御を確認.
+     * access Dav resources with token with confidentialRole app auth and check the access control.
      */
     private void checkResourcesWithWithConfidentialSchema(String path, String file, String token, String cellPath) {
 
         // すべてのスキーマ設定でアクセス可能
-        this.cheackResourceSchema(path, file, token, "", HttpStatus.SC_OK, Setup.TEST_BOX1, cellPath);
-        this.cheackResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.NONE,
+        this.checkResourceSchema(path, file, token, "", HttpStatus.SC_OK, Setup.TEST_BOX1, cellPath);
+        this.checkResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.NONE,
                 HttpStatus.SC_OK, Setup.TEST_BOX1, cellPath);
-        this.cheackResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.PUBLIC,
+        this.checkResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.PUBLIC,
                 HttpStatus.SC_OK, Setup.TEST_BOX1, cellPath);
-        this.cheackResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.CONFIDENTIAL,
+        this.checkResourceSchema(path, file, token, OAuth2Helper.SchemaLevel.CONFIDENTIAL,
                 HttpStatus.SC_OK, Setup.TEST_BOX1, cellPath);
     }
 
     /**
      * リソースアクセスのスキーマ認証制御の確認.
      */
-    private void cheackResourceSchema(String path, String file, String token,
+    private void checkResourceSchema(String path, String file, String token,
             String level, int status, String boxName, String cellPath) {
         // ACLでスキーマレベル設定
         this.setAclSchema(boxName, path, level, cellPath);
@@ -170,11 +171,11 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * ACLによるスキーマ設定.
-     * @param box ボックス名
-     * @param path コレクション以下のパス
-     * @param level スキーマレベル
-     * @param cellPath セル
+     * ACL configuration using p:requireSchemaAuthz attribute.
+     * @param box Box name
+     * @param path path under box
+     * @param level requireSchemaAuthz value
+     * @param cellPath cell path
      */
     private void setAclSchema(String box, String path, String level, String cellPath) {
         String settingFile = ACL_AUTH_TEST_SETTING_FILE;
@@ -212,13 +213,13 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * スキーマ無しパスワード認証でトランスセルトークンのチェック.
+     * C01_スキーマ無しパスワード認証でトランスセルトークンのチェック.
      * @throws TokenParseException トークンパースエラー
      * @throws TokenRootCrtException TokenRootCrtException
      * @throws TokenDsigException TokenDsigException
      */
     @Test
-    public final void スキーマ無しパスワード認証でトランスセルトークンのチェック() throws TokenParseException,
+    public final void C01_スキーマ無しパスワード認証でトランスセルトークンのチェック() throws TokenParseException,
             TokenDsigException, TokenRootCrtException {
         // 認証
         JSONObject json = getTransTokenByPassAuth("account2", "password2");
@@ -230,11 +231,11 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * スキーマ付パスワード認証でセルローカルとリフレッシュトークン.
+     * C02_スキーマ付パスワード認証でセルローカルとリフレッシュトークン.
      * @throws TokenParseException トークンパースエラー
      */
     @Test
-    public final void スキーマ付パスワード認証でセルローカルとリフレッシュトークン() throws TokenParseException {
+    public final void C02_スキーマ付パスワード認証でセルローカルとリフレッシュトークン() throws TokenParseException {
         String tokenStr = checkCellLocalWithSchema("account0", "password0",
                 TEST_APP_CELL1, UrlUtils.cellRoot(TEST_APP_CELL1));
 
@@ -250,23 +251,23 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * スキーマ付パスワード認証でトランスセルトークンのチェック.
+     * C03_スキーマ付パスワード認証でトランスセルトークンのチェック.
      * @throws TokenParseException トークンパースエラー
      * @throws TokenRootCrtException TokenRootCrtException
      * @throws TokenDsigException TokenDsigException
      */
     @Test
-    public final void スキーマ付パスワード認証でトランスセルトークンのチェック() throws TokenParseException,
+    public final void C03_スキーマ付パスワード認証でトランスセルトークンのチェック() throws TokenParseException,
             TokenDsigException, TokenRootCrtException {
         checkTransTokenWithSchema("account0", "password0", UrlUtils.cellRoot(TEST_APP_CELL1));
     }
 
     /**
-     * confidentialRoleスキーマ付パスワード認証でセルローカルとリフレッシュトークン.
+     * C04_confidentialRoleスキーマ付パスワード認証でセルローカルとリフレッシュトークン.
      * @throws TokenParseException トークンパースエラー
      */
     @Test
-    public final void confidentialRoleスキーマ付パスワード認証でセルローカルとリフレッシュトークン() throws TokenParseException {
+    public final void C04_confidentialRoleスキーマ付パスワード認証でセルローカルとリフレッシュトークン() throws TokenParseException {
         String tokenStr = checkCellLocalWithSchema("account1", "password1",
                 TEST_APP_CELL1, UrlUtils.cellRoot(TEST_APP_CELL1) + OAuth2Helper.Key.CONFIDENTIAL_MARKER);
 
@@ -282,24 +283,24 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * confidentialRoleスキーマ付パスワード認証でトランスセルトークンのチェック.
+     * C05_confidentialRoleスキーマ付パスワード認証でトランスセルトークンのチェック.
      * @throws TokenParseException トークンパースエラー
      * @throws TokenRootCrtException TokenRootCrtException
      * @throws TokenDsigException TokenDsigException
      */
     @Test
-    public final void confidentialRoleスキーマ付パスワード認証でトランスセルトークンのチェック() throws TokenParseException,
+    public final void C05_confidentialRoleスキーマ付パスワード認証でトランスセルトークンのチェック() throws TokenParseException,
             TokenDsigException, TokenRootCrtException {
         checkTransTokenWithSchema("account1", "password1",
                 UrlUtils.cellRoot(TEST_APP_CELL1) + OAuth2Helper.Key.CONFIDENTIAL_MARKER);
     }
 
     /**
-     * スキーマ無しトークン認証でセルローカルトークンのチェック.
+     * C01_スキーマ無しトークン認証でセルローカルトークンのチェック.
      * @throws TokenParseException トークンパースエラー
      */
     @Test
-    public final void スキーマ無しトークン認証でセルローカルトークンのチェック() throws TokenParseException {
+    public final void C06_スキーマ無しトークン認証でセルローカルトークンのチェック() throws TokenParseException {
         // 認証
         JSONObject json = getTransTokenByPassAuth("account2", "password2");
 
@@ -321,7 +322,7 @@ public class SchemaAuthTest extends PersoniumTest {
         // WebDavのスキーマアクセス制御確認
         // 自分セルローカルトークン
         try {
-            this.cheacResourcesWithNoneSchema(DAV_COLLECTION, DAV_RESOURCE, tokenStr2, TEST_CELL2);
+            this.checkDavAccessWithoutAppAuth(DAV_COLLECTION, DAV_RESOURCE, tokenStr2, TEST_CELL2);
         } finally {
             // ACLとスキーマレベル設定を元に戻す
             this.setAclSchema(Setup.TEST_BOX1, DAV_COLLECTION, OAuth2Helper.SchemaLevel.NONE, TEST_CELL2);
@@ -329,11 +330,11 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * スキーマ付トークン認証でセルローカルトークンのチェック.
+     * C07_スキーマ付トークン認証でセルローカルトークンのチェック.
      * @throws TokenParseException トークンパースエラー
      */
     @Test
-    public final void スキーマ付トークン認証でセルローカルトークンのチェック() throws TokenParseException {
+    public final void C07_スキーマ付トークン認証でセルローカルトークンのチェック() throws TokenParseException {
         String tokenStr = cheackTokenAuth("account0", "password0",
                 UrlUtils.cellRoot(TEST_APP_CELL1));
 
@@ -348,11 +349,11 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * confidentialRoleスキーマ付トークン認証でセルローカルトークンのチェック.
+     * C08_confidentialRoleスキーマ付トークン認証でセルローカルトークンのチェック.
      * @throws TokenParseException トークンパースエラー
      */
     @Test
-    public final void confidentialRoleスキーマ付トークン認証でセルローカルトークンのチェック() throws TokenParseException {
+    public final void C08_confidentialRoleスキーマ付トークン認証でセルローカルトークンのチェック() throws TokenParseException {
         String tokenStr = cheackTokenAuth("account1", "password1",
                 UrlUtils.cellRoot(TEST_APP_CELL1)
                         + OAuth2Helper.Key.CONFIDENTIAL_MARKER);
@@ -368,11 +369,11 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * スキーマ認証時に無効なトークンを検出した場合401が返ることの確認.
+     * C09_スキーマ認証時に無効なトークンを検出した場合401が返ることの確認.
      * @throws TokenParseException トークンパースエラー
      */
     @Test
-    public final void スキーマ認証時に無効なトークンを検出した場合401が返ることの確認() throws TokenParseException {
+    public final void C09_スキーマ認証時に無効なトークンを検出した場合401が返ることの確認() throws TokenParseException {
         // テキトーなトークン
         String token = "hogeracho";
         try {
@@ -390,11 +391,11 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * Boxレベル$batchでのスキーマ認証制御の確認.
+     * C10_Boxレベル$batchでのスキーマ認証制御の確認.
      * @throws TokenParseException TokenParseException
      */
     @Test
-    public final void Boxレベル$batchでのスキーマ認証制御の確認() throws TokenParseException {
+    public final void C10_Boxレベル$batchでのスキーマ認証制御の確認() throws TokenParseException {
 
         // スキーマ無しの認証トークン取得
         String token = ResourceUtils.getMyCellLocalToken(TEST_CELL1, "account0", "password0");
@@ -423,10 +424,10 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * スキーマレベル設定の継承ー自分の設定が優先されること.
+     * C11_スキーマレベル設定の継承ー自分の設定が優先されること.
      */
     @Test
-    public final void スキーマレベル設定の継承ー自分の設定が優先されること() {
+    public final void C11_スキーマレベル設定の継承ー自分の設定が優先されること() {
         try {
             // ACL設定
             this.setACL(TEST_BOX1, "", ACL_SETTING_FILE);
@@ -466,10 +467,10 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * スキーマレベル設定の継承ー自分に設定が無い場合親の設定が有効になること.
+     * C12_スキーマレベル設定の継承ー自分に設定が無い場合親の設定が有効になること.
      */
     @Test
-    public final void スキーマレベル設定の継承ー自分に設定が無い場合親の設定が有効になること() {
+    public final void C12_スキーマレベル設定の継承ー自分に設定が無い場合親の設定が有効になること() {
         try {
             // ACL設定
             this.setACL(TEST_BOX1, "", ACL_SETTING_FILE);
@@ -507,10 +508,10 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * スキーマレベル設定の継承ーデフォルトはスキーマ認証不要であることの確認.
+     * C13_スキーマレベル設定の継承ーデフォルトはスキーマ認証不要であることの確認.
      */
     @Test
-    public final void スキーマレベル設定の継承ーデフォルトはスキーマ認証不要であることの確認() {
+    public final void C13_スキーマレベル設定の継承ーデフォルトはスキーマ認証不要であることの確認() {
         try {
             // ACL設定
             this.setACL(TEST_BOX1, "", ACL_SETTING_FILE);
@@ -532,12 +533,11 @@ public class SchemaAuthTest extends PersoniumTest {
     }
 
     /**
-     * スキーマ認証スキーマ値チェックの確認.
-     * @throws TokenParseException トークンパースエラー
+     * C14_AppAuth_Check_BoxSchemaMatch.
+     * @throws TokenParseException
      */
-    @SuppressWarnings("deprecation")
     @Test
-    public final void スキーマ認証スキーマ値チェックの確認() throws TokenParseException {
+    public final void C14_AppAuth_Check_BoxSchemaMatch() throws TokenParseException {
         String userCell = "cell20161221";
         String schemaCell = "cell20161221schema";
         String user = "user";
@@ -550,42 +550,23 @@ public class SchemaAuthTest extends PersoniumTest {
         String aTokenStr = null;
 
         try {
-            // セルの作成
+            // Create Cells
             CellUtils.create(userCell, MASTER_TOKEN, HttpStatus.SC_CREATED);
             CellUtils.create(schemaCell, MASTER_TOKEN, HttpStatus.SC_CREATED);
 
-            // Accountの作成
+            // Create Accounts
             AccountUtils.create(MASTER_TOKEN, userCell, user, pass, HttpStatus.SC_CREATED);
             AccountUtils.create(MASTER_TOKEN, schemaCell, user, pass, HttpStatus.SC_CREATED);
 
-            // Boxの作成
+            // Create Boxes
             BoxUtils.createWithSchema(userCell, boxWithHttpSchemaUrl, MASTER_TOKEN, UrlUtils.cellRoot(schemaCell));
             BoxUtils.createWithSchema(userCell, boxWithNonSchemaCellSchemaUrl, MASTER_TOKEN,
                     UrlUtils.cellRoot(userCell));
             BoxUtils.createWithSchema(userCell, boxWithLocalUnitSchemaUrl,
                     MASTER_TOKEN, "personium-localunit:/" + schemaCell + "/");
 
-            // Roleの作成
-//            RoleUtils.create(userCell, MASTER_TOKEN, boxWithHttpSchemaUrl, role, HttpStatus.SC_CREATED);
-//            RoleUtils.create(userCell, MASTER_TOKEN, boxWithLocalUnitSchemaUrl, role, HttpStatus.SC_CREATED);
 
-            // RoleとAccountの$links
-//            ResourceUtils.linkAccountRole(userCell, MASTER_TOKEN, user, boxWithHttpSchemaUrl,
-//                    role, HttpStatus.SC_NO_CONTENT);
-//            ResourceUtils.linkAccountRole(userCell, MASTER_TOKEN, user, boxWithLocalUnitSchemaUrl,
-//                    role, HttpStatus.SC_NO_CONTENT);
-
-            // BoxにConfidentialレベルの設定
-//            this.setAclSchema(boxWithHttpSchemaUrl, "", UrlUtils.roleResource(userCell, boxWithHttpSchemaUrl, ""),
-//                    OAuth2Helper.SchemaLevel.PUBLIC, userCell, role, DEFAULT_PRIVILEGE);
-//            this.setAclSchema(boxWithNonSchemaCellSchemaUrl, "",
-//                    UrlUtils.roleResource(userCell, boxWithHttpSchemaUrl, ""),
-//                    OAuth2Helper.SchemaLevel.PUBLIC, userCell, role, DEFAULT_PRIVILEGE);
-//            this.setAclSchema(boxWithLocalUnitSchemaUrl, "",
-//                    UrlUtils.roleResource(userCell, boxWithLocalUnitSchemaUrl, ""),
-//                    OAuth2Helper.SchemaLevel.PUBLIC, userCell, role, DEFAULT_PRIVILEGE);
-
-            // ACLの設定（今回テストではACL設定は無関係のため、ALLで設定）
+            // ACL config (This test is not meant to check ACL settings so use principal ALL）
             DavResourceUtils.setACL(userCell, MASTER_TOKEN, HttpStatus.SC_OK,
                     userCell + "/" + boxWithHttpSchemaUrl,
                     "box/acl-setting-all.txt", role, "<D:read/></D:privilege><D:privilege><D:write/>",
@@ -599,11 +580,11 @@ public class SchemaAuthTest extends PersoniumTest {
                     "box/acl-setting-all.txt", role, "<D:read/></D:privilege><D:privilege><D:write/>",
                     OAuth2Helper.SchemaLevel.PUBLIC);
 
-            // スキーマ認証用トランスセルトークンの取得
+            // App auth token retrieval
             JSONObject appAuthJson = getTransTokenByAppAuth(schemaCell, user, pass, UrlUtils.cellRoot(userCell));
             String appToken = (String) appAuthJson.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-            // Queryでスキーマ認証
+            // ROPC with app auth
             TResponse res = Http.request("authn/password-cl-cp.txt")
                     .with("remoteCell", userCell)
                     .with("username", user)
@@ -618,46 +599,51 @@ public class SchemaAuthTest extends PersoniumTest {
             String rTokenStr = (String) json.get(OAuth2Helper.Key.REFRESH_TOKEN);
             aTokenStr = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-            // コレクションの作成（boxWithHttpSchemaUrlはスキーマと、トークンのスキーマが一致するため作成可能）
-            DavResourceUtils.createWebDavCollection("box/mkcol.txt", userCell,
-                    boxWithHttpSchemaUrl + "/" + colName,
-                    aTokenStr, HttpStatus.SC_CREATED);
+            // Create Collection (Succeed since boxWithHttpSchemaUrl's schema matches the token schema)
+            Http.request("box/mkcol.txt")
+                    .with("cellPath", userCell)
+                    .with("path", boxWithHttpSchemaUrl + "/" + colName)
+                    .with("token", aTokenStr)
+                    .returns().statusCode(HttpStatus.SC_CREATED);
 
-            // コレクションの作成（boxWithNonSchemaCellSchemaUrlはスキーマと、トークンのスキーマが一致しないため作成不可）
-            DavResourceUtils.createWebDavCollection("box/mkcol.txt", userCell,
-                    boxWithNonSchemaCellSchemaUrl + "/" + colName,
-                    aTokenStr, HttpStatus.SC_FORBIDDEN);
+            // Create Collection (Fail since boxWithNonSchemaCellSchemaUrl's schema does not matches the token schema）
+            Http.request("box/mkcol.txt")
+                .with("cellPath", userCell)
+                .with("path", boxWithNonSchemaCellSchemaUrl + "/" + colName)
+                .with("token", aTokenStr)
+                .returns().statusCode(HttpStatus.SC_FORBIDDEN);
 
-            // コレクションの作成（boxWithLocalUnitSchemaUrlはスキーマと、トークンのスキーマが一致するため作成可能）
-            DavResourceUtils.createWebDavCollection("box/mkcol.txt", userCell,
-                    boxWithLocalUnitSchemaUrl + "/" + colName,
-                    aTokenStr, HttpStatus.SC_CREATED);
+            // Create Collection (Succeed since boxWithLocalUnitSchemaUrl's schema matches the token schema）
+            Http.request("box/mkcol.txt")
+                .with("cellPath", userCell)
+                .with("path", boxWithLocalUnitSchemaUrl + "/" + colName)
+                .with("token", aTokenStr)
+                .returns().statusCode(HttpStatus.SC_CREATED);
 
-            // リフレッシュトークン認証
-            TResponse refreshRes = ResourceUtils.refreshTokenAuthCl(userCell, rTokenStr);
+            // Token Refresh
+            TResponse refreshRes = Http.request("authn/refresh-cl-cp.txt")
+                    .with("remoteCell", userCell)
+                    .with("refresh_token", rTokenStr)
+                    .with("client_id", UrlUtils.cellRoot(schemaCell))
+                    .with("client_secret", appToken)
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
             aTokenStr = (String) refreshRes.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
         } finally {
-            // コレクションの削除（testbox03はスキーマと、トークンのスキーマが一致するため削除可能）
+            // delete Collections
             DavResourceUtils.deleteCollection(userCell, boxWithHttpSchemaUrl, colName, MASTER_TOKEN, -1);
-            // コレクションの削除（testbox05はスキーマと、トークンのスキーマが一致するため削除可能）
             DavResourceUtils.deleteCollection(userCell, boxWithLocalUnitSchemaUrl, colName, MASTER_TOKEN, -1);
 
-            // RoleとAccountの$linksの削除
-//            ResourceUtils.linkAccountRollDelete(userCell, MASTER_TOKEN, user, boxWithHttpSchemaUrl, role);
-
-            // Roleの削除
-//            RoleUtils.delete(userCell, MASTER_TOKEN, boxWithHttpSchemaUrl, role);
-
-            // Boxの削除
+            // delete Boxes
             BoxUtils.delete(userCell, MASTER_TOKEN, boxWithHttpSchemaUrl);
             BoxUtils.delete(userCell, MASTER_TOKEN, boxWithNonSchemaCellSchemaUrl);
             BoxUtils.delete(userCell, MASTER_TOKEN, boxWithLocalUnitSchemaUrl);
 
-            // Accountの削除
+            // delete Accounts
             AccountUtils.delete(schemaCell, MASTER_TOKEN, user, -1);
             AccountUtils.delete(userCell, MASTER_TOKEN, user, -1);
 
-            // セルの削除
+            // delete Cells
             CellUtils.delete(MASTER_TOKEN, schemaCell, -1);
             CellUtils.delete(MASTER_TOKEN, userCell, -1);
         }
@@ -665,11 +651,11 @@ public class SchemaAuthTest extends PersoniumTest {
 
 
     /**
-     * デフォルトボックスに対するスキーマ認証の確認.
+     * C15_MainBoxに対するスキーマ認証の確認.
      * @throws TokenParseException トークンパースエラー
      */
     @Test
-    public final void デフォルトボックスに対するスキーマ認証の確認() throws TokenParseException {
+    public final void C15_MainBoxに対するスキーマ認証の確認() throws TokenParseException {
         String tokenStr = checkCellLocalWithSchema("account0", "password0",
                 TEST_CELL1, UrlUtils.cellRoot(TEST_CELL1));
 
