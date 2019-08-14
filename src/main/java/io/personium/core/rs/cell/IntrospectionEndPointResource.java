@@ -39,7 +39,7 @@ import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.auth.token.TransCellRefreshToken;
+import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
@@ -159,7 +159,7 @@ public class IntrospectionEndPointResource {
                                 tk.getRoles().stream().map(role -> role.createUrl()).collect(Collectors.toList()));
                     }
                 } else if (tk instanceof CellLocalAccessToken
-                           || tk instanceof TransCellRefreshToken
+                           || tk instanceof VisitorRefreshToken
                            || tk instanceof TransCellAccessToken) {
                     IAccessToken iat = (IAccessToken) tk;
                     String audience = iat.getTarget();

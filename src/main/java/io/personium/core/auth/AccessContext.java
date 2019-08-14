@@ -27,6 +27,7 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.auth.token.AbstractLocalAccessToken;
 import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
@@ -34,12 +35,11 @@ import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
 import io.personium.common.auth.token.AccountAccessToken;
 import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.IAccessToken;
-import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
+import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
@@ -184,31 +184,17 @@ public class AccessContext {
             if (pCookiePeer == null || 0 == pCookiePeer.length()) {
                 return new AccessContext(TYPE_ANONYMOUS, cell, baseUri, requestURIInfo);
             }
-            //Cookie authentication
-            //Get decrypted value of cookie value
-            if (null == pCookieAuthValue) {
-                return new AccessContext(
-                        TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
-            }
+            String nonPortHost = headerHost.split(":")[0];
+
+
             // Cookie related processing requires no port number.
-            String decodedCookieValue;
+            String authToken = null;
             try {
-                String nonPortHost = headerHost.split(":")[0];
-                decodedCookieValue = LocalToken.decode(pCookieAuthValue,
-                        UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(nonPortHost)));
-            } catch (TokenParseException e) {
-                return new AccessContext(
-                        TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
-            }
-            int separatorIndex = decodedCookieValue.indexOf("\t");
-            String peer = decodedCookieValue.substring(0, separatorIndex);
-            //Obtain authorizationHeader equivalent token from information in cookie
-            String authToken = decodedCookieValue.substring(separatorIndex + 1);
-            if (pCookiePeer.equals(peer)) {
-                //Generate appropriate AccessContext with recursive call.
+                authToken = AbstractLocalAccessToken.parseCookie(pCookieAuthValue, pCookiePeer,
+                        AccessContext.getCookieCryptKey(nonPortHost), true);
                 return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
                         requestURIInfo, null, null, cell, baseUri, headerHost, xPersoniumUnitUser);
-            } else {
+            } catch (TokenParseException e) {
                 return new AccessContext(
                         TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
             }
@@ -736,7 +722,7 @@ public class AccessContext {
         }
         log.debug(tk.getClass().getCanonicalName());
         //If it is not an AccessToken, ie a refresh token.
-        if (!(tk instanceof IAccessToken) || tk instanceof TransCellRefreshToken) {
+        if (!(tk instanceof IAccessToken) || tk instanceof VisitorRefreshToken) {
             //Access by refresh token is not permitted.
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.refreshToken);
         }

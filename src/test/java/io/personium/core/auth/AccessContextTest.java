@@ -40,7 +40,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 
 import io.personium.common.auth.token.CellLocalAccessToken;
-import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
@@ -252,13 +251,11 @@ public class AccessContextTest {
                 System.currentTimeMillis(), UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
                 cell.getOwnerNormalized(), UrlUtils.getBaseUrl());
 
-        String tokenString = uluut.toTokenString();
         // p_cookie_peerとして、ランダムなUUIDを設定する
         String dcCookiePeer = UUID.randomUUID().toString();
-        String cookieValue = dcCookiePeer + "\t" + tokenString;
         // ヘッダに返却するdc-cookie値は、暗号化する
-        String encodedCookieValue = LocalToken.encode(cookieValue,
-                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
+        String encodedCookieValue = uluut.getCookieString(dcCookiePeer,
+                AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()));
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(null, uriInfo, dcCookiePeer, encodedCookieValue,
@@ -284,13 +281,11 @@ public class AccessContextTest {
                 UrlUtils.getBaseUrl() + "/cellowner", cell.getOwnerNormalized(), null,
                 UrlUtils.getBaseUrl() + "/cellowner");
 
-        String tokenString = token.toTokenString();
         // p_cookie_peerとして、ランダムなUUIDを設定する
         String dcCookiePeer = UUID.randomUUID().toString();
-        String cookieValue = dcCookiePeer + "\t" + tokenString;
         // ヘッダに返却するdc-cookie値は、暗号化する
-        String encodedCookieValue = LocalToken.encode(cookieValue,
-                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
+        String encodedCookieValue = token.getCookieString(dcCookiePeer,
+                AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()));
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(null, uriInfo, dcCookiePeer, encodedCookieValue,
@@ -314,19 +309,17 @@ public class AccessContextTest {
                 System.currentTimeMillis(), UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
                 cell.getOwnerNormalized(), uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort());
 
-        String tokenString = uluut.toTokenString();
         // p_cookie_peerとして、ランダムなUUIDを設定する
-        String dcCookiePeer = UUID.randomUUID().toString();
-        String cookieValue = dcCookiePeer + "\t" + tokenString;
+        String pCookiePeer = UUID.randomUUID().toString();
         // ヘッダに返却するdc-cookie値は、暗号化する
-        String encodedCookieValue = LocalToken.encode(cookieValue,
-                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
+        String encodedCookieValue = uluut.getCookieString(pCookiePeer,
+                AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()));
 
         String basicAuth = "Basic "
                 + PersoniumCoreUtils.encodeBase64Url("user:pass".getBytes());
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
-        AccessContext accessContext = AccessContext.create(basicAuth, uriInfo, dcCookiePeer, encodedCookieValue,
+        AccessContext accessContext = AccessContext.create(basicAuth, uriInfo, pCookiePeer, encodedCookieValue,
                 cell, BASE_URL, UrlUtils.getHost(), OWNER);
         assertEquals(AccessContext.TYPE_INVALID, accessContext.getType());
     }
@@ -348,18 +341,16 @@ public class AccessContextTest {
                 System.currentTimeMillis(), UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
                 cell.getOwnerNormalized(), uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort());
 
-        String tokenString = uluut.toTokenString();
         // p_cookie_peerとして、ランダムなUUIDを設定する
-        String dcCookiePeer = UUID.randomUUID().toString();
-        String cookieValue = dcCookiePeer + "\t" + tokenString;
-        // ヘッダに返却するdc-cookie値は、暗号化する
-        String encodedCookieValue = LocalToken.encode(cookieValue,
-                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
+        String pCookiePeer = UUID.randomUUID().toString();
+        // ヘッダに返却するp-cookie値は、暗号化する
+        String encodedCookieValue = uluut.getCookieString(pCookiePeer,
+                AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()));
 
         String masterTokenAuth = "Bearer " + MASTER_TOKEN;
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
-        AccessContext accessContext = AccessContext.create(masterTokenAuth, uriInfo, dcCookiePeer, encodedCookieValue,
+        AccessContext accessContext = AccessContext.create(masterTokenAuth, uriInfo, pCookiePeer, encodedCookieValue,
                 cell, BASE_URL, UrlUtils.getHost(), OWNER);
         assertEquals(AccessContext.TYPE_UNIT_MASTER, accessContext.getType());
     }

@@ -57,18 +57,17 @@ import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.auth.token.AbstractLocalToken;
 import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
 import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
+import io.personium.common.auth.token.GrantCode;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.IdToken;
-import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
-import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
@@ -566,15 +565,15 @@ public class AuthzEndPointResource {
             //Returning cell local token
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
                 AccountAccessToken aToken = new AccountAccessToken(issuedAt, expiresIn,
-                        getIssuerUrl(), username, schema);
+                        getIssuerUrl(), username, schema, "ROPC");
                 paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
                 paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
                 paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));
             } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
                 List<Role> roleList = cell.getRoleListForAccount(username);
-                CellLocalAccessToken aToken = new CellLocalAccessToken(issuedAt,
-                        CellLocalAccessToken.CODE_EXPIRES, getIssuerUrl(), username, roleList, schema, scope);
-                paramMap.put(OAuth2Helper.Key.CODE, aToken.toCodeString());
+                GrantCode aToken = new GrantCode(issuedAt,
+                        GrantCode.CODE_EXPIRES, getIssuerUrl(), username, roleList, schema, scope);
+                paramMap.put(OAuth2Helper.Key.CODE, aToken.toTokenString());
             }
         } else {
             CellCmp cellCmp = (CellCmp) cellRsCmp.getDavCmp();
@@ -634,13 +633,10 @@ public class AuthzEndPointResource {
         //Cookie authentication
         //Get decrypted value of cookie value
         AbstractOAuth2Token token;
+        String authToken;
         try {
-            String decodedCookieValue = LocalToken.decode(pCookie,
-                    UnitLocalUnitUserToken.getIvBytes(
-                            AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
-            int separatorIndex = decodedCookieValue.indexOf("\t");
-            //Obtain authorizationHeader equivalent token from information in cookie
-            String authToken = decodedCookieValue.substring(separatorIndex + 1);
+            authToken = AbstractLocalToken.parseCookie(pCookie, null,
+                    AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()), false);
 
             token = AbstractOAuth2Token.parse(authToken, getIssuerUrl(), cell.getUnitUrl());
 
@@ -684,15 +680,15 @@ public class AuthzEndPointResource {
 
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
                 AccountAccessToken aToken = new AccountAccessToken(issuedAt, expiresIn,
-                        getIssuerUrl(), username, clientId);
+                        getIssuerUrl(), username, clientId, "ROPC");
                 paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
                 paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
                 paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));
             } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
                 List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
-                CellLocalAccessToken aToken = new CellLocalAccessToken(issuedAt,
-                        CellLocalAccessToken.CODE_EXPIRES, getIssuerUrl(), username, roleList, clientId, scope);
-                paramMap.put(OAuth2Helper.Key.CODE, aToken.toCodeString());
+                GrantCode aToken = new GrantCode(issuedAt,
+                        GrantCode.CODE_EXPIRES, getIssuerUrl(), username, roleList, clientId, scope);
+                paramMap.put(OAuth2Helper.Key.CODE, aToken.toTokenString());
             }
         } else {
             CellCmp cellCmp = (CellCmp) cellRsCmp.getDavCmp();

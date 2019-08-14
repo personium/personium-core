@@ -41,7 +41,7 @@ import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.auth.token.TransCellRefreshToken;
+import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Relation;
@@ -1134,7 +1134,7 @@ public class AuthTest extends PersoniumTest {
 
             JSONObject json2 = res2.bodyAsJson();
             String refreshToken = (String) json2.get(OAuth2Helper.Key.REFRESH_TOKEN);
-            TransCellRefreshToken rToken = TransCellRefreshToken.parse(refreshToken,
+            VisitorRefreshToken rToken = VisitorRefreshToken.parse(refreshToken,
                     UrlUtils.cellRoot(TEST_CELL2));
 
             // リフレッシュトークンの作成時にミリ秒を秒に丸めてトークン文字列化しているため1秒停止
@@ -1154,7 +1154,7 @@ public class AuthTest extends PersoniumTest {
                             .statusCode(HttpStatus.SC_OK);
             JSONObject json3 = res3.bodyAsJson();
             String refreshToken2 = (String) json3.get(OAuth2Helper.Key.REFRESH_TOKEN);
-            TransCellRefreshToken rToken2 = TransCellRefreshToken.parse(refreshToken2,
+            VisitorRefreshToken rToken2 = VisitorRefreshToken.parse(refreshToken2,
                     UrlUtils.cellRoot(TEST_CELL2));
 
             // リフレッシュトークンが更新されている事をチェック
@@ -1225,7 +1225,7 @@ public class AuthTest extends PersoniumTest {
 
             JSONObject json2 = res2.bodyAsJson();
             String refreshToken = (String) json2.get(OAuth2Helper.Key.REFRESH_TOKEN);
-            TransCellRefreshToken rToken = TransCellRefreshToken.parse(refreshToken,
+            VisitorRefreshToken rToken = VisitorRefreshToken.parse(refreshToken,
                     UrlUtils.cellRoot(TEST_CELL2));
 
             // Refresh
@@ -1237,7 +1237,7 @@ public class AuthTest extends PersoniumTest {
                             .statusCode(HttpStatus.SC_OK);
             JSONObject json3 = res3.bodyAsJson();
             String refreshToken2 = (String) json3.get(OAuth2Helper.Key.REFRESH_TOKEN);
-            TransCellRefreshToken rToken2 = TransCellRefreshToken.parse(refreshToken2,
+            VisitorRefreshToken rToken2 = VisitorRefreshToken.parse(refreshToken2,
                     UrlUtils.cellRoot(TEST_CELL2));
 
             // リフレッシュトークンが更新されている事をチェック
@@ -1296,7 +1296,7 @@ public class AuthTest extends PersoniumTest {
                     .statusCode(HttpStatus.SC_OK);
 
             String refreshToken = (String) res3.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
-            TransCellRefreshToken rToken1 = TransCellRefreshToken.parse(refreshToken,
+            VisitorRefreshToken rToken1 = VisitorRefreshToken.parse(refreshToken,
                     UrlUtils.cellRoot(TEST_CELL2));
 
             // リフレッシュトークンの作成時にミリ秒を秒に丸めてトークン文字列化しているため1秒停止
@@ -1317,7 +1317,7 @@ public class AuthTest extends PersoniumTest {
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
             String refreshToken2 = (String) res4.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
-            TransCellRefreshToken rToken2 = TransCellRefreshToken.parse(refreshToken2,
+            VisitorRefreshToken rToken2 = VisitorRefreshToken.parse(refreshToken2,
                     UrlUtils.cellRoot(TEST_CELL2));
 
             // リフレッシュトークンが更新されている事をチェック
@@ -1377,7 +1377,7 @@ public class AuthTest extends PersoniumTest {
                     .statusCode(HttpStatus.SC_OK);
 
             String refreshToken = (String) res3.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
-            TransCellRefreshToken rToken1 = TransCellRefreshToken.parse(refreshToken,
+            VisitorRefreshToken rToken1 = VisitorRefreshToken.parse(refreshToken,
                     UrlUtils.cellRoot(TEST_CELL2));
 
             // リフレッシュトークンの作成時にミリ秒を秒に丸めてトークン文字列化しているため1秒停止
@@ -1397,7 +1397,7 @@ public class AuthTest extends PersoniumTest {
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
             String refreshToken2 = (String) res4.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
-            TransCellRefreshToken rToken2 = TransCellRefreshToken.parse(refreshToken2,
+            VisitorRefreshToken rToken2 = VisitorRefreshToken.parse(refreshToken2,
                     UrlUtils.cellRoot(TEST_CELL2));
 
             // リフレッシュトークンが更新されている事をチェック

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.Application;
 
-import io.personium.common.auth.token.LocalToken;
+import io.personium.common.auth.token.AbstractLocalToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumCoreLog;
@@ -47,7 +47,7 @@ public class PersoniumCoreApplication extends Application {
         try {
             TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                     PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
-            LocalToken.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
+            AbstractLocalToken.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
             DataCryptor.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
             PersoniumThread.start(PersoniumUnitConfig.getThreadPoolNumForCellIO(),
                     PersoniumUnitConfig.getThreadPoolNumForBoxIO(),

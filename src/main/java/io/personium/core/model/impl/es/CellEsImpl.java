@@ -761,7 +761,7 @@ public class CellEsImpl implements Cell {
      */
     private void addRoleListExtCelltoRole(final IExtRoleContainingToken token, List<Role> roles) {
         //Acquisition of Role corresponding to ExtCell-Role binding
-        String extCell = token.getExtCellUrl();
+        String extCell = token.getIssuer();
         String principal = token.getSubject();
         String principalCell;
         if (principal.contains("#")) {

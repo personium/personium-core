@@ -52,16 +52,16 @@ import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
 import io.personium.common.auth.token.AccountAccessToken;
 import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.CellLocalRefreshToken;
+import io.personium.common.auth.token.GrantCode;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.IRefreshToken;
 import io.personium.common.auth.token.IdToken;
-import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
+import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthnException;
 import io.personium.core.PersoniumCoreException;
@@ -314,7 +314,7 @@ public class TokenEndPointResource {
         }
 
         // When processing is normally completed, issue a token.
-        return this.issueToken(target, owner, schema, accountName, expiresIn, rTokenExpiresIn);
+        return this.issueToken(target, owner, schema, accountName, expiresIn, rTokenExpiresIn, "ROPC");
     }
 
     /**
@@ -451,7 +451,7 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER
                     .realm(this.cell.getUrl());
         }
-        if (!code.startsWith(CellLocalAccessToken.PREFIX_CODE)) {
+        if (!code.startsWith(GrantCode.PREFIX_CODE)) {
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
         }
 
@@ -485,7 +485,7 @@ public class TokenEndPointResource {
 
         //Regenerate AccessToken and RefreshToken from the received Token
         CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, rTokenExpiresIn, getIssuerUrl(),
-                token.getSubject(), schema);
+                token.getSubject(), schema, "grantcode");
         IAccessToken aToken = null;
         if (target == null) {
             aToken = new CellLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
@@ -565,7 +565,7 @@ public class TokenEndPointResource {
 
         //Create a refresh token based on the authentication information
         long issuedAt = new Date().getTime();
-        TransCellRefreshToken rToken = new TransCellRefreshToken(
+        VisitorRefreshToken rToken = new VisitorRefreshToken(
                 tcToken.getId(), //Save ID of received SAML
                 issuedAt, rTokenExpiresIn, getIssuerUrl(), tcToken.getSubject(),
                 tcToken.getIssuer(), //Save receipt of SAML's
@@ -677,12 +677,12 @@ public class TokenEndPointResource {
         if (rToken instanceof CellLocalRefreshToken) {
             String subject = rToken.getSubject();
             List<Role> roleList = cell.getRoleListForAccount(subject);
-            aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target, getIssuerUrl(), roleList, schema);
+            aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target, getIssuerUrl(), roleList);
         } else {
             //Ask CELL to determine the role of you from the role of the token issuer.
             List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
             aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target,
-                    getIssuerUrl(), rolesHere, schema);
+                    getIssuerUrl(), rolesHere);
         }
 
         if (aToken instanceof TransCellAccessToken) {
@@ -719,14 +719,11 @@ public class TokenEndPointResource {
         }
 
         if (issueCookie) {
-            String tokenString = accessToken.toTokenString();
             //Set random UUID as p_cookie_peer
             String pCookiePeer = UUID.randomUUID().toString();
-            String cookieValue = pCookiePeer + "\t" + tokenString;
             //The p_cookie value to return to the header is encrypted
-            String encodedCookieValue = LocalToken.encode(cookieValue,
-                    UnitLocalUnitUserToken.getIvBytes(AccessContext
-                            .getCookieCryptKey(requestURIInfo.getBaseUri().getHost())));
+            String encodedCookieValue = accessToken.getCookieString(pCookiePeer,
+                    AccessContext.getCookieCryptKey(requestURIInfo.getBaseUri().getHost()));
             //Specify cookie version (0)
             int version = 0;
             String path = getCookiePath();
@@ -880,7 +877,7 @@ public class TokenEndPointResource {
             }
         }
 
-        return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn);
+        return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn, "ROPC");
     }
 
     /**
@@ -910,7 +907,7 @@ public class TokenEndPointResource {
     }
 
     private Response issueToken(final String target, final String owner,
-            final String schema, final String username, long expiresIn, long rTokenExpiresIn) {
+            final String schema, final String username, long expiresIn, long rTokenExpiresIn, String scope) {
         long issuedAt = new Date().getTime();
 
         if (Key.TRUE_STR.equals(owner)) {
@@ -931,12 +928,12 @@ public class TokenEndPointResource {
         }
 
         CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, rTokenExpiresIn,
-                getIssuerUrl(), username, schema);
+                getIssuerUrl(), username, schema, scope);
 
         //Create a response.
         if (target == null) {
             AccountAccessToken localToken = new AccountAccessToken(issuedAt, expiresIn,
-                    getIssuerUrl(), username, schema);
+                    getIssuerUrl(), username, schema, scope);
             return this.responseAuthSuccess(localToken, rToken, issuedAt);
         } else {
             //Check that TODO SCHEMA is URL

@@ -94,7 +94,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token without schema (schema null)
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", null);
+        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", null, null);
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
@@ -127,7 +127,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token without schema
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl2);
+        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl2, "ROPC");
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
@@ -159,7 +159,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl);
+        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl, "ROPC");
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
@@ -198,7 +198,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl);
+        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl, "ROPC");
 
         // Refresh Token
         HttpResponse res = refreshToken(usrCellUrl, clrt.toTokenString(), null);
@@ -223,7 +223,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", null);
+        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", null, "ROPC");
 
         // Refresh Token
         HttpResponse res = refreshToken(usrCellUrl, clrt.toTokenString(), appCellUrl);

@@ -36,6 +36,7 @@ public class TokenBuilder {
     private String subject;
     private String schema;
     private List<Role> roleList;
+    private String scope;
 
     /**
      * Constructor.
@@ -83,6 +84,15 @@ public class TokenBuilder {
         this.schema = schema;
         return this;
     }
+    /**
+     * Set scope.
+     * @param scope scope
+     * @return TokenBuilder
+     */
+    public TokenBuilder scope(String scope) { // CHECKSTYLE IGNORE
+        this.scope = scope;
+        return this;
+    }
 
     /**
      * Set roleList.
@@ -119,7 +129,7 @@ public class TokenBuilder {
                     new AccountAccessToken(new Date().getTime(),
                                            cellUrl,
                                            subject,
-                                           schema);
+                                           schema, scope);
                 accessToken = token.toTokenString();
             } else {
                 // CellLocalAccessToken
