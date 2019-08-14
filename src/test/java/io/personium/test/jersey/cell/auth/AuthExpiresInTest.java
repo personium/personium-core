@@ -261,11 +261,11 @@ public class AuthExpiresInTest extends PersoniumTest {
     }
 
     /**
-     * Test if receiveCord.
+     * Test if receiveCode.
      * @throws Exception Unexpected exception
      */
     @Test
-    public final void receiveCord() throws Exception {
+    public final void receiveCode() throws Exception {
         // authz endpoint.
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String redirectUri = clientId + "__/redirect.html";

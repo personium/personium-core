@@ -455,9 +455,9 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
         }
 
-        CellLocalAccessToken token;
+        GrantCode token;
         try {
-            token = (CellLocalAccessToken) AbstractOAuth2Token.parse(code, getIssuerUrl(), cell.getUnitUrl());
+            token = (GrantCode) AbstractOAuth2Token.parse(code, getIssuerUrl(), cell.getUnitUrl());
         } catch (TokenParseException e) {
             //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
