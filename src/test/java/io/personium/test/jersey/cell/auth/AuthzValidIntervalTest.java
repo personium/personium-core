@@ -41,7 +41,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
-import io.personium.common.auth.token.AccountAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.lock.LockManager;
@@ -180,7 +180,7 @@ public class AuthzValidIntervalTest extends PersoniumTest {
 
         Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         try {
-            AccountAccessToken aToken = AccountAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
+            ResidentLocalAccessToken aToken = ResidentLocalAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                     UrlUtils.cellRoot(Setup.TEST_CELL1));
             assertNotNull("access token parse error.", aToken);
             assertEquals(OAuth2Helper.Scheme.BEARER, response.get(OAuth2Helper.Key.TOKEN_TYPE));

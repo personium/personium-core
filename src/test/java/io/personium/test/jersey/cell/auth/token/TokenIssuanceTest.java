@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.AccountAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.HttpClientFactory;
@@ -114,7 +114,7 @@ public class TokenIssuanceTest extends PersoniumTest {
         String at = this.callROPC(usrCellUrl, "account1", "password1", null, appCellLocalUnit, clientSecret).getString("access_token");
         log.info("token:" + at);
 
-        AccountAccessToken aat = AccountAccessToken.parse(at, usrCellUrl);
+        ResidentLocalAccessToken aat = ResidentLocalAccessToken.parse(at, usrCellUrl);
 
         String schema = aat.getSchema();
         log.info(schema);

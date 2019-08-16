@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.CellLocalAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.utils.PersoniumCoreUtils;
@@ -1071,9 +1071,9 @@ public class AuthCheckTest extends PersoniumTest {
 
         JSONObject json2 = res2.bodyAsJson();
         String localToken2 = (String) json2.get(OAuth2Helper.Key.ACCESS_TOKEN);
-        CellLocalAccessToken aToken = null;
+        VisitorLocalAccessToken aToken = null;
         try {
-            aToken = CellLocalAccessToken.parse(localToken2, UrlUtils.cellRoot(tokenAuthCellName));
+            aToken = VisitorLocalAccessToken.parse(localToken2, UrlUtils.cellRoot(tokenAuthCellName));
         } catch (TokenParseException e) {
             fail();
         }

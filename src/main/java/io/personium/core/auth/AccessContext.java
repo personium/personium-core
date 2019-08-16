@@ -32,8 +32,8 @@ import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.Role;
@@ -733,7 +733,7 @@ public class AccessContext {
         }
 
         AccessContext ret = new AccessContext(null, cell, baseUri, uriInfo);
-        if (tk instanceof AccountAccessToken) {
+        if (tk instanceof ResidentLocalAccessToken) {
             ret.accessType = TYPE_ACCOUNT;
             //Retrieve role information.
             String acct = tk.getSubject();
@@ -749,8 +749,8 @@ public class AccessContext {
             ret.accessType = TYPE_PASSWORD_CHANGE;
             ret.subject = cell.getUrl() + "#" + tk.getSubject();
             ret.issuer = tk.getIssuer();
-        } else if (tk instanceof CellLocalAccessToken) {
-            CellLocalAccessToken clat = (CellLocalAccessToken) tk;
+        } else if (tk instanceof VisitorLocalAccessToken) {
+            VisitorLocalAccessToken clat = (VisitorLocalAccessToken) tk;
             ret.accessType = TYPE_LOCAL;
             //Acquire roll information and pack it.
             ret.roles = clat.getRoles();

@@ -62,11 +62,11 @@ import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.AccountAccessToken;
 import io.personium.common.auth.token.GrantCode;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.IdToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
@@ -564,8 +564,8 @@ public class AuthzEndPointResource {
             //Respond with 303 and return Location header
             //Returning cell local token
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
-                AccountAccessToken aToken = new AccountAccessToken(issuedAt, expiresIn,
-                        getIssuerUrl(), username, schema, "ROPC");
+                ResidentLocalAccessToken aToken = new ResidentLocalAccessToken(issuedAt, expiresIn,
+                        getIssuerUrl(), username, schema, AbstractOAuth2Token.Scope.EMPTY);
                 paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
                 paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
                 paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));
@@ -679,8 +679,8 @@ public class AuthzEndPointResource {
             String username = token.getSubject();
 
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
-                AccountAccessToken aToken = new AccountAccessToken(issuedAt, expiresIn,
-                        getIssuerUrl(), username, clientId, "ROPC");
+                ResidentLocalAccessToken aToken = new ResidentLocalAccessToken(issuedAt, expiresIn,
+                        getIssuerUrl(), username, clientId, AbstractOAuth2Token.Scope.EMPTY);
                 paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
                 paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
                 paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));

@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 
@@ -125,16 +125,16 @@ public class TokenBuilder {
                     subject = null;
                 }
                 // AccountAccessToken
-                AccountAccessToken token =
-                    new AccountAccessToken(new Date().getTime(),
+                ResidentLocalAccessToken token =
+                    new ResidentLocalAccessToken(new Date().getTime(),
                                            cellUrl,
                                            subject,
                                            schema, scope);
                 accessToken = token.toTokenString();
             } else {
                 // CellLocalAccessToken
-                CellLocalAccessToken token =
-                    new CellLocalAccessToken(new Date().getTime(),
+                VisitorLocalAccessToken token =
+                    new VisitorLocalAccessToken(new Date().getTime(),
                                              cellUrl,
                                              subject,
                                              roleList,

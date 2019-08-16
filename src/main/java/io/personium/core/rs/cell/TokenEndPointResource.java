@@ -49,18 +49,18 @@ import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
-import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.GrantCode;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.IRefreshToken;
 import io.personium.common.auth.token.IdToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
+import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthnException;
@@ -314,7 +314,8 @@ public class TokenEndPointResource {
         }
 
         // When processing is normally completed, issue a token.
-        return this.issueToken(target, owner, schema, accountName, expiresIn, rTokenExpiresIn, "ROPC");
+        return this.issueToken(target, owner, schema, accountName, expiresIn, rTokenExpiresIn,
+                AbstractOAuth2Token.Scope.EMPTY);
     }
 
     /**
@@ -484,11 +485,11 @@ public class TokenEndPointResource {
         long issuedAt = new Date().getTime();
 
         //Regenerate AccessToken and RefreshToken from the received Token
-        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, rTokenExpiresIn, getIssuerUrl(),
+        ResidentRefreshToken rToken = new ResidentRefreshToken(issuedAt, rTokenExpiresIn, getIssuerUrl(),
                 token.getSubject(), schema, "grantcode");
         IAccessToken aToken = null;
         if (target == null) {
-            aToken = new CellLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
+            aToken = new VisitorLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
                     token.getSubject(), token.getRoles(), schema);
         } else {
             List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
@@ -583,7 +584,7 @@ public class TokenEndPointResource {
         //The target can be freely decided.
         IAccessToken aToken = null;
         if (target == null) {
-            aToken = new CellLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
+            aToken = new VisitorLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
                     tcToken.getSubject(), rolesHere, schemaVerified);
         } else {
             aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
@@ -648,7 +649,7 @@ public class TokenEndPointResource {
 
         if (Key.TRUE_STR.equals(owner)) {
             //You can be promoted only for your own cell refresh.
-            if (token.getClass() != CellLocalRefreshToken.class) {
+            if (token.getClass() != ResidentRefreshToken.class) {
                 throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER.realm(this.cell.getUrl());
             }
             //Check unit escalation privilege setting
@@ -674,7 +675,7 @@ public class TokenEndPointResource {
         rToken = rToken.refreshRefreshToken(issuedAt, rTokenExpiresIn);
 
         IAccessToken aToken = null;
-        if (rToken instanceof CellLocalRefreshToken) {
+        if (rToken instanceof ResidentRefreshToken) {
             String subject = rToken.getSubject();
             List<Role> roleList = cell.getRoleListForAccount(subject);
             aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target, getIssuerUrl(), roleList);
@@ -877,7 +878,7 @@ public class TokenEndPointResource {
             }
         }
 
-        return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn, "ROPC");
+        return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn, AbstractOAuth2Token.Scope.ROPC);
     }
 
     /**
@@ -927,12 +928,12 @@ public class TokenEndPointResource {
             return this.responseAuthSuccess(uluut, null, issuedAt);
         }
 
-        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, rTokenExpiresIn,
+        ResidentRefreshToken rToken = new ResidentRefreshToken(issuedAt, rTokenExpiresIn,
                 getIssuerUrl(), username, schema, scope);
 
         //Create a response.
         if (target == null) {
-            AccountAccessToken localToken = new AccountAccessToken(issuedAt, expiresIn,
+            ResidentLocalAccessToken localToken = new ResidentLocalAccessToken(issuedAt, expiresIn,
                     getIssuerUrl(), username, schema, scope);
             return this.responseAuthSuccess(localToken, rToken, issuedAt);
         } else {

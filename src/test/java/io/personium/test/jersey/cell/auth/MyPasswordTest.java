@@ -32,7 +32,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
-import io.personium.common.auth.token.AccountAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.auth.OAuth2Helper;
@@ -134,7 +134,7 @@ public class MyPasswordTest extends PersoniumTest {
             // Authenticate again.
             resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1, account, "newPassword", -1);
             tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
-            assertTrue(tokenStr.startsWith(AccountAccessToken.PREFIX_ACCESS));
+            assertTrue(tokenStr.startsWith(ResidentLocalAccessToken.PREFIX_ACCESS));
         } finally {
             AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, account, -1);
         }

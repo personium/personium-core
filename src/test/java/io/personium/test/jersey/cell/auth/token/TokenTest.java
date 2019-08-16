@@ -28,12 +28,12 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.common.auth.token.AbstractOAuth2Token;
-import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
-import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
+import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
@@ -114,7 +114,7 @@ public class TokenTest extends PersoniumTest {
         String schema = "";
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
-        CellLocalRefreshToken validToken = new CellLocalRefreshToken(
+        ResidentRefreshToken validToken = new ResidentRefreshToken(
                 issuedAt - AbstractOAuth2Token.SECS_IN_AN_DAY * 1000 + MILLISECS_IN_AN_MINITE,
                 issuer, subject, schema, "ROPC");
 
@@ -126,7 +126,7 @@ public class TokenTest extends PersoniumTest {
                 .statusCode(HttpStatus.SC_OK);
 
         // 期限切れのトークンを生成する（IT環境の通信時間を考慮して１分余裕を持たせる）
-        CellLocalRefreshToken invalidToken = new CellLocalRefreshToken(
+        ResidentRefreshToken invalidToken = new ResidentRefreshToken(
                 issuedAt - AbstractOAuth2Token.SECS_IN_AN_DAY * 1000 - MILLISECS_IN_AN_MINITE, issuer, subject,
                 schema, "ROPC");
         // アプリセルに対して認証
@@ -226,10 +226,10 @@ public class TokenTest extends PersoniumTest {
         String issuer = UrlUtils.cellRoot(TEST_CELL1);
         String subject = "account2";
         String schema = "";
-        String scope = "ROPC";
+        String scope = AbstractOAuth2Token.Scope.ROPC;
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
-        AccountAccessToken validToken = new AccountAccessToken(
+        ResidentLocalAccessToken validToken = new ResidentLocalAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR + MILLISECS_IN_AN_MINITE,
                 issuer, subject, schema, scope);
         // データアクセス
@@ -237,7 +237,7 @@ public class TokenTest extends PersoniumTest {
                 DAV_COLLECTION + DAV_RESOURCE, HttpStatus.SC_OK, TEST_CELL1, Setup.TEST_BOX1);
 
         // 期限切れのトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
-        AccountAccessToken invalidToken = new AccountAccessToken(
+        ResidentLocalAccessToken invalidToken = new ResidentLocalAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR - MILLISECS_IN_AN_MINITE,
                 issuer, subject, schema, scope);
         // データアクセス
@@ -260,7 +260,7 @@ public class TokenTest extends PersoniumTest {
         String schema = "";
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
-        CellLocalAccessToken validToken = new CellLocalAccessToken(
+        VisitorLocalAccessToken validToken = new VisitorLocalAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR + MILLISECS_IN_AN_MINITE,
                 issuer, subject, roleList, schema);
         // データアクセス
@@ -268,7 +268,7 @@ public class TokenTest extends PersoniumTest {
                 DAV_COLLECTION + DAV_RESOURCE, HttpStatus.SC_OK, TEST_CELL1, Setup.TEST_BOX1);
 
         // 期限切れのトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
-        CellLocalAccessToken invalidToken = new CellLocalAccessToken(
+        VisitorLocalAccessToken invalidToken = new VisitorLocalAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR - MILLISECS_IN_AN_MINITE,
                 issuer, subject, roleList, schema);
         // データアクセス

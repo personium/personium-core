@@ -39,7 +39,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 
-import io.personium.common.auth.token.CellLocalAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
@@ -277,7 +277,7 @@ public class AccessContextTest {
         when(cell.getUnitUrl()).thenReturn(UrlUtils.getBaseUrl());
 
         // Token発行処理
-        CellLocalAccessToken token = new CellLocalAccessToken(
+        VisitorLocalAccessToken token = new VisitorLocalAccessToken(
                 UrlUtils.getBaseUrl() + "/cellowner", cell.getOwnerNormalized(), null,
                 UrlUtils.getBaseUrl() + "/cellowner");
 

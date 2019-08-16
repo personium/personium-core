@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.CellLocalRefreshToken;
+import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.auth.OAuth2Helper;
@@ -94,7 +94,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token without schema (schema null)
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", null, null);
+        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", null, null);
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
@@ -127,7 +127,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token without schema
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl2, "ROPC");
+        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", appCellUrl2, "ROPC");
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
@@ -159,7 +159,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl, "ROPC");
+        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", appCellUrl, "ROPC");
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
@@ -198,7 +198,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", appCellUrl, "ROPC");
+        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", appCellUrl, "ROPC");
 
         // Refresh Token
         HttpResponse res = refreshToken(usrCellUrl, clrt.toTokenString(), null);
@@ -223,7 +223,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token
-        CellLocalRefreshToken clrt = new CellLocalRefreshToken(usrCellUrl, "account1", null, "ROPC");
+        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", null, "ROPC");
 
         // Refresh Token
         HttpResponse res = refreshToken(usrCellUrl, clrt.toTokenString(), appCellUrl);

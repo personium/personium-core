@@ -41,8 +41,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.common.auth.token.AbstractOAuth2Token;
-import io.personium.common.auth.token.CellLocalAccessToken;
-import io.personium.common.auth.token.CellLocalRefreshToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
+import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.core.model.Cell;
@@ -52,7 +52,7 @@ import io.personium.test.categories.Unit;
  * TokenEndPointResource unit test classs.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ TokenEndPointResource.class, CellLocalRefreshToken.class, VisitorRefreshToken.class,
+@PrepareForTest({ TokenEndPointResource.class, ResidentRefreshToken.class, VisitorRefreshToken.class,
     AbstractOAuth2Token.class })
 @Category({ Unit.class })
 public class TokenEndPointResourceTest {
@@ -94,7 +94,7 @@ public class TokenEndPointResourceTest {
         // --------------------
         PowerMockito.doReturn(cellUrl).when(tokenEndPointResource, "getIssuerUrl");
         doReturn(host).when(mockCell).getUnitUrl();
-        CellLocalRefreshToken mockOldRToken = PowerMockito.mock(CellLocalRefreshToken.class);
+        ResidentRefreshToken mockOldRToken = PowerMockito.mock(ResidentRefreshToken.class);
         PowerMockito.mockStatic(AbstractOAuth2Token.class);
         PowerMockito.when(AbstractOAuth2Token.class,
                 "parse", refreshToken, cellUrl, host).thenReturn(mockOldRToken);
@@ -102,7 +102,7 @@ public class TokenEndPointResourceTest {
         PowerMockito.doReturn(false).when(mockOldRToken).isRefreshExpired();
         PowerMockito.doReturn(schema).when(mockOldRToken).getSchema();
 
-        CellLocalRefreshToken mockNewRToken = PowerMockito.mock(CellLocalRefreshToken.class);
+        ResidentRefreshToken mockNewRToken = PowerMockito.mock(ResidentRefreshToken.class);
         doReturn(mockNewRToken).when(mockOldRToken).refreshRefreshToken(anyLong(), anyLong());
 
         PowerMockito.doReturn("subject").when(mockNewRToken).getSubject();
@@ -110,7 +110,7 @@ public class TokenEndPointResourceTest {
         List<Role> roleList = new ArrayList<Role>();
         doReturn(roleList).when(mockCell).getRoleListForAccount("subject");
 
-        CellLocalAccessToken mockNewAToken = mock(CellLocalAccessToken.class);
+        VisitorLocalAccessToken mockNewAToken = mock(VisitorLocalAccessToken.class);
         PowerMockito.doReturn(mockNewAToken).when(mockNewRToken).refreshAccessToken(
                 anyLong(), anyLong(), anyString(), anyString(), anyList());
 
@@ -181,7 +181,7 @@ public class TokenEndPointResourceTest {
         List<Role> roleList = new ArrayList<Role>();
         doReturn(roleList).when(mockCell).getRoleListHere(mockNewRToken);
 
-        CellLocalAccessToken mockNewAToken = mock(CellLocalAccessToken.class);
+        VisitorLocalAccessToken mockNewAToken = mock(VisitorLocalAccessToken.class);
         PowerMockito.doReturn(mockNewAToken).when(mockNewRToken).refreshAccessToken(
                 anyLong(), anyLong(), anyString(), anyString(), anyList());
 
