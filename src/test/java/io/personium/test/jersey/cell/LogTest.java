@@ -252,7 +252,7 @@ public class LogTest extends ODataCommon {
                 .statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
 
         Http.request("cell/log-get.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL1)
                 .with("collection", CURRENT_COLLECTION)
@@ -262,7 +262,7 @@ public class LogTest extends ODataCommon {
                 .statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
 
         Http.request("cell/log-get.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL1)
                 .with("collection", CURRENT_COLLECTION)

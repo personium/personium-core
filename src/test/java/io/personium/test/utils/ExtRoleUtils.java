@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONObject;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 
 /**
  * Httpリクエストドキュメントを利用するユーティリティ.
@@ -45,7 +45,7 @@ public class ExtRoleUtils {
             final String relationName, final String relationBoxName, final int code) {
         TResponse response = Http.request("cell/extRole/extRole-get.txt")
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(extRoleName))
+                .with("extRoleName", CommonUtils.encodeUrlComp(extRoleName))
                 .with("relationName", relationName)
                 .with("relationBoxName", relationBoxName)
                 .with("token", token)
@@ -162,7 +162,7 @@ public class ExtRoleUtils {
             final String newRelation, final String newRelationBox, final int code) {
         Http.request("cell/extRole/extRole-update.txt")
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(extRoleName))
+                .with("extRoleName", CommonUtils.encodeUrlComp(extRoleName))
                 .with("relationName", relationName)
                 .with("relationBoxName", relationBoxName)
                 .with("newextRoleName", newextRoleName)
@@ -186,7 +186,7 @@ public class ExtRoleUtils {
             final String relationName, final String relationBoxName, final JSONObject body, final int code) {
         Http.request("cell/extRole/extRole-update-nobody.txt")
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(extRoleName))
+                .with("extRoleName", CommonUtils.encodeUrlComp(extRoleName))
                 .with("relationName", relationName)
                 .with("relationBoxName", relationBoxName)
                 .with("token", token)
@@ -209,7 +209,7 @@ public class ExtRoleUtils {
             final String relationName, final String relationBoxName, final JSONObject body, final int code) {
         Http.request("cell/extRole/extRole-update-merge.txt")
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(extRoleName))
+                .with("extRoleName", CommonUtils.encodeUrlComp(extRoleName))
                 .with("relationName", relationName)
                 .with("relationBoxName", relationBoxName)
                 .with("token", token)
@@ -233,7 +233,7 @@ public class ExtRoleUtils {
         String relationBoxNameStr = relationBoxName == null ? "null" : "'" + relationBoxName + "'"; // CHECKSTYLE IGNORE
         Http.request("cell/extRole/extRole-delete.txt")
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(extRoleUrl))
+                .with("extRoleName", CommonUtils.encodeUrlComp(extRoleUrl))
                 .with("relationName", relationNameStr)
                 .with("relationBoxName", relationBoxNameStr)
                 .with("token", token)

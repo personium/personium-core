@@ -64,7 +64,7 @@ import org.xml.sax.SAXException;
 import io.personium.common.auth.token.Role;
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.ElapsedTimeLog;
@@ -424,7 +424,7 @@ public class DavCmpFsImpl implements DavCmp {
                 for (Element elem : lpe) {
                     res.setProperty(elem, HttpStatus.SC_OK);
                     String key = elem.getLocalName() + PROP_KEY_SEPARATOR + elem.getNamespaceURI();
-                    String value = PersoniumCoreUtils.nodeToString(elem);
+                    String value = CommonUtils.nodeToString(elem);
                     log.debug("key: " + key);
                     log.debug("val: " + value);
                     propsJson.put(key, value);
@@ -738,7 +738,7 @@ public class DavCmpFsImpl implements DavCmp {
             endLog.setParams(fileSize / KILO_BYTES);
             endLog.writeLog();
 
-            return res.header(HttpHeaders.ETAG, getEtag()).header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES,
+            return res.header(HttpHeaders.ETAG, getEtag()).header(CommonUtils.HttpHeaders.ACCEPT_RANGES,
                     RangeHeaderHandler.BYTES_UNIT);
 
         } catch (BinaryDataNotFoundException nex) {
@@ -784,7 +784,7 @@ public class DavCmpFsImpl implements DavCmp {
 
         //I have returned Content - Length to the clear because I can not process Chunked 's Range response in iPad' s safari.
         return javax.ws.rs.core.Response.status(HttpStatus.SC_PARTIAL_CONTENT).entity(sout)
-                .header(PersoniumCoreUtils.HttpHeaders.CONTENT_RANGE, brs.makeContentRangeHeaderField())
+                .header(CommonUtils.HttpHeaders.CONTENT_RANGE, brs.makeContentRangeHeaderField())
                 .header(HttpHeaders.CONTENT_LENGTH, brs.getContentLength())
                 .header(HttpHeaders.CONTENT_TYPE, contentType);
     }

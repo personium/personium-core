@@ -40,7 +40,7 @@ import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
@@ -105,7 +105,7 @@ public class IntrospectionEndPointResource {
         String schema;
 
         if (AccessContext.TYPE_INVALID.equals(accessContext.getType())) {
-            String[] idpw = PersoniumCoreUtils.parseBasicAuthzHeader(authzHeader);
+            String[] idpw = CommonUtils.parseBasicAuthzHeader(authzHeader);
             if (idpw != null) {
                 String username = PersoniumUnitConfig.getIntrospectUsername();
                 String password = PersoniumUnitConfig.getIntrospectPassword();

@@ -40,7 +40,7 @@ import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
@@ -633,7 +633,7 @@ public class AccessContext {
             return new AccessContext(TYPE_INVALID, null, baseUri, uriInfo, InvalidReason.basicAuthError);
         }
 
-        String[] idpw = PersoniumCoreUtils.parseBasicAuthzHeader(authzHeaderValue);
+        String[] idpw = CommonUtils.parseBasicAuthzHeader(authzHeaderValue);
         if (idpw == null) {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthFormat);
         }

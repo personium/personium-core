@@ -42,7 +42,7 @@ public class PersoniumReadDeleteModeManager {
                     HttpMethod.DELETE,
                     HttpMethod.OPTIONS,
                     HttpMethod.HEAD,
-                    io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND,
+                    io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND,
                     "REPORT"
                     )
             );

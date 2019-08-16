@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -113,7 +113,7 @@ public class BoxUrlResource {
 
         //Return response
         return Response.status(HttpStatus.SC_OK)
-                .header(PersoniumCoreUtils.HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS, HttpHeaders.LOCATION)
+                .header(CommonUtils.HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS, HttpHeaders.LOCATION)
                 .header(HttpHeaders.LOCATION, box.getUrl())
                 .entity(responseBody.toJSONString())
                 .build();

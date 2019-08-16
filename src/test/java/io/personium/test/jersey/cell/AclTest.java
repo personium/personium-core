@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
@@ -1000,7 +1000,7 @@ public class AclTest extends AbstractCase {
     @SuppressWarnings("unchecked")
     @Test
     public final void CellレベルACL設定アクセス制御$link確認() {
-        String extCellUrl = PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2));
+        String extCellUrl = CommonUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2));
         String relationName = "testRelation";
         try {
             List<String> account = new ArrayList<String>();
@@ -1051,7 +1051,7 @@ public class AclTest extends AbstractCase {
                     account.get(4), HttpStatus.SC_NO_CONTENT);
             // 削除
             LinksUtils.deleteLinksExtCell(TEST_CELL1,
-                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2)),
+                    CommonUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2)),
                     Relation.EDM_TYPE_NAME, relationName, null, account.get(10), HttpStatus.SC_NO_CONTENT);
 
             // $link extCellとrole→SOCIALとAUTHの権限が必要
@@ -1066,7 +1066,7 @@ public class AclTest extends AbstractCase {
 
             // 削除
             LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
-                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2)),
+                    CommonUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2)),
                     Role.EDM_TYPE_NAME, "role1", null, account.get(10), HttpStatus.SC_NO_CONTENT);
         } finally {
             // Relationの削除
@@ -1687,7 +1687,7 @@ public class AclTest extends AbstractCase {
             // OK: ROOT
             apvRes4 = ReceivedMessageUtils.approve(account.get(10), TEST_CELL1, uuid, HttpStatus.SC_NO_CONTENT);
             // Relation-ExtCell $links削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
                     Relation.EDM_TYPE_NAME, "user", null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // ExtCell削除
             ExtCellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, UrlUtils.cellRoot("targetcell"));
@@ -1701,7 +1701,7 @@ public class AclTest extends AbstractCase {
             // OK: message+social
             apvRes5 = ReceivedMessageUtils.approve(account.get(18), TEST_CELL1, uuid, HttpStatus.SC_NO_CONTENT);
             // Relation-ExtCell $links削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
                     Relation.EDM_TYPE_NAME, "user", null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "user", null, -1);
@@ -1770,7 +1770,7 @@ public class AclTest extends AbstractCase {
                 ODataCommon.deleteOdataResource(apvRes7.getLocationHeader());
             }
             // Relation-ExtCell $links削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
                     Relation.EDM_TYPE_NAME, "user", null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "user", null, -1);
@@ -2105,7 +2105,7 @@ public class AclTest extends AbstractCase {
                     "_" + ExtCell.EDM_TYPE_NAME,
                     extCellBody, account.get(4), HttpStatus.SC_CREATED);
             // 作成した$linkの削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(extCellUrl),
                     Relation.EDM_TYPE_NAME, relationName, null, account.get(10), HttpStatus.SC_NO_CONTENT);
             // 作成したExtCell削除
             ExtCellUtils.delete(TOKEN, TEST_CELL1, extCellUrl,
@@ -2116,28 +2116,28 @@ public class AclTest extends AbstractCase {
 
             // extCellとrole→SOCIALとAUTHの権限が必要
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    CommonUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(0), HttpStatus.SC_FORBIDDEN);
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    CommonUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(1), HttpStatus.SC_FORBIDDEN);
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    CommonUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(4), HttpStatus.SC_FORBIDDEN);
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    CommonUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(9), HttpStatus.SC_CREATED);
             // 作成した$linkの削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(extCellUrl),
                     Role.EDM_TYPE_NAME, roleName, null, TOKEN, HttpStatus.SC_NO_CONTENT);
             // Role削除
             RoleUtils.delete(TEST_CELL1, TOKEN, roleName, null);
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    CommonUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(10), HttpStatus.SC_CREATED);
             // Role削除
@@ -2145,7 +2145,7 @@ public class AclTest extends AbstractCase {
 
         } finally {
             // 作成した$linkの削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(extCellUrl),
                     Relation.EDM_TYPE_NAME, relationName, null, TOKEN, -1);
             // ExtCell 削除
             ExtCellUtils.delete(TOKEN, TEST_CELL1, extCellUrl,

@@ -59,7 +59,7 @@ import org.apache.http.entity.InputStreamEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.ElapsedTimeLog;
@@ -114,7 +114,7 @@ public class PersoniumEngineSvcCollectionResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
@@ -159,13 +159,13 @@ public class PersoniumEngineSvcCollectionResource {
     @WriteAPI
     @DELETE
     public Response delete(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         // X-Personium-Recursive Header
         if (recursiveHeader != null
                 && !Boolean.TRUE.toString().equalsIgnoreCase(recursiveHeader)
                 && !Boolean.FALSE.toString().equalsIgnoreCase(recursiveHeader)) {
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
         }
         boolean recursive = Boolean.valueOf(recursiveHeader);
         // Check acl.(Parent acl check)
@@ -262,10 +262,10 @@ public class PersoniumEngineSvcCollectionResource {
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.DELETE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MOVE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL
+                io.personium.common.utils.CommonUtils.HttpMethod.MOVE,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH,
+                io.personium.common.utils.CommonUtils.HttpMethod.ACL
                 ).build();
     }
 
@@ -478,10 +478,10 @@ public class PersoniumEngineSvcCollectionResource {
         }
 
         // If RequestKey is not specified in the header, Take over the generated RequestKey.
-        if (!req.containsHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY)) {
+        if (!req.containsHeader(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY)) {
             String requestKey = this.getRequestKey(this.davRsCmp);
             if (requestKey != null) {
-                req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, requestKey);
+                req.addHeader(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, requestKey);
             }
         }
 

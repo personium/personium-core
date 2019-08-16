@@ -70,7 +70,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
@@ -1022,7 +1022,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
         if (aclElement != null) {
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            sbAclXml.append(PersoniumCoreUtils.nodeToString(aclElement));
+            sbAclXml.append(CommonUtils.nodeToString(aclElement));
             Reader aclXml = new StringReader(sbAclXml.toString());
             fileCmp.acl(aclXml);
         }
@@ -1051,7 +1051,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
         sbPropXml.append("<D:set>");
         sbPropXml.append("<D:prop>");
         for (Element element : propElements) {
-            sbPropXml.append(PersoniumCoreUtils.nodeToString(element));
+            sbPropXml.append(CommonUtils.nodeToString(element));
         }
         sbPropXml.append("</D:prop>");
         sbPropXml.append("</D:set>");

@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -450,7 +450,7 @@ public class MyPasswordTest extends PersoniumTest {
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + headerAuthorization);
-        requestheaders.put(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL, headerCredential);
+        requestheaders.put(CommonUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL, headerCredential);
 
         try {
             res = rest.put(UrlUtils.cellRoot(requestCellName) + "__mypassword", "",

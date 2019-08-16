@@ -23,7 +23,7 @@ import org.apache.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
@@ -62,11 +62,11 @@ public abstract class HttpAction extends Action {
         // set common headers
         //  X-Personium-RequestKey, X-Personium-EventId, X-Personium-RuleChain, X-Personium-Via
         event.getRequestKey().ifPresent(requestKey ->
-                                  req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY,
+                                  req.addHeader(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY,
                                                 requestKey));
-        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_EVENTID, eventId);
-        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RULECHAIN, chain);
-        getVia(event).ifPresent(via -> req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA, via));
+        req.addHeader(CommonUtils.HttpHeaders.X_PERSONIUM_EVENTID, eventId);
+        req.addHeader(CommonUtils.HttpHeaders.X_PERSONIUM_RULECHAIN, chain);
+        getVia(event).ifPresent(via -> req.addHeader(CommonUtils.HttpHeaders.X_PERSONIUM_VIA, via));
     }
 
     @Override

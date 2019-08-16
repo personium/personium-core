@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
+import io.personium.common.utils.CommonUtils.HttpHeaders;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;

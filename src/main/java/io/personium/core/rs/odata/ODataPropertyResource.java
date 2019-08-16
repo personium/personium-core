@@ -52,7 +52,7 @@ import org.odata4j.producer.EntityResponse;
 import org.odata4j.producer.QueryInfo;
 
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
@@ -114,7 +114,7 @@ public class ODataPropertyResource extends AbstractODataResource {
     public final Response postEntity(
             @Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @DefaultValue(FORMAT_JSON) @QueryParam("$format") final String format,
             final Reader reader) {
         //Access control
@@ -242,7 +242,7 @@ public class ODataPropertyResource extends AbstractODataResource {
     public final Response getNavProperty(
             @Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @QueryParam("$callback") final String callback,
             @QueryParam("$skiptoken") final String skipToken,
             @QueryParam("q") final String q) {

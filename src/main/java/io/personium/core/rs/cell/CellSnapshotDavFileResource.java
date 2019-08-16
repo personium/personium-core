@@ -29,7 +29,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.PROPFIND;
 import io.personium.core.annotations.REPORT;
@@ -126,7 +126,7 @@ public class CellSnapshotDavFileResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Check exist
@@ -159,7 +159,7 @@ public class CellSnapshotDavFileResource {
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 HttpMethod.DELETE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND
                 ).build();
     }
 

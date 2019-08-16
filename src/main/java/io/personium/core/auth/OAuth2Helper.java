@@ -18,7 +18,7 @@ package io.personium.core.auth;
 
 import javax.xml.namespace.QName;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 
 /**
  * A utility around OAuth 2.
@@ -323,12 +323,12 @@ public final class OAuth2Helper {
          * ownerRepresentativeAccounts.
          */
         public static final QName PROP_KEY_OWNER_REPRESENTIVE_ACCOUNTS =
-                new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, "ownerRepresentativeAccounts");
+                new QName(CommonUtils.XmlConst.NS_PERSONIUM, "ownerRepresentativeAccounts");
         /**
          * ownerRepresentativeAccount.
          */
         public static final QName PROP_KEY_OWNER_REPRESENTIVE_ACCOUNT =
-                new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, "account");
+                new QName(CommonUtils.XmlConst.NS_PERSONIUM, "account");
     }
 
     /**

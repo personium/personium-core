@@ -68,7 +68,7 @@ import io.personium.common.auth.token.IdToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
 import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.auth.token.Role;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumCoreMessageUtils;
@@ -1020,7 +1020,7 @@ public class AuthzEndPointResource {
 
             Object[] params = paramsList.toArray();
 
-            String html = PersoniumCoreUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
+            String html = CommonUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
             html = MessageFormat.format(html, params);
 
             return html;
@@ -1092,7 +1092,7 @@ public class AuthzEndPointResource {
 
             Object[] params = paramsList.toArray();
 
-            String html = PersoniumCoreUtils.readStringResource("html/authform_passwordchange.html",
+            String html = CommonUtils.readStringResource("html/authform_passwordchange.html",
                     CharEncoding.UTF_8);
             html = MessageFormat.format(html, params);
 

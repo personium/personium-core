@@ -33,7 +33,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.jersey.filter.PersoniumCoreContainerFilter;
 import io.personium.test.categories.Unit;
 
@@ -63,20 +63,20 @@ public class PersoniumCoreContainerFilterTest {
                 mockPD);
         MultivaluedMap<String, String> headers = request.getHeaders();
         // メソッドオーバーライド
-        headers.add(PersoniumCoreUtils.HttpHeaders.X_HTTP_METHOD_OVERRIDE, HttpMethod.OPTIONS);
+        headers.add(CommonUtils.HttpHeaders.X_HTTP_METHOD_OVERRIDE, HttpMethod.OPTIONS);
         // ヘッダオーバーライド
         String authzValue = "Bearer tokenstring";
         String acceptValue = "text/html";
         String contentTypeValue = "application/xml";
-        headers.add(PersoniumCoreUtils.HttpHeaders.X_OVERRIDE, HttpHeaders.AUTHORIZATION + ": " + authzValue);
+        headers.add(CommonUtils.HttpHeaders.X_OVERRIDE, HttpHeaders.AUTHORIZATION + ": " + authzValue);
         headers.add(HttpHeaders.ACCEPT, contentTypeValue);
-        headers.add(PersoniumCoreUtils.HttpHeaders.X_OVERRIDE, HttpHeaders.ACCEPT + ": " + acceptValue);
+        headers.add(CommonUtils.HttpHeaders.X_OVERRIDE, HttpHeaders.ACCEPT + ": " + acceptValue);
         headers.add(HttpHeaders.CONTENT_TYPE, contentTypeValue);
         // X-FORWARDED-* 系のヘッダ設定
         String scheme = "https";
         String host = "example.org";
-        headers.add(PersoniumCoreUtils.HttpHeaders.X_FORWARDED_PROTO, scheme);
-        headers.add(PersoniumCoreUtils.HttpHeaders.X_FORWARDED_HOST, host);
+        headers.add(CommonUtils.HttpHeaders.X_FORWARDED_PROTO, scheme);
+        headers.add(CommonUtils.HttpHeaders.X_FORWARDED_HOST, host);
 
         // 被テスト処理の実行
         containerFilter.filter(request);

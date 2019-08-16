@@ -58,7 +58,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import io.personium.common.auth.token.Role;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
@@ -421,10 +421,10 @@ public class DavRsCmp {
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 HttpMethod.DELETE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MKCOL,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL
+                io.personium.common.utils.CommonUtils.HttpMethod.MKCOL,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH,
+                io.personium.common.utils.CommonUtils.HttpMethod.ACL
                 ).build();
     }
 
@@ -591,8 +591,8 @@ public class DavRsCmp {
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             List<Element> listElement = colRt.getAny();
-            QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.ODATA,
-                    PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+            QName qname = new QName(CommonUtils.XmlConst.NS_PERSONIUM, CommonUtils.XmlConst.ODATA,
+                    CommonUtils.XmlConst.NS_PREFIX_PERSONIUM);
             Element element = WebDAVModelHelper.createElement(qname);
             listElement.add(element);
             ret.setPropertyOk(colRt);
@@ -602,8 +602,8 @@ public class DavRsCmp {
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             List<Element> listElement = colRt.getAny();
-            QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.SERVICE,
-                    PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+            QName qname = new QName(CommonUtils.XmlConst.NS_PERSONIUM, CommonUtils.XmlConst.SERVICE,
+                    CommonUtils.XmlConst.NS_PREFIX_PERSONIUM);
             Element element = WebDAVModelHelper.createElement(qname);
             listElement.add(element);
             ret.setPropertyOk(colRt);
@@ -613,8 +613,8 @@ public class DavRsCmp {
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             List<Element> listElement = colRt.getAny();
-            QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.STREAM,
-                    PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+            QName qname = new QName(CommonUtils.XmlConst.NS_PERSONIUM, CommonUtils.XmlConst.STREAM,
+                    CommonUtils.XmlConst.NS_PREFIX_PERSONIUM);
             Element element = WebDAVModelHelper.createElement(qname);
             listElement.add(element);
             ret.setPropertyOk(colRt);
@@ -626,8 +626,8 @@ public class DavRsCmp {
             ret.setPropertyOk(colRt);
 
             // Add cellstatus.
-            QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.CELL_STATUS,
-                    PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+            QName qname = new QName(CommonUtils.XmlConst.NS_PERSONIUM, CommonUtils.XmlConst.CELL_STATUS,
+                    CommonUtils.XmlConst.NS_PREFIX_PERSONIUM);
             Element element = WebDAVModelHelper.createElement(qname);
             element.setTextContent(dCmp.getCellStatus());
             ret.setPropertyOk(element);

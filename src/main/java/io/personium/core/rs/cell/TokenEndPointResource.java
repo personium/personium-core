@@ -62,7 +62,7 @@ import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthnException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
@@ -361,7 +361,7 @@ public class TokenEndPointResource {
 
         //Parsing authzHeader
         if (authzHeader != null) {
-            String[] idpw = PersoniumCoreUtils
+            String[] idpw = CommonUtils
                     .parseBasicAuthzHeader(authzHeader);
             if (idpw != null) {
                 //Specify authzHeader first

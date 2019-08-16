@@ -29,7 +29,7 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
@@ -82,7 +82,7 @@ public class MessageResource extends ODataCtlResource {
     @POST
     @Path("send")
     public Response messages(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VERSION) final String version,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_VERSION) final String version,
             @Context final UriInfo uriInfo,
             final Reader reader) {
         //Access control

@@ -31,7 +31,7 @@ import org.apache.commons.lang.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.auth.OAuth2Helper.Key;
 
@@ -73,7 +73,7 @@ public class ErrorHtmlResource {
             msg = PersoniumCoreMessageUtils.getMessage("PS-ER-0002");
         }
 
-        String html = PersoniumCoreUtils.readStringResource("html/error.html", CharEncoding.UTF_8);
+        String html = CommonUtils.readStringResource("html/error.html", CharEncoding.UTF_8);
         html = MessageFormat.format(html, title, msg);
         return html;
     }

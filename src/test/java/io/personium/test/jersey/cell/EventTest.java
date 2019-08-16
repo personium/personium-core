@@ -117,7 +117,7 @@ public class EventTest extends ODataCommon {
     public final void イベント受付に対するPROPFINDで501が返却されること() {
 
         Http.request("cell/cell-event.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL1)
                 .with("requestKey", "testRequestKey")
@@ -133,7 +133,7 @@ public class EventTest extends ODataCommon {
     public final void イベント受付に対するPROPPATCHで501が返却されること() {
 
         Http.request("cell/cell-event.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL1)
                 .with("requestKey", "testRequestKey")

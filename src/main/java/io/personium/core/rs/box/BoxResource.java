@@ -41,7 +41,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MKCOL;
@@ -269,11 +269,11 @@ public class BoxResource {
     @WriteAPI
     @DELETE
     public Response recursiveDelete(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         // If the X-Personium-Recursive header is not true, it is an error
         if (!Boolean.TRUE.toString().equalsIgnoreCase(recursiveHeader)) {
             throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
         }
         boolean recursive = Boolean.valueOf(recursiveHeader);
 
@@ -309,7 +309,7 @@ public class BoxResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
@@ -424,7 +424,7 @@ public class BoxResource {
     @WriteAPI
     @MKCOL
     public Response mkcol(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader,
             @HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final String contentLength,
             final InputStream inStream) {

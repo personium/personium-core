@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.commons.lang.CharEncoding;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.model.Box;
 import io.personium.core.rs.cell.AuthResourceUtils;
@@ -349,7 +349,7 @@ public class AuthzUtils {
 
         Object[] params = paramsList.toArray();
 
-        String html = PersoniumCoreUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
+        String html = CommonUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
         html = MessageFormat.format(html, params);
 
         return html;
@@ -386,7 +386,7 @@ public class AuthzUtils {
 
         Object[] params = paramsList.toArray();
 
-        String html = PersoniumCoreUtils.readStringResource("html/authform_passwordchange.html", CharEncoding.UTF_8);
+        String html = CommonUtils.readStringResource("html/authform_passwordchange.html", CharEncoding.UTF_8);
         html = MessageFormat.format(html, params);
 
         return html;

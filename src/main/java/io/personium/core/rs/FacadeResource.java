@@ -28,7 +28,7 @@ import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
@@ -76,11 +76,11 @@ public class FacadeResource {
             @QueryParam(COOKIE_PEER_QUERY_KEY) final String cookiePeer,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String headerAuthz,
             @HeaderParam(HttpHeaders.HOST) final String headerHost,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String headerPersoniumUnitUser,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) final String headerPersoniumRequestKey,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_EVENTID) final String headerPersoniumEventId,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RULECHAIN) final String headerPersoniumRuleChain,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA) final String headerPersoniumVia,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String headerPersoniumUnitUser,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) final String headerPersoniumRequestKey,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_EVENTID) final String headerPersoniumEventId,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_RULECHAIN) final String headerPersoniumRuleChain,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_VIA) final String headerPersoniumVia,
             @Context final UriInfo uriInfo,
             @Context HttpServletRequest httpServletRequest) {
 

@@ -42,7 +42,7 @@ import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -248,7 +248,7 @@ public class AuthTest extends PersoniumTest {
                 .statusCode(HttpStatus.SC_OK);
 
         String schemaTransCellAccessTokenHeader =
-                PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1),
+                CommonUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1),
                         transCellAccessToken);
         // Authorizationヘッダでスキーマ認証
         Http.request("authn/password-cl-ch.txt")
@@ -289,7 +289,7 @@ public class AuthTest extends PersoniumTest {
                 .statusCode(HttpStatus.SC_OK);
 
         String schemaTransCellAccessTokenHeader =
-                PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1),
+                CommonUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1),
                         schemaTransCellAccessToken);
         // Authorizationヘッダでスキーマ認証
         Http.request("authn/password-cl-ch.txt")
@@ -416,7 +416,7 @@ public class AuthTest extends PersoniumTest {
             // Setupで作成されたrole1を紐づけ。
             Http.request("cell/link-extCell-role.txt")
                     .with("cellPath", TEST_CELL2)
-                    .with("cellName", PersoniumCoreUtils.encodeUrlComp(localunitCell1Url))
+                    .with("cellName", CommonUtils.encodeUrlComp(localunitCell1Url))
                     .with("token", MASTER_TOKEN)
                     .with("roleUrl", roleUrl)
                     .returns().statusCode(HttpStatus.SC_NO_CONTENT);
@@ -497,7 +497,7 @@ public class AuthTest extends PersoniumTest {
                     .with("sourceEntity", "Role")
                     .with("sourceKey", "'" + testrole + "'")
                     .with("navPropName", "_ExtCell")
-                    .with("navPropKey", "'" + PersoniumCoreUtils.encodeUrlComp(localunitCell1Url) + "'")
+                    .with("navPropKey", "'" + CommonUtils.encodeUrlComp(localunitCell1Url) + "'")
                     .with("token", "Bearer " + MASTER_TOKEN)
                     .with("ifMatch", "*")
                     .returns();
@@ -544,7 +544,7 @@ public class AuthTest extends PersoniumTest {
             RelationUtils.create(TEST_CELL2, MASTER_TOKEN, body, HttpStatus.SC_CREATED);
 
             // Cell1のExtCellとRelationを結びつけ
-            LinksUtils.createLinksExtCell(TEST_CELL2, PersoniumCoreUtils.encodeUrlComp(localunitCell1Url),
+            LinksUtils.createLinksExtCell(TEST_CELL2, CommonUtils.encodeUrlComp(localunitCell1Url),
                     Relation.EDM_TYPE_NAME, testrelation, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
             // Cell1のRelationとRoleを結びつけ
             LinksUtils.createLinks(TEST_CELL2, Relation.EDM_TYPE_NAME, testrelation, null,
@@ -625,7 +625,7 @@ public class AuthTest extends PersoniumTest {
                     Role.EDM_TYPE_NAME, testrole, null, MASTER_TOKEN, -1);
 
             // Cell1のExtCellとRelationの削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL2, PersoniumCoreUtils.encodeUrlComp(localunitCell1Url),
+            LinksUtils.deleteLinksExtCell(TEST_CELL2, CommonUtils.encodeUrlComp(localunitCell1Url),
                     Relation.EDM_TYPE_NAME, testrelation, null, MASTER_TOKEN, -1);
 
             // Cell1のRelationを削除
@@ -748,7 +748,7 @@ public class AuthTest extends PersoniumTest {
                 .statusCode(HttpStatus.SC_OK);
 
         String schemaTransCellAccessTokenHeader =
-                PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1),
+                CommonUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1),
                         schemaTransCellAccessToken);
         // Authorizationヘッダでスキーマ認証
         Http.request("authn/saml-cl-ch.txt")
@@ -800,7 +800,7 @@ public class AuthTest extends PersoniumTest {
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 
-        String schemaTransCellAccessTokenHeader = PersoniumCoreUtils.createBasicAuthzHeader(
+        String schemaTransCellAccessTokenHeader = CommonUtils.createBasicAuthzHeader(
                 UrlUtils.cellRoot(TEST_APP_CELL1),
                 schemaTransCellAccessToken);
 
@@ -1481,7 +1481,7 @@ public class AuthTest extends PersoniumTest {
             // ------------------------------
             // refresh at TEST_CELL1 adding app auth  (header)
             // ------------------------------
-            String schemaTransCellAccessTokenHeader = PersoniumCoreUtils.createBasicAuthzHeader(
+            String schemaTransCellAccessTokenHeader = CommonUtils.createBasicAuthzHeader(
                     UrlUtils.cellRoot(TEST_APP_CELL1), schemaTransCellAccessToken);
 
             res3 = Http.request("authn/refresh-tc-ch.txt")
@@ -1571,7 +1571,7 @@ public class AuthTest extends PersoniumTest {
         // ------------------------------
         // Refresh should fail when added app auth (header) at refresh time.
         // ------------------------------
-        String schemaTransCellAccessTokenHeader = PersoniumCoreUtils.createBasicAuthzHeader(
+        String schemaTransCellAccessTokenHeader = CommonUtils.createBasicAuthzHeader(
                 UrlUtils.cellRoot(TEST_APP_CELL1), schemaTransCellAccessToken);
 
         res3 = Http.request("authn/refresh-cl-ch.txt")
@@ -1671,7 +1671,7 @@ public class AuthTest extends PersoniumTest {
             // ------------------------------
             // Refresh at "testcell2" adding app auth  (header)
             // ------------------------------
-            String schemaTransCellAccessTokenHeader = PersoniumCoreUtils.createBasicAuthzHeader(
+            String schemaTransCellAccessTokenHeader = CommonUtils.createBasicAuthzHeader(
                     UrlUtils.cellRoot(TEST_APP_CELL1), schemaTransCellAccessToken);
 
             res4 = Http.request("authn/refresh-tc-ch.txt")
@@ -1776,7 +1776,7 @@ public class AuthTest extends PersoniumTest {
             // ------------------------------
             // Refresh at "testcell2" adding app auth  (header)
             // ------------------------------
-            String schemaTransCellAccessTokenHeader = PersoniumCoreUtils.createBasicAuthzHeader(
+            String schemaTransCellAccessTokenHeader = CommonUtils.createBasicAuthzHeader(
                     UrlUtils.cellRoot(TEST_APP_CELL1), schemaTransCellAccessToken);
 
             res4 = Http.request("authn/refresh-cl-ch.txt")

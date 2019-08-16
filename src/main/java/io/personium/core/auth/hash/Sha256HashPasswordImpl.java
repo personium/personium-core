@@ -22,7 +22,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.lang.CharEncoding;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.OEntityWrapper;
@@ -59,7 +59,7 @@ public class Sha256HashPasswordImpl implements HashPassword {
             MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM_NAME);
             byte[] digestBytes = md.digest(str2hash.getBytes(CharEncoding.UTF_8));
             //Although its data efficiency is better, this implementation is made for compatibility with DC 0.
-            return PersoniumCoreUtils.byteArray2HexString(digestBytes);
+            return CommonUtils.byteArray2HexString(digestBytes);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         } catch (UnsupportedEncodingException e) {

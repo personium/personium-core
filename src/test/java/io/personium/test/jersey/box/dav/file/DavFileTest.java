@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumUnitConfig.BinaryData;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -456,7 +456,7 @@ public class DavFileTest extends PersoniumTest {
             getResp.statusCode(HttpStatus.SC_PARTIAL_CONTENT);
 
             assertEquals(String.format("bytes %s-%s/%s", first, last, body.length()),
-                    getResp.getHeader(PersoniumCoreUtils.HttpHeaders.CONTENT_RANGE));
+                    getResp.getHeader(CommonUtils.HttpHeaders.CONTENT_RANGE));
 
             assertEquals(body.substring(first, last + 1), getResp.getBody());
         } finally {

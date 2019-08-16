@@ -38,7 +38,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.apache.commons.io.Charsets;
 import org.apache.wink.webdav.model.Multistatus;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 
 /**
@@ -47,7 +47,7 @@ import io.personium.core.PersoniumCoreException;
 public class BarFile implements Closeable {
 
     /** Content-Type of bar file. */
-    public static final String CONTENT_TYPE = PersoniumCoreUtils.ContentType.CONTENT_TYPE_BAR;
+    public static final String CONTENT_TYPE = CommonUtils.ContentType.CONTENT_TYPE_BAR;
 
     /** Directory name : meta. */
     private static final String META_DIR = "00_meta";

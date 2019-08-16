@@ -41,7 +41,7 @@ import org.mockito.Matchers;
 
 import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 import io.personium.core.odata.OEntityWrapper;
@@ -154,7 +154,7 @@ public class AccessContextTest {
     @Ignore
     public void testCreateBasic() {
         String auth = "Basic "
-                + PersoniumCoreUtils.encodeBase64Url("user:pass".getBytes());
+                + CommonUtils.encodeBase64Url("user:pass".getBytes());
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
@@ -170,7 +170,7 @@ public class AccessContextTest {
     @Test
     public void testCreateBasicINVALID() {
         String auth = "Basic "
-                + PersoniumCoreUtils.encodeBase64Url("user:pass".getBytes());
+                + CommonUtils.encodeBase64Url("user:pass".getBytes());
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(false);
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
@@ -316,7 +316,7 @@ public class AccessContextTest {
                 AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()));
 
         String basicAuth = "Basic "
-                + PersoniumCoreUtils.encodeBase64Url("user:pass".getBytes());
+                + CommonUtils.encodeBase64Url("user:pass".getBytes());
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(basicAuth, uriInfo, pCookiePeer, encodedCookieValue,

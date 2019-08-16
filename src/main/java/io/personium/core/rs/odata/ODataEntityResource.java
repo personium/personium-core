@@ -50,7 +50,7 @@ import org.odata4j.producer.EntityQueryInfo;
 import org.odata4j.producer.EntityResponse;
 import org.odata4j.producer.resources.OptionsQueryParser;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.MERGE;
@@ -501,7 +501,7 @@ public class ODataEntityResource extends AbstractODataResource {
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
-                PersoniumCoreUtils.HttpMethod.MERGE,
+                CommonUtils.HttpMethod.MERGE,
                 HttpMethod.DELETE
                 ).build();
     }

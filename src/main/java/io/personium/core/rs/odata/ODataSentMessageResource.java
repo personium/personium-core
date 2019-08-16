@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.event.PersoniumEventType;
@@ -445,7 +445,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
         }
         req.setEntity(body);
 
-        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VERSION, version);
+        req.addHeader(CommonUtils.HttpHeaders.X_PERSONIUM_VERSION, version);
         req.addHeader(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + token.toTokenString());
         req.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
 

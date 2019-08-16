@@ -74,7 +74,7 @@ public class LogListTest extends ODataCommon {
     public final void ログファイル一覧取得に対するPROPFINDで501が返却されること() {
 
         Http.request("cell/log-propfind-with-nobody.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", CURRENT_COLLECTION)
@@ -126,7 +126,7 @@ public class LogListTest extends ODataCommon {
                 .statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
 
         Http.request("cell/log-propfind-with-nobody.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", CURRENT_COLLECTION)
@@ -142,7 +142,7 @@ public class LogListTest extends ODataCommon {
     public final void ログファイル一覧取得で存在しないコレクションに対するPROPFINDで404が返却されること() {
 
         Http.request("cell/log-propfind-with-nobody.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", "dummy")
@@ -195,7 +195,7 @@ public class LogListTest extends ODataCommon {
     public final void アーカイブログファイル一覧取得_ボディなしかつContentLengthありのPROPFINDで207が返却されること() {
 
         Http.request("cell/log-propfind-with-nobody.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)
@@ -211,7 +211,7 @@ public class LogListTest extends ODataCommon {
     public final void アーカイブログファイル一覧取得_ボディなしかつContentLengthなしのPROPFINDで207が返却されること() {
 
         Http.request("cell/log-propfind-with-nobody-non-content-length.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)
@@ -230,7 +230,7 @@ public class LogListTest extends ODataCommon {
                 + "<D:propfind xmlns:D=\"DAV:\"><D:allprop/></D:propfind>";
 
         TResponse tresponse = Http.request("cell/log-propfind-with-body.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)
@@ -254,7 +254,7 @@ public class LogListTest extends ODataCommon {
                 + "<D:propfind xmlns:D=\"DAV:\"><D:allprop/></D:propfind>";
 
         TResponse tresponse = Http.request("cell/log-propfind-with-body.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)
@@ -278,7 +278,7 @@ public class LogListTest extends ODataCommon {
                 + "<D:propfind xmlns:D=\"DAV:\"></D:propfind>";
 
         Http.request("cell/log-propfind-with-body.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)
@@ -299,7 +299,7 @@ public class LogListTest extends ODataCommon {
                 + "<D:propfind xmlns:D=\"DAV:\"><D:hoge/></D:propfind>";
 
         Http.request("cell/log-propfind-with-body.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)
@@ -320,7 +320,7 @@ public class LogListTest extends ODataCommon {
                 + "<D:propfind xmlns:D=\"DAV:\"><D:allprop/></D:propfind>";
 
         Http.request("cell/log-propfind-with-body.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)
@@ -340,7 +340,7 @@ public class LogListTest extends ODataCommon {
                 + "<D:propfind xmlns:D=\"DAV:\"><D:allprop/></D:propfind>";
 
         Http.request("cell/log-propfind-with-body.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", "Invalid-Token")
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)
@@ -360,7 +360,7 @@ public class LogListTest extends ODataCommon {
                 + "<D:propfind xmlns:D=\"DAV:\"><D:allprop/></D:propfind>";
 
         Http.request("cell/log-propfind-with-body-no-depth.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)
@@ -379,7 +379,7 @@ public class LogListTest extends ODataCommon {
                 + "<D:propfind xmlns:D=\"DAV:\"><D:allprop/></D:propfind>";
 
         Http.request("cell/log-propfind-with-body.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)
@@ -400,7 +400,7 @@ public class LogListTest extends ODataCommon {
                 + "<D:propfind xmlns:D=\"DAV:\"><D:allprop/></D:propfind>";
 
         Http.request("cell/log-propfind-with-body.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL_EVENTLOG)
                 .with("collection", ARCHIVE_COLLECTION)

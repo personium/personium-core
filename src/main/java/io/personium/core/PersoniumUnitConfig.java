@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.utils.UriUtils;
 
@@ -871,7 +871,7 @@ public class PersoniumUnitConfig {
     public static String getBaseUrl() {
          return UriBuilder.fromPath("/")
                           .scheme(getUnitScheme())
-                          .host(PersoniumCoreUtils.getFQDN())
+                          .host(CommonUtils.getFQDN())
                           .port(getUnitPort())
                           .build()
                           .toString();

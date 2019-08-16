@@ -34,7 +34,7 @@ import org.junit.experimental.categories.Category;
 import org.odata4j.core.ODataConstants;
 import org.odata4j.core.ODataVersion;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumUnitConfig.Security;
 import io.personium.core.auth.OAuth2Helper;
@@ -226,7 +226,7 @@ public class Sha256HashPasswordTest extends ODataCommon {
         // set request header
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + headerAuthorization);
-        requestheaders.put(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL, headerCredential);
+        requestheaders.put(CommonUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL, headerCredential);
 
         try {
             res = rest.put(UrlUtils.cellRoot(cellName) + "__mypassword", "", requestheaders);

@@ -25,7 +25,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumRequest;
@@ -204,7 +204,7 @@ public class UserDataUtils {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("entityType", entTypeName)
-                .with("id", PersoniumCoreUtils.encodeUrlComp(id))
+                .with("id", CommonUtils.encodeUrlComp(id))
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("token", token)
                 .with("query", query)
@@ -603,7 +603,7 @@ public class UserDataUtils {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("entityType", entityType)
-                .with("id", PersoniumCoreUtils.encodeUrlComp(id))
+                .with("id", CommonUtils.encodeUrlComp(id))
                 .with("token", token)
                 .with("ifMatch", "*")
                 .returns()

@@ -27,7 +27,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MOVE;
@@ -80,7 +80,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
@@ -184,13 +184,13 @@ public final class ODataSvcCollectionResource extends ODataResource {
     @WriteAPI
     @DELETE
     public Response delete(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         // X-Personium-Recursive Header
         if (recursiveHeader != null
                 && !Boolean.TRUE.toString().equalsIgnoreCase(recursiveHeader)
                 && !Boolean.FALSE.toString().equalsIgnoreCase(recursiveHeader)) {
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
         }
         boolean recursive = Boolean.valueOf(recursiveHeader);
         // Check acl.
@@ -232,10 +232,10 @@ public final class ODataSvcCollectionResource extends ODataResource {
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.DELETE,
-                PersoniumCoreUtils.HttpMethod.MOVE,
-                PersoniumCoreUtils.HttpMethod.PROPFIND,
-                PersoniumCoreUtils.HttpMethod.PROPPATCH,
-                PersoniumCoreUtils.HttpMethod.ACL
+                CommonUtils.HttpMethod.MOVE,
+                CommonUtils.HttpMethod.PROPFIND,
+                CommonUtils.HttpMethod.PROPPATCH,
+                CommonUtils.HttpMethod.ACL
                 ).build();
     }
 

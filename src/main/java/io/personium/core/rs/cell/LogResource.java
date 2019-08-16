@@ -57,7 +57,7 @@ import org.apache.wink.webdav.model.Resourcetype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.PROPFIND;
@@ -129,7 +129,7 @@ public class LogResource {
             @Context UriInfo uriInfo,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth
             ) {
 
         //Access control

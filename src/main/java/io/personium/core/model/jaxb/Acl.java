@@ -36,7 +36,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import io.personium.common.auth.token.Role;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -66,7 +66,7 @@ public final class Acl {
     String base;
 
     /** p:requireSchemaAuthz. */
-    @XmlAttribute(namespace = PersoniumCoreUtils.XmlConst.NS_PERSONIUM)
+    @XmlAttribute(namespace = CommonUtils.XmlConst.NS_PERSONIUM)
     String requireSchemaAuthz;
 
     /** Ace tag.*/
