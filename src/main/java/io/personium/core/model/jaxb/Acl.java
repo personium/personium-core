@@ -200,7 +200,7 @@ public final class Acl {
      */
     public void validateAcl(boolean isCellLevel) {
         // Check whether requireSchemaAuthz matches permitted value.
-        if (!OAuth2Helper.SchemaLevel.isMatchPermittedValue(requireSchemaAuthz)) {
+        if (!OAuth2Helper.SchemaLevel.isPermittedValue(requireSchemaAuthz)) {
             String cause = String.format("Value [%s] for requireSchemaAuthz is invalid", requireSchemaAuthz);
             throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(cause);
         }

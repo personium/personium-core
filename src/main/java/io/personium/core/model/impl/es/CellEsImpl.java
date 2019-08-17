@@ -51,6 +51,7 @@ import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthUtils;
+import io.personium.core.auth.ScopeArbitrator;
 import io.personium.core.event.EventBus;
 import io.personium.core.eventlog.EventUtils;
 import io.personium.core.model.Box;
@@ -992,5 +993,11 @@ public class CellEsImpl implements Cell {
         }
 
         roles.add(new Role(roleName, boxName, schema, this.url));
+    }
+
+    @Override
+    public ScopeArbitrator getScopeArbitrator(String clientId, boolean isRopc) {
+        Box box = this.getBoxForSchema(clientId);
+        return new ScopeArbitrator(this, box, isRopc);
     }
 }

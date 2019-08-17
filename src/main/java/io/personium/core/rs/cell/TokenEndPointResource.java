@@ -147,7 +147,10 @@ public class TokenEndPointResource {
         String clientSecret = formParams.getFirst(Key.CLIENT_SECRET);
         String expiresInStr = formParams.getFirst(Key.EXPIRES_IN);
         String rTokenExpiresInStr = formParams.getFirst(Key.REFRESH_TOKEN_EXPIRES_IN);
-        String pCookie = formParams.getFirst("p_cookie");
+        String pCookie = formParams.getFirst(Key.P_COOKIE);
+        String scopeStr = formParams.getFirst(Key.SCOPE);
+
+        String[] scope = AbstractOAuth2Token.Scope.parse(scopeStr);
 
         // relsolve personium-localunit scheme url.
         String target = UriUtils.convertSchemeFromLocalUnitToHttp(pTarget);
@@ -209,18 +212,18 @@ public class TokenEndPointResource {
         if (OAuth2Helper.GrantType.PASSWORD.equals(grantType)) {
             //Regular password authentication
             Response response = this.handlePassword(target, pOwner,
-                    schema, username, password, expiresIn, rTokenExpiresIn);
+                    schema, username, password, expiresIn, rTokenExpiresIn, scope);
             return response;
         } else if (OAuth2Helper.GrantType.SAML2_BEARER.equals(grantType)) {
             return this.receiveSaml2(target, pOwner, schema, assertion, expiresIn, rTokenExpiresIn);
         } else if (OAuth2Helper.GrantType.REFRESH_TOKEN.equals(grantType)) {
             return this.receiveRefresh(target, pOwner, schema, refreshToken, expiresIn, rTokenExpiresIn);
         } else if (OAuth2Helper.GrantType.AUTHORIZATION_CODE.equals(grantType)) {
-            return receiveCode(target, pOwner, schema, code, expiresIn, rTokenExpiresIn);
+            return receiveCode(target, pOwner, schema, code, expiresIn, rTokenExpiresIn, scope);
         } else {
             // Call Auth Plugins
             return this.callAuthPlugins(grantType, formParams, target, pOwner,
-                    schema, expiresIn, rTokenExpiresIn);
+                    schema, expiresIn, rTokenExpiresIn, scope);
         }
     }
 
@@ -244,7 +247,7 @@ public class TokenEndPointResource {
      * @return Response
      */
     private Response callAuthPlugins(String grantType, MultivaluedMap<String, String> params,
-            String target, String owner, String schema, long expiresIn, long rTokenExpiresIn) {
+            String target, String owner, String schema, long expiresIn, long rTokenExpiresIn, String[] requestScopes) {
         // Plugin manager.
         PluginManager pm = PersoniumCoreApplication.getPluginManager();
         // Search target plugin.
@@ -312,10 +315,10 @@ public class TokenEndPointResource {
                 throw PersoniumCoreAuthnException.AUTHN_FAILED;
             }
         }
+        String[] scopes = this.cell.getScopeArbitrator(schema, true).request(requestScopes).getResults();
 
         // When processing is normally completed, issue a token.
-        return this.issueToken(target, owner, schema, accountName, expiresIn, rTokenExpiresIn,
-                AbstractOAuth2Token.Scope.EMPTY);
+        return this.issueToken(target, owner, schema, accountName, expiresIn, rTokenExpiresIn, scopes);
     }
 
     /**
@@ -439,7 +442,7 @@ public class TokenEndPointResource {
      * @return API response
      */
     private Response receiveCode(final String target, String owner, String schema,
-            final String code, long expiresIn, long rTokenExpiresIn) {
+            final String code, long expiresIn, long rTokenExpiresIn, String[] scope) {
         if (code == null) {
             //If code is not set, it is regarded as a parse error
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
@@ -486,7 +489,7 @@ public class TokenEndPointResource {
 
         //Regenerate AccessToken and RefreshToken from the received Token
         ResidentRefreshToken rToken = new ResidentRefreshToken(issuedAt, rTokenExpiresIn, getIssuerUrl(),
-                token.getSubject(), schema, "grantcode");
+                token.getSubject(), schema, token.getScope());
         IAccessToken aToken = null;
         if (target == null) {
             aToken = new VisitorLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
@@ -504,7 +507,7 @@ public class TokenEndPointResource {
             CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
             String subject = token.getSubject();
             long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
-            long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_A_HOUR;
+            long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_AN_HOUR;
             idToken = new IdToken(
                     cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
                     subject, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
@@ -771,7 +774,7 @@ public class TokenEndPointResource {
 
     private Response handlePassword(final String target, final String owner,
             final String schema, final String username,
-            final String password, long expiresIn, long rTokenExpiresIn) {
+            final String password, long expiresIn, long rTokenExpiresIn, String[] scope) {
 
         //Password check processing
         if (username == null) {
@@ -877,8 +880,9 @@ public class TokenEndPointResource {
                 throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
             }
         }
+        String[] scopes = this.cell.getScopeArbitrator(schema, true).request(scope).getResults();
 
-        return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn, AbstractOAuth2Token.Scope.ROPC);
+        return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn, scopes);
     }
 
     /**
@@ -908,7 +912,7 @@ public class TokenEndPointResource {
     }
 
     private Response issueToken(final String target, final String owner,
-            final String schema, final String username, long expiresIn, long rTokenExpiresIn, String scope) {
+            final String schema, final String username, long expiresIn, long rTokenExpiresIn, String[] scopes) {
         long issuedAt = new Date().getTime();
 
         if (Key.TRUE_STR.equals(owner)) {
@@ -929,12 +933,12 @@ public class TokenEndPointResource {
         }
 
         ResidentRefreshToken rToken = new ResidentRefreshToken(issuedAt, rTokenExpiresIn,
-                getIssuerUrl(), username, schema, scope);
+                getIssuerUrl(), username, schema, scopes);
 
         //Create a response.
         if (target == null) {
             ResidentLocalAccessToken localToken = new ResidentLocalAccessToken(issuedAt, expiresIn,
-                    getIssuerUrl(), username, schema, scope);
+                    getIssuerUrl(), username, schema, scopes);
             return this.responseAuthSuccess(localToken, rToken, issuedAt);
         } else {
             //Check that TODO SCHEMA is URL

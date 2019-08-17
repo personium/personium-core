@@ -180,6 +180,7 @@ public final class OAuth2Helper {
     public static class Scope {
         /** openid. It is used with the openid connect of the oauth2 extension. */
         public static final String OPENID = "openid";
+
     }
 
     /**
@@ -292,6 +293,10 @@ public final class OAuth2Helper {
          */
         public static final String OWNER = "p_owner";
         /**
+         * p_cookie.
+         */
+        public static final String P_COOKIE = "p_cookie";
+        /**
          * p_owner value.
          */
         public static final String TRUE_STR = "true";
@@ -354,7 +359,7 @@ public final class OAuth2Helper {
          * @param value Target value
          * @return true:match false:not match
          */
-        public static boolean isMatchPermittedValue(String value) {
+        public static boolean isPermittedValue(String value) {
             if (value == null
                     || NONE.equals(value)
                     || PUBLIC.equals(value)

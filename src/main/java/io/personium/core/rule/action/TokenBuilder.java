@@ -23,9 +23,9 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import io.personium.common.auth.token.ResidentLocalAccessToken;
-import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 
 /**
  * Create token string.
@@ -36,7 +36,7 @@ public class TokenBuilder {
     private String subject;
     private String schema;
     private List<Role> roleList;
-    private String scope;
+    private String[] scope;
 
     /**
      * Constructor.
@@ -89,7 +89,7 @@ public class TokenBuilder {
      * @param scope scope
      * @return TokenBuilder
      */
-    public TokenBuilder scope(String scope) { // CHECKSTYLE IGNORE
+    public TokenBuilder scope(String[] scope) { // CHECKSTYLE IGNORE
         this.scope = scope;
         return this;
     }

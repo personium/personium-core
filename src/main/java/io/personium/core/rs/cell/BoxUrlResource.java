@@ -38,7 +38,7 @@ import io.personium.core.model.ModelFactory;
 import io.personium.core.utils.ODataUtils;
 
 /**
- * JOX-RS Resource for obtaining Box URL.
+ * JAX-RS Resource for obtaining Box URL.
  */
 public class BoxUrlResource {
 

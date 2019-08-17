@@ -127,7 +127,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token without schema
-        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", appCellUrl2, "ROPC");
+        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", appCellUrl2, new String [] {"scope1"});
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
@@ -159,7 +159,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token
-        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", appCellUrl, "ROPC");
+        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", appCellUrl, new String[] {"scope1"});
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
@@ -198,7 +198,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token
-        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", appCellUrl, "ROPC");
+        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", appCellUrl, new String[] {"scope1"});
 
         // Refresh Token
         HttpResponse res = refreshToken(usrCellUrl, clrt.toTokenString(), null);
@@ -223,7 +223,7 @@ public class TokenAcceptanceTest extends PersoniumTest {
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
         // Generate Refresh Token
-        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", null, "ROPC");
+        ResidentRefreshToken clrt = new ResidentRefreshToken(usrCellUrl, "account1", null, new String[] {"scope1", "scope2"});
 
         // Refresh Token
         HttpResponse res = refreshToken(usrCellUrl, clrt.toTokenString(), appCellUrl);

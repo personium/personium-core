@@ -27,6 +27,7 @@ import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.Role;
+import io.personium.core.auth.ScopeArbitrator;
 import io.personium.core.event.EventBus;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.OEntityWrapper;
@@ -172,6 +173,8 @@ public interface Cell {
      * @return Box
      */
     Box getBoxForSchema(String boxSchema);
+
+    ScopeArbitrator getScopeArbitrator(String clientId, boolean isRopc);
 
     /**
      * It gets the Accounts to specify the Account name.

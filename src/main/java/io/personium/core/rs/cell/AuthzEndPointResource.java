@@ -172,7 +172,7 @@ public class AuthzEndPointResource {
             @QueryParam(Key.REDIRECT_URI) final String redirectUri,
             @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
             @QueryParam(Key.STATE) final String state,
-            @QueryParam(Key.SCOPE) final String scope,
+            @QueryParam(Key.SCOPE) final String scopeStr,
             @QueryParam(Key.KEEPLOGIN) final String keepLogin,
             @QueryParam(Key.CANCEL_FLG) final String isCancel,
             @QueryParam(Key.EXPIRES_IN) final String expiresInStr,
@@ -180,7 +180,7 @@ public class AuthzEndPointResource {
             @QueryParam(Key.PASSWORD_CHANGE_REQUIRED) final String passwordChangeRequiredStr,
             @Context final UriInfo uriInfo,
             @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
-
+        String[] scope = scopeStr.split(" ");
         return auth(false, responseType, clientId, redirectUri, null, null, pCookie, state, scope, keepLogin, isCancel,
                 expiresInStr, uriInfo, xForwardedFor, accessTokenStr, passwordChangeRequiredStr);
     }
@@ -214,7 +214,8 @@ public class AuthzEndPointResource {
         String accessTokenStr = formParams.getFirst(Key.ACCESS_TOKEN);
         String passwordChangeRequiredStr = formParams.getFirst(Key.PASSWORD_CHANGE_REQUIRED);
 
-        return auth(true, responseType, clientId, redirectUri, username, password, pCookie, state, scope, keepLogin,
+        return auth(true, responseType, clientId, redirectUri, username, password, pCookie, state,
+                AbstractOAuth2Token.Scope.parse(scope), keepLogin,
                 isCancel, expiresInStr, uriInfo, xForwardedFor, accessTokenStr, passwordChangeRequiredStr);
     }
 
@@ -254,7 +255,7 @@ public class AuthzEndPointResource {
             final String password,
             final String pCookie,
             final String state,
-            final String scope,
+            final String[] scope,
             final String keepLogin,
             final String isCancel,
             final String expiresInStr,
@@ -356,7 +357,7 @@ public class AuthzEndPointResource {
      * @return JAX-RS Response
      */
     private Response handlePasswordChange(String responseType, String clientId, String redirectUri, String apTokenStr,
-            String newPassword, String state, String scope, String keepLogin, long expiresIn) {
+            String newPassword, String state, String[] scope, String keepLogin, long expiresIn) {
         if (newPassword == null || StringUtils.isEmpty(newPassword)) {
             return returnFormRedirect(responseType, clientId, redirectUri,
                     OAuth2Helper.Error.INVALID_REQUEST, state, CODE_PASSWORD_CHANGE_NO_PASS, scope, apTokenStr, true);
@@ -436,7 +437,7 @@ public class AuthzEndPointResource {
      * @return JAX-RS Response
      */
     private Response handlePassword(String responseType, String clientId, String redirectUri, // CHECKSTYLE IGNORE
-            String username, String password, String state, String scope, String keepLogin, long expiresIn) {
+            String username, String password, String state, String[] scope, String keepLogin, long expiresIn) {
         //If both user ID and password are unspecified, return login error
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             return returnFormRedirect(responseType, clientId, redirectUri,
@@ -579,7 +580,7 @@ public class AuthzEndPointResource {
             CellCmp cellCmp = (CellCmp) cellRsCmp.getDavCmp();
             CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
             long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
-            long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_A_HOUR;
+            long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_AN_HOUR;
             IdToken idToken = new IdToken(
                     cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
                     username, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
@@ -629,7 +630,7 @@ public class AuthzEndPointResource {
      * @return JAX-RS Response
      */
     private Response handlePCookie(boolean isPost, String responseType, String clientId, String redirectUri,
-            String pCookie, String state, String scope, String keepLogin, long expiresIn, UriInfo uriInfo) {
+            String pCookie, String state, String[] scope, String keepLogin, long expiresIn, UriInfo uriInfo) {
         //Cookie authentication
         //Get decrypted value of cookie value
         AbstractOAuth2Token token;
@@ -695,7 +696,7 @@ public class AuthzEndPointResource {
             CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
             String subject = token.getSubject();
             long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
-            long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_A_HOUR;
+            long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_AN_HOUR;
             IdToken idToken = new IdToken(
                     cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
                     subject, clientId, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
@@ -728,7 +729,7 @@ public class AuthzEndPointResource {
      * @return response
      */
     private Response returnHandlePCookieFailedResponse(boolean isPost, String responseType, String clientId,
-            String redirectUri, String error, String state, String code, String scope) {
+            String redirectUri, String error, String state, String code, String[] scope) {
         if (isPost) {
             // It redirects at POST.
             return returnFormRedirect(responseType, clientId, redirectUri, error, state, code, scope);
@@ -880,7 +881,7 @@ public class AuthzEndPointResource {
      * @return response (redirect to the authentication form)
      */
     private Response returnFormRedirect(String responseType, String clientId, String redirectUri,
-            String error, String state, String code, String scope) {
+            String error, String state, String code, String[] scope) {
         return returnFormRedirect(responseType, clientId, redirectUri, error, state, code, scope, null, false);
     }
 
@@ -898,7 +899,7 @@ public class AuthzEndPointResource {
      * @return response (redirect to the authentication form)
      */
     private Response returnFormRedirect(String responseType, String clientId, String redirectUri,
-            String error, String state, String code, String scope, String accessTokenStr,
+            String error, String state, String code, String[] scope, String accessTokenStr,
             boolean passwordChangeRequired) {
         //Respond with 303 and return Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
@@ -922,9 +923,10 @@ public class AuthzEndPointResource {
                         .append("=").append(URLEncoder.encode(state, CharEncoding.UTF_8));
             }
             // scope
-            if (StringUtils.isNotEmpty(scope)) {
+            if (scope != null && scope.length > 0) {
+                String scopeStr = URLEncoder.encode(AbstractOAuth2Token.Scope.toConcatValue(scope), CharEncoding.UTF_8);
                 sbuf.append("&").append(OAuth2Helper.Key.SCOPE)
-                        .append("=").append(URLEncoder.encode(scope, CharEncoding.UTF_8));
+                        .append("=").append(URLEncoder.encode(scopeStr, CharEncoding.UTF_8));
             }
             // access_token
             if (StringUtils.isNotEmpty(accessTokenStr)) {

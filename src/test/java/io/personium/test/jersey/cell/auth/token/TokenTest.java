@@ -115,8 +115,8 @@ public class TokenTest extends PersoniumTest {
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         ResidentRefreshToken validToken = new ResidentRefreshToken(
-                issuedAt - AbstractOAuth2Token.SECS_IN_AN_DAY * 1000 + MILLISECS_IN_AN_MINITE,
-                issuer, subject, schema, "ROPC");
+                issuedAt - AbstractOAuth2Token.SECS_IN_A_DAY * 1000 + MILLISECS_IN_AN_MINITE,
+                issuer, subject, schema, new String[] {"scope1", "scope2"});
 
         // アプリセルに対して認証
         Http.request("authn/refresh-cl.txt")
@@ -127,8 +127,8 @@ public class TokenTest extends PersoniumTest {
 
         // 期限切れのトークンを生成する（IT環境の通信時間を考慮して１分余裕を持たせる）
         ResidentRefreshToken invalidToken = new ResidentRefreshToken(
-                issuedAt - AbstractOAuth2Token.SECS_IN_AN_DAY * 1000 - MILLISECS_IN_AN_MINITE, issuer, subject,
-                schema, "ROPC");
+                issuedAt - AbstractOAuth2Token.SECS_IN_A_DAY * 1000 - MILLISECS_IN_AN_MINITE, issuer, subject,
+                schema,  new String[] {"scope1", "scope2", "scope3"});
         // アプリセルに対して認証
         Http.request("authn/refresh-cl.txt")
                 .with("remoteCell", TEST_CELL1)
@@ -152,7 +152,7 @@ public class TokenTest extends PersoniumTest {
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         VisitorRefreshToken validToken = new VisitorRefreshToken(
-                id, issuedAt - AbstractOAuth2Token.SECS_IN_AN_DAY * 1000 + MILLISECS_IN_AN_MINITE,
+                id, issuedAt - AbstractOAuth2Token.SECS_IN_A_DAY * 1000 + MILLISECS_IN_AN_MINITE,
                 issuer, subject, origIssuer, origRoleList, schema);
         // Refresh
         Http.request("authn/refresh-cl.txt")
@@ -163,7 +163,7 @@ public class TokenTest extends PersoniumTest {
 
         // 期限切れのトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         VisitorRefreshToken invalidToken = new VisitorRefreshToken(
-                id, issuedAt - AbstractOAuth2Token.SECS_IN_AN_DAY * 1000 - MILLISECS_IN_AN_MINITE,
+                id, issuedAt - AbstractOAuth2Token.SECS_IN_A_DAY * 1000 - MILLISECS_IN_AN_MINITE,
                 issuer, subject, origIssuer, origRoleList, schema);
         // Refresh
         Http.request("authn/refresh-cl.txt")
@@ -226,7 +226,7 @@ public class TokenTest extends PersoniumTest {
         String issuer = UrlUtils.cellRoot(TEST_CELL1);
         String subject = "account2";
         String schema = "";
-        String scope = AbstractOAuth2Token.Scope.ROPC;
+        String[] scope = new String[0];
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         ResidentLocalAccessToken validToken = new ResidentLocalAccessToken(
