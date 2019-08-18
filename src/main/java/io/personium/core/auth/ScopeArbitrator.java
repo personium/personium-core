@@ -2,7 +2,9 @@ package io.personium.core.auth;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.core.PersoniumUnitConfig;
@@ -14,33 +16,33 @@ public class ScopeArbitrator {
     Cell cell;
     Box box;
     boolean isRopc;
-    String[] requestedScopes = new String[0];
+    Set<String> requestedScopes = new HashSet<>();
     List<String> permittedScopes = new ArrayList<String>();
 
-    static final String[] VALID_NON_URL_SCOPES = new String[] {
-            "root",
-            OAuth2Helper.Scope.OPENID
-    };
+    static final Set<String> VALID_NON_URL_SCOPES = new HashSet<>(Arrays.asList(new String[] {
+        CellPrivilege.ROOT.getName(),
+        CellPrivilege.MESSAGE.getName(),
+        OAuth2Helper.Scope.OPENID
+    }));
     public ScopeArbitrator(Cell cell, Box box, boolean ropc) {
         this.cell = cell;
         this.box = box;
         this.isRopc = ropc;
     }
-    public void request(String requestScopes) {
-        this.requestedScopes = AbstractOAuth2Token.Scope.parse(requestScopes);
-        arbitrate();
+    public ScopeArbitrator request(String requestScopes) {
+        return this.request(AbstractOAuth2Token.Scope.parse(requestScopes));
     }
     public ScopeArbitrator request(String[] requestScopes) {
         if (requestScopes != null) {
-            this.requestedScopes = requestScopes;
+            this.requestedScopes = new HashSet<>(Arrays.asList(requestScopes));
         }
-        arbitrate();
+        this.arbitrate();
         return this;
     }
     private void arbitrate() {
-        for (int i = 0 ; i < this.requestedScopes.length ; i++) {
-            if (this.check(requestedScopes[i])) {
-                this.permittedScopes.add(this.requestedScopes[i]);
+        for (String scope : this.requestedScopes) {
+            if (this.check(scope)) {
+                this.permittedScopes.add(scope);
             }
        }
     }
@@ -57,7 +59,7 @@ public class ScopeArbitrator {
 
         }
         // Exclude invalid non-URL values;
-        if (Arrays.binarySearch(VALID_NON_URL_SCOPES, scope) < 0) {
+        if (!VALID_NON_URL_SCOPES.contains(scope)) {
             return false;
         }
         // if ROPC then allow any valid scopes.
@@ -68,7 +70,7 @@ public class ScopeArbitrator {
         return false;
     }
     private boolean isRole(String scope) {
-        String id = this.box.getCell().roleResourceUrlToId(scope, PersoniumUnitConfig.getBaseUrl());
+        String id = this.cell.roleResourceUrlToId(scope, PersoniumUnitConfig.getBaseUrl());
         return (id != null);
     }
 }

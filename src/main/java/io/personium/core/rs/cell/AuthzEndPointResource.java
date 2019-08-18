@@ -180,7 +180,7 @@ public class AuthzEndPointResource {
             @QueryParam(Key.PASSWORD_CHANGE_REQUIRED) final String passwordChangeRequiredStr,
             @Context final UriInfo uriInfo,
             @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
-        String[] scope = scopeStr.split(" ");
+        String[] scope = AbstractOAuth2Token.Scope.parse(scopeStr);
         return auth(false, responseType, clientId, redirectUri, null, null, pCookie, state, scope, keepLogin, isCancel,
                 expiresInStr, uriInfo, xForwardedFor, accessTokenStr, passwordChangeRequiredStr);
     }
