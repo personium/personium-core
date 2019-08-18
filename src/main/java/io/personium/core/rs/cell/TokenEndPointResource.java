@@ -18,11 +18,14 @@ package io.personium.core.rs.cell;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.ws.rs.HeaderParam;
@@ -502,7 +505,8 @@ public class TokenEndPointResource {
 
         // If scope is openid it returns id_token.
         IdToken idToken = null;
-        if (OAuth2Helper.Scope.OPENID.equals(token.getScope())) {
+        Set<String> reqScopes = new HashSet<>(Arrays.asList(token.getScope()));
+        if (reqScopes.contains(OAuth2Helper.Scope.OPENID)) {
             CellCmp cellCmp = (CellCmp) davRsCmp.getDavCmp();
             CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
             String subject = token.getSubject();

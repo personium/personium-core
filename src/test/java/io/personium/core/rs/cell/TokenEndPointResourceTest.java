@@ -327,7 +327,7 @@ public class TokenEndPointResourceTest {
     }
 
     @Test
-    public void testToken() throws Exception {
+    public void testToken_password() throws Exception {
         String cellUrl = "https://personium/testcell/";
         String xForwadedFor = "1.2.3.4";
 
@@ -345,7 +345,7 @@ public class TokenEndPointResourceTest {
         JsonObject j = Json.createReader(new ByteArrayInputStream(res.getEntity().toString().getBytes(Charsets.UTF8_CHARSET))).readObject();
         System.out.println(j.getString("access_token"));
         assertEquals(200, res.getStatus());
-
-
     }
+
+
 }
