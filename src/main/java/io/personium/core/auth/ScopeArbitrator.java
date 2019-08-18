@@ -22,6 +22,23 @@ public class ScopeArbitrator {
     static final Set<String> VALID_NON_URL_SCOPES = new HashSet<>(Arrays.asList(new String[] {
         CellPrivilege.ROOT.getName(),
         CellPrivilege.MESSAGE.getName(),
+        CellPrivilege.MESSAGE_READ.getName(),
+        CellPrivilege.EVENT.getName(),
+        CellPrivilege.EVENT_READ.getName(),
+        CellPrivilege.ACL.getName(),
+        CellPrivilege.ACL_READ.getName(),
+        CellPrivilege.AUTH.getName(),
+        CellPrivilege.AUTH_READ.getName(),
+        CellPrivilege.SOCIAL.getName(),
+        CellPrivilege.SOCIAL_READ.getName(),
+        CellPrivilege.BOX.getName(),
+        CellPrivilege.BOX_BAR_INSTALL.getName(),
+        CellPrivilege.BOX_READ.getName(),
+        CellPrivilege.LOG.getName(),
+        CellPrivilege.LOG_READ.getName(),
+        CellPrivilege.PROPFIND.getName(),
+        CellPrivilege.RULE.getName(),
+        CellPrivilege.RULE_READ.getName(),
         OAuth2Helper.Scope.OPENID
     }));
     public ScopeArbitrator(Cell cell, Box box, boolean ropc) {

@@ -1,6 +1,6 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2019 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,11 +72,11 @@ import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
+import io.personium.core.auth.ScopeArbitrator;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellRsCmp;
-import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.impl.fs.CellKeysFile;
 import io.personium.core.odata.OEntityWrapper;
@@ -97,7 +97,7 @@ public class TokenEndPointResource {
     static Logger log = LoggerFactory.getLogger(TokenEndPointResource.class);
 
     private final Cell cell;
-    private final DavRsCmp davRsCmp;
+    private final CellRsCmp davRsCmp;
     private boolean issueCookie = false;
     private UriInfo requestURIInfo;
     //The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
@@ -110,7 +110,7 @@ public class TokenEndPointResource {
      * @param cell  Cell
      * @param davRsCmp davRsCmp
      */
-    public TokenEndPointResource(final Cell cell, final DavRsCmp davRsCmp) {
+    public TokenEndPointResource(final Cell cell, final CellRsCmp davRsCmp) {
         this.cell = cell;
         this.davRsCmp = davRsCmp;
     }
@@ -812,7 +812,7 @@ public class TokenEndPointResource {
         }
 
         // Check if the target account records authentication history.
-        isRecordingAuthHistory = AuthResourceUtils.isRecordingAuthHistory((CellRsCmp) davRsCmp, accountId, username);
+        isRecordingAuthHistory = ((CellRsCmp) davRsCmp).isRecordingAuthHistory(accountId, username);
 
         //Check valid authentication interval
         if (isLockedInterval) {
@@ -880,7 +880,8 @@ public class TokenEndPointResource {
                 throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
             }
         }
-        String[] scopes = this.cell.getScopeArbitrator(schema, true).request(scope).getResults();
+        ScopeArbitrator sa = this.cell.getScopeArbitrator(schema, true);
+        String[] scopes = sa.request(scope).getResults();
 
         return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn, scopes);
     }

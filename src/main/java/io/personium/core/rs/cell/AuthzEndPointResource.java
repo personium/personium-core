@@ -467,7 +467,7 @@ public class AuthzEndPointResource {
             }
 
             // Check if the target account records authentication history.
-            isRecordingAuthHistory = AuthResourceUtils.isRecordingAuthHistory(cellRsCmp, accountId, username);
+            isRecordingAuthHistory = cellRsCmp.isRecordingAuthHistory(accountId, username);
 
             //Check valid authentication interval
             if (isLockedInterval) {

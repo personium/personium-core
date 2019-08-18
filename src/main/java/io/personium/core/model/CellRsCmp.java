@@ -356,6 +356,23 @@ public class CellRsCmp extends DavRsCmp {
     }
 
     /**
+     * Check if the target account records authentication history.
+     * @param accountId account ID
+     * @param accountName account name
+     * @return "true" is records authentication history
+     */
+    public boolean isRecordingAuthHistory(String accountId, String accountName) {
+        if (StringUtils.isEmpty(accountId) || StringUtils.isEmpty(accountName)) {
+            return false;
+        }
+        List<String> ineligibleAccountList = this.getAccountsNotRecordingAuthHistory();
+        if (ineligibleAccountList == null) {
+            return true;
+        }
+        return !ineligibleAccountList.contains(accountName);
+    }
+
+    /**
      * Obtain Auth Scheme that can be used for authentication.
      * Autret Scheme that can be used for @return authentication
      */

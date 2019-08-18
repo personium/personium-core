@@ -45,10 +45,9 @@ public class PersoniumCoreApplication extends Application {
      */
     public static void start() {
         try {
+            loadConfig();
             TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                     PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
-            AbstractLocalToken.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
-            DataCryptor.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
             PersoniumThread.start(PersoniumUnitConfig.getThreadPoolNumForCellIO(),
                     PersoniumUnitConfig.getThreadPoolNumForBoxIO(),
                     PersoniumUnitConfig.getThreadPoolNumForMisc());
@@ -67,11 +66,19 @@ public class PersoniumCoreApplication extends Application {
                         String.valueOf(mergeSchedulerMaxThreadCount));
             }
 
-            pm = new PluginManager();
+            loadPlugins();
         } catch (Exception e) {
             PersoniumCoreLog.Server.FAILED_TO_START_SERVER.reason(e).writeLog();
             throw new RuntimeException(e);
         }
+    }
+    public static void loadConfig() {
+        AbstractLocalToken.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
+        DataCryptor.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
+    }
+
+    public static void loadPlugins() {
+        pm = new PluginManager();
     }
 
     /**
