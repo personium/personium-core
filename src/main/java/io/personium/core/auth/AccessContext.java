@@ -16,10 +16,15 @@
  */
 package io.personium.core.auth;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.UriInfo;
 
@@ -32,13 +37,13 @@ import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.ResidentLocalAccessToken;
-import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthzException;
@@ -134,12 +139,19 @@ public class AccessContext {
     private Cell cell;
     /** Access token type. */
     private String accessType;
-    /** subject. */
+    /** accessing user subject. */
     private String subject;
-    /** issuer. */
+    /** access token issuer. */
     private String issuer;
-    /** schema. */
+    /** accessing app schema. */
     private String schema;
+    /** scopes granted to the app. */
+    private Set<String> scopes = new HashSet<>();
+    /** CellPrivilege granted for App  as scope. */
+    private Set<CellPrivilege> scopePrivileges = new HashSet<>();
+    /** Roles granted for App as scope. */
+    private Set<Role> scopeRole = new HashSet<>();
+
     /** confidentialLevel. */
     private String confidentialLevel;
     /** Roles associated with access account. */
@@ -186,7 +198,6 @@ public class AccessContext {
             }
             String nonPortHost = headerHost.split(":")[0];
 
-
             // Cookie related processing requires no port number.
             String authToken = null;
             try {
@@ -200,10 +211,8 @@ public class AccessContext {
             }
         }
 
-        //TODO V1.1 Here is the part that can be cached. You can get it from the cache here.
-
-        //First branch depending on the authentication method
-
+        // TODO V1.1 Here is the part that can be cached. You can get it from the cache here.
+        // First branch depending on the authentication method
         if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BASIC)) {
             //Basic authentication
             return createBasicAuthz(authzHeaderValue, cell, baseUri, requestURIInfo);
@@ -378,8 +387,7 @@ public class AccessContext {
      */
     public boolean isUnitUserToken() {
         String type = getType();
-        if (TYPE_UNIT_MASTER.equals(type)
-                || TYPE_UNIT_ADMIN.equals(type)) {
+        if (TYPE_UNIT_MASTER.equals(type) || TYPE_UNIT_ADMIN.equals(type)) {
             return true;
         } else if ((TYPE_UNIT_USER.equals(type) || TYPE_UNIT_LOCAL.equals(type))
                 && getSubject().equals(getCell().getOwnerNormalized())) {
@@ -388,6 +396,7 @@ public class AccessContext {
         }
         return false;
     }
+
 
     /**
      * Perform access control (only master token, unit user token, unit local unit user token accessible).
@@ -455,7 +464,7 @@ public class AccessContext {
      * @param cellname cell
      * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
-    public void checkMyLocalOrPasswordChangeToken(Cell cellname, AcceptableAuthScheme acceptableAuthScheme) {
+    public void checkMyLocalOrPasswordChangeToken(AcceptableAuthScheme acceptableAuthScheme) {
         //Returning 401 if there is no illegal token or token designation
         //Returning 403 for a token other than your own cell local token
         if (TYPE_INVALID.equals(this.getType())) {
@@ -475,7 +484,8 @@ public class AccessContext {
      * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkSchemaAccess(String settingConfidentialLevel, Box box, AcceptableAuthScheme acceptableAuthScheme) {
-        //If you are a master token or unit user, unit local unit user pass through schema authentication.
+        // If accessed with a master, unit user token, or unit local unit user token,
+        // Then pass through schema authentication.
         if (this.isUnitUserToken()) {
             return;
         }
@@ -551,7 +561,7 @@ public class AccessContext {
         }
 
         //The main box has a schema but basic authentication is possible
-        if (Role.DEFAULT_BOX_NAME.equals(box.getName())) {
+        if (Box.MAIN_BOX_NAME.equals(box.getName())) {
             return;
         }
 
@@ -777,8 +787,23 @@ public class AccessContext {
         } else {
             ret.confidentialLevel = OAuth2Helper.SchemaLevel.PUBLIC;
         }
-
-        // TODO Cache Cell Level
+        if (tk.getScope() != null) {
+            ret.scopes.addAll(Arrays.asList(tk.getScope()));
+            for (String scope : ret.scopes) {
+                if (OAuth2Helper.Scope.OPENID.contentEquals(scope)) {
+                    continue;
+                }
+                if (scope.startsWith("https://")||scope.startsWith("http://")) {
+                    try {
+                        ret.scopeRole.add(new Role(new URL(scope)));
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    ret.scopePrivileges.add(CellPrivilege.get(CellPrivilege.class, scope));
+                }
+            }
+        }
         return ret;
     }
 
@@ -929,5 +954,4 @@ public class AccessContext {
             return ret;
         }
     }
-
 }

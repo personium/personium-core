@@ -19,8 +19,6 @@ package io.personium.core.rs.cell;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.Response;
 
-import org.odata4j.core.ODataConstants;
-import org.odata4j.core.ODataVersion;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
@@ -75,7 +73,7 @@ public class PasswordResource {
     @PUT
     public Response mypass() {
         //Access control
-        this.accessContext.checkMyLocalOrPasswordChangeToken(cell, this.davRsCmp.getAcceptableAuthScheme());
+        this.accessContext.checkMyLocalOrPasswordChangeToken(this.davRsCmp.getAcceptableAuthScheme());
         //Get the Account name to change password from cell local token
         this.key = this.accessContext.getSubject();
         String[] keyName;
@@ -97,7 +95,6 @@ public class PasswordResource {
 
         //Response return
         return Response.noContent()
-                .header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString)
                 .build();
     }
 }

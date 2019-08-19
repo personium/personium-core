@@ -39,8 +39,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 
-import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
@@ -50,14 +50,14 @@ import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
 
 /**
- * AccessContext ユニットテストクラス.
+ * Unit test class for AccessContext.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class AccessContextTest {
 
     /**
-     * マスタートークン.
+     * Master Token.
      */
     public static final String MASTER_TOKEN = PersoniumUnitConfig.getMasterToken();
 
