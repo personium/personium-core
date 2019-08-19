@@ -275,11 +275,10 @@ public final class ODataSvcCollectionResource extends ODataResource {
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {
         Acl acl = this.davRsCmp.getDavCmp().getAcl();
-        String url = this.davRsCmp.getCell().getUrl();
-        if (ac.requirePrivilege(acl, BoxPrivilege.READ, url)) {
+        if (ac.requirePrivilege(acl, BoxPrivilege.READ)) {
             return true;
         }
-        if (ac.requirePrivilege(acl, BoxPrivilege.WRITE, url)) {
+        if (ac.requirePrivilege(acl, BoxPrivilege.WRITE)) {
             return true;
         }
         return false;

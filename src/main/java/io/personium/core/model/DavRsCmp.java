@@ -396,7 +396,7 @@ public class DavRsCmp {
         // skip ACL check if davCmp does not exist.
         // (nonexistent resource is specified)
         if (privilege != null && this.davCmp != null
-                && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege, this.getCell().getUrl())) {
+                && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege)) {
             return true;
         }
 

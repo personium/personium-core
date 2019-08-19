@@ -56,6 +56,7 @@ import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.impl.es.cache.BoxCache;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
+import io.personium.core.model.jaxb.Acl;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.utils.UriUtils;
 import net.spy.memcached.internal.CheckedOperationTimeoutException;
@@ -395,5 +396,12 @@ public abstract class Cell {
      */
     public abstract String roleResourceUrlToId(String roleUrl, String baseUrl);
 
+    /**
+     * @return Cell Level ACL
+     */
+    public Acl getAcl() {
+        CellCmp cc = ModelFactory.cellCmp(this);
+        return cc.getAcl();
+    }
 
 }

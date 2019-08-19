@@ -142,7 +142,7 @@ public class CellRsCmp extends DavRsCmp {
 
         //If davCmp does not exist (resource that does not exist is specified) skip ACL check for that resource
         if (this.davCmp != null
-                && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege, this.getCell().getUrl())) {
+                && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege)) {
             return true;
         }
         return false;

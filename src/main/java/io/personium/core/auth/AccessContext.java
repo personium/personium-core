@@ -175,6 +175,7 @@ public class AccessContext {
         this.baseUri = baseUri;
         this.uriInfo = uriInfo;
         this.invalidReason = invalidReason;
+
     }
 
     /**
@@ -211,7 +212,6 @@ public class AccessContext {
             }
         }
 
-        // TODO V1.1 Here is the part that can be cached. You can get it from the cache here.
         // First branch depending on the authentication method
         if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BASIC)) {
             //Basic authentication
@@ -322,12 +322,11 @@ public class AccessContext {
 
     /**
      * Merge with the parent's ACL information and judge whether access is possible.
-     * @param acl ALC set in the resource
+     * @param acl ACL set in the resource
      * @param resourcePrivilege Privilege required to access the resource
-     * @param cellUrl Cell URL
      * @return boolean
      */
-    public boolean requirePrivilege(Acl acl, Privilege resourcePrivilege, String cellUrl) {
+    public boolean requirePrivilege(Acl acl, Privilege resourcePrivilege) {
         //No access if ACL is not set
         if (acl == null || acl.getAceList() == null) {
             return false;
@@ -366,7 +365,7 @@ public class AccessContext {
                 }
 
                 //Detect setting corresponding to role
-                if (role.localCreateUrl(cellUrl).equals(principalHref)) {
+                if (role.localCreateUrl(this.cell.getUrl()).equals(principalHref)) {
                     //Confirm whether Root is set
                     if (ace.getGrantedPrivilegeList().contains(CellPrivilege.ROOT.getName())) {
                         return true;
@@ -953,5 +952,26 @@ public class AccessContext {
             ret.roles = cell.getRoleListHere(tca);
             return ret;
         }
+    }
+
+    /**
+     * Check if this access context has the cell level privilege.
+     * @param cellPriv
+     * @return
+     */
+    public boolean hasPrivilege(CellPrivilege cellPriv) {
+        return hasPrivilegeInScope(cellPriv) && hasPrivilegeInSubject(cellPriv);
+    }
+    private boolean hasPrivilegeInScope(CellPrivilege cellPriv) {
+        for (CellPrivilege scopePriv : this.scopePrivileges) {
+            if (scopePriv.includes(cellPriv)) {
+                return true;
+            }
+        }
+        // TODO scope role check
+        return false;
+    }
+    private boolean hasPrivilegeInSubject(CellPrivilege cellPriv) {
+        return this.requirePrivilege(this.cell.getAcl(), cellPriv);
     }
 }
