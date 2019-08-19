@@ -38,7 +38,7 @@ import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.Box;
-import io.personium.core.model.DavRsCmp;
+import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
@@ -59,24 +59,24 @@ import io.personium.core.utils.UriUtils;
  */
 public final class CellCtlResource extends ODataResource {
     String pCredHeader;
-    DavRsCmp davRsCmp;
+    CellRsCmp cellRsCmp;
 
     /**
      * constructor.
      * @param accessContext AccessContext
      * @param pCredHeader X-Personium-Credential header
-     * @param davRsCmp davRsCmp
+     * @param cellRsCmp davRsCmp
      */
-    public CellCtlResource(final AccessContext accessContext, final String pCredHeader, DavRsCmp davRsCmp) {
+    public CellCtlResource(final AccessContext accessContext, final String pCredHeader, CellRsCmp cellRsCmp) {
         super(accessContext, UriUtils.SCHEME_LOCALCELL + ":/__ctl/", ModelFactory.ODataCtl.cellCtl(accessContext
                 .getCell()));
         this.pCredHeader = pCredHeader;
-        this.davRsCmp = davRsCmp;
+        this.cellRsCmp = cellRsCmp;
     }
 
     @Override
     public void checkAccessContext(final AccessContext ac, Privilege privilege) {
-        this.davRsCmp.checkAccessContext(ac, privilege);
+        this.cellRsCmp.checkAccessContext(ac, privilege);
     }
 
     /**
@@ -85,12 +85,12 @@ public final class CellCtlResource extends ODataResource {
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {
-        return this.davRsCmp.getAcceptableAuthScheme();
+        return this.cellRsCmp.getAcceptableAuthScheme();
     }
 
     @Override
     public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
-        return this.davRsCmp.hasPrivilege(ac, privilege);
+        return this.cellRsCmp.hasPrivilege(ac, privilege);
     }
 
     @Override
@@ -476,7 +476,7 @@ public final class CellCtlResource extends ODataResource {
                 .type(type)
                 .object(object)
                 .info(info)
-                .davRsCmp(this.davRsCmp)
+                .davRsCmp(this.cellRsCmp)
                 .build();
         EventBus eventBus = this.getAccessContext().getCell().getEventBus();
         eventBus.post(ev);
