@@ -58,7 +58,6 @@ import io.personium.core.utils.UriUtils;
  * JAX-RS Resource handling DC Cell Level Api.
  */
 public final class CellCtlResource extends ODataResource {
-
     String pCredHeader;
     DavRsCmp davRsCmp;
 
@@ -82,7 +81,7 @@ public final class CellCtlResource extends ODataResource {
 
     /**
      * Obtain Auth Scheme that can be used for authentication.
-     * Autret Scheme that can be used for @return authentication
+     * @return Auth Scheme that can be used for authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {

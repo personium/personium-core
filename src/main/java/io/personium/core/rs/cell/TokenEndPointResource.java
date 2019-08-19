@@ -712,6 +712,9 @@ public class TokenEndPointResource {
         JSONObject resp = new JSONObject();
         resp.put(OAuth2Helper.Key.ACCESS_TOKEN, accessToken.toTokenString());
         resp.put(OAuth2Helper.Key.EXPIRES_IN, accessToken.expiresIn());
+        if (accessToken.getScopes() != null && accessToken.getScopes().length > 0) {
+            resp.put(OAuth2Helper.Key.SCOPE, AbstractOAuth2Token.Scope.toConcatValue(accessToken.getScopes()));
+        }
         if (refreshToken != null) {
             resp.put(OAuth2Helper.Key.REFRESH_TOKEN, refreshToken.toTokenString());
             resp.put(OAuth2Helper.Key.REFRESH_TOKEN_EXPIRES_IN, refreshToken.refreshExpiresIn());

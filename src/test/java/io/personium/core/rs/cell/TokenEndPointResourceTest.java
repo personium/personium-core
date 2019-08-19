@@ -343,8 +343,8 @@ public class TokenEndPointResourceTest {
 
         Response res = tokenEndPointResource.token(uriInfo, null, formParams, xForwadedFor);
         JsonObject j = Json.createReader(new ByteArrayInputStream(res.getEntity().toString().getBytes(Charsets.UTF8_CHARSET))).readObject();
-        System.out.println(j.getString("access_token"));
         assertEquals(200, res.getStatus());
+        assertEquals("root", j.getString("scope"));
     }
 
 
