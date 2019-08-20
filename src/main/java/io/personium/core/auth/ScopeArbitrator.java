@@ -12,6 +12,23 @@ import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.utils.UriUtils;
 
+/**
+ * Class for scope arbitration object.
+ * Create an instance with Cell and Box information and a flag whether the token
+ * authentication is done via ROPC or not.
+ *
+ * With isROPC true:
+ *   It is a cell admin mode. So any scope request will be admitted.
+ *   if not request is made then default scope will be root.
+ *
+ * With isROPC false:
+ *   Normal use cases.
+ *   only scopes that are pre-granted to box will be admitted.
+ *   i.e. Cell Level Privileges and Roles
+ *   if no box exists then no scope will be granted.
+ *
+ *   not implemented yet.
+ */
 public class ScopeArbitrator {
     Cell cell;
     Box box;
@@ -53,6 +70,12 @@ public class ScopeArbitrator {
         if (requestScopes != null) {
             this.requestedScopes = new HashSet<>(Arrays.asList(requestScopes));
         }
+        // remove empty entry
+        this.requestedScopes.remove("");
+        if (this.requestedScopes.size() == 0 && this.isRopc) {
+            // if ROPC and no scope requested then root will be granted.
+            this.requestedScopes.add("root");
+        }
         this.arbitrate();
         return this;
     }
@@ -68,22 +91,27 @@ public class ScopeArbitrator {
     }
     private boolean check(String scope) {
         String resolvedScope = UriUtils.resolveLocalUnit(scope);
+        // If it looks like a role because it is a http URL.
         if (resolvedScope.startsWith("http://") || resolvedScope.startsWith("https://")) {
+            // check if it is really a role or not
             if (isRole(resolvedScope)) {
                 return true;
             }
             return false;
-
         }
-        // Exclude invalid non-URL values;
+        // If not, it should probably be Cell Privilege.
+        // make sure.
         if (!VALID_NON_URL_SCOPES.contains(scope)) {
             return false;
         }
+        // Now Cell Level privilege can come here.
         // if ROPC then allow any valid scopes.
         if (this.isRopc) {
             return true;
         }
-
+        // if not the reject all .. (Tentatively)
+        // TODO implement Box configuration to allow Cell Level privilege, and refer to that
+        // setting.
         return false;
     }
     private boolean isRole(String scope) {

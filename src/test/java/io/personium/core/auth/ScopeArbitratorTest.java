@@ -41,6 +41,17 @@ public class ScopeArbitratorTest {
         assertEquals(3, res.length);
     }
     /**
+     * When constructed with ROPC option and no scope requested, then root is granted.
+     */
+    @Test
+    public void When_ROPC_noScopeRequest_Then_RootGranted () {
+        ScopeArbitrator sa  = new ScopeArbitrator(this.mockCell, this.mockBox, true);
+        sa.request("");
+        String[] res = sa.getResults();
+        assertEquals("root", res[0]);
+    }
+
+    /**
      * When constructed with non-ROPC option, then any Cell level priviledge can not be allowed.
      */
     @Test
