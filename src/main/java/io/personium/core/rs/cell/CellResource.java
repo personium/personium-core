@@ -280,14 +280,14 @@ public class CellResource {
     }
 
     /**
-     * Endpoint of password change API.
+     * Endpoint of my password change API.
      * @param pCredHeader pCredHeader
      * @return Response
      */
     @Path("__mypassword")
-    public PasswordResource mypassword(
+    public MyPasswordResource mypassword(
             @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader) {
-        return new PasswordResource(this.accessContext, pCredHeader, this.cell, this.cellRsCmp);
+        return new MyPasswordResource(this.accessContext, pCredHeader, this.cell, this.cellRsCmp);
     }
 
     /**

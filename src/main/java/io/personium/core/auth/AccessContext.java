@@ -474,6 +474,11 @@ public class AccessContext {
         } else if (!TYPE_ACCOUNT.equals(this.getType()) && !TYPE_PASSWORD_CHANGE.equals(this.getType())) {
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
+
+        // Check if cope lacking
+        if (TYPE_ACCOUNT.equals(this.getType()) &&!this.hasPrivilegeInScope(CellPrivilege.AUTH)) {
+            throw PersoniumCoreException.Auth.INSUFFICIENT_SCOPE.params(CellPrivilege.AUTH.getName());
+        }
     }
 
     /**
@@ -799,7 +804,10 @@ public class AccessContext {
                         throw new RuntimeException(e);
                     }
                 } else {
-                    ret.scopePrivileges.add(CellPrivilege.get(CellPrivilege.class, scope));
+                    CellPrivilege prv = CellPrivilege.get(CellPrivilege.class, scope);
+                    if (prv != null) {
+                        ret.scopePrivileges.add(prv);
+                    }
                 }
             }
         }

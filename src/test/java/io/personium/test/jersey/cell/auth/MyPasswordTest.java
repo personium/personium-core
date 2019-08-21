@@ -1,6 +1,6 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2019 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,39 @@ package io.personium.test.jersey.cell.auth;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.apache.commons.io.Charsets;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
-import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.rs.PersoniumCoreApplication;
+import io.personium.core.utils.HttpClientFactory;
+import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -57,7 +71,7 @@ import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
 
 /**
- * パスワード変更APIのテスト.
+ * Test for Password change API.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
@@ -66,25 +80,37 @@ public class MyPasswordTest extends PersoniumTest {
     private static final String MASTER_TOKEN = AbstractCase.MASTER_TOKEN_NAME;
     private static final String UNIT_USER_CELL = "unitusercell";
 
+    private String cellUrl;
+
+
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public MyPasswordTest() {
         super(new PersoniumCoreApplication());
     }
+    @Before
+    public void before() {
+        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        this.cellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
+    }
 
     /**
-     * 自分セルローカルトークン認証でパスワード変更を実行し204が返ること.
-     * @throws TokenParseException 認証用トークンのパースエラー
+     * When accessed with residential Access Token with sufficient scope, then return 204.
+     * @throws TokenParseException
      */
     @Test
-    public final void 自分セルローカルトークン認証でパスワード変更を実行し204が返ること() throws TokenParseException {
+    public final void When_ResidentialAccessTokenWithSufficientScope_Then_Return_204() throws TokenParseException {
+        String accountName = "PasswordTest";
+        String accountPw = "password";
+
         try {
             // Account作成
-            AccountUtils.create(MASTER_TOKEN, Setup.TEST_CELL1, "PasswordTest", "password", 201);
+            AccountUtils.create(MASTER_TOKEN, Setup.TEST_CELL1, accountName, accountPw, 201);
             // 認証
-            JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
-                    "PasswordTest", "password", -1);
+            HttpResponse httpRes = this.httpReqROPC(this.cellUrl, accountName, accountPw, null, null, null, null);
+            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), Charsets.UTF_8));
+
             // セルローカルトークンを取得する
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
@@ -100,15 +126,47 @@ public class MyPasswordTest extends PersoniumTest {
             // 2.変更後のパスワードのセルローカルトークンでアカウントの取得を実行して200となること
             // 認証
             resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
-                    "PasswordTest", "newPassword", -1);
+                    accountName, "newPassword", -1);
             // セルローカルトークンを取得する
             tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
             res = requesttoMypassword(tokenStr, "newPassword1", Setup.TEST_CELL1);
             assertEquals(204, res.getStatusCode());
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, "PasswordTest", 204);
+            AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, accountName, 204);
         }
     }
+
+    /**
+     * When Access Token_Has Insufficient Scope Then Return_403.
+     * @throws TokenParseException
+     */
+    @Test
+    public final void When_ResidentialAccessToken_HasInsufficientScope_Then_Return_403() throws TokenParseException {
+        String accountName = "PasswordTest";
+        String accountPw = "password";
+
+        try {
+            // Account作成
+            AccountUtils.create(MASTER_TOKEN, Setup.TEST_CELL1, accountName, accountPw, 201);
+
+            // 認証
+            HttpResponse httpRes = this.httpReqROPC(this.cellUrl, accountName, accountPw, null, "messsage", null, null);
+            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), Charsets.UTF_8));
+            // セルローカルトークンを取得する
+            String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
+            // 確認
+
+            PersoniumResponse res = requesttoMypassword(tokenStr, "newPassword", Setup.TEST_CELL1);
+            assertEquals(403, res.getStatusCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, accountName, 204);
+        }
+    }
+
 
     /**
      * Test that my password change token authentication can be change the password.
@@ -122,9 +180,15 @@ public class MyPasswordTest extends PersoniumTest {
             AccountUtils.createWithStatus(Setup.MASTER_TOKEN_NAME, Setup.TEST_CELL1, account, account,
                     Account.STATUS_PASSWORD_CHANGE_REQUIRED, HttpStatus.SC_CREATED);
             // Authenticate
-            JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
-                    account, account, -1);
+//            JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
+//                    account, account, -1);
+            HttpResponse httpRes = this.httpReqROPC(this.cellUrl, account, account, null, null, null, null);
+            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), Charsets.UTF_8));
+            System.out.println(resBody.toJSONString());
+
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
+            String scope = (String) resBody.get(OAuth2Helper.Key.SCOPE);
+
             assertTrue(tokenStr.startsWith(PasswordChangeAccessToken.PREFIX_ACCESS));
 
             // Change my password.
@@ -135,6 +199,8 @@ public class MyPasswordTest extends PersoniumTest {
             resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1, account, "newPassword", -1);
             tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
             assertTrue(tokenStr.startsWith(ResidentLocalAccessToken.PREFIX_ACCESS));
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, account, -1);
         }
@@ -459,5 +525,40 @@ public class MyPasswordTest extends PersoniumTest {
             e.printStackTrace();
         }
         return res;
+    }
+
+    private HttpResponse httpReqROPC(String cellUrl, String username, String password, String pTarget, String scope,
+            String clientId, String clientSecret) throws ClientProtocolException, IOException {
+        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_DEFAULT);
+
+        String tokenEndpoint = cellUrl + "__token";
+        HttpPost post = new HttpPost(tokenEndpoint);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("grant_type=password&username=");
+        sb.append(username);
+        sb.append("&password=");
+        sb.append(password);
+        if (pTarget != null) {
+            sb.append("&p_target=");
+            sb.append(pTarget);
+        }
+        if (scope != null) {
+            sb.append("&scope=");
+            sb.append(scope);
+        }
+        if (clientId != null) {
+            sb.append("&client_id=");
+            sb.append(clientId);
+            sb.append("&client_secret=");
+            sb.append(clientSecret);
+        }
+
+        post.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
+        post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+
+        HttpEntity reqEntity = new StringEntity(sb.toString());
+        post.setEntity(reqEntity);
+        return client.execute(post);
     }
 }

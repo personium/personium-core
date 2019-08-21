@@ -57,7 +57,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import io.personium.common.auth.token.Role;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
@@ -488,7 +487,7 @@ public class DavRsCmp {
         // check if this resource if under a box with Schema URL
         String boxSchema = this.getBox().getSchema();
         // only Bearer scheme is allowed if Box Schema URL is defined
-        if (boxSchema != null && boxSchema.length() > 0 && !Role.DEFAULT_BOX_NAME.equals(this.getBox().getName())) {
+        if (boxSchema != null && boxSchema.length() > 0 && !Box.MAIN_BOX_NAME.equals(this.getBox().getName())) {
             allowedAuthScheme = AcceptableAuthScheme.BEARER;
         }
         return allowedAuthScheme;

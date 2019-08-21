@@ -28,7 +28,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Cell;
-import io.personium.core.model.DavRsCmp;
+import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.PersoniumODataProducer;
@@ -36,33 +36,33 @@ import io.personium.core.odata.PersoniumODataProducer;
 /**
  * JAX-RS resource that handles password change processing in resource class.
  */
-public class PasswordResource {
+public class MyPasswordResource {
 
     String pCredHeader;
     AccessContext accessContext;
     Cell cell;
 
-    static Logger log = LoggerFactory.getLogger(PasswordResource.class);
+    static Logger log = LoggerFactory.getLogger(MyPasswordResource.class);
 
     private String key;
     private String keyString = null;
     private OEntityKey oEntityKey;
-    private DavRsCmp davRsCmp;
+    private CellRsCmp cellRsCmp;
 
     /**
      * constructor.
      * @param accessContext accessContext
      * @param pCredHeader pCredHeader
      * @param cell cell
-     * @param davRsCmp DavRsCmp
+     * @param cellRsCmp DavRsCmp
      */
-    public PasswordResource(final AccessContext accessContext,
+    public MyPasswordResource(final AccessContext accessContext,
             final String pCredHeader,
-            Cell cell, DavRsCmp davRsCmp) {
+            Cell cell, CellRsCmp cellRsCmp) {
         this.accessContext = accessContext;
         this.pCredHeader = pCredHeader;
         this.cell = cell;
-        this.davRsCmp = davRsCmp;
+        this.cellRsCmp = cellRsCmp;
     }
 
     /**
@@ -71,9 +71,9 @@ public class PasswordResource {
      */
     @WriteAPI
     @PUT
-    public Response mypass() {
+    public Response put() {
         //Access control
-        this.accessContext.checkMyLocalOrPasswordChangeToken(this.davRsCmp.getAcceptableAuthScheme());
+        this.accessContext.checkMyLocalOrPasswordChangeToken(this.cellRsCmp.getAcceptableAuthScheme());
         //Get the Account name to change password from cell local token
         this.key = this.accessContext.getSubject();
         String[] keyName;

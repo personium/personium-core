@@ -34,7 +34,7 @@ public class ScopeArbitratorTest {
     @Test
     public void When_ROPC_Then_CellLevelPrivileges_CanBeAllowed () {
         ScopeArbitrator sa  = new ScopeArbitrator(this.mockCell, this.mockBox, true);
-        sa.request("openid root root message foo https://personium.example/__role/__/someRole");
+        sa.requestString("openid root root message foo https://personium.example/__role/__/someRole");
         String[] res = sa.getResults();
         System.out.println(StringUtils.join(sa.requestedScopes, " "));
         System.out.println(StringUtils.join(res, " "));
@@ -46,7 +46,7 @@ public class ScopeArbitratorTest {
     @Test
     public void When_ROPC_noScopeRequest_Then_RootGranted () {
         ScopeArbitrator sa  = new ScopeArbitrator(this.mockCell, this.mockBox, true);
-        sa.request("");
+        sa.requestString(null);
         String[] res = sa.getResults();
         assertEquals("root", res[0]);
     }
@@ -57,7 +57,7 @@ public class ScopeArbitratorTest {
     @Test
     public void When_NotROPC_Then_CellLevelPrivileges_CanNotBeAllowed () {
         ScopeArbitrator sa  = new ScopeArbitrator(this.mockCell, this.mockBox, false);
-        sa.request("root message-read");
+        sa.requestString("root message-read");
         String[] res = sa.getResults();
         assertEquals(0, res.length);
     }

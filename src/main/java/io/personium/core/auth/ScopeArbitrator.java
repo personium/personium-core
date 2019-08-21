@@ -63,7 +63,7 @@ public class ScopeArbitrator {
         this.box = box;
         this.isRopc = ropc;
     }
-    public ScopeArbitrator request(String requestScopes) {
+    public ScopeArbitrator requestString(String requestScopes) {
         return this.request(AbstractOAuth2Token.Scope.parse(requestScopes));
     }
     public ScopeArbitrator request(String[] requestScopes) {
