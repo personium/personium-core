@@ -116,6 +116,6 @@ public class ScopeArbitrator {
     }
     private boolean isRole(String scope) {
         String id = this.cell.roleResourceUrlToId(scope, PersoniumUnitConfig.getBaseUrl());
-        return (id != null);
+        return id != null;
     }
 }

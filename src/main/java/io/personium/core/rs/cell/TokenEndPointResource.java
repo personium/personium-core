@@ -222,7 +222,7 @@ public class TokenEndPointResource {
         } else if (OAuth2Helper.GrantType.REFRESH_TOKEN.equals(grantType)) {
             return this.receiveRefresh(target, pOwner, schema, refreshToken, expiresIn, rTokenExpiresIn);
         } else if (OAuth2Helper.GrantType.AUTHORIZATION_CODE.equals(grantType)) {
-            return receiveCode(target, pOwner, schema, code, expiresIn, rTokenExpiresIn, scope);
+            return receiveCode(target, pOwner, schema, code, expiresIn, rTokenExpiresIn);
         } else {
             // Call Auth Plugins
             return this.callAuthPlugins(grantType, formParams, target, pOwner,
@@ -445,7 +445,7 @@ public class TokenEndPointResource {
      * @return API response
      */
     private Response receiveCode(final String target, String owner, String schema,
-            final String code, long expiresIn, long rTokenExpiresIn, String[] scope) {
+            final String code, long expiresIn, long rTokenExpiresIn) {
         if (code == null) {
             //If code is not set, it is regarded as a parse error
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
