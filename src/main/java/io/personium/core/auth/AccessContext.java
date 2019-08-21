@@ -967,10 +967,7 @@ public class AccessContext {
      * @param cellPriv
      * @return
      */
-    public boolean hasCellPrivilege(CellPrivilege cellPriv) {
-        return hasScopeCellPrivilege(cellPriv) && hasSubjectCellPrivilege(cellPriv);
-    }
-    private boolean hasScopeCellPrivilege(CellPrivilege cellPriv) {
+    public boolean hasScopeCellPrivilege(CellPrivilege cellPriv) {
         for (CellPrivilege scopePriv : this.scopePrivileges) {
             if (scopePriv.includes(cellPriv)) {
                 return true;
@@ -978,8 +975,5 @@ public class AccessContext {
         }
         // TODO scope role check
         return false;
-    }
-    private boolean hasSubjectCellPrivilege(CellPrivilege cellPriv) {
-        return this.hasSubjectPrivilegeForAcl(this.cell.getAcl(), cellPriv);
     }
 }

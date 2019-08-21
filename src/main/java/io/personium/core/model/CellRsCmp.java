@@ -42,6 +42,7 @@ import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.auth.CellPrivilege;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
 import io.personium.core.utils.HttpClientFactory;
@@ -179,6 +180,11 @@ public class CellRsCmp extends DavRsCmp {
                         ac.getRealm(), getAcceptableAuthScheme());
             }
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        }
+
+        if (privilege instanceof CellPrivilege
+                && !this.accessContext.hasScopeCellPrivilege((CellPrivilege)privilege)) {
+            throw PersoniumCoreException.Auth.INSUFFICIENT_SCOPE.params(privilege.getName());
         }
     }
 
