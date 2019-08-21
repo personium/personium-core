@@ -150,7 +150,7 @@ public class AccessContext {
     /** CellPrivilege granted for App  as scope. */
     private Set<CellPrivilege> scopePrivileges = new HashSet<>();
     /** Roles granted for App as scope. */
-    private Set<Role> scopeRole = new HashSet<>();
+    private Set<Role> scopeRoles = new HashSet<>();
 
     /** confidentialLevel. */
     private String confidentialLevel;
@@ -555,8 +555,10 @@ public class AccessContext {
     }
 
     /**
-     * If basic authentication can not be done, it is checked whether basic authentication can be performed or not, and the state of Basic authentication disabled is set in context. <br />
-     * In this method, only checking is performed, and whether or not it is actually an authentication error is left to the access right check process of the structure.
+     * If basic authentication can not be done, it is checked whether basic authentication can be performed or not,
+     *  and the state of Basic authentication disabled is set in context. <br />
+     * In this method, only checking is performed, and whether or not it is actually an authentication error
+     * is left to the access right check process of the structure.
      * @param box Box object (specify null for Cell level)
      */
     public void updateBasicAuthenticationStateForResource(Box box) {
@@ -806,7 +808,7 @@ public class AccessContext {
                 }
                 if (scope.startsWith("https://")||scope.startsWith("http://")) {
                     try {
-                        ret.scopeRole.add(new Role(new URL(scope)));
+                        ret.scopeRoles.add(new Role(new URL(scope)));
                     } catch (MalformedURLException e) {
                         throw new RuntimeException(e);
                     }
