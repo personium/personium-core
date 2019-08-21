@@ -138,11 +138,13 @@ public class CellRsCmp extends DavRsCmp {
      * @param privilege Privilege of ACL (read or write)
      * @return boolean
      */
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
+    @Override
+    public boolean hasSubjectPrivilege(Privilege privilege) {
 
-        //If davCmp does not exist (resource that does not exist is specified) skip ACL check for that resource
+        // If davCmp does not exist (resource that does not exist is specified)
+        // skip ACL check for that resource
         if (this.davCmp != null
-                && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege)) {
+                && this.getAccessContext().hasSubjectPrivilegeForAcl(this.davCmp.getAcl(), privilege)) {
             return true;
         }
         return false;
@@ -154,7 +156,7 @@ public class CellRsCmp extends DavRsCmp {
      * @param privilege Required privilege
      */
     public void checkAccessContext(AccessContext ac, Privilege privilege) {
-        // Check UnitUser token.
+        // If UnitUser token, then OK.
         if (ac.isUnitUserToken(privilege)) {
             return;
         }
@@ -163,9 +165,10 @@ public class CellRsCmp extends DavRsCmp {
         this.accessContext.updateBasicAuthenticationStateForResource(null);
 
         //Access right check
-        if (!this.hasPrivilege(ac, privilege)) {
+        if (!this.hasSubjectPrivilege(privilege)) {
             //Check the validity of the token
-            //Even if the token is INVALID, if the ACL setting and Privilege is set to all, it is necessary to permit access, so check at this timing
+            // Even if the token is INVALID, if the ACL setting and Privilege is set to all,
+            // it is necessary to permit access, so check at this timing
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
                 ac.throwInvalidTokenException(getAcceptableAuthScheme());
             } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {

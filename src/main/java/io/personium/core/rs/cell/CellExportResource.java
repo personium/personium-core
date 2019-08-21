@@ -72,7 +72,7 @@ public class CellExportResource {
     @GET
     public Response get() {
         // Check the authority required for execution.
-        cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        this.cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
 
         // Get processing status from cache.
         // If it returns null, it is regarded as ready state.

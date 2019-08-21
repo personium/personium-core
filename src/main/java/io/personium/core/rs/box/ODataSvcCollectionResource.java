@@ -84,7 +84,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ_PROPERTIES);
         Response response = this.davRsCmp.doPropfind(requestBodyXml,
                                                      depth,
                                                      contentLength,
@@ -195,7 +195,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
         boolean recursive = Boolean.valueOf(recursiveHeader);
         // Check acl.
         // Since ODataSvcCollectionResource always has a parent, result of this.davRsCmp.getParent() will never be null.
-        this.davRsCmp.getParent().checkAccessContext(this.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
 
         // If OData schema/data already exists, an error
         if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
@@ -249,13 +249,13 @@ public final class ODataSvcCollectionResource extends ODataResource {
     public Response move(
             @Context HttpHeaders headers) {
         //Access control to move source (check parent's authority)
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }
 
     @Override
     public void checkAccessContext(AccessContext ac, Privilege privilege) {
-        this.davRsCmp.checkAccessContext(ac, privilege);
+        this.davRsCmp.checkAccessContext(privilege);
     }
 
     /**
@@ -275,10 +275,10 @@ public final class ODataSvcCollectionResource extends ODataResource {
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {
         Acl acl = this.davRsCmp.getDavCmp().getAcl();
-        if (ac.requirePrivilege(acl, BoxPrivilege.READ)) {
+        if (ac.hasSubjectPrivilegeForAcl(acl, BoxPrivilege.READ)) {
             return true;
         }
-        if (ac.requirePrivilege(acl, BoxPrivilege.WRITE)) {
+        if (ac.hasSubjectPrivilegeForAcl(acl, BoxPrivilege.WRITE)) {
             return true;
         }
         return false;
@@ -286,7 +286,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
 
     @Override
     public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
-        return this.davRsCmp.hasPrivilege(ac, privilege);
+        return this.davRsCmp.hasSubjectPrivilege(privilege);
     }
 
     @Override

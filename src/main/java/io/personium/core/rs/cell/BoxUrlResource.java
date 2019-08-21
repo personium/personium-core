@@ -105,7 +105,7 @@ public class BoxUrlResource {
         //Validity check of the authentication token (such as tokens that have expired)
         DavCmp davCmp = ModelFactory.boxCmp(box);
         DavRsCmp boxUrlRsCmp = new BoxUrlRsCmp(this.cellRsCmp, davCmp, this.accessContext, box);
-        boxUrlRsCmp.checkAccessContext(this.accessContext, BoxPrivilege.READ);
+        boxUrlRsCmp.checkAccessContext(BoxPrivilege.READ);
 
         // Response body
         JSONObject responseBody = new JSONObject();

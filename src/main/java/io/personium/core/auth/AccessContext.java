@@ -326,7 +326,7 @@ public class AccessContext {
      * @param resourcePrivilege Privilege required to access the resource
      * @return boolean
      */
-    public boolean requirePrivilege(Acl acl, Privilege resourcePrivilege) {
+    public boolean hasSubjectPrivilegeForAcl(Acl acl, Privilege resourcePrivilege) {
         //No access if ACL is not set
         if (acl == null || acl.getAceList() == null) {
             return false;
@@ -463,7 +463,7 @@ public class AccessContext {
      * @param cellname cell
      * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
-    public void checkMyLocalOrPasswordChangeToken(AcceptableAuthScheme acceptableAuthScheme) {
+    public void checkResidentLocalOrPasswordChangeToken(AcceptableAuthScheme acceptableAuthScheme) {
         //Returning 401 if there is no illegal token or token designation
         //Returning 403 for a token other than your own cell local token
         if (TYPE_INVALID.equals(this.getType())) {
@@ -476,7 +476,7 @@ public class AccessContext {
         }
 
         // Check if cope lacking
-        if (TYPE_ACCOUNT.equals(this.getType()) &&!this.hasPrivilegeInScope(CellPrivilege.AUTH)) {
+        if (TYPE_ACCOUNT.equals(this.getType()) &&!this.hasScopeCellPrivilege(CellPrivilege.AUTH)) {
             throw PersoniumCoreException.Auth.INSUFFICIENT_SCOPE.params(CellPrivilege.AUTH.getName());
         }
     }
@@ -967,10 +967,10 @@ public class AccessContext {
      * @param cellPriv
      * @return
      */
-    public boolean hasPrivilege(CellPrivilege cellPriv) {
-        return hasPrivilegeInScope(cellPriv) && hasPrivilegeInSubject(cellPriv);
+    public boolean hasCellPrivilege(CellPrivilege cellPriv) {
+        return hasScopeCellPrivilege(cellPriv) && hasSubjectCellPrivilege(cellPriv);
     }
-    private boolean hasPrivilegeInScope(CellPrivilege cellPriv) {
+    private boolean hasScopeCellPrivilege(CellPrivilege cellPriv) {
         for (CellPrivilege scopePriv : this.scopePrivileges) {
             if (scopePriv.includes(cellPriv)) {
                 return true;
@@ -979,7 +979,7 @@ public class AccessContext {
         // TODO scope role check
         return false;
     }
-    private boolean hasPrivilegeInSubject(CellPrivilege cellPriv) {
-        return this.requirePrivilege(this.cell.getAcl(), cellPriv);
+    private boolean hasSubjectCellPrivilege(CellPrivilege cellPriv) {
+        return this.hasSubjectPrivilegeForAcl(this.cell.getAcl(), cellPriv);
     }
 }

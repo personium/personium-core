@@ -898,7 +898,7 @@ public class DavCmpFsImplTest {
             AccessContext accessContext = PowerMockito.mock(AccessContext.class);
             doReturn(accessContext).when(davRsCmp).getAccessContext();
             doReturn(davRsCmp).when(davRsCmp).getParent();
-            doNothing().when(davRsCmp).checkAccessContext(any(AccessContext.class), any(BoxPrivilege.class));
+            doNothing().when(davRsCmp).checkAccessContext(any(BoxPrivilege.class));
             doReturn(davRsCmp).when(davDestination).getDestinationRsCmp();
             DavCmpFsImpl destDavCmp = PowerMockito.mock(DavCmpFsImpl.class);
             File destDir = mock(File.class);

@@ -72,7 +72,7 @@ public class BoxUrlRsCmpTest {
         // None.
 
         // Run method
-        boxUrlRsCmp.checkAccessContext(ac, privilege);
+        boxUrlRsCmp.checkAccessContext(privilege);
     }
 
     /**
@@ -98,7 +98,7 @@ public class BoxUrlRsCmpTest {
         // None.
 
         // Run method
-        boxUrlRsCmp.checkAccessContext(ac, privilege);
+        boxUrlRsCmp.checkAccessContext(privilege);
     }
 
     /**
@@ -127,13 +127,13 @@ public class BoxUrlRsCmpTest {
 
         doNothing().when(ac).updateBasicAuthenticationStateForResource(null);
 
-        doReturn(true).when(boxUrlRsCmp).hasPrivilege(ac, privilege);
+        doReturn(true).when(boxUrlRsCmp).hasSubjectPrivilege(privilege);
 
         // Expected result
         // None.
 
         // Run method
-        boxUrlRsCmp.checkAccessContext(ac, privilege);
+        boxUrlRsCmp.checkAccessContext(privilege);
     }
 
     /**
@@ -150,7 +150,7 @@ public class BoxUrlRsCmpTest {
         Privilege privilege = null;
 
         // Mock settings
-        boxUrlRsCmp = PowerMockito.spy(new BoxUrlRsCmp(new CellRsCmp(null, null, null), null, null, null));
+        boxUrlRsCmp = PowerMockito.spy(new BoxUrlRsCmp(new CellRsCmp(null, null, ac), null, ac, null));
         doReturn(AcceptableAuthScheme.BEARER).when(boxUrlRsCmp).getAcceptableAuthScheme();
 
         doReturn(false).when(ac).isUnitUserToken(privilege);
@@ -163,7 +163,7 @@ public class BoxUrlRsCmpTest {
 
         doNothing().when(ac).updateBasicAuthenticationStateForResource(null);
 
-        doReturn(false).when(boxUrlRsCmp).hasPrivilege(ac, privilege);
+        doReturn(false).when(boxUrlRsCmp).hasSubjectPrivilege(privilege);
 
         doReturn(AccessContext.TYPE_INVALID).when(ac).getType();
         doThrow(PersoniumCoreException.Server.UNKNOWN_ERROR).when(ac).throwInvalidTokenException(
@@ -171,7 +171,7 @@ public class BoxUrlRsCmpTest {
 
         // Run method
         try {
-            boxUrlRsCmp.checkAccessContext(ac, privilege);
+            boxUrlRsCmp.checkAccessContext(privilege);
             fail("Not throws exception.");
         } catch (PersoniumCoreException e) {
             // Confirm result
@@ -194,7 +194,7 @@ public class BoxUrlRsCmpTest {
         Privilege privilege = null;
 
         // Mock settings
-        boxUrlRsCmp = PowerMockito.spy(new BoxUrlRsCmp(new CellRsCmp(null, null, null), null, null, null));
+        boxUrlRsCmp = PowerMockito.spy(new BoxUrlRsCmp(new CellRsCmp(null, null, ac), null, ac, null));
         doReturn(AcceptableAuthScheme.BEARER).when(boxUrlRsCmp).getAcceptableAuthScheme();
 
         doReturn(false).when(ac).isUnitUserToken(privilege);
@@ -207,14 +207,14 @@ public class BoxUrlRsCmpTest {
 
         doNothing().when(ac).updateBasicAuthenticationStateForResource(null);
 
-        doReturn(false).when(boxUrlRsCmp).hasPrivilege(ac, privilege);
+        doReturn(false).when(boxUrlRsCmp).hasSubjectPrivilege(privilege);
 
         doReturn(AccessContext.TYPE_ANONYMOUS).when(ac).getType();
         doReturn("https://personium/testcell").when(ac).getRealm();
 
         // Run method
         try {
-            boxUrlRsCmp.checkAccessContext(ac, privilege);
+            boxUrlRsCmp.checkAccessContext(privilege);
             fail("Not throws exception.");
         } catch (PersoniumCoreException e) {
             // Confirm result
@@ -239,7 +239,7 @@ public class BoxUrlRsCmpTest {
         Privilege privilege = null;
 
         // Mock settings
-        boxUrlRsCmp = PowerMockito.spy(new BoxUrlRsCmp(new CellRsCmp(null, null, null), null, null, null));
+        boxUrlRsCmp = PowerMockito.spy(new BoxUrlRsCmp(new CellRsCmp(null, null, ac), null, ac, null));
         doReturn(AcceptableAuthScheme.BEARER).when(boxUrlRsCmp).getAcceptableAuthScheme();
 
         doReturn(false).when(ac).isUnitUserToken(privilege);
@@ -252,13 +252,13 @@ public class BoxUrlRsCmpTest {
 
         doNothing().when(ac).updateBasicAuthenticationStateForResource(null);
 
-        doReturn(false).when(boxUrlRsCmp).hasPrivilege(ac, privilege);
+        doReturn(false).when(boxUrlRsCmp).hasSubjectPrivilege(privilege);
 
         doReturn(AccessContext.TYPE_LOCAL).when(ac).getType();
 
         // Run method
         try {
-            boxUrlRsCmp.checkAccessContext(ac, privilege);
+            boxUrlRsCmp.checkAccessContext(privilege);
             fail("Not throws exception.");
         } catch (PersoniumCoreException e) {
             // Confirm result

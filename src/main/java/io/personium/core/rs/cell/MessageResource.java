@@ -86,7 +86,7 @@ public class MessageResource extends ODataCtlResource {
             @Context final UriInfo uriInfo,
             final Reader reader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
+        this.davRsCmp.checkAccessContext(CellPrivilege.MESSAGE);
 
         //Data registration
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
@@ -131,7 +131,7 @@ public class MessageResource extends ODataCtlResource {
     public Response messagesApprove(@PathParam("key") final String key,
             final Reader reader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
+        this.davRsCmp.checkAccessContext(CellPrivilege.MESSAGE);
 
         //Approve received messages
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);

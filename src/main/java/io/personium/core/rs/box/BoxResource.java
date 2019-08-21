@@ -181,8 +181,8 @@ public class BoxResource {
      */
     private Response getBarFile() {
         // Access control.
-        boxRsCmp.checkAccessContext(boxRsCmp.getAccessContext(), BoxPrivilege.READ);
-        boxRsCmp.checkAccessContext(boxRsCmp.getAccessContext(), BoxPrivilege.READ_ACL);
+        boxRsCmp.checkAccessContext(BoxPrivilege.READ);
+        boxRsCmp.checkAccessContext(BoxPrivilege.READ_ACL);
 
         BarFileExporter exporter = new BarFileExporter(boxRsCmp);
         // Execute export.
@@ -195,7 +195,7 @@ public class BoxResource {
      */
     private Response getMetadata() {
         // Access control.
-        this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.boxRsCmp.checkAccessContext(BoxPrivilege.READ);
 
         //Get asynchronous processing status of box installation from cache.
         //In this case, if null is returned, box installation has not been executed,
@@ -278,7 +278,7 @@ public class BoxResource {
         boolean recursive = Boolean.valueOf(recursiveHeader);
 
         // Check acl.
-        boxRsCmp.checkAccessContext(boxRsCmp.getAccessContext(), CellPrivilege.BOX);
+        boxRsCmp.checkAccessContext(CellPrivilege.BOX);
 
         Response response = boxRsCmp.getDavCmp().delete(null, recursive).build();
 
@@ -313,7 +313,7 @@ public class BoxResource {
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.boxRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        this.boxRsCmp.checkAccessContext(BoxPrivilege.READ_PROPERTIES);
         Response response = this.boxRsCmp.doPropfind(requestBodyXml,
                                                      depth,
                                                      contentLength,
@@ -346,7 +346,7 @@ public class BoxResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
-        this.boxRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.boxRsCmp.checkAccessContext(BoxPrivilege.WRITE_PROPERTIES);
         Response response = this.boxRsCmp.doProppatch(requestBodyXml);
 
         // post event to EventBus
@@ -393,7 +393,7 @@ public class BoxResource {
     @ACL
     public Response acl(final Reader reader) {
         //Access control
-        this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
+        this.boxRsCmp.checkAccessContext(BoxPrivilege.WRITE_ACL);
         Response response = this.boxRsCmp.doAcl(reader);
 
         // post event to EventBus
@@ -495,7 +495,7 @@ public class BoxResource {
             @Context HttpHeaders headers) {
 
         //MOVE method for Box resource is disabled
-        this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.boxRsCmp.checkAccessContext(BoxPrivilege.WRITE);
         throw PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_BOX;
     }
 }

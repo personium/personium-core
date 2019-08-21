@@ -234,7 +234,7 @@ public class DavRsCmp {
         // ACL config output is allowed by Unit User or when ACL Privilege is configured.
         boolean canAclRead = false;
         if (this.getAccessContext().isUnitUserToken(requiredForReadAcl)
-                || this.hasPrivilege(this.getAccessContext(), requiredForReadAcl)) {
+                || this.hasSubjectPrivilege(requiredForReadAcl)) {
             canAclRead = true;
         }
 
@@ -380,8 +380,8 @@ public class DavRsCmp {
      * @param privilege ACL Privilege (read/write/bind/unbind)
      * @return boolean
      */
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
-        return hasPrivilege(ac, privilege, privilege);
+    public boolean hasSubjectPrivilege(Privilege privilege) {
+        return hasSubjectPrivilege( privilege, privilege);
     }
 
     /**
@@ -391,16 +391,17 @@ public class DavRsCmp {
      * @param parentPrivilege parent ACL Privilege (read/write/bind/unbind) If it is null, it does not refer to the parent's authority.
      * @return boolean
      */
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege, Privilege parentPrivilege) {
+    public boolean hasSubjectPrivilege(Privilege privilege, Privilege parentPrivilege) {
         // skip ACL check if davCmp does not exist.
         // (nonexistent resource is specified)
         if (privilege != null && this.davCmp != null
-                && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege)) {
+                && this.getAccessContext().hasSubjectPrivilegeForAcl(this.davCmp.getAcl(), privilege)) {
             return true;
         }
 
         // check parent (recursively)
-        if (parentPrivilege != null && this.parent != null && this.parent.hasPrivilege(ac, parentPrivilege)) {
+        if (parentPrivilege != null && this.parent != null
+                && this.parent.hasSubjectPrivilege(parentPrivilege)) {
             return true;
         }
 
@@ -414,7 +415,7 @@ public class DavRsCmp {
     @OPTIONS
     public Response options() {
         // AccessControl
-        this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
+        this.checkAccessContext(BoxPrivilege.READ);
 
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
@@ -433,8 +434,8 @@ public class DavRsCmp {
      * @param ac AccessContext
      * @param privilege Privilege to check if it is given
      */
-    public void checkAccessContext(final AccessContext ac, Privilege privilege) {
-        checkAccessContext(ac, privilege, privilege);
+    public void checkAccessContext(Privilege privilege) {
+        checkAccessContext(privilege, privilege);
     }
 
     /**
@@ -444,7 +445,8 @@ public class DavRsCmp {
      * @param privilege Privilege to check if it is given
      * @param parentPrivilege parent ACL Privilege
      */
-    public void checkAccessContext(final AccessContext ac, Privilege privilege, Privilege parentPrivilege) {
+    public void checkAccessContext(Privilege privilege, Privilege parentPrivilege) {
+        AccessContext ac = this.getAccessContext();
         // if accessed with valid UnitUserToken then fine.
         if (ac.isUnitUserToken(privilege)) {
             return;
@@ -465,7 +467,7 @@ public class DavRsCmp {
         ac.updateBasicAuthenticationStateForResource(this.getBox());
 
         // check Access Privilege
-        if (!this.hasPrivilege(ac, privilege, parentPrivilege)) {
+        if (!this.hasSubjectPrivilege(privilege, parentPrivilege)) {
             // check token validity
             // check here because access should be allowed when Privilege "all" is configured
             // even if the token is invalid

@@ -88,7 +88,7 @@ public class PersoniumEngineSourceCollection {
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ_PROPERTIES);
         return this.davRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
                 BoxPrivilege.READ_ACL);
     }
@@ -109,8 +109,7 @@ public class PersoniumEngineSourceCollection {
     @MOVE
     public void move() {
         //Access control
-        this.davRsCmp.checkAccessContext(
-                this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE);
         throw PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE;
     }
 
@@ -121,7 +120,7 @@ public class PersoniumEngineSourceCollection {
     @OPTIONS
     public Response options() {
         //Access control to move source
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND
                 ).build();

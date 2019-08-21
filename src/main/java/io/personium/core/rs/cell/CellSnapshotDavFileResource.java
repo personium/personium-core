@@ -70,7 +70,7 @@ public class CellSnapshotDavFileResource {
         // Check exist
         checkFileExists();
         // Access Control
-        davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        davRsCmp.getParent().checkAccessContext(CellPrivilege.ROOT);
         ResponseBuilder rb = davRsCmp.get(ifNoneMatch, null);
         return rb.build();
     }
@@ -94,7 +94,7 @@ public class CellSnapshotDavFileResource {
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
             final InputStream inputStream) {
         // Access Control
-        davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        davRsCmp.getParent().checkAccessContext(CellPrivilege.ROOT);
 
         ResponseBuilder rb = davRsCmp.getDavCmp().putForUpdate(contentType, inputStream, ifMatch);
         return rb.build();
@@ -111,7 +111,7 @@ public class CellSnapshotDavFileResource {
         // Check exist
         checkFileExists();
         // Access Control
-        davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        davRsCmp.getParent().checkAccessContext(CellPrivilege.ROOT);
         ResponseBuilder rb = davRsCmp.getDavCmp().delete(ifMatch, false);
         return rb.build();
     }
@@ -132,7 +132,7 @@ public class CellSnapshotDavFileResource {
         // Check exist
         checkFileExists();
         // Access Control
-        davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        davRsCmp.getParent().checkAccessContext(CellPrivilege.ROOT);
         return davRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding, CellPrivilege.ROOT);
     }
 
@@ -154,7 +154,7 @@ public class CellSnapshotDavFileResource {
         // Check exist
         checkFileExists();
         // Access Control
-        davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        davRsCmp.getParent().checkAccessContext(CellPrivilege.ROOT);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,

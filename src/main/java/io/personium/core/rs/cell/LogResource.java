@@ -133,7 +133,7 @@ public class LogResource {
             ) {
 
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG_READ);
+        this.davRsCmp.checkAccessContext(CellPrivilege.LOG_READ);
 
         //Valid values ​​of Depth header are 0, 1
         //Since it does not support when infinity, return it with 403
@@ -266,7 +266,7 @@ public class LogResource {
             @PathParam("filename") final String fileName) {
 
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG_READ);
+        this.davRsCmp.checkAccessContext(CellPrivilege.LOG_READ);
 
         //Check the collection name of the event log
         if (!isValidLogCollection(logCollection)) {
@@ -368,7 +368,7 @@ public class LogResource {
             @PathParam("filename") final String fileName) {
 
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG);
+        this.davRsCmp.checkAccessContext(CellPrivilege.LOG);
 
         //Check the collection name of the event log
         if (CURRENT_COLLECTION.equals(logCollection)) {

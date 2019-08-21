@@ -379,7 +379,7 @@ public class CellResource {
     }
 
     /**
-     * Access to the default box.
+     * Access to the main box.
      * @param jaxRsRequest HTTP request for JAX-RS
      * @return BoxResource Object
      */

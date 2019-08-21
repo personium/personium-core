@@ -90,7 +90,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     @Override
     public void checkAccessContext(AccessContext ac, Privilege privilege) {
-        this.davRsCmp.checkAccessContext(ac, privilege);
+        this.davRsCmp.checkAccessContext(privilege);
     }
 
     /**
@@ -104,7 +104,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     @Override
     public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
-        return this.davRsCmp.hasPrivilege(ac, privilege);
+        return this.davRsCmp.hasSubjectPrivilege(privilege);
     }
 
     @Override

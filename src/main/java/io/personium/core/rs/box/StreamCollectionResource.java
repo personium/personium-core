@@ -77,7 +77,7 @@ public class StreamCollectionResource {
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ_PROPERTIES);
         Response response = this.davRsCmp.doPropfind(requestBodyXml,
                                                      depth,
                                                      contentLength,
@@ -129,7 +129,7 @@ public class StreamCollectionResource {
         boolean recursive = Boolean.valueOf(recursiveHeader);
         // Check acl.(Parent acl check)
         // Since DavCollectionResource always has a parent, result of this.davRsCmp.getParent() will never be null.
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
 
         if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
             throw PersoniumCoreException.Dav.HAS_CHILDREN;
@@ -162,7 +162,7 @@ public class StreamCollectionResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.davRsCmp.checkAccessContext( BoxPrivilege.WRITE_PROPERTIES);
         Response response = this.davRsCmp.doProppatch(requestBodyXml);
 
         // post event to EventBus
@@ -191,7 +191,7 @@ public class StreamCollectionResource {
     @ACL
     public Response acl(final Reader reader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_ACL);
         Response response = this.davCmp.acl(reader).build();
 
         // post event to EventBus
@@ -221,7 +221,7 @@ public class StreamCollectionResource {
     public Response move(
             @Context HttpHeaders headers) {
         //Access control to move source (check parent's authority)
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }
 
@@ -232,7 +232,7 @@ public class StreamCollectionResource {
     @OPTIONS
     public Response options() {
         // access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.DELETE,
                 io.personium.common.utils.CommonUtils.HttpMethod.MOVE,

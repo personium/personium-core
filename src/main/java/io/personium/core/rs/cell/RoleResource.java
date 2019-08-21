@@ -68,7 +68,7 @@ public class RoleResource {
     public final Response list(
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.AUTH_READ);
+        this.davRsCmp.checkAccessContext(CellPrivilege.AUTH_READ);
         EntitiesResponse er = op.getEntities(Box.EDM_TYPE_NAME, null);
         List<OEntity> loe = er.getEntities();
         List<String> sl = new ArrayList<String>();
@@ -97,7 +97,7 @@ public class RoleResource {
             @PathParam("box") String boxName,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.AUTH_READ);
+        this.davRsCmp.checkAccessContext(CellPrivilege.AUTH_READ);
         //If the Box path is Cell Level, search the Cell level role and return it as a list.
         if (BOX_PATH_CELL_LEVEL.equals(boxName)) {
             //Generation of TODO Body
@@ -131,7 +131,7 @@ public class RoleResource {
             @PathParam("role") String role,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.AUTH_READ);
+        this.davRsCmp.checkAccessContext(CellPrivilege.AUTH_READ);
         //If the Box pass is Cell Level, it is handled as Cell Level Roll.
         if (BOX_PATH_CELL_LEVEL.equals(boxName)) {
             //Generation of TODO Body

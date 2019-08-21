@@ -73,7 +73,7 @@ public class MyPasswordResource {
     @PUT
     public Response put() {
         //Access control
-        this.accessContext.checkMyLocalOrPasswordChangeToken(this.cellRsCmp.getAcceptableAuthScheme());
+        this.accessContext.checkResidentLocalOrPasswordChangeToken(this.cellRsCmp.getAcceptableAuthScheme());
         //Get the Account name to change password from cell local token
         this.key = this.accessContext.getSubject();
         String[] keyName;

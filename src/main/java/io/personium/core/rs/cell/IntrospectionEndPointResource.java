@@ -34,11 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.AbstractOAuth2Token;
-import io.personium.common.auth.token.ResidentLocalAccessToken;
-import io.personium.common.auth.token.VisitorLocalAccessToken;
-import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.IAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
+import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthzException;
@@ -192,7 +192,7 @@ public class IntrospectionEndPointResource {
     @OPTIONS
     public Response options() {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.AUTH_READ);
+        this.davRsCmp.checkAccessContext(CellPrivilege.AUTH_READ);
         return ResourceUtils.responseBuilderForOptions(HttpMethod.POST)
                             .build();
     }

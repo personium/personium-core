@@ -90,7 +90,7 @@ public final class CellCtlResource extends ODataResource {
 
     @Override
     public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
-        return this.cellRsCmp.hasPrivilege(ac, privilege);
+        return this.cellRsCmp.hasSubjectPrivilege(privilege);
     }
 
     @Override
