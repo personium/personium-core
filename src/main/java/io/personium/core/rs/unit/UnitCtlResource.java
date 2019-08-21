@@ -89,7 +89,8 @@ public class UnitCtlResource extends ODataResource {
      * {@inheritDoc}
      */
     @Override
-    public void checkAccessContext(AccessContext ac, Privilege privilege) {
+    public void checkAccessContext(Privilege privilege) {
+        AccessContext ac = this.getAccessContext();
         // Accept if UnitMaster, UnitAdmin, UnitUser, UnitLocal.
         if (AccessContext.TYPE_UNIT_MASTER.equals(ac.getType())
                 || AccessContext.TYPE_UNIT_ADMIN.equals(ac.getType())
@@ -117,7 +118,7 @@ public class UnitCtlResource extends ODataResource {
     }
 
     @Override
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
+    public boolean hasPrivilege(Privilege privilege) {
         return false;
     }
 
@@ -148,14 +149,10 @@ public class UnitCtlResource extends ODataResource {
      */
     @Override
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
-
         String entitySetName = oEntityWrapper.getEntitySet().getName();
-
         EntityResponse er = this.getODataProducer()
                 .getEntity(entitySetName, oEntityKey, new EntityQueryInfo.Builder().build());
-
         OEntityWrapper oew = (OEntityWrapper) er.getEntity();
-
         //Determining accessibility for each entity
         this.checkAccessContextPerEntity(this.getAccessContext(), oew);
     }
@@ -164,22 +161,17 @@ public class UnitCtlResource extends ODataResource {
     public void beforeDelete(final String entitySetName, final OEntityKey oEntityKey) {
         EntityResponse er = this.getODataProducer()
                 .getEntity(entitySetName, oEntityKey, new EntityQueryInfo.Builder().build());
-
         OEntityWrapper oew = (OEntityWrapper) er.getEntity();
 
         //Determining accessibility for each entity
         this.checkAccessContextPerEntity(this.getAccessContext(), oew);
-
         if (Cell.EDM_TYPE_NAME.equals(entitySetName)) {
             String cellId = oew.getUuid();
             cell = ModelFactory.cellFromId(cellId);
-
             //409 error if Cell is not empty
             if (!cell.isEmpty()) {
                 throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
             }
-
-
         }
     }
 

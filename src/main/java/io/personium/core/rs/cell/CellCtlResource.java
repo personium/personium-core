@@ -55,7 +55,7 @@ import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * JAX-RS Resource handling DC Cell Level Api.
+ * JAX-RS Resource handling Personium Cell control objects.
  */
 public final class CellCtlResource extends ODataResource {
     String pCredHeader;
@@ -75,7 +75,7 @@ public final class CellCtlResource extends ODataResource {
     }
 
     @Override
-    public void checkAccessContext(final AccessContext ac, Privilege privilege) {
+    public void checkAccessContext(Privilege privilege) {
         this.cellRsCmp.checkAccessContext(privilege);
     }
 
@@ -89,7 +89,7 @@ public final class CellCtlResource extends ODataResource {
     }
 
     @Override
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
+    public boolean hasPrivilege(Privilege privilege) {
         return this.cellRsCmp.hasSubjectPrivilege(privilege);
     }
 

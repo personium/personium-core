@@ -93,7 +93,7 @@ public class ODataMergeResource extends ODataEntityResource {
         checkNotAllowedMethod();
 
         //Access control
-        getOdataResource().checkAccessContext(getAccessContext(),
+        getOdataResource().checkAccessContext(
                 getOdataResource().getNecessaryWritePrivilege(getEntitySetName()));
 
         //Create an OEntityWrapper from the request.

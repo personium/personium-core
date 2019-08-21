@@ -117,7 +117,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
-        this.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.checkAccessContext(BoxPrivilege.WRITE_PROPERTIES);
 
         Response response = this.davRsCmp.doProppatch(requestBodyXml);
 
@@ -156,7 +156,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
     @ACL
     public Response acl(final Reader reader) {
         //Access control
-        this.checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE_ACL);
+        this.checkAccessContext(BoxPrivilege.WRITE_ACL);
         Response response = this.davRsCmp.getDavCmp().acl(reader).build();
 
         // post event to EventBus
@@ -228,7 +228,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
     @OPTIONS
     public Response optionsRoot() {
         //Access control
-        this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
+        this.checkAccessContext(BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.DELETE,
@@ -254,7 +254,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     @Override
-    public void checkAccessContext(AccessContext ac, Privilege privilege) {
+    public void checkAccessContext(Privilege privilege) {
         this.davRsCmp.checkAccessContext(privilege);
     }
 
@@ -285,7 +285,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     @Override
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
+    public boolean hasPrivilege(Privilege privilege) {
         return this.davRsCmp.hasSubjectPrivilege(privilege);
     }
 

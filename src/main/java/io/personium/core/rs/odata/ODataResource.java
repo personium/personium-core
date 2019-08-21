@@ -55,8 +55,15 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * Route of JAX-RS Resource resource providing OData service Unit control · Cell control · User OData Schema · User OData It is used for 4 kinds of usage.
- * Create a subclass and give rootUrl and odataProducer in the constructor. This class finishes all processing that does not depend on back side implementation, such as schema checking.
+ * Route of JAX-RS Resource resource providing OData service
+ * 4 kinds of usages.
+ *  1. Unit control objects
+ *  2. Cell control objects
+ *  3. User OData Schema
+ *  4. User OData
+ * Create a subclass and give rootUrl and odataProducer in the constructor.
+ * This class finishes all processing that does not depend on back side implementation,
+ *  such as schema checking.
  */
 public abstract class ODataResource extends ODataCtlResource {
 
@@ -97,7 +104,7 @@ public abstract class ODataResource extends ODataCtlResource {
      * @param ac accessContext
      * @param privilege Privilege
      */
-    public abstract void checkAccessContext(AccessContext ac, Privilege privilege);
+    public abstract void checkAccessContext(Privilege privilege);
 
     /**
      * Obtain Auth Scheme that can be used for authentication.
@@ -111,7 +118,7 @@ public abstract class ODataResource extends ODataCtlResource {
      * @param privilege privilege
      * @return Accessibility
      */
-    public abstract boolean hasPrivilege(AccessContext ac, Privilege privilege);
+    public abstract boolean hasPrivilege(Privilege privilege);
 
     /**
      * Schema authentication check processing.
@@ -151,7 +158,7 @@ public abstract class ODataResource extends ODataCtlResource {
 //    @Path("")
     public Response optionsRoot() {
         //Access control
-        this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
+        this.checkAccessContext(BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET
                 ).build();
@@ -190,7 +197,7 @@ public abstract class ODataResource extends ODataCtlResource {
             @QueryParam("$format") final String format,
             @Context HttpHeaders httpHeaders) {
         //Access control
-        this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
+        this.checkAccessContext(BoxPrivilege.READ);
 
         StringWriter w = new StringWriter();
 

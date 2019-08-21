@@ -55,7 +55,6 @@ import org.odata4j.producer.QueryInfo;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.WriteAPI;
-import io.personium.core.auth.AccessContext;
 import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
@@ -71,7 +70,6 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
     private static final int Q_MAX_LENGTH = Common.MAX_Q_VALUE_LENGTH;
     ODataResource odataResource;
-    AccessContext accessContext;
 
     /**
      * constructor.
@@ -80,7 +78,6 @@ public final class ODataEntitiesResource extends AbstractODataResource {
      */
     public ODataEntitiesResource(final ODataResource odataResource, final String entitySetName) {
         this.odataResource = odataResource;
-        this.accessContext = this.odataResource.getAccessContext();
         setOdataProducer(this.odataResource.getODataProducer());
         setEntitySetName(entitySetName);
     }
@@ -104,7 +101,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
             @QueryParam("q") final String q) {
 
         //Access control
-        this.odataResource.checkAccessContext(this.accessContext,
+        this.odataResource.checkAccessContext(
                 this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
 
         //Ask Producer to get the request
@@ -191,8 +188,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         checkNotAllowedMethod(uriInfo);
 
         //Access control
-        this.odataResource.checkAccessContext(this.accessContext,
-                this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
+        this.odataResource.checkAccessContext(this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
 
         UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
 
@@ -281,8 +277,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     @OPTIONS
     public Response options() {
         //Access control
-        this.odataResource.checkAccessContext(this.accessContext,
-                this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
+        this.odataResource.checkAccessContext(this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.POST

@@ -59,7 +59,6 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.WriteAPI;
-import io.personium.core.auth.AccessContext;
 import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
@@ -78,7 +77,6 @@ public final class ODataLinksResource {
     private final OEntityKey targetEntityKey;
     private final ODataResource odataResource;
     private final ODataProducer odataProducer;
-    private final AccessContext accessContext;
 
     /**
      * log.
@@ -98,7 +96,6 @@ public final class ODataLinksResource {
             final String targetNavProp,
             final OEntityKey targetEntityKey) {
         this.odataResource = odataResource;
-        this.accessContext = this.odataResource.getAccessContext();
         this.odataProducer = this.odataResource.getODataProducer();
         this.sourceEntity = sourceEntity;
         this.targetNavProp = targetNavProp;
@@ -406,8 +403,7 @@ public final class ODataLinksResource {
     public Response options() {
 
         //Access control
-        this.odataResource.checkAccessContext(this.accessContext,
-                this.odataResource.getNecessaryOptionsPrivilege());
+        this.odataResource.checkAccessContext(this.odataResource.getNecessaryOptionsPrivilege());
 
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
@@ -456,12 +452,12 @@ public final class ODataLinksResource {
         String entitySetNameTo = targetNavProp;
         if (entitySetNameFrom.equals(ReceivedMessage.EDM_TYPE_NAME)
                 || entitySetNameTo.equals(Account.EDM_NPNAME_FOR_RECEIVED_MESSAGE)) {
-            this.odataResource.checkAccessContext(this.accessContext,
+            this.odataResource.checkAccessContext(
                     this.odataResource.getNecessaryWritePrivilege(ReceivedMessage.EDM_TYPE_NAME));
         } else {
-            this.odataResource.checkAccessContext(this.accessContext,
+            this.odataResource.checkAccessContext(
                     this.odataResource.getNecessaryWritePrivilege(entitySetNameFrom));
-            this.odataResource.checkAccessContext(this.accessContext,
+            this.odataResource.checkAccessContext(
                     this.odataResource.getNecessaryWritePrivilege(entitySetNameTo.substring(1)));
         }
     }
@@ -473,12 +469,12 @@ public final class ODataLinksResource {
         String entitySetNameTo = targetNavProp;
         if (entitySetNameFrom.equals(ReceivedMessage.EDM_TYPE_NAME)
                 || entitySetNameTo.equals(Account.EDM_NPNAME_FOR_RECEIVED_MESSAGE)) {
-            this.odataResource.checkAccessContext(this.accessContext,
+            this.odataResource.checkAccessContext(
                     this.odataResource.getNecessaryReadPrivilege(ReceivedMessage.EDM_TYPE_NAME));
         } else {
-            this.odataResource.checkAccessContext(this.accessContext,
+            this.odataResource.checkAccessContext(
                     this.odataResource.getNecessaryReadPrivilege(entitySetNameFrom));
-            this.odataResource.checkAccessContext(this.accessContext,
+            this.odataResource.checkAccessContext(
                     this.odataResource.getNecessaryReadPrivilege(entitySetNameTo.substring(1)));
         }
     }

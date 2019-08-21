@@ -241,7 +241,7 @@ public class BarFileInstaller {
         //[403] Access control
         AccessContext accessContext = this.oDataEntityResource.getAccessContext();
         ODataResource odataResource = this.oDataEntityResource.getOdataResource();
-        odataResource.checkAccessContext(accessContext, CellPrivilege.BOX_BAR_INSTALL);
+        odataResource.checkAccessContext(CellPrivilege.BOX_BAR_INSTALL);
 
         //[400] Request header format check
         checkHeaders(headers);
