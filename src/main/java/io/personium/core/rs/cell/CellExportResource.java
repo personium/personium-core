@@ -72,7 +72,7 @@ public class CellExportResource {
     @GET
     public Response get() {
         // Check the authority required for execution.
-        this.cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        this.cellRsCmp.checkAccessContext(CellPrivilege.ROOT);
 
         // Get processing status from cache.
         // If it returns null, it is regarded as ready state.
@@ -96,7 +96,7 @@ public class CellExportResource {
     @POST
     public Response post(final Reader reader) {
         // Check the authority required for execution.
-        cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        cellRsCmp.checkAccessContext(CellPrivilege.ROOT);
 
         // Reading body.
         String name = null;
@@ -135,7 +135,7 @@ public class CellExportResource {
     @OPTIONS
     public Response options() {
         // Check the authority required for execution.
-        cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        cellRsCmp.checkAccessContext(CellPrivilege.ROOT);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.POST

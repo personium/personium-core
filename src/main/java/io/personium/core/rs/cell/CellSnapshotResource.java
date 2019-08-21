@@ -79,7 +79,7 @@ public class CellSnapshotResource {
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) Long contentLength,
             @HeaderParam("Transfer-Encoding") String transferEncoding) {
         // Access Control
-        cellSnapshotCellRsCmp.checkAccessContext(cellSnapshotCellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        cellSnapshotCellRsCmp.checkAccessContext(CellPrivilege.ROOT);
         return cellSnapshotCellRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
                 CellPrivilege.ROOT);
     }
@@ -91,7 +91,7 @@ public class CellSnapshotResource {
     @OPTIONS
     public Response options() {
         // Access Control
-        cellSnapshotCellRsCmp.checkAccessContext(cellSnapshotCellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        cellSnapshotCellRsCmp.checkAccessContext(CellPrivilege.ROOT);
         return ResourceUtils.responseBuilderForOptions(
                 io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND
                 ).build();

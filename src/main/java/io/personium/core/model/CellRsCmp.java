@@ -128,6 +128,7 @@ public class CellRsCmp extends DavRsCmp {
     /**
      * @return AccessContext
      */
+    @Override
     public AccessContext getAccessContext() {
         return this.accessContext;
     }
@@ -155,7 +156,9 @@ public class CellRsCmp extends DavRsCmp {
      * @param ac Access context
      * @param privilege Required privilege
      */
-    public void checkAccessContext(AccessContext ac, Privilege privilege) {
+    @Override
+    public void checkAccessContext(Privilege privilege) {
+        AccessContext ac = this.getAccessContext();
         // If UnitUser token, then OK.
         if (ac.isUnitUserToken(privilege)) {
             return;

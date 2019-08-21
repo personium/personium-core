@@ -455,7 +455,7 @@ public class WebSocketService {
                 CellCmp cellCmp = ModelFactory.cellCmp(cell);
                 if (cellCmp.exists()) {
                     CellRsCmp cellRsCmp = new CellRsCmp(cellCmp, cell, ac);
-                    cellRsCmp.checkAccessContext(ac, CellPrivilege.EVENT);
+                    cellRsCmp.checkAccessContext(CellPrivilege.EVENT);
                     PersoniumEvent pEvent = new PersoniumEvent.Builder()
                             .external()
                             .type((String) event.get("Type"))
@@ -735,7 +735,7 @@ public class WebSocketService {
                     result = false;
                 }
                 CellRsCmp cellRsCmp = new CellRsCmp(cellCmp, cell, ac);
-                cellRsCmp.checkAccessContext(ac, CellPrivilege.EVENT_READ);
+                cellRsCmp.checkAccessContext(CellPrivilege.EVENT_READ);
             } catch (Exception e) {
                 e.printStackTrace();
                 result = false;

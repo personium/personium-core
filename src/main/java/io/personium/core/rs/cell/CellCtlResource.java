@@ -76,7 +76,7 @@ public final class CellCtlResource extends ODataResource {
 
     @Override
     public void checkAccessContext(final AccessContext ac, Privilege privilege) {
-        this.cellRsCmp.checkAccessContext(ac, privilege);
+        this.cellRsCmp.checkAccessContext(privilege);
     }
 
     /**

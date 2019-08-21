@@ -464,7 +464,7 @@ public class CellResource {
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.PROPFIND);
+        this.cellRsCmp.checkAccessContext(CellPrivilege.PROPFIND);
         Response response = this.cellRsCmp.doPropfind(requestBodyXml,
                                                       depth,
                                                       contentLength,
@@ -536,7 +536,7 @@ public class CellResource {
     @ACL
     public Response acl(final Reader reader) {
         //Access control
-        this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.ACL);
+        this.cellRsCmp.checkAccessContext(CellPrivilege.ACL);
         Response response = this.cellRsCmp.doAcl(reader);
 
         // post event to EventBus
@@ -562,7 +562,7 @@ public class CellResource {
     @OPTIONS
     public Response options() {
         //Access control
-        this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.SOCIAL_READ);
+        this.cellRsCmp.checkAccessContext(CellPrivilege.SOCIAL_READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.POST,
                 CommonUtils.HttpMethod.PROPFIND
