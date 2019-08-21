@@ -98,7 +98,9 @@ public class TokenAcceptanceTest extends PersoniumTest {
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
-        TransCellAccessToken appAuthToken = new TransCellAccessToken(appCellUrl, appCellUrl + "#account1", usrCellUrl, roleList ,null);
+        TransCellAccessToken appAuthToken = new TransCellAccessToken(appCellUrl, appCellUrl + "#account1",
+                usrCellUrl, roleList,
+                null, null);
 
         // Refresh Token
         HttpResponse res  = refreshToken(usrCellUrl, clrt.toTokenString(), null, appCellUrl, appAuthToken.toTokenString());
@@ -131,7 +133,9 @@ public class TokenAcceptanceTest extends PersoniumTest {
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
-        TransCellAccessToken appAuthToken = new TransCellAccessToken(appCellUrl1, appCellUrl1 + "#account1", usrCellUrl, roleList ,null);
+        TransCellAccessToken appAuthToken = new TransCellAccessToken(appCellUrl1, appCellUrl1 + "#account1",
+                usrCellUrl, roleList,
+                null, null);
 
         // Refresh Token
         HttpResponse res  = refreshToken(usrCellUrl, clrt.toTokenString(), appCellUrl2, appCellUrl1, appAuthToken.toTokenString());
@@ -163,7 +167,9 @@ public class TokenAcceptanceTest extends PersoniumTest {
 
         // Generate AppAuth Token
         List<Role> roleList = new ArrayList<Role>();
-        TransCellAccessToken appAuthToken = new TransCellAccessToken(appCellUrl, appCellUrl + "#account1", usrCellUrl, roleList ,null);
+        TransCellAccessToken appAuthToken = new TransCellAccessToken(appCellUrl, appCellUrl + "#account1",
+                usrCellUrl, roleList,
+                null, null);
 
         // Refresh Token
         HttpResponse res = refreshToken(usrCellUrl, clrt.toTokenString(), appCellUrl, appCellUrl, appAuthToken.toTokenString());

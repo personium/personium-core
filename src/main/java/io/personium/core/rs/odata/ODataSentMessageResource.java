@@ -185,6 +185,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
 
         String fromCellUrl = getMessageResource().getAccessContext().getCell().getUrl();
         String schema = getMessageResource().getAccessContext().getSchema();
+        String[] scope = getMessageResource().getAccessContext().getScope();
 
         //Destination list creation
         List<String> toList = createRequestUrl();
@@ -196,7 +197,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
 
             //Create token for receive API call
             TransCellAccessToken token = new TransCellAccessToken(
-                    fromCellUrl, fromCellUrl, toCellUrl, new ArrayList<Role>(), schema);
+                    fromCellUrl, fromCellUrl, toCellUrl, new ArrayList<Role>(), schema, scope);
 
             //Extract ID from (ID)
             Pattern formatPattern = Pattern.compile("\\('(.+)'\\)");

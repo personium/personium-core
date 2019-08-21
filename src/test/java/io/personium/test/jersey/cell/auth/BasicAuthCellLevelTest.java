@@ -67,7 +67,7 @@ public class BasicAuthCellLevelTest extends PersoniumTest {
             + Base64.encodeBase64String(String.format(("%s:%s"), userName, password).getBytes());
 
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public BasicAuthCellLevelTest() {
         super(new PersoniumCoreApplication());

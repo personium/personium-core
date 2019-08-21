@@ -60,6 +60,9 @@ public class TokenTest extends PersoniumTest {
     static final String DAV_RESOURCE = "dav.txt";
 
     static final int MILLISECS_IN_AN_MINITE = 60 * 1000;
+    static final String SCHEMA_SAMPLE = "scope";
+    static final String[] SCOPE_SAMPLE = new String[] {"scope"};
+
 
     /**
      * Constructor.
@@ -78,12 +81,11 @@ public class TokenTest extends PersoniumTest {
         String subject = issuer + "#account1";
         String target = UrlUtils.cellRoot(TEST_CELL2);
         List<Role> roleList = new ArrayList<Role>();
-        String schema = "";
 
         // 期限切れでないトークンを生成
         TransCellAccessToken validToken = new TransCellAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR + MILLISECS_IN_AN_MINITE,
-                issuer, subject, target, roleList, schema);
+                issuer, subject, target, roleList, SCHEMA_SAMPLE, SCOPE_SAMPLE);
         // セルに対してトークン認証
         Http.request("authn/saml-cl-c0.txt")
                 .with("remoteCell", TEST_CELL2)
@@ -94,7 +96,7 @@ public class TokenTest extends PersoniumTest {
         // 期限切れのトークンを生成
         TransCellAccessToken invalidToken = new TransCellAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR - MILLISECS_IN_AN_MINITE,
-                issuer, subject, target, roleList, schema);
+                issuer, subject, target, roleList, SCHEMA_SAMPLE, SCOPE_SAMPLE);
         // セルに対してトークン認証
         Http.request("authn/saml-cl-c0.txt")
                 .with("remoteCell", TEST_CELL2)
@@ -116,7 +118,7 @@ public class TokenTest extends PersoniumTest {
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         ResidentRefreshToken validToken = new ResidentRefreshToken(
                 issuedAt - AbstractOAuth2Token.SECS_IN_A_DAY * 1000 + MILLISECS_IN_AN_MINITE,
-                issuer, subject, schema, new String[] {"scope1", "scope2"});
+                issuer, subject, schema, SCOPE_SAMPLE);
 
         // アプリセルに対して認証
         Http.request("authn/refresh-cl.txt")
@@ -149,11 +151,12 @@ public class TokenTest extends PersoniumTest {
         String subject = origIssuer + "#account1";
         List<Role> origRoleList = new ArrayList<Role>();
         String schema = "";
+        String[] scope = new String[] {"scope"};
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         VisitorRefreshToken validToken = new VisitorRefreshToken(
                 id, issuedAt - AbstractOAuth2Token.SECS_IN_A_DAY * 1000 + MILLISECS_IN_AN_MINITE,
-                issuer, subject, origIssuer, origRoleList, schema);
+                issuer, subject, origIssuer, origRoleList, schema, scope);
         // Refresh
         Http.request("authn/refresh-cl.txt")
                 .with("remoteCell", TEST_CELL2)
@@ -164,7 +167,7 @@ public class TokenTest extends PersoniumTest {
         // 期限切れのトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         VisitorRefreshToken invalidToken = new VisitorRefreshToken(
                 id, issuedAt - AbstractOAuth2Token.SECS_IN_A_DAY * 1000 - MILLISECS_IN_AN_MINITE,
-                issuer, subject, origIssuer, origRoleList, schema);
+                issuer, subject, origIssuer, origRoleList, schema, scope);
         // Refresh
         Http.request("authn/refresh-cl.txt")
                 .with("remoteCell", TEST_CELL2)
@@ -191,7 +194,7 @@ public class TokenTest extends PersoniumTest {
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         TransCellAccessToken validToken = new TransCellAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR + MILLISECS_IN_AN_MINITE,
-                issuer, subject, target, roleList, schema);
+                issuer, subject, target, roleList, SCHEMA_SAMPLE, SCOPE_SAMPLE);
         // セルに対してトークン認証
         Http.request("authn/password-cl-cp.txt")
                 .with("remoteCell", TEST_CELL1)
@@ -205,7 +208,7 @@ public class TokenTest extends PersoniumTest {
         // 期限切のトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         TransCellAccessToken invalidToken = new TransCellAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR - MILLISECS_IN_AN_MINITE,
-                issuer, subject, target, roleList, schema);
+                issuer, subject, target, roleList, SCHEMA_SAMPLE, SCOPE_SAMPLE);
         // セルに対してトークン認証
         Http.request("authn/password-cl-cp.txt")
                 .with("remoteCell", TEST_CELL1)
@@ -258,11 +261,13 @@ public class TokenTest extends PersoniumTest {
         Role role = new Role(new URL(UrlUtils.roleResource(TEST_CELL1, "__", "role2")));
         roleList.add(role);
         String schema = "";
+        String[] scope = new String[] {"scope"};
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         VisitorLocalAccessToken validToken = new VisitorLocalAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR + MILLISECS_IN_AN_MINITE,
-                issuer, subject, roleList, schema);
+                AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
+                issuer, subject, roleList, SCHEMA_SAMPLE, SCOPE_SAMPLE);
         // データアクセス
         ResourceUtils.retrieve(validToken.toTokenString(),
                 DAV_COLLECTION + DAV_RESOURCE, HttpStatus.SC_OK, TEST_CELL1, Setup.TEST_BOX1);
@@ -270,7 +275,8 @@ public class TokenTest extends PersoniumTest {
         // 期限切れのトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         VisitorLocalAccessToken invalidToken = new VisitorLocalAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR - MILLISECS_IN_AN_MINITE,
-                issuer, subject, roleList, schema);
+                AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
+                issuer, subject, roleList, SCHEMA_SAMPLE, SCOPE_SAMPLE);
         // データアクセス
         ResourceUtils.retrieve(invalidToken.toTokenString(),
                 DAV_COLLECTION + DAV_RESOURCE, HttpStatus.SC_UNAUTHORIZED, TEST_CELL1, Setup.TEST_BOX1);
@@ -289,12 +295,11 @@ public class TokenTest extends PersoniumTest {
         List<Role> roleList = new ArrayList<Role>();
         Role role = new Role(new URL(UrlUtils.roleResource(TEST_CELL1, "__", "role2")));
         roleList.add(role);
-        String schema = "";
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         TransCellAccessToken validToken = new TransCellAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR + MILLISECS_IN_AN_MINITE,
-                issuer, subject, target, roleList, schema);
+                issuer, subject, target, roleList, SCHEMA_SAMPLE, SCOPE_SAMPLE);
         // データアクセス
         ResourceUtils.retrieve(validToken.toTokenString(),
                 DAV_COLLECTION + DAV_RESOURCE, HttpStatus.SC_OK, TEST_CELL2, Setup.TEST_BOX1);
@@ -302,7 +307,7 @@ public class TokenTest extends PersoniumTest {
         // 期限切れのトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         TransCellAccessToken invalidToken = new TransCellAccessToken(
                 issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR - MILLISECS_IN_AN_MINITE,
-                issuer, subject, target, roleList, schema);
+                issuer, subject, target, roleList, SCHEMA_SAMPLE, SCOPE_SAMPLE);
         // データアクセス
         ResourceUtils.retrieve(invalidToken.toTokenString(),
                 DAV_COLLECTION + DAV_RESOURCE, HttpStatus.SC_UNAUTHORIZED, TEST_CELL2, Setup.TEST_BOX1);
@@ -316,12 +321,11 @@ public class TokenTest extends PersoniumTest {
         long issuedAt = new Date().getTime();
         String issuer = UrlUtils.cellRoot(TEST_CELL1);
         String subject = "account2";
-        String schema = "";
 
         // Create password change access token.
         PasswordChangeAccessToken validToken = new PasswordChangeAccessToken(
                 issuedAt,
-                issuer, subject, schema);
+                issuer, subject, SCHEMA_SAMPLE, SCOPE_SAMPLE);
 
         // Password change access token can not access data.
         ResourceUtils.retrieve(validToken.toTokenString(),

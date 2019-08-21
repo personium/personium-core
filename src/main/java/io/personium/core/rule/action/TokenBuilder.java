@@ -127,18 +127,21 @@ public class TokenBuilder {
                 // AccountAccessToken
                 ResidentLocalAccessToken token =
                     new ResidentLocalAccessToken(new Date().getTime(),
-                                           cellUrl,
-                                           subject,
-                                           schema, scope);
+                            this.cellUrl,
+                            this.subject,
+                            this.schema,
+                            this.scope);
                 accessToken = token.toTokenString();
             } else {
                 // CellLocalAccessToken
                 VisitorLocalAccessToken token =
                     new VisitorLocalAccessToken(new Date().getTime(),
-                                             cellUrl,
-                                             subject,
-                                             roleList,
-                                             schema);
+                            VisitorLocalAccessToken.ACCESS_TOKEN_EXPIRES_MILLISECS,
+                            this.cellUrl,
+                            this.subject,
+                            this.roleList,
+                            this.schema,
+                            this.scope);
                 accessToken = token.toTokenString();
             }
         } else {
@@ -149,7 +152,7 @@ public class TokenBuilder {
                                          subject,
                                          targetCellUrl,
                                          roleList,
-                                         schema);
+                                         schema, scope);
             accessToken = token.toTokenString();
         }
 

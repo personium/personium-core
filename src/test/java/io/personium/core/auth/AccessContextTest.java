@@ -24,6 +24,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -278,8 +279,13 @@ public class AccessContextTest {
 
         // Token発行処理
         VisitorLocalAccessToken token = new VisitorLocalAccessToken(
-                UrlUtils.getBaseUrl() + "/cellowner", cell.getOwnerNormalized(), null,
-                UrlUtils.getBaseUrl() + "/cellowner");
+                new Date().getTime(),
+                VisitorLocalAccessToken.ACCESS_TOKEN_EXPIRES_MILLISECS,
+                UrlUtils.getBaseUrl() + "/cellowner",
+                cell.getOwnerNormalized(),
+                null,
+                UrlUtils.getBaseUrl() + "/cellowner",
+                new String[] {"scope"});
 
         // p_cookie_peerとして、ランダムなUUIDを設定する
         String dcCookiePeer = UUID.randomUUID().toString();

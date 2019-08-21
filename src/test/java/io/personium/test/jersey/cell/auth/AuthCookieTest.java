@@ -328,7 +328,7 @@ public class AuthCookieTest extends PersoniumTest {
             // 期限切れでないトークンを生成
             TransCellAccessToken validToken = new TransCellAccessToken(
                     issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR + MILLISECS_IN_AN_MINITE,
-                    issuer, subject, target, roleList, schema);
+                    issuer, subject, target, roleList, schema, new String[] {"scope"});
             // セルに対してトークン認証
             TResponse passRes = Http.request("authn/issue-cookie-with-saml.txt")
                     .with("remoteCell", LOCAL_CELL)
@@ -377,7 +377,7 @@ public class AuthCookieTest extends PersoniumTest {
             // 期限切れでないトークンを生成
             TransCellAccessToken validToken = new TransCellAccessToken(
                     issuedAt - AbstractOAuth2Token.MILLISECS_IN_AN_HOUR + MILLISECS_IN_AN_MINITE,
-                    issuer, subject, target, roleList, schema);
+                    issuer, subject, target, roleList, schema, new String[] {"scope"});
             // セルに対してトークン認証
             TResponse passRes = Http.request("authn/issue-cookie-with-saml.txt")
                     .with("remoteCell", LOCAL_CELL)

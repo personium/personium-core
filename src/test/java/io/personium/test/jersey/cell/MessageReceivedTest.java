@@ -312,7 +312,7 @@ public class MessageReceivedTest extends ODataCommon {
         String cellUrl = UrlUtils.cellRoot(Setup.TEST_CELL2);
         String targetCellUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
         TransCellAccessToken token = new TransCellAccessToken(cellUrl, cellUrl + "#account",
-                targetCellUrl, new ArrayList<Role>(), "");
+                targetCellUrl, new ArrayList<Role>(), "", null);
 
         requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + token.toTokenString());
 
@@ -1813,7 +1813,7 @@ public class MessageReceivedTest extends ODataCommon {
     private String getCellIssueToken(String targetCellUrl) {
         String cellUrl = UrlUtils.cellRoot(Setup.TEST_CELL2);
         TransCellAccessToken token = new TransCellAccessToken(cellUrl, cellUrl,
-                targetCellUrl, new ArrayList<Role>(), "");
+                targetCellUrl, new ArrayList<Role>(), "", null);
         return token.toTokenString();
     }
 }

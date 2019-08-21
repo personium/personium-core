@@ -305,20 +305,21 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED;
         }
 
+        String[] scopes = this.cell.getScopeArbitrator(schema, true).request(requestScopes).getResults();
+
         // Check account is active.
         boolean accountActive = AuthUtils.isActive(idTokenUserOew);
         boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(idTokenUserOew);
         if (!accountActive) {
             if (passwordChangeRequired) {
                 // Issue password change.
-                issuePasswordChange(schema, accountName, rTokenExpiresIn);
+                issuePasswordChange(schema, accountName, rTokenExpiresIn, scopes);
             } else {
                 PersoniumCoreLog.OIDC.ACCOUNT_IS_DEACTIVATED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, accountName).writeLog();
                 throw PersoniumCoreAuthnException.AUTHN_FAILED;
             }
         }
-        String[] scopes = this.cell.getScopeArbitrator(schema, true).request(requestScopes).getResults();
 
         // When processing is normally completed, issue a token.
         return this.issueToken(target, owner, schema, accountName, expiresIn, rTokenExpiresIn, scopes);
@@ -496,11 +497,11 @@ public class TokenEndPointResource {
         IAccessToken aToken = null;
         if (target == null) {
             aToken = new VisitorLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    token.getSubject(), token.getRoles(), schema);
+                    token.getSubject(), token.getRoles(), schema, token.getScope());
         } else {
             List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
             aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    getIssuerUrl() + "#" + token.getSubject(), target, roleList, schema);
+                    getIssuerUrl() + "#" + token.getSubject(), target, roleList, schema, token.getScope());
         }
 
         // If scope is openid it returns id_token.
@@ -571,6 +572,9 @@ public class TokenEndPointResource {
 
         //Authentication is successful -------------------------------
 
+        //TODO
+        String[] scopes = this.cell.getScopeArbitrator(schema, true).request(tcToken.getScope()).getResults();
+
         //Create a refresh token based on the authentication information
         long issuedAt = new Date().getTime();
         VisitorRefreshToken rToken = new VisitorRefreshToken(
@@ -578,7 +582,7 @@ public class TokenEndPointResource {
                 issuedAt, rTokenExpiresIn, getIssuerUrl(), tcToken.getSubject(),
                 tcToken.getIssuer(), //Save receipt of SAML's
                 tcToken.getRoles(), //Save receipt of SAML's
-                schema);
+                schema, scopes);
 
         //Ask CELL to decide the role of you from the role of TC issuer.
         List<Role> rolesHere = cell.getRoleListHere(tcToken);
@@ -590,12 +594,16 @@ public class TokenEndPointResource {
         //Authentication token issue processing
         //The target can be freely decided.
         IAccessToken aToken = null;
+
+        // TODO
+
+
         if (target == null) {
             aToken = new VisitorLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    tcToken.getSubject(), rolesHere, schemaVerified);
+                    tcToken.getSubject(), rolesHere, schemaVerified, scopes);
         } else {
             aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    tcToken.getSubject(), target, rolesHere, schemaVerified);
+                    tcToken.getSubject(), target, rolesHere, schemaVerified, scopes);
         }
         return this.responseAuthSuccess(aToken, rToken, issuedAt);
     }
@@ -712,8 +720,8 @@ public class TokenEndPointResource {
         JSONObject resp = new JSONObject();
         resp.put(OAuth2Helper.Key.ACCESS_TOKEN, accessToken.toTokenString());
         resp.put(OAuth2Helper.Key.EXPIRES_IN, accessToken.expiresIn());
-        if (accessToken.getScopes() != null && accessToken.getScopes().length > 0) {
-            resp.put(OAuth2Helper.Key.SCOPE, AbstractOAuth2Token.Scope.toConcatValue(accessToken.getScopes()));
+        if (accessToken.getScope() != null && accessToken.getScope().length > 0) {
+            resp.put(OAuth2Helper.Key.SCOPE, AbstractOAuth2Token.Scope.toConcatValue(accessToken.getScope()));
         }
         if (refreshToken != null) {
             resp.put(OAuth2Helper.Key.REFRESH_TOKEN, refreshToken.toTokenString());
@@ -875,7 +883,7 @@ public class TokenEndPointResource {
         if (!accountActive) {
             if (passwordChangeRequired) {
                 // Issue password change.
-                issuePasswordChange(schema, username, rTokenExpiresIn);
+                issuePasswordChange(schema, username, rTokenExpiresIn, scope);
             } else {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
@@ -900,11 +908,11 @@ public class TokenEndPointResource {
      * @param username user name
      * @param expiresIn expires in
      */
-    private void issuePasswordChange(final String schema, final String username, long expiresIn) {
+    private void issuePasswordChange(final String schema, final String username, long expiresIn, String[] scope) {
         // create account password change access token.
         long issuedAt = new Date().getTime();
         PasswordChangeAccessToken aToken = new PasswordChangeAccessToken(
-                issuedAt, expiresIn, getIssuerUrl(), username, schema);
+                issuedAt, expiresIn, getIssuerUrl(), username, schema, scope);
 
         // get auth history. (non update auth history)
         AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
@@ -955,7 +963,7 @@ public class TokenEndPointResource {
             List<Role> roleList = cell.getRoleListForAccount(username);
 
             TransCellAccessToken tcToken = new TransCellAccessToken(issuedAt, expiresIn,
-                    getIssuerUrl(), getIssuerUrl() + "#" + username, target, roleList, schema);
+                    getIssuerUrl(), getIssuerUrl() + "#" + username, target, roleList, schema, scopes);
             return this.responseAuthSuccess(tcToken, rToken, issuedAt);
         }
     }

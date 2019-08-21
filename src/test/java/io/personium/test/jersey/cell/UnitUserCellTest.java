@@ -313,7 +313,7 @@ public class UnitUserCellTest extends PersoniumTest {
             // UnitUserTokenを自作
             TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
                     UrlUtils.subjectUrl(UNIT_USER_CELL, UNIT_USER_ACCOUNT),
-                    UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
+                    UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
 
             // ユニットユーザトークンでは取得できないことを確認
             CellUtils.get(CREATE_CELL, tcat.toTokenString(), HttpStatus.SC_FORBIDDEN);
@@ -593,7 +593,7 @@ public class UnitUserCellTest extends PersoniumTest {
     public void セルレベルPROPPATCHをユニットユーザトークンで実行可能なことを確認() throws TokenParseException {
         // UnitUserTokenを自作
         TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
-                Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
+                Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
 
         String unitUserToken = tcat.toTokenString();
 
@@ -611,7 +611,7 @@ public class UnitUserCellTest extends PersoniumTest {
     public void セルレベルPROPPATCHをオーナーの違うユニットユーザトークンでは実行不可なことを確認() throws TokenParseException {
         // UnitUserTokenを自作
         TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
-                Setup.OWNER_HMC, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
+                Setup.OWNER_HMC, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
 
         String unitUserToken = tcat.toTokenString();
 
@@ -792,7 +792,7 @@ public class UnitUserCellTest extends PersoniumTest {
     public void セルの検索でオーナーが一致するものだけ検索できることの確認() throws TokenParseException {
         // VETをオーナーにもつUnitUserTokenを自作
         TransCellAccessToken tcatvet = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
-                Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
+                Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
 
         // ユニットユーザトークンではオーナーが一致するセルのみ検索できることの確認（vetをオーナーに持つのはsetupで作っているtestcell1,schema1のみの想定）
         TResponse tcatget = CellUtils.list(tcatvet.toTokenString(), HttpStatus.SC_OK);

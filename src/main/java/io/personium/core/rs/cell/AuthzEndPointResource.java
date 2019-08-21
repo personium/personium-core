@@ -550,7 +550,7 @@ public class AuthzEndPointResource {
         if (passwordChangeRequired) {
             //Issue password change.
             PasswordChangeAccessToken apToken = new PasswordChangeAccessToken(
-                    issuedAt, expiresIn, getIssuerUrl(), username, schema);
+                    issuedAt, expiresIn, getIssuerUrl(), username, schema, scope);
             return returnFormRedirect(responseType, clientId, redirectUri, OAuth2Helper.Error.UNAUTHORIZED_CLIENT,
                     state, CODE_PASSWORD_CHANGE_REQUIRED, scope, apToken.toTokenString(), true);
         }

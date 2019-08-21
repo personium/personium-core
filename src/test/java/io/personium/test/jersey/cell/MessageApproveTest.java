@@ -3468,7 +3468,7 @@ public class MessageApproveTest extends ODataCommon {
     private String getCellIssueToken(String targetCellUrl) {
         String cellUrl = UrlUtils.cellRoot(Setup.TEST_CELL2);
         TransCellAccessToken token = new TransCellAccessToken(cellUrl, cellUrl,
-                targetCellUrl, new ArrayList<io.personium.common.auth.token.Role>(), "");
+                targetCellUrl, new ArrayList<io.personium.common.auth.token.Role>(), "", null);
         return token.toTokenString();
     }
 

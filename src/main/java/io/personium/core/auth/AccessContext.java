@@ -279,6 +279,13 @@ public class AccessContext {
     public String getSchema() {
         return schema;
     }
+    /**
+     * Get scopes.
+     * @return scopes
+     */
+    public String[] getScope() {
+        return this.scopes.toArray(new String[0]);
+    }
 
     /**
      * Get confidentialLevel.
