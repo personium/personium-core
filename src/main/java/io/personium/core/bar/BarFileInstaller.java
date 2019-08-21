@@ -53,7 +53,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.bar.jackson.JSONManifest;
 import io.personium.core.model.Box;
@@ -239,13 +238,11 @@ public class BarFileInstaller {
      */
     private void checkPreConditions(Map<String, String> headers) {
         //[403] Access control
-        AccessContext accessContext = this.oDataEntityResource.getAccessContext();
         ODataResource odataResource = this.oDataEntityResource.getOdataResource();
         odataResource.checkAccessContext(CellPrivilege.BOX_BAR_INSTALL);
 
         //[400] Request header format check
         checkHeaders(headers);
-
     }
 
     /**
