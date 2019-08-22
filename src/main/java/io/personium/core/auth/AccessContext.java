@@ -72,23 +72,23 @@ public class AccessContext {
 
     /** Anonymous access : No Authorization header. */
     public static final String TYPE_ANONYMOUS = "anon";
-    /** Access with invalid permissions : Authorization header was present, but it was not authenticated. */
+    /** Access with invalid access token : Authorization header was present, but it was not authenticated. */
     public static final String TYPE_INVALID = "invalid";
-    /** Access with master token : Authorization header content is master token. */
+    /** Access with master token : Authorization header content is unit master token. */
     public static final String TYPE_UNIT_MASTER = "unit-master";
-    /** Access by basic authentication. */
+    /** Access with basic authentication. */
     public static final String TYPE_BASIC = "basic";
-    /** Access by account access token. */
-    public static final String TYPE_ACCOUNT = "account";
-    /** Access by password change access token. */
+    /** Access with Resident Local  Access Token. */
+    public static final String TYPE_RESIDENT = "account";
+    /** Access with password change access token. */
     public static final String TYPE_PASSWORD_CHANGE = "password-change";
-    /** Access by cell local access token. */
-    public static final String TYPE_LOCAL = "local";
-    /** Access by TransCell Access Token. */
+    /** Access with visitor local access token. */
+    public static final String TYPE_VISITOR = "local";
+    /** Access with Trans Cell Access Token. */
     public static final String TYPE_TRANS = "trans";
-    /** Access by Unit User Access token. */
+    /** Access with Unit User Access token. */
     public static final String TYPE_UNIT_USER = "unit-user";
-    /** Access by "Unit User Access token" assigned "UnitAdmin authority". */
+    /** Access with "Unit User Access token" assigned "UnitAdmin authority". */
     public static final String TYPE_UNIT_ADMIN = "unit-admin";
     /** Access by Unit Local Unit User Token. */
     public static final String TYPE_UNIT_LOCAL = "unit-local";
@@ -445,8 +445,9 @@ public class AccessContext {
     }
 
     /**
-     * Access control is performed (Subject can access only token of CELL).
-     * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
+     * Check that the subject in the TCAT is identical to the issuer.
+     * @param acceptableAuthScheme
+     *  Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkCellIssueToken(AcceptableAuthScheme acceptableAuthScheme) {
         if (TYPE_TRANS.equals(this.getType())
@@ -478,12 +479,12 @@ public class AccessContext {
         } else if (TYPE_ANONYMOUS.equals(this.getType())
                 || TYPE_BASIC.equals(this.getType())) {
             throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
-        } else if (!TYPE_ACCOUNT.equals(this.getType()) && !TYPE_PASSWORD_CHANGE.equals(this.getType())) {
+        } else if (!TYPE_RESIDENT.equals(this.getType()) && !TYPE_PASSWORD_CHANGE.equals(this.getType())) {
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
 
-        // Check if cope lacking
-        if (TYPE_ACCOUNT.equals(this.getType()) &&!this.hasScopeCellPrivilege(CellPrivilege.AUTH)) {
+        // Check that the subject is resident and the app scope include auth priv.
+        if (TYPE_RESIDENT.equals(this.getType()) && !this.hasScopeCellPrivilege(CellPrivilege.AUTH)) {
             throw PersoniumCoreException.Auth.INSUFFICIENT_SCOPE.params(CellPrivilege.AUTH.getName());
         }
     }
@@ -757,7 +758,7 @@ public class AccessContext {
 
         AccessContext ret = new AccessContext(null, cell, baseUri, uriInfo);
         if (tk instanceof ResidentLocalAccessToken) {
-            ret.accessType = TYPE_ACCOUNT;
+            ret.accessType = TYPE_RESIDENT;
             //Retrieve role information.
             String acct = tk.getSubject();
             ret.roles = cell.getRoleListForAccount(acct);
@@ -774,7 +775,7 @@ public class AccessContext {
             ret.issuer = tk.getIssuer();
         } else if (tk instanceof VisitorLocalAccessToken) {
             VisitorLocalAccessToken clat = (VisitorLocalAccessToken) tk;
-            ret.accessType = TYPE_LOCAL;
+            ret.accessType = TYPE_VISITOR;
             //Acquire roll information and pack it.
             ret.roles = clat.getRoles();
             ret.subject = tk.getSubject();

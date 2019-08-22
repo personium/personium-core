@@ -296,7 +296,7 @@ public class AccessContextTest {
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(null, uriInfo, dcCookiePeer, encodedCookieValue,
                 cell, BASE_URL, UrlUtils.getHost(), OWNER);
-        assertEquals(AccessContext.TYPE_LOCAL, accessContext.getType());
+        assertEquals(AccessContext.TYPE_VISITOR, accessContext.getType());
     }
 
     /**

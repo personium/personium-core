@@ -254,7 +254,7 @@ public class BoxUrlRsCmpTest {
 
         doReturn(false).when(boxUrlRsCmp).hasSubjectPrivilege(privilege);
 
-        doReturn(AccessContext.TYPE_LOCAL).when(ac).getType();
+        doReturn(AccessContext.TYPE_VISITOR).when(ac).getType();
 
         // Run method
         try {
