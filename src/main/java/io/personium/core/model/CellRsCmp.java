@@ -184,7 +184,8 @@ public class CellRsCmp extends DavRsCmp {
 
         if (privilege instanceof CellPrivilege
                 && !this.accessContext.hasScopeCellPrivilege((CellPrivilege)privilege)) {
-            throw PersoniumCoreException.Auth.INSUFFICIENT_SCOPE.params(privilege.getName());
+                // TODO Temporarily commenting out.
+//            throw PersoniumCoreException.Auth.INSUFFICIENT_SCOPE.params(privilege.getName());
         }
     }
 
