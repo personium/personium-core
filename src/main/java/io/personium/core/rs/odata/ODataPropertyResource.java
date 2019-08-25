@@ -52,10 +52,9 @@ import org.odata4j.producer.EntityResponse;
 import org.odata4j.producer.QueryInfo;
 
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.WriteAPI;
-import io.personium.core.auth.AccessContext;
 import io.personium.core.event.PersoniumEventType;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumFormatWriterFactory;
@@ -72,7 +71,6 @@ public class ODataPropertyResource extends AbstractODataResource {
     private final OEntityId sourceEntityId;
     private final String targetNavProp;
     private final EdmEntitySet targetEntitySet;
-    private final AccessContext accessContext;
     private final ODataResource odataResource;
 
     /**
@@ -87,7 +85,6 @@ public class ODataPropertyResource extends AbstractODataResource {
         this.sourceOData = entityResource.getOdataResource();
         this.sourceEntityId = entityResource.getOEntityId();
         setOdataProducer(entityResource.getOdataProducer());
-        this.accessContext = entityResource.getAccessContext();
         this.odataResource = entityResource.getOdataResource();
         //Confirm existence of Navigation property on schema
         EdmEntitySet eSet = getOdataProducer().getMetadata().findEdmEntitySet(this.sourceEntityId.getEntitySetName());
@@ -114,7 +111,7 @@ public class ODataPropertyResource extends AbstractODataResource {
     public final Response postEntity(
             @Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @DefaultValue(FORMAT_JSON) @QueryParam("$format") final String format,
             final Reader reader) {
         //Access control
@@ -242,7 +239,7 @@ public class ODataPropertyResource extends AbstractODataResource {
     public final Response getNavProperty(
             @Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @QueryParam("$callback") final String callback,
             @QueryParam("$skiptoken") final String skipToken,
             @QueryParam("q") final String q) {
@@ -309,7 +306,7 @@ public class ODataPropertyResource extends AbstractODataResource {
     @OPTIONS
     public Response options() {
         //Access control
-        this.odataResource.checkAccessContext(this.accessContext,
+        this.odataResource.checkAccessContext(
                 this.odataResource.getNecessaryOptionsPrivilege());
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
@@ -320,18 +317,18 @@ public class ODataPropertyResource extends AbstractODataResource {
     private void checkWriteAccessContext() {
         //Access control
         //The same process runs twice for TODO BOX level. Since it is useless, we need ingenuity such as passing Privilege as an array to checkAccessContext
-        this.odataResource.checkAccessContext(this.accessContext,
+        this.odataResource.checkAccessContext(
                 this.odataResource.getNecessaryWritePrivilege(this.sourceEntityId.getEntitySetName()));
-        this.odataResource.checkAccessContext(this.accessContext,
+        this.odataResource.checkAccessContext(
                 this.odataResource.getNecessaryWritePrivilege(targetNavProp.substring(1)));
     }
 
     private void checkReadAccessContext() {
         //Access control
         //The same process runs twice for TODO BOX level. Since it is useless, we need ingenuity such as passing Privilege as an array to checkAccessContext
-        this.odataResource.checkAccessContext(this.accessContext,
+        this.odataResource.checkAccessContext(
                 this.odataResource.getNecessaryReadPrivilege(this.sourceEntityId.getEntitySetName()));
-        this.odataResource.checkAccessContext(this.accessContext,
+        this.odataResource.checkAccessContext(
                 this.odataResource.getNecessaryReadPrivilege(targetNavProp.substring(1)));
     }
 }

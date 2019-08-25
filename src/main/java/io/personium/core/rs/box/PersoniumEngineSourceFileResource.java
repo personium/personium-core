@@ -50,7 +50,7 @@ public final class PersoniumEngineSourceFileResource extends DavFileResource {
     @ACL
     public Response acl(final Reader reader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_ACL);
         throw PersoniumCoreException.Dav.METHOD_NOT_ALLOWED;
     }
 }

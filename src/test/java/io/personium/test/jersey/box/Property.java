@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 
 /**
  * Propertyを扱うオブジェクト.
@@ -81,7 +81,7 @@ public class Property {
     @XmlAttribute(name = "Precision")
     String precision;
 
-    @XmlAttribute(namespace = PersoniumCoreUtils.XmlConst.NS_PERSONIUM, name = "Unique")
+    @XmlAttribute(namespace = CommonUtils.XmlConst.NS_PERSONIUM, name = "Unique")
     String unique;
 
     @Override

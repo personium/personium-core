@@ -63,7 +63,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import io.personium.common.es.EsClient;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
@@ -626,7 +626,7 @@ public class DavCmpFsImplTest {
             ResponseBuilder expected = Response.ok().header(HttpHeaders.CONTENT_LENGTH, 98L)
                     .header(HttpHeaders.CONTENT_TYPE, "text/plain")
                     .header(ETAG, "\"1-1487652733383\"")
-                    .header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
+                    .header(CommonUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
 
             // --------------------
             // Run method
@@ -691,7 +691,7 @@ public class DavCmpFsImplTest {
             ResponseBuilder expected = Response.ok().header(HttpHeaders.CONTENT_LENGTH, 98L)
                     .header(HttpHeaders.CONTENT_TYPE, "text/plain")
                     .header(ETAG, "\"1-1487652733383\"")
-                    .header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
+                    .header(CommonUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
 
             // --------------------
             // Run method
@@ -754,11 +754,11 @@ public class DavCmpFsImplTest {
             // --------------------
             String sourceFileMD5 = md5Hex(getSystemResourceAsStream("davFile/range01.txt"));
             ResponseBuilder expected = Response.status(HttpStatus.SC_PARTIAL_CONTENT)
-                    .header(PersoniumCoreUtils.HttpHeaders.CONTENT_RANGE, "bytes 10-40/98")
+                    .header(CommonUtils.HttpHeaders.CONTENT_RANGE, "bytes 10-40/98")
                     .header(HttpHeaders.CONTENT_LENGTH, 31L)
                     .header(HttpHeaders.CONTENT_TYPE, "text/plain")
                     .header(ETAG, "\"1-1487652733383\"")
-                    .header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
+                    .header(CommonUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
 
             // --------------------
             // Run method
@@ -822,11 +822,11 @@ public class DavCmpFsImplTest {
             // --------------------
             String sourceFileMD5 = md5Hex(getSystemResourceAsStream("davFile/range01.txt"));
             ResponseBuilder expected = Response.status(HttpStatus.SC_PARTIAL_CONTENT)
-                    .header(PersoniumCoreUtils.HttpHeaders.CONTENT_RANGE, "bytes 10-40/98")
+                    .header(CommonUtils.HttpHeaders.CONTENT_RANGE, "bytes 10-40/98")
                     .header(HttpHeaders.CONTENT_LENGTH, 31L)
                     .header(HttpHeaders.CONTENT_TYPE, "text/plain")
                     .header(ETAG, "\"1-1487652733383\"")
-                    .header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
+                    .header(CommonUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
 
             // --------------------
             // Run method
@@ -898,7 +898,7 @@ public class DavCmpFsImplTest {
             AccessContext accessContext = PowerMockito.mock(AccessContext.class);
             doReturn(accessContext).when(davRsCmp).getAccessContext();
             doReturn(davRsCmp).when(davRsCmp).getParent();
-            doNothing().when(davRsCmp).checkAccessContext(any(AccessContext.class), any(BoxPrivilege.class));
+            doNothing().when(davRsCmp).checkAccessContext(any(BoxPrivilege.class));
             doReturn(davRsCmp).when(davDestination).getDestinationRsCmp();
             DavCmpFsImpl destDavCmp = PowerMockito.mock(DavCmpFsImpl.class);
             File destDir = mock(File.class);

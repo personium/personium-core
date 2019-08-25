@@ -1374,13 +1374,14 @@ public class ODataBatchResource extends AbstractODataResource {
      * @param ac AccessContext
      * @param privilege Required privilege
      */
-    private void checkAccessContextForMimePart(AccessContext ac, Privilege privilege) {
+    private void checkAccessContextForMimePart(Privilege privilege) {
+        AccessContext ac = this.odataResource.getAccessContext();
         // Check UnitUser token.
         if (ac.isUnitUserToken(privilege)) {
             return;
         }
 
-        if (!this.odataResource.hasPrivilege(ac, privilege)) {
+        if (!this.odataResource.hasPrivilege(privilege)) {
             //Authentication processing has already been executed for the $ batch request, so we only decide authorization here
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
@@ -1402,7 +1403,7 @@ public class ODataBatchResource extends AbstractODataResource {
             batchAccess = new BatchAccess();
             writeAccess.put(priv, batchAccess);
             try {
-                this.checkAccessContextForMimePart(this.odataResource.getAccessContext(), priv);
+                this.checkAccessContextForMimePart(priv);
             } catch (PersoniumCoreException ex) {
                 batchAccess.setAccessContext(ex);
             }
@@ -1426,7 +1427,7 @@ public class ODataBatchResource extends AbstractODataResource {
             batchAccess = new BatchAccess();
             readAccess.put(priv, batchAccess);
             try {
-                this.checkAccessContextForMimePart(this.odataResource.getAccessContext(), priv);
+                this.checkAccessContextForMimePart(priv);
             } catch (PersoniumCoreException ex) {
                 batchAccess.setAccessContext(ex);
             }

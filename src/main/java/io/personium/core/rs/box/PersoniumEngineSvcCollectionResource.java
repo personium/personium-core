@@ -59,10 +59,10 @@ import org.apache.http.entity.InputStreamEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
+import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
-import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MOVE;
@@ -114,11 +114,11 @@ public class PersoniumEngineSvcCollectionResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ_PROPERTIES);
         Response response = this.davRsCmp.doPropfind(requestBodyXml,
                                                      depth,
                                                      contentLength,
@@ -159,18 +159,18 @@ public class PersoniumEngineSvcCollectionResource {
     @WriteAPI
     @DELETE
     public Response delete(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         // X-Personium-Recursive Header
         if (recursiveHeader != null
                 && !Boolean.TRUE.toString().equalsIgnoreCase(recursiveHeader)
                 && !Boolean.FALSE.toString().equalsIgnoreCase(recursiveHeader)) {
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
         }
         boolean recursive = Boolean.valueOf(recursiveHeader);
         // Check acl.(Parent acl check)
         // Since DavCollectionResource always has a parent, result of this.davRsCmp.getParent() will never be null.
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
 
         if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
             throw PersoniumCoreException.Dav.HAS_CHILDREN;
@@ -203,7 +203,7 @@ public class PersoniumEngineSvcCollectionResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_PROPERTIES);
         Response response = this.davRsCmp.doProppatch(requestBodyXml);
 
         // post event to EventBus
@@ -232,7 +232,7 @@ public class PersoniumEngineSvcCollectionResource {
     @ACL
     public Response acl(final Reader reader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_ACL);
         Response response = this.davCmp.acl(reader).build();
 
         // post event to EventBus
@@ -259,13 +259,13 @@ public class PersoniumEngineSvcCollectionResource {
     @OPTIONS
     public Response options() {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.DELETE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MOVE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL
+                io.personium.common.utils.CommonUtils.HttpMethod.MOVE,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH,
+                io.personium.common.utils.CommonUtils.HttpMethod.ACL
                 ).build();
     }
 
@@ -297,7 +297,7 @@ public class PersoniumEngineSvcCollectionResource {
             @Context final UriInfo uriInfo,
             @Context HttpHeaders headers) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.EXEC);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.EXEC);
         return relaycommon(HttpMethod.GET, uriInfo, path, headers, null);
     }
 
@@ -317,7 +317,7 @@ public class PersoniumEngineSvcCollectionResource {
             @Context HttpHeaders headers,
             final InputStream is) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.EXEC);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.EXEC);
         return relaycommon(HttpMethod.POST, uriInfo, path, headers, is);
     }
 
@@ -337,7 +337,7 @@ public class PersoniumEngineSvcCollectionResource {
             @Context HttpHeaders headers,
             final InputStream is) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.EXEC);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.EXEC);
         return relaycommon(HttpMethod.PUT, uriInfo, path, headers, is);
     }
 
@@ -355,7 +355,7 @@ public class PersoniumEngineSvcCollectionResource {
             @Context final UriInfo uriInfo,
             @Context HttpHeaders headers) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.EXEC);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.EXEC);
         return relaycommon(HttpMethod.DELETE, uriInfo, path, headers, null);
     }
 
@@ -478,10 +478,10 @@ public class PersoniumEngineSvcCollectionResource {
         }
 
         // If RequestKey is not specified in the header, Take over the generated RequestKey.
-        if (!req.containsHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY)) {
+        if (!req.containsHeader(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY)) {
             String requestKey = this.getRequestKey(this.davRsCmp);
             if (requestKey != null) {
-                req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, requestKey);
+                req.addHeader(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, requestKey);
             }
         }
 
@@ -617,7 +617,7 @@ public class PersoniumEngineSvcCollectionResource {
     public Response move(
             @Context HttpHeaders headers) {
         //Access control to move source (check parent's authority)
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }
 }

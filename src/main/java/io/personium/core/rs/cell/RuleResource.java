@@ -19,8 +19,8 @@ package io.personium.core.rs.cell;
 import java.util.Map;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.core.Response;
 
 import io.personium.core.auth.AccessContext;
@@ -58,7 +58,7 @@ public class RuleResource {
     @GET
     public final Response list() {
         // access control
-        this.cellRsCmp.checkAccessContext(this.accessContext, CellPrivilege.RULE_READ);
+        this.cellRsCmp.checkAccessContext(CellPrivilege.RULE_READ);
 
         RuleManager rman = RuleManager.getInstance();
         Map<String, Object> map = rman.getRules(this.cell);
@@ -73,7 +73,7 @@ public class RuleResource {
     @OPTIONS
     public Response options() {
         // Access Control
-        this.cellRsCmp.checkAccessContext(this.accessContext, CellPrivilege.RULE_READ);
+        this.cellRsCmp.checkAccessContext(CellPrivilege.RULE_READ);
         return ResourceUtils.responseBuilderForOptions(HttpMethod.GET)
                             .build();
     }

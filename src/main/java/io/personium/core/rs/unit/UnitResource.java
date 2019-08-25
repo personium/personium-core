@@ -33,7 +33,7 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
@@ -110,10 +110,10 @@ public class UnitResource {
      */
     @Path("{cellName}")
     public final Object cell(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) final String xPersoniumRequestKey,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_EVENTID) final String xPersoniumEventId,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RULECHAIN) final String xPersoniumRuleChain,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA) final String xPersoniumVia,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) final String xPersoniumRequestKey,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_EVENTID) final String xPersoniumEventId,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_RULECHAIN) final String xPersoniumRuleChain,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_VIA) final String xPersoniumVia,
             @Context HttpServletRequest httpServletRequest,
             @PathParam("cellName") String cellName) {
 
@@ -163,7 +163,7 @@ public class UnitResource {
         return new StatusResource();
     }
 
-    static final String CROSSDOMAIN_XML = PersoniumCoreUtils.readStringResource("crossdomain.xml", CharEncoding.UTF_8);
+    static final String CROSSDOMAIN_XML = CommonUtils.readStringResource("crossdomain.xml", CharEncoding.UTF_8);
 
     /**
      * Crossdomain.xmlを返します。

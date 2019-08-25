@@ -20,7 +20,7 @@ import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
@@ -62,7 +62,7 @@ public class ExtRoleLinkTest extends ODataCommon {
             CellCtlUtils.createExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
 
             String testExtRoleUrl = extRoleUrl(testCellName,
-                    relationBoxName, relationName, PersoniumCoreUtils.encodeUrlComp(testExtRoleName));
+                    relationBoxName, relationName, CommonUtils.encodeUrlComp(testExtRoleName));
 
             // $links作成
             Http.request("cell/link.txt")
@@ -91,7 +91,7 @@ public class ExtRoleLinkTest extends ODataCommon {
             CellCtlUtils.createRelation(testCellName, relationName, relationBoxName);
             CellCtlUtils.createExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
 
-            LinksUtils.deleteLinksExtRole(testCellName, PersoniumCoreUtils.encodeUrlComp(testExtRoleName),
+            LinksUtils.deleteLinksExtRole(testCellName, CommonUtils.encodeUrlComp(testExtRoleName),
                     relationName, relationBoxName, Relation.EDM_TYPE_NAME, relationName, relationBoxName,
                     AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -113,7 +113,7 @@ public class ExtRoleLinkTest extends ODataCommon {
             CellCtlUtils.createExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
 
             String testExtRoleUrl = extRoleUrl(testCellName,
-                    relationBoxName, relationName, PersoniumCoreUtils.encodeUrlComp(testExtRoleName));
+                    relationBoxName, relationName, CommonUtils.encodeUrlComp(testExtRoleName));
 
             // $links取得
             Http.request("cell/link-list.txt")

@@ -50,7 +50,7 @@ import org.odata4j.producer.EntityQueryInfo;
 import org.odata4j.producer.EntityResponse;
 import org.odata4j.producer.resources.OptionsQueryParser;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.MERGE;
@@ -74,13 +74,12 @@ public class ODataEntityResource extends AbstractODataResource {
 
     private final String keyString;
     private final ODataResource odataResource;
-    private final AccessContext accessContext;
 
     /**
      * @return AccessContext
      */
     public AccessContext getAccessContext() {
-        return accessContext;
+        return this.odataResource.getAccessContext();
     }
 
     /**
@@ -112,7 +111,6 @@ public class ODataEntityResource extends AbstractODataResource {
      */
     public ODataEntityResource() {
         this.odataResource = null;
-        this.accessContext = null;
         this.keyString = null;
         this.oEntityKey = null;
     }
@@ -125,7 +123,6 @@ public class ODataEntityResource extends AbstractODataResource {
      */
     public ODataEntityResource(final ODataResource odataResource, final String entitySetName, final String key) {
         this.odataResource = odataResource;
-        this.accessContext = this.odataResource.accessContext;
         setOdataProducer(this.odataResource.getODataProducer());
         setEntitySetName(entitySetName);
 
@@ -162,7 +159,6 @@ public class ODataEntityResource extends AbstractODataResource {
     protected ODataEntityResource(final ODataResource odataResource,
             final String entitySetName, final String keyString, final OEntityKey oEntityKey) {
         this.odataResource = odataResource;
-        this.accessContext = this.odataResource.accessContext;
         setOdataProducer(this.odataResource.getODataProducer());
         setEntitySetName(entitySetName);
         this.keyString = keyString;
@@ -188,8 +184,7 @@ public class ODataEntityResource extends AbstractODataResource {
             @QueryParam("$expand") String expand,
             @QueryParam("$select") String select) {
         //Access control
-        this.odataResource.checkAccessContext(this.accessContext,
-                this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
+        this.odataResource.checkAccessContext(this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
 
         UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
 
@@ -217,7 +212,7 @@ public class ODataEntityResource extends AbstractODataResource {
             OEntityWrapper oew = (OEntityWrapper) entity;
 
             //Determining accessibility for each entity
-            this.odataResource.checkAccessContextPerEntity(this.accessContext, oew);
+            this.odataResource.checkAccessContextPerEntity(this.getAccessContext(), oew);
 
             etag = oew.getEtag();
             //Basically enter this IF statement.
@@ -315,8 +310,7 @@ public class ODataEntityResource extends AbstractODataResource {
         checkNotAllowedMethod();
 
         //Access control
-        this.odataResource.checkAccessContext(this.accessContext,
-                this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
+        this.odataResource.checkAccessContext(this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
 
         String etag;
 
@@ -395,8 +389,7 @@ public class ODataEntityResource extends AbstractODataResource {
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
         //Access control
-        this.odataResource.checkAccessContext(this.accessContext,
-                this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
+        this.odataResource.checkAccessContext(this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
 
         deleteEntity(ifMatch);
         Response res = Response.noContent()
@@ -495,13 +488,12 @@ public class ODataEntityResource extends AbstractODataResource {
     @OPTIONS
     public Response options() {
         //Access control
-        this.odataResource.checkAccessContext(this.accessContext,
-                this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
+        this.odataResource.checkAccessContext(this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
 
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
-                PersoniumCoreUtils.HttpMethod.MERGE,
+                CommonUtils.HttpMethod.MERGE,
                 HttpMethod.DELETE
                 ).build();
     }

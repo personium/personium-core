@@ -30,7 +30,7 @@ import org.junit.experimental.categories.Category;
 
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Cell;
@@ -144,7 +144,7 @@ public class CellBulkDeletionTest extends AbstractCase {
             assertEquals(HttpStatus.SC_PRECONDITION_FAILED, response.getStatusCode());
             ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.Misc.PRECONDITION_FAILED.getCode(),
                     PersoniumCoreException.Misc.PRECONDITION_FAILED
-                            .params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE)
+                            .params(CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE)
                             .getMessage());
         } finally {
             // セルを削除する
@@ -173,7 +173,7 @@ public class CellBulkDeletionTest extends AbstractCase {
             assertEquals(HttpStatus.SC_PRECONDITION_FAILED, response.getStatusCode());
             ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.Misc.PRECONDITION_FAILED.getCode(),
                     PersoniumCoreException.Misc.PRECONDITION_FAILED
-                            .params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE)
+                            .params(CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE)
                             .getMessage());
         } finally {
             // セルを削除する

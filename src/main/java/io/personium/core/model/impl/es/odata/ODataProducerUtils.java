@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.response.PersoniumSearchHits;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AuthUtils;
@@ -105,7 +105,7 @@ public final class ODataProducerUtils {
             Iterable<? extends NamespacedAnnotation<?>> anots = edmProp.getAnnotations();
             for (NamespacedAnnotation<?> anot : anots) {
                 if ("Unique".equals(anot.getName())
-                        && PersoniumCoreUtils.XmlConst.NS_PERSONIUM.equals(anot.getNamespace().getUri())) {
+                        && CommonUtils.XmlConst.NS_PERSONIUM.equals(anot.getNamespace().getUri())) {
                     String ukName = (String) anot.getValue();
                     List<String> ukProps = uks.get(ukName);
                     if (ukProps == null) {

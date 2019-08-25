@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -372,7 +372,7 @@ public class AccountRoleLinkTest extends AccountTest {
             // Account登録
             TResponse accountRes = AccountUtils.create(MASTER_TOKEN_NAME, Setup.TEST_CELL1, testAccountName,
                     testAccountPass, HttpStatus.SC_CREATED);
-            accountUrl = PersoniumCoreUtils.decodeUrlComp(accountRes.getLocationHeader());
+            accountUrl = CommonUtils.decodeUrlComp(accountRes.getLocationHeader());
             // Role登録
             RoleUtils.create(Setup.TEST_CELL1, MASTER_TOKEN_NAME, testRoleName,
                     HttpStatus.SC_CREATED);

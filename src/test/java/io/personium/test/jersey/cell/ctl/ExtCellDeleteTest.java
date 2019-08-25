@@ -21,7 +21,7 @@ import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -66,12 +66,12 @@ public class ExtCellDeleteTest extends ODataCommon {
             // 準備。ExtCell、ロール作ってリンクさせる。
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
             RoleUtils.create(cellName, token, roleName, boxName, HttpStatus.SC_CREATED);
-            LinksUtils.createLinksExtCell(cellName, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+            LinksUtils.createLinksExtCell(cellName, CommonUtils.encodeUrlComp(extCellUrl),
                     Role.EDM_TYPE_NAME, roleName, boxName, token, HttpStatus.SC_NO_CONTENT);
 
             ExtCellUtils.delete(token, cellName, extCellUrl, HttpStatus.SC_NO_CONTENT);
         } finally {
-            LinksUtils.deleteLinksExtCell(cellName, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+            LinksUtils.deleteLinksExtCell(cellName, CommonUtils.encodeUrlComp(extCellUrl),
                     Role.EDM_TYPE_NAME, roleName, boxName, token, -1);
             RoleUtils.delete(cellName, token, roleName, boxName, -1);
             ExtCellUtils.delete(token, cellName, extCellUrl, -1);
@@ -97,12 +97,12 @@ public class ExtCellDeleteTest extends ODataCommon {
             // 準備。ExtCell、Relation作ってリンクさせる。
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
             RelationUtils.create(cellName, token, body, HttpStatus.SC_CREATED);
-            LinksUtils.createLinksExtCell(cellName, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+            LinksUtils.createLinksExtCell(cellName, CommonUtils.encodeUrlComp(extCellUrl),
                     Relation.EDM_TYPE_NAME, relationName, null, token, HttpStatus.SC_NO_CONTENT);
 
             ExtCellUtils.delete(token, cellName, extCellUrl, HttpStatus.SC_NO_CONTENT);
         } finally {
-            LinksUtils.deleteLinksExtCell(cellName, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+            LinksUtils.deleteLinksExtCell(cellName, CommonUtils.encodeUrlComp(extCellUrl),
                     Relation.EDM_TYPE_NAME, relationName, null, token, -1);
             RelationUtils.delete(cellName, token, relationName, boxName, -1);
             ExtCellUtils.delete(token, cellName, extCellUrl, -1);

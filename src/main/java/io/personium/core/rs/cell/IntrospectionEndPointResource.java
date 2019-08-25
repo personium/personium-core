@@ -34,13 +34,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.AbstractOAuth2Token;
-import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
-import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.IAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
+import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.auth.token.TransCellRefreshToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
+import io.personium.common.auth.token.VisitorRefreshToken;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
@@ -105,7 +105,7 @@ public class IntrospectionEndPointResource {
         String schema;
 
         if (AccessContext.TYPE_INVALID.equals(accessContext.getType())) {
-            String[] idpw = PersoniumCoreUtils.parseBasicAuthzHeader(authzHeader);
+            String[] idpw = CommonUtils.parseBasicAuthzHeader(authzHeader);
             if (idpw != null) {
                 String username = PersoniumUnitConfig.getIntrospectUsername();
                 String password = PersoniumUnitConfig.getIntrospectPassword();
@@ -146,8 +146,8 @@ public class IntrospectionEndPointResource {
             if (!tk.isExpired() && (schema == null || schema != null && schema.equals(tk.getSchema()))) {
                 String issuer = tk.getIssuer();
                 int expirationTime = tk.getIssuedAt() + tk.expiresIn();
-                if (tk instanceof AccountAccessToken
-                    || tk instanceof CellLocalRefreshToken) {
+                if (tk instanceof ResidentLocalAccessToken
+                    || tk instanceof ResidentRefreshToken) {
                     if (issuer.equals(this.cell.getUrl())) {
                         map.put(RESP_ACTIVE, true);
                         map.put(RESP_CLIENT_ID, tk.getSchema());
@@ -158,8 +158,8 @@ public class IntrospectionEndPointResource {
                         map.put(RESP_EXT_ROLES,
                                 tk.getRoles().stream().map(role -> role.createUrl()).collect(Collectors.toList()));
                     }
-                } else if (tk instanceof CellLocalAccessToken
-                           || tk instanceof TransCellRefreshToken
+                } else if (tk instanceof VisitorLocalAccessToken
+                           || tk instanceof VisitorRefreshToken
                            || tk instanceof TransCellAccessToken) {
                     IAccessToken iat = (IAccessToken) tk;
                     String audience = iat.getTarget();
@@ -192,7 +192,7 @@ public class IntrospectionEndPointResource {
     @OPTIONS
     public Response options() {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.AUTH_READ);
+        this.davRsCmp.checkAccessContext(CellPrivilege.AUTH_READ);
         return ResourceUtils.responseBuilderForOptions(HttpMethod.POST)
                             .build();
     }

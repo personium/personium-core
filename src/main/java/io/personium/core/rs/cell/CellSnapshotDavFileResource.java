@@ -29,7 +29,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.PROPFIND;
 import io.personium.core.annotations.REPORT;
@@ -70,7 +70,7 @@ public class CellSnapshotDavFileResource {
         // Check exist
         checkFileExists();
         // Access Control
-        davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        davRsCmp.getParent().checkAccessContext(CellPrivilege.ROOT);
         ResponseBuilder rb = davRsCmp.get(ifNoneMatch, null);
         return rb.build();
     }
@@ -94,7 +94,7 @@ public class CellSnapshotDavFileResource {
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
             final InputStream inputStream) {
         // Access Control
-        davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        davRsCmp.getParent().checkAccessContext(CellPrivilege.ROOT);
 
         ResponseBuilder rb = davRsCmp.getDavCmp().putForUpdate(contentType, inputStream, ifMatch);
         return rb.build();
@@ -111,7 +111,7 @@ public class CellSnapshotDavFileResource {
         // Check exist
         checkFileExists();
         // Access Control
-        davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        davRsCmp.getParent().checkAccessContext(CellPrivilege.ROOT);
         ResponseBuilder rb = davRsCmp.getDavCmp().delete(ifMatch, false);
         return rb.build();
     }
@@ -126,13 +126,13 @@ public class CellSnapshotDavFileResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Check exist
         checkFileExists();
         // Access Control
-        davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        davRsCmp.getParent().checkAccessContext(CellPrivilege.ROOT);
         return davRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding, CellPrivilege.ROOT);
     }
 
@@ -154,12 +154,12 @@ public class CellSnapshotDavFileResource {
         // Check exist
         checkFileExists();
         // Access Control
-        davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        davRsCmp.getParent().checkAccessContext(CellPrivilege.ROOT);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 HttpMethod.DELETE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND
                 ).build();
     }
 

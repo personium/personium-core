@@ -1,6 +1,6 @@
 /**
- * personium.io
- * Copyright 2014-2018 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2019 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.auth.CellPrivilege;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
 import io.personium.core.utils.HttpClientFactory;
@@ -128,6 +129,7 @@ public class CellRsCmp extends DavRsCmp {
     /**
      * @return AccessContext
      */
+    @Override
     public AccessContext getAccessContext() {
         return this.accessContext;
     }
@@ -138,11 +140,13 @@ public class CellRsCmp extends DavRsCmp {
      * @param privilege Privilege of ACL (read or write)
      * @return boolean
      */
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
+    @Override
+    public boolean hasSubjectPrivilege(Privilege privilege) {
 
-        //If davCmp does not exist (resource that does not exist is specified) skip ACL check for that resource
+        // If davCmp does not exist (resource that does not exist is specified)
+        // skip ACL check for that resource
         if (this.davCmp != null
-                && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege, this.getCell().getUrl())) {
+                && this.getAccessContext().hasSubjectPrivilegeForAcl(this.davCmp.getAcl(), privilege)) {
             return true;
         }
         return false;
@@ -153,8 +157,10 @@ public class CellRsCmp extends DavRsCmp {
      * @param ac Access context
      * @param privilege Required privilege
      */
-    public void checkAccessContext(AccessContext ac, Privilege privilege) {
-        // Check UnitUser token.
+    @Override
+    public void checkAccessContext(Privilege privilege) {
+        AccessContext ac = this.getAccessContext();
+        // If UnitUser token, then OK.
         if (ac.isUnitUserToken(privilege)) {
             return;
         }
@@ -163,9 +169,10 @@ public class CellRsCmp extends DavRsCmp {
         this.accessContext.updateBasicAuthenticationStateForResource(null);
 
         //Access right check
-        if (!this.hasPrivilege(ac, privilege)) {
+        if (!this.hasSubjectPrivilege(privilege)) {
             //Check the validity of the token
-            //Even if the token is INVALID, if the ACL setting and Privilege is set to all, it is necessary to permit access, so check at this timing
+            // Even if the token is INVALID, if the ACL setting and Privilege is set to all,
+            // it is necessary to permit access, so check at this timing
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
                 ac.throwInvalidTokenException(getAcceptableAuthScheme());
             } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
@@ -173,6 +180,12 @@ public class CellRsCmp extends DavRsCmp {
                         ac.getRealm(), getAcceptableAuthScheme());
             }
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        }
+
+        if (privilege instanceof CellPrivilege
+                && !this.accessContext.hasScopeCellPrivilege((CellPrivilege)privilege)) {
+                // TODO Temporarily commenting out.
+//            throw PersoniumCoreException.Auth.INSUFFICIENT_SCOPE.params(privilege.getName());
         }
     }
 
@@ -353,6 +366,23 @@ public class CellRsCmp extends DavRsCmp {
         }
         String[] accounts = accountsStr.split(",");
         return Arrays.asList(accounts);
+    }
+
+    /**
+     * Check if the target account records authentication history.
+     * @param accountId account ID
+     * @param accountName account name
+     * @return "true" is records authentication history
+     */
+    public boolean isRecordingAuthHistory(String accountId, String accountName) {
+        if (StringUtils.isEmpty(accountId) || StringUtils.isEmpty(accountName)) {
+            return false;
+        }
+        List<String> ineligibleAccountList = this.getAccountsNotRecordingAuthHistory();
+        if (ineligibleAccountList == null) {
+            return true;
+        }
+        return !ineligibleAccountList.contains(accountName);
     }
 
     /**

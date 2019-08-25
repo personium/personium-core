@@ -57,7 +57,7 @@ public class PersoniumEngineSourceNullResource extends NullResource {
             @HeaderParam("Transfer-Encoding") final String transferEncoding,
             final InputStream inputStream) {
         //Access control
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.BIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.BIND);
         throw PersoniumCoreException.Dav.METHOD_NOT_ALLOWED;
     }
 

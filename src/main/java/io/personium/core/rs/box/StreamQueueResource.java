@@ -30,7 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
@@ -64,7 +64,7 @@ public class StreamQueueResource extends StreamResource {
         factory.setNamespaceAware(true);
         try {
             String prop = this.davCmp.getPropertyAsRawString(PROP_ELEMENT_QUEUES,
-                                                             PersoniumCoreUtils.XmlConst.NS_PERSONIUM);
+                                                             CommonUtils.XmlConst.NS_PERSONIUM);
             if (prop == null) {
                 return queues;
             }
@@ -72,7 +72,7 @@ public class StreamQueueResource extends StreamResource {
             InputStream is = new ByteArrayInputStream(prop.getBytes(CharEncoding.UTF_8));
             Document doc = builder.parse(is);
             Element element = doc.getDocumentElement();
-            NodeList nl = element.getElementsByTagNameNS(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
+            NodeList nl = element.getElementsByTagNameNS(CommonUtils.XmlConst.NS_PERSONIUM,
                                                          PROP_ELEMENT_QUEUE);
             for (int i = 0; i < nl.getLength(); i++) {
                 queues.add(nl.item(i).getTextContent());

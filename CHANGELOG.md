@@ -1,6 +1,13 @@
+## 1.7.18
+IMPROVEMENTS:
+* Limit Cell Level API Access to tokens issued via ROPC process. ([#445](https://github.com/personium/personium-core/issues/445))
+* URL scheme "personium-localunit" is extended and supports a syntax using two colons. ([#284](https://github.com/personium/personium-core/issues/284))
+* Token refreshing between apps disabled. ([#463](https://github.com/personium/personium-core/issues/463))
+
+
 ## 1.7.17
 IMPROVEMENTS:
-* Add IO logging with IO time. ([#446](https://github.com/personium/personium-core/issues/446))
+* Add IO logging with elapsed time. ([#446](https://github.com/personium/personium-core/issues/446))
 
 ## 1.7.16
 BUG FIXES:
@@ -8,7 +15,7 @@ BUG FIXES:
 * If Accept request header contains extra values, 409 is returned ([#435](https://github.com/personium/personium-core/issues/435))
 
 IMPROVEMENTS:
-* Fix crossdomain.xml error in Eclipse. ([#448](https://github.com/personium/personium-core/issues/444))
+* Fix crossdomain.xml namespace URL. ([#448](https://github.com/personium/personium-core/issues/444))
 
 ## 1.7.15
 BUG FIXES:

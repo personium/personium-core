@@ -31,7 +31,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
@@ -93,7 +93,7 @@ public class BoxResourceTest {
         } catch (PersoniumCoreException e) {
             // Confirm result
             PersoniumCoreException expected = PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
             assertThat(e.getCode(), is(expected.getCode()));
             assertThat(e.getMessage(), is(expected.getMessage()));
         }
@@ -123,7 +123,7 @@ public class BoxResourceTest {
         } catch (PersoniumCoreException e) {
             // Confirm result
             PersoniumCoreException expected = PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
             assertThat(e.getCode(), is(expected.getCode()));
             assertThat(e.getMessage(), is(expected.getMessage()));
         }
@@ -153,7 +153,7 @@ public class BoxResourceTest {
         } catch (PersoniumCoreException e) {
             // Confirm result
             PersoniumCoreException expected = PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
             assertThat(e.getCode(), is(expected.getCode()));
             assertThat(e.getMessage(), is(expected.getMessage()));
         }

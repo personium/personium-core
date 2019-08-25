@@ -39,8 +39,8 @@ import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
+import io.personium.common.utils.CommonUtils;
+import io.personium.common.utils.CommonUtils.HttpHeaders;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumReadDeleteModeManager;
 import io.personium.core.PersoniumUnitConfig;
@@ -120,7 +120,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     private void overrideMethod(ContainerRequestContext requestContext) {
         if (HttpMethod.POST.equalsIgnoreCase(requestContext.getMethod())) {
             String overrideMethod = requestContext.getHeaders().getFirst(
-                    PersoniumCoreUtils.HttpHeaders.X_HTTP_METHOD_OVERRIDE);
+                    CommonUtils.HttpHeaders.X_HTTP_METHOD_OVERRIDE);
             if (overrideMethod != null && !overrideMethod.isEmpty()) {
                 requestContext.setMethod(overrideMethod);
             }
@@ -128,7 +128,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     private void overrideHeaders(ContainerRequestContext requestContext) {
-        List<String> overrideHeaderList = requestContext.getHeaders().get(PersoniumCoreUtils.HttpHeaders.X_OVERRIDE);
+        List<String> overrideHeaderList = requestContext.getHeaders().get(CommonUtils.HttpHeaders.X_OVERRIDE);
         if (overrideHeaderList == null) {
             return;
         }
@@ -155,9 +155,9 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
 
     private void overrideUri(ContainerRequestContext requestContext) {
         MultivaluedMap<String, String> headers = requestContext.getHeaders();
-        String xForwardedProto = headers.getFirst(PersoniumCoreUtils.HttpHeaders.X_FORWARDED_PROTO);
-        String xForwardedHost = headers.getFirst(PersoniumCoreUtils.HttpHeaders.X_FORWARDED_HOST);
-        String xForwardedPath = headers.getFirst(PersoniumCoreUtils.HttpHeaders.X_FORWARDED_PATH);
+        String xForwardedProto = headers.getFirst(CommonUtils.HttpHeaders.X_FORWARDED_PROTO);
+        String xForwardedHost = headers.getFirst(CommonUtils.HttpHeaders.X_FORWARDED_HOST);
+        String xForwardedPath = headers.getFirst(CommonUtils.HttpHeaders.X_FORWARDED_PATH);
 
         UriInfo uriInfo = requestContext.getUriInfo();
         UriBuilder baseUriBuilder = uriInfo.getBaseUriBuilder();
@@ -195,12 +195,12 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
                     HttpMethod.PUT,
                     HttpMethod.DELETE,
                     HttpMethod.HEAD,
-                    io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MERGE,
-                    io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MKCOL,
-                    io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MOVE,
-                    io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND,
-                    io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH,
-                    io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL
+                    io.personium.common.utils.CommonUtils.HttpMethod.MERGE,
+                    io.personium.common.utils.CommonUtils.HttpMethod.MKCOL,
+                    io.personium.common.utils.CommonUtils.HttpMethod.MOVE,
+                    io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND,
+                    io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH,
+                    io.personium.common.utils.CommonUtils.HttpMethod.ACL
                     ).build();
 
             //Do not pass control to the servlet by issuing an exception

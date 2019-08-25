@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
@@ -216,11 +216,11 @@ public class CellResource {
     @WriteAPI
     @DELETE
     public Response cellBulkDeletion(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         //If the specification of the X-Personium-Recursive header is not "true", it is an error
         if (!"true".equals(recursiveHeader)) {
             throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
         }
         //Confirm the access authority
         //Unit Master, Unit User, Unit Local Unit User except authority error
@@ -275,19 +275,19 @@ public class CellResource {
      */
     @Path("__ctl")
     public CellCtlResource ctl(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader) {
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader) {
         return new CellCtlResource(this.accessContext, pCredHeader, this.cellRsCmp);
     }
 
     /**
-     * Endpoint of password change API.
+     * Endpoint of my password change API.
      * @param pCredHeader pCredHeader
      * @return Response
      */
     @Path("__mypassword")
-    public PasswordResource mypassword(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader) {
-        return new PasswordResource(this.accessContext, pCredHeader, this.cell, this.cellRsCmp);
+    public MyPasswordResource mypassword(
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader) {
+        return new MyPasswordResource(this.accessContext, pCredHeader, this.cell, this.cellRsCmp);
     }
 
     /**
@@ -379,7 +379,7 @@ public class CellResource {
     }
 
     /**
-     * Access to the default box.
+     * Access to the main box.
      * @param jaxRsRequest HTTP request for JAX-RS
      * @return BoxResource Object
      */
@@ -460,11 +460,11 @@ public class CellResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @DefaultValue("0") @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @DefaultValue("0") @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.PROPFIND);
+        this.cellRsCmp.checkAccessContext(CellPrivilege.PROPFIND);
         Response response = this.cellRsCmp.doPropfind(requestBodyXml,
                                                       depth,
                                                       contentLength,
@@ -536,7 +536,7 @@ public class CellResource {
     @ACL
     public Response acl(final Reader reader) {
         //Access control
-        this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.ACL);
+        this.cellRsCmp.checkAccessContext(CellPrivilege.ACL);
         Response response = this.cellRsCmp.doAcl(reader);
 
         // post event to EventBus
@@ -562,10 +562,10 @@ public class CellResource {
     @OPTIONS
     public Response options() {
         //Access control
-        this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.SOCIAL_READ);
+        this.cellRsCmp.checkAccessContext(CellPrivilege.SOCIAL_READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.POST,
-                PersoniumCoreUtils.HttpMethod.PROPFIND
+                CommonUtils.HttpMethod.PROPFIND
                 ).build();
     }
 

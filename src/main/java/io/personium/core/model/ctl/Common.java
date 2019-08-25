@@ -25,7 +25,7 @@ import org.odata4j.edm.EdmAnnotationAttribute;
 import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 
 /**
  * Constant values commonly used in Edm.
@@ -174,8 +174,8 @@ public class Common {
     /**
      * DC namespace.
      */
-    public static final PrefixedNamespace P_NAMESPACE = new PrefixedNamespace(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
-            PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+    public static final PrefixedNamespace P_NAMESPACE = new PrefixedNamespace(CommonUtils.XmlConst.NS_PERSONIUM,
+            CommonUtils.XmlConst.NS_PREFIX_PERSONIUM);
 
     /**
      * Name property.

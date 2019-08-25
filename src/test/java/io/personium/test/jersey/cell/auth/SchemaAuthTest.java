@@ -28,9 +28,9 @@ import org.junit.runner.RunWith;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
-import io.personium.common.auth.token.CellLocalRefreshToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
+import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
@@ -92,10 +92,10 @@ public class SchemaAuthTest extends PersoniumTest {
 
         // トークンチェック
         String tokenStr = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
-        AccountAccessToken aToken = AccountAccessToken.parse(tokenStr, issuer);
+        ResidentLocalAccessToken aToken = ResidentLocalAccessToken.parse(tokenStr, issuer);
         assertNotNull(aToken.getSchema());
         String rTokenStr = (String) json.get(OAuth2Helper.Key.REFRESH_TOKEN);
-        CellLocalRefreshToken rToken = CellLocalRefreshToken.parse(rTokenStr, issuer);
+        ResidentRefreshToken rToken = ResidentRefreshToken.parse(rTokenStr, issuer);
         assertNotNull(rToken.getSchema());
 
         // WebDavのスキーマアクセス制御確認
@@ -316,7 +316,7 @@ public class SchemaAuthTest extends PersoniumTest {
 
         JSONObject json2 = res2.bodyAsJson();
         String tokenStr2 = (String) json2.get(OAuth2Helper.Key.ACCESS_TOKEN);
-        CellLocalAccessToken aToken = CellLocalAccessToken.parse(tokenStr2, issuer);
+        VisitorLocalAccessToken aToken = VisitorLocalAccessToken.parse(tokenStr2, issuer);
         assertNotNull(aToken.getSchema());
 
         // WebDavのスキーマアクセス制御確認
@@ -800,10 +800,10 @@ public class SchemaAuthTest extends PersoniumTest {
 
         // トークンチェック
         String tokenStr = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
-        AccountAccessToken aToken = AccountAccessToken.parse(tokenStr, issuer);
+        ResidentLocalAccessToken aToken = ResidentLocalAccessToken.parse(tokenStr, issuer);
         assertEquals(schema, aToken.getSchema());
         String rTokenStr = (String) json.get(OAuth2Helper.Key.REFRESH_TOKEN);
-        CellLocalRefreshToken rToken = CellLocalRefreshToken.parse(rTokenStr, issuer);
+        ResidentRefreshToken rToken = ResidentRefreshToken.parse(rTokenStr, issuer);
         assertEquals(schema, rToken.getSchema());
 
         return tokenStr;
@@ -866,7 +866,7 @@ public class SchemaAuthTest extends PersoniumTest {
 
         JSONObject json2 = res3.bodyAsJson();
         String tokenStr2 = (String) json2.get(OAuth2Helper.Key.ACCESS_TOKEN);
-        CellLocalAccessToken aToken = CellLocalAccessToken.parse(tokenStr2, issuer);
+        VisitorLocalAccessToken aToken = VisitorLocalAccessToken.parse(tokenStr2, issuer);
         assertEquals(schema, aToken.getSchema());
 
         return tokenStr2;

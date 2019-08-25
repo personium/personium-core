@@ -165,7 +165,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                         if (isValidCurrentStatus(currentStatus)) {
                             if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
                                 // check social privilege
-                                davRsCmp.checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.SOCIAL);
+                                davRsCmp.checkAccessContext(CellPrivilege.SOCIAL);
                                 // create or delete Relation
                                 String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
                                 String boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
@@ -184,7 +184,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                         if (isValidCurrentStatus(currentStatus)) {
                             if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
                                 // check social privilege
-                                davRsCmp.checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.SOCIAL);
+                                davRsCmp.checkAccessContext(CellPrivilege.SOCIAL);
                                 // create or delete Role
                                 String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
                                 String boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
@@ -203,7 +203,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                         if (isValidCurrentStatus(currentStatus)) {
                             if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
                                 // check rule privilege
-                                this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.RULE);
+                                this.davRsCmp.checkAccessContext(CellPrivilege.RULE);
                                 // register or unregister rule
                                 String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
                                 String boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());

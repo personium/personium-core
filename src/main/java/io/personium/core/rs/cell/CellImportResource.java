@@ -75,7 +75,7 @@ public class CellImportResource {
     @GET
     public Response get() {
         // Check the authority required for execution.
-        cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        cellRsCmp.checkAccessContext(CellPrivilege.ROOT);
 
         String jsonString = "";
         if (Cell.STATUS_NORMAL.equals(cellRsCmp.getDavCmp().getCellStatus())) {
@@ -111,7 +111,7 @@ public class CellImportResource {
     @POST
     public Response post(final Reader reader) {
         // Check the authority required for execution.
-        cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        cellRsCmp.checkAccessContext(CellPrivilege.ROOT);
 
         // Reading body.
         JSONObject body;
@@ -141,7 +141,7 @@ public class CellImportResource {
     @OPTIONS
     public Response options() {
         // Check the authority required for execution.
-        cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        cellRsCmp.checkAccessContext(CellPrivilege.ROOT);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.POST

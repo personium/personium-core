@@ -86,7 +86,7 @@
     </appender>
 
     <logger  name="io.personium">
-        <level value="DEBUG" />
+        <level value="INFO" />
         <appender-ref ref="file" />
         <appender-ref ref="stdout" />
     </logger>

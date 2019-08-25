@@ -42,7 +42,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Account;
@@ -768,7 +768,7 @@ public class CollectionTest extends PersoniumTest {
 
             // Confirm results
             PersoniumCoreException expected = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
             JSONObject bodyJson = response.bodyAsJson();
             JSONObject messageJson = (JSONObject) bodyJson.get("message");
             assertThat(bodyJson.get("code"), is(expected.getCode()));
@@ -823,7 +823,7 @@ public class CollectionTest extends PersoniumTest {
 
             // Confirm results
             PersoniumCoreException expected = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
             JSONObject bodyJson = response.bodyAsJson();
             JSONObject messageJson = (JSONObject) bodyJson.get("message");
             assertThat(bodyJson.get("code"), is(expected.getCode()));
@@ -878,7 +878,7 @@ public class CollectionTest extends PersoniumTest {
 
             // Confirm results
             PersoniumCoreException expected = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
             JSONObject bodyJson = response.bodyAsJson();
             JSONObject messageJson = (JSONObject) bodyJson.get("message");
             assertThat(bodyJson.get("code"), is(expected.getCode()));

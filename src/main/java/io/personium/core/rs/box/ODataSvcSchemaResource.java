@@ -89,8 +89,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     @Override
-    public void checkAccessContext(AccessContext ac, Privilege privilege) {
-        this.davRsCmp.checkAccessContext(ac, privilege);
+    public void checkAccessContext(Privilege privilege) {
+        this.davRsCmp.checkAccessContext(privilege);
     }
 
     /**
@@ -103,8 +103,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     @Override
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
-        return this.davRsCmp.hasPrivilege(ac, privilege);
+    public boolean hasPrivilege(Privilege privilege) {
+        return this.davRsCmp.hasSubjectPrivilege(privilege);
     }
 
     @Override
@@ -125,7 +125,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
             @QueryParam("$format") final String format,
             @Context HttpHeaders httpHeaders) {
         //Access control
-        this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
+        this.checkAccessContext(BoxPrivilege.READ);
         //From the contents of $ format and Accept header,
         //Should Schema's Atom ServiceDocument be returned?
         //It is judged whether EDMX of data should be returned or not.
@@ -164,7 +164,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
     @Path("{first: \\$}metadata")
     public Response getMetadata() {
         //Access control
-        this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
+        this.checkAccessContext(BoxPrivilege.READ);
         //Return EDMX of the schema
         //Auth header check
         return super.doGetMetadata();
@@ -179,7 +179,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
 //    @Path("")
     public Response optionsRoot() {
         //Access control
-        this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
+        this.checkAccessContext(BoxPrivilege.READ);
         return super.doGetOptionsMetadata();
     }
 

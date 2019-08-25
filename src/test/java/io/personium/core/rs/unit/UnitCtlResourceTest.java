@@ -189,7 +189,7 @@ public class UnitCtlResourceTest {
         // None.
 
         // Run method
-        unitCtlResource.checkAccessContext(ac, privilege);
+        unitCtlResource.checkAccessContext(privilege);
     }
 
     /**
@@ -219,7 +219,7 @@ public class UnitCtlResourceTest {
 
         try {
             // Run method
-            unitCtlResource.checkAccessContext(ac, privilege);
+            unitCtlResource.checkAccessContext(privilege);
             fail("Not throws exception.");
         } catch (PersoniumCoreAuthzException e) {
             // Confirm result
@@ -255,7 +255,7 @@ public class UnitCtlResourceTest {
 
         try {
             // Run method
-            unitCtlResource.checkAccessContext(ac, privilege);
+            unitCtlResource.checkAccessContext(privilege);
             fail("Not throws exception.");
         } catch (PersoniumCoreAuthzException e) {
             // Confirm result
@@ -282,14 +282,14 @@ public class UnitCtlResourceTest {
         doReturn(uri).when(uriInfo).getBaseUri();
         unitCtlResource = spy(new UnitCtlResource(ac));
 
-        doReturn(AccessContext.TYPE_LOCAL).when(ac).getType();
+        doReturn(AccessContext.TYPE_VISITOR).when(ac).getType();
 
         // Expected result
         PersoniumCoreException expected = PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
 
         try {
             // Run method
-            unitCtlResource.checkAccessContext(ac, privilege);
+            unitCtlResource.checkAccessContext(privilege);
             fail("Not throws exception.");
         } catch (PersoniumCoreException e) {
             // Confirm result

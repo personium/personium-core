@@ -64,10 +64,10 @@ import org.xml.sax.SAXException;
 import io.personium.common.auth.token.Role;
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
+import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
-import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -424,7 +424,7 @@ public class DavCmpFsImpl implements DavCmp {
                 for (Element elem : lpe) {
                     res.setProperty(elem, HttpStatus.SC_OK);
                     String key = elem.getLocalName() + PROP_KEY_SEPARATOR + elem.getNamespaceURI();
-                    String value = PersoniumCoreUtils.nodeToString(elem);
+                    String value = CommonUtils.nodeToString(elem);
                     log.debug("key: " + key);
                     log.debug("val: " + value);
                     propsJson.put(key, value);
@@ -738,7 +738,7 @@ public class DavCmpFsImpl implements DavCmp {
             endLog.setParams(fileSize / KILO_BYTES);
             endLog.writeLog();
 
-            return res.header(HttpHeaders.ETAG, getEtag()).header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES,
+            return res.header(HttpHeaders.ETAG, getEtag()).header(CommonUtils.HttpHeaders.ACCEPT_RANGES,
                     RangeHeaderHandler.BYTES_UNIT);
 
         } catch (BinaryDataNotFoundException nex) {
@@ -784,7 +784,7 @@ public class DavCmpFsImpl implements DavCmp {
 
         //I have returned Content - Length to the clear because I can not process Chunked 's Range response in iPad' s safari.
         return javax.ws.rs.core.Response.status(HttpStatus.SC_PARTIAL_CONTENT).entity(sout)
-                .header(PersoniumCoreUtils.HttpHeaders.CONTENT_RANGE, brs.makeContentRangeHeaderField())
+                .header(CommonUtils.HttpHeaders.CONTENT_RANGE, brs.makeContentRangeHeaderField())
                 .header(HttpHeaders.CONTENT_LENGTH, brs.getContentLength())
                 .header(HttpHeaders.CONTENT_TYPE, contentType);
     }
@@ -924,7 +924,7 @@ public class DavCmpFsImpl implements DavCmp {
             //In the MOVE method, the source and the destination Box are the same, so even if you acquire the destination access context,
             //Even if you acquire the access context of the source, you can get the same Object
             //Therefore, we use the access context of the move destination
-            AccessContext ac = davDestination.getDestinationRsCmp().getAccessContext();
+            //AccessContext ac = davDestination.getDestinationRsCmp().getAccessContext();
 
             //Access control to the destination
             //For the following reasons, access is controlled to the destination after locking.
@@ -932,12 +932,12 @@ public class DavCmpFsImpl implements DavCmp {
             //2. When performing access control of the move destination before locking, it is necessary to acquire the information of the move destination, and a request to the ES occurs.
             File destDir = ((DavCmpFsImpl) davDestination.getDestinationCmp()).fsDir;
             if (!davDestination.getDestinationCmp().exists()) {
-                davDestination.getDestinationRsCmp().getParent().checkAccessContext(ac, BoxPrivilege.BIND);
+                davDestination.getDestinationRsCmp().getParent().checkAccessContext(BoxPrivilege.BIND);
                 Files.move(this.fsDir.toPath(), destDir.toPath());
                 res = javax.ws.rs.core.Response.status(HttpStatus.SC_CREATED);
             } else {
-                davDestination.getDestinationRsCmp().getParent().checkAccessContext(ac, BoxPrivilege.BIND);
-                davDestination.getDestinationRsCmp().getParent().checkAccessContext(ac, BoxPrivilege.UNBIND);
+                davDestination.getDestinationRsCmp().getParent().checkAccessContext(BoxPrivilege.BIND);
+                davDestination.getDestinationRsCmp().getParent().checkAccessContext(BoxPrivilege.UNBIND);
                 FileUtils.deleteDirectory(destDir);
                 Files.move(this.fsDir.toPath(), destDir.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 res = javax.ws.rs.core.Response.status(HttpStatus.SC_NO_CONTENT);

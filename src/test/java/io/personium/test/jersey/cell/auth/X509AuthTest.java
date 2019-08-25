@@ -84,7 +84,8 @@ public class X509AuthTest extends PersoniumTest {
 
             // TransCellAccessTokenを自作
             TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(Setup.TEST_CELL1),
-                    "https://example/test/#admin", UrlUtils.cellRoot(Setup.TEST_CELL1), new ArrayList<Role>(), null);
+                    "https://example/test/#admin", UrlUtils.cellRoot(Setup.TEST_CELL1), new ArrayList<Role>(),
+                    null, null);
 
             String token = tcat.toTokenString();
             // テスト用トークンを作成したら、サーバ側の証明書をデフォルトに再設定
@@ -116,7 +117,8 @@ public class X509AuthTest extends PersoniumTest {
 
         // TransCellAccessTokenを自作
         TransCellAccessToken tcat = new TransCellAccessToken("https://example/test/",
-                "https://example/test/#admin", UrlUtils.cellRoot(Setup.TEST_CELL1), new ArrayList<Role>(), null);
+                "https://example/test/#admin", UrlUtils.cellRoot(Setup.TEST_CELL1), new ArrayList<Role>(),
+                null, null);
         String token = tcat.toTokenString();
 
         // testcell1にトークン認証して400
@@ -157,7 +159,8 @@ public class X509AuthTest extends PersoniumTest {
 
             // TransCellAccessTokenを自作
             TransCellAccessToken tcat = new TransCellAccessToken("https://localhost/test/",
-                    "https://example/test/#admin", UrlUtils.cellRoot(Setup.TEST_CELL1), new ArrayList<Role>(), null);
+                    "https://example/test/#admin", UrlUtils.cellRoot(Setup.TEST_CELL1), new ArrayList<Role>(),
+                    null, null);
 
             String token = tcat.toTokenString();
             // テスト用トークンを作成したら、サーバ側の証明書をデフォルトに再設定
@@ -209,7 +212,8 @@ public class X509AuthTest extends PersoniumTest {
 
             // TransCellAccessTokenを自作
             TransCellAccessToken tcat = new TransCellAccessToken("https://localhost/test/",
-                    "https://example/test/#admin", UrlUtils.cellRoot(Setup.TEST_CELL1), new ArrayList<Role>(), null);
+                    "https://example/test/#admin", UrlUtils.cellRoot(Setup.TEST_CELL1), new ArrayList<Role>(),
+                    null, null);
 
             String token = tcat.toTokenString();
 
