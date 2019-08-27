@@ -212,6 +212,18 @@ public final class OAuth2Helper {
          */
         public static final String CLIENT_SECRET = "client_secret";
         /**
+         * "client_assertion" parameter key defined in RFC7521.
+         * https://tools.ietf.org/html/rfc7521#section-4.2
+         */
+        public static final String CLIENT_ASSERTION = "client_assertion";
+        /**
+         * "client_assertion_type" parameter key defined in RFC7521.
+         * https://tools.ietf.org/html/rfc7521#section-4.2
+         */
+        public static final String CLIENT_ASSERTION_TYPE = "client_assertion_type";
+
+
+        /**
          * state.
          */
         public static final String STATE = "state";
@@ -300,6 +312,7 @@ public final class OAuth2Helper {
          * p_owner value.
          */
         public static final String TRUE_STR = "true";
+
         /**
          * refresh_token_expires_in.
          */

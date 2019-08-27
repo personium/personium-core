@@ -148,6 +148,8 @@ public class TokenEndPointResource {
         String code = formParams.getFirst(Key.CODE);
         String clientId = formParams.getFirst(Key.CLIENT_ID);
         String clientSecret = formParams.getFirst(Key.CLIENT_SECRET);
+        String clientAssertion = formParams.getFirst(Key.CLIENT_ASSERTION);
+        String clientAssertionType = formParams.getFirst(Key.CLIENT_ASSERTION_TYPE);
         String expiresInStr = formParams.getFirst(Key.EXPIRES_IN);
         String rTokenExpiresInStr = formParams.getFirst(Key.REFRESH_TOKEN_EXPIRES_IN);
         String pCookie = formParams.getFirst(Key.P_COOKIE);
@@ -178,9 +180,11 @@ public class TokenEndPointResource {
 
         String schema = null;
         // Authenticate client first if necessary.
-        // If neither Scope nor authzHeader nor clientId exists, client authentication is not performed.
-        if (clientId != null || authzHeader != null) {
-            schema = clientAuth(clientId, clientSecret, authzHeader, cell.getUrl());
+        // If neither authzHeader, clientAssertion nor clientId exists,
+        // client authentication is not performed.
+        if (clientId != null || authzHeader != null || clientAssertion != null || clientAssertionType != null) {
+            schema = clientAuth(clientId, clientSecret, clientAssertionType, clientAssertion,
+                    authzHeader, cell.getUrl());
         }
 
         // Check value of expires_in
@@ -350,18 +354,49 @@ public class TokenEndPointResource {
         return url;
     }
 
+    public static String clientAuth(
+            final String clientId, final String clientSecret,
+            final String clientAssertionType, final String clientAssertion,
+            final String authzHeader, final String cellUrl) {
+        // When clientAssertionType is spesified,
+        if (clientAssertionType != null || clientAssertion != null) {
+            // Then clientAssertionType should be valid value.
+            if (!OAuth2Helper.GrantType.SAML2_BEARER.equals(clientAssertionType)) {
+                throw PersoniumCoreAuthnException.INVALID_CLIENT_ASSERTION_TYPE.params(OAuth2Helper.GrantType.SAML2_BEARER);
+            }
+            // Just ignore clientSecret, authzHeader
+            //
+            return clientAuth(clientId, clientAssertion,
+                    null, cellUrl);
+        } else {
+            // When clientAssertionType is NOT spesified,
+
+            // clientId or authz header should be specified.
+            if (clientId == null && authzHeader == null) {
+                throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
+            }
+            // Then use clientId, clientSecret or authHeader
+            return clientAuth(clientId, clientSecret,
+                    authzHeader, cellUrl);
+
+        }
+    }
+
+
     /**
      * Client authentication processing.
-     * @param clientId Schema
+     * @param clientId Schema URL. if null is specified then skip check.
      * @param clientSecret token
      * @param authzHeader Value of Authorization Header
      * @param cellUrl Cell URL
      * @return null: Client authentication failed.
      */
-    public static String clientAuth(final String clientId, final String clientSecret,
+    public static String clientAuth(
+            final String clientId, final String clientSecret,
             final String authzHeader, final String cellUrl) {
         String targetClientId = clientId;
         String targetClientSecret = clientSecret;
+
         if (targetClientSecret == null) {
             targetClientSecret = "";
         }
@@ -391,7 +426,7 @@ public class TokenEndPointResource {
         } catch (TokenParseException e) {
             //Perth failure
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.realm(
+            throw PersoniumCoreAuthnException.CLIENT_ASSERTION_PARSE_ERROR.realm(
                     cellUrl).reason(e);
         } catch (TokenDsigException e) {
             //Signature validation error
@@ -412,7 +447,8 @@ public class TokenEndPointResource {
         }
 
         // Confirm that Issuer is equal to ID
-        if (!targetClientId.equals(tcToken.getIssuer())) {
+        // if clientId is null, then just skip this check
+        if (clientId != null && !targetClientId.equals(tcToken.getIssuer())) {
             throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
         }
 
