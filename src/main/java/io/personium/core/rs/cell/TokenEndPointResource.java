@@ -370,8 +370,9 @@ public class TokenEndPointResource {
                     null, cellUrl);
         } else {
             // When clientAssertionType is NOT spesified,
-            // clientId should be specified.
-            if (clientId == null) {
+
+            // clientId or authz header should be specified.
+            if (clientId == null && authzHeader == null) {
                 throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
             }
             // Then use clientId, clientSecret or authHeader

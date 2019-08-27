@@ -268,7 +268,7 @@ public class AuthErrorTest extends PersoniumTest {
         // リフレッシュトークン認証
         TResponse tokenRes = Http.request("authn/refresh-cl-with-bearerheader.txt")
                 .with("remoteCell", TEST_CELL1)
-                .with("Authorization_token", "bearerHeader")
+                .with("Authorization_token", "invalidBearerHeader")
                 .with("refresh_token", refreshToken)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
