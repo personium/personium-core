@@ -19,6 +19,7 @@ package io.personium.core.rs.cell;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -68,6 +69,8 @@ import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
+import io.personium.core.PersoniumCoreAuthnException;
+import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ctl.Account;
@@ -89,6 +92,7 @@ public class TokenEndPointResourceTest {
     private TokenEndPointResource tokenEndPointResource;
     private Cell mockCell;
     private CellRsCmp mockCellRsCmp;
+    private UriInfo mockUriInfo;
 
     @BeforeClass
     public static void beforeClass() {
@@ -190,6 +194,9 @@ public class TokenEndPointResourceTest {
 
 
         this.tokenEndPointResource = PowerMockito.spy(new TokenEndPointResource(mockCell, this.mockCellRsCmp));
+        this.mockUriInfo = mock(UriInfo.class);
+        doReturn(new URI(cellUrl)).when(this.mockUriInfo).getBaseUri();
+
     }
 
     /**
@@ -326,9 +333,12 @@ public class TokenEndPointResourceTest {
         assertThat(actual.getStatus(), is(expected.getStatus()));
     }
 
+    /**
+     * test for token() method with grant_type=password params setting.
+     * @throws Exception
+     */
     @Test
     public void testToken_password() throws Exception {
-        String cellUrl = "https://personium/testcell/";
         String xForwadedFor = "1.2.3.4";
 
         //PowerMockito.doReturn(cellUrl).when(tokenEndPointResource, "getIssuerUrl");
@@ -338,14 +348,84 @@ public class TokenEndPointResourceTest {
         formParams.add("password", "password");
         formParams.add("scope", "root https://personium/appcell/");
 
-        UriInfo uriInfo = mock(UriInfo.class);
-        doReturn(new URI(cellUrl)).when(uriInfo).getBaseUri();
 
-        Response res = tokenEndPointResource.token(uriInfo, null, formParams, xForwadedFor);
+        Response res = tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
         JsonObject j = Json.createReader(new ByteArrayInputStream(res.getEntity().toString().getBytes(Charsets.UTF8_CHARSET))).readObject();
         assertEquals(200, res.getStatus());
         assertEquals("root", j.getString("scope"));
     }
 
+    /**
+     * test for token() method with invalid client_assertion_type.
+     * @throws Exception
+     */
+    @Test
+    public void testToken_invalidClientAssertionType_shoudFail() throws Exception {
+        String xForwadedFor = "1.2.3.4";
 
+        //PowerMockito.doReturn(cellUrl).when(tokenEndPointResource, "getIssuerUrl");
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
+        formParams.add("grant_type", "password");
+        formParams.add("username", "username");
+        formParams.add("password", "password");
+        formParams.add("client_assertion_type", "invalid_client_assertion");
+        formParams.add("scope", "root https://personium/appcell/");
+
+        try {
+            tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
+        } catch (PersoniumCoreAuthnException e) {
+            assertEquals(PersoniumCoreAuthnException.INVALID_CLIENT_ASSERTION_TYPE.getCode(), e.getCode());
+            return;
+        }
+        fail("Should throw exception");
+    }
+
+    /**
+     * test for token() method with valid client_assertion_type and null client_assertion.
+     * @throws Exception
+     */
+    @Test
+    public void testToken_nullClientAssertion_shouldFail() throws Exception {
+        String xForwadedFor = "1.2.3.4";
+
+        //PowerMockito.doReturn(cellUrl).when(tokenEndPointResource, "getIssuerUrl");
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
+        formParams.add("grant_type", "password");
+        formParams.add("username", "username");
+        formParams.add("password", "password");
+        formParams.add("client_assertion_type", OAuth2Helper.GrantType.SAML2_BEARER);
+        formParams.add("scope", "root https://personium/appcell/");
+
+        try {
+            tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
+        } catch (PersoniumCoreAuthnException e) {
+            assertEquals(PersoniumCoreAuthnException.CLIENT_ASSERTION_PARSE_ERROR.getCode(), e.getCode());
+            return;
+        }
+        fail("Should throw exception");
+    }
+    /**
+     * test for token() method with null client_assertion_type and valid client_assertion.
+     * @throws Exception
+     */
+    @Test
+    public void testToken_nullClientAssertionTypeAndValidClientAssertion_shouldFail() throws Exception {
+        String xForwadedFor = "1.2.3.4";
+
+        //PowerMockito.doReturn(cellUrl).when(tokenEndPointResource, "getIssuerUrl");
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
+        formParams.add("grant_type", "password");
+        formParams.add("username", "username");
+        formParams.add("password", "password");
+        formParams.add("client_assertion", "aa");
+        formParams.add("scope", "root https://personium/appcell/");
+
+        try {
+            tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
+        } catch (PersoniumCoreAuthnException e) {
+            assertEquals(PersoniumCoreAuthnException.INVALID_CLIENT_ASSERTION_TYPE.getCode(), e.getCode());
+            return;
+        }
+        fail("Should throw exception");
+    }
 }
