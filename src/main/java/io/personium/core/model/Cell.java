@@ -339,9 +339,9 @@ public abstract class Cell {
     }
 
 
-    public ScopeArbitrator getScopeArbitrator(String clientId, boolean isRopc) {
+    public ScopeArbitrator getScopeArbitrator(String clientId, String grantType) {
         Box box = this.getBoxForSchema(clientId);
-        return new ScopeArbitrator(this, box, isRopc);
+        return new ScopeArbitrator(this, box, grantType);
     }
     /**
      * It gets the Accounts to specify the Account name.

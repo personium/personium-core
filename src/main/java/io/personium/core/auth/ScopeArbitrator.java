@@ -14,8 +14,7 @@ import io.personium.core.utils.UriUtils;
 
 /**
  * Class for scope arbitration object.
- * Create an instance with Cell and Box information and a flag whether the token
- * authentication is done via ROPC or not.
+ * Create an instance with Cell and Box information and grant_type string.
  *
  * With isROPC true:
  *   It is a cell admin mode. So any scope request will be admitted.
@@ -33,35 +32,29 @@ public class ScopeArbitrator {
     Cell cell;
     Box box;
     boolean isRopc;
+    String grantType;
+    Privilege unitMaxScopePrivilege;
     Set<String> requestedScopes = new HashSet<>();
     List<String> permittedScopes = new ArrayList<String>();
 
     static final Set<String> VALID_NON_URL_SCOPES = new HashSet<>(Arrays.asList(new String[] {
-        CellPrivilege.ROOT.getName(),
-        CellPrivilege.MESSAGE.getName(),
-        CellPrivilege.MESSAGE_READ.getName(),
-        CellPrivilege.EVENT.getName(),
-        CellPrivilege.EVENT_READ.getName(),
-        CellPrivilege.ACL.getName(),
-        CellPrivilege.ACL_READ.getName(),
-        CellPrivilege.AUTH.getName(),
-        CellPrivilege.AUTH_READ.getName(),
-        CellPrivilege.SOCIAL.getName(),
-        CellPrivilege.SOCIAL_READ.getName(),
-        CellPrivilege.BOX.getName(),
-        CellPrivilege.BOX_BAR_INSTALL.getName(),
-        CellPrivilege.BOX_READ.getName(),
-        CellPrivilege.LOG.getName(),
-        CellPrivilege.LOG_READ.getName(),
-        CellPrivilege.PROPFIND.getName(),
-        CellPrivilege.RULE.getName(),
-        CellPrivilege.RULE_READ.getName(),
         OAuth2Helper.Scope.OPENID
     }));
-    public ScopeArbitrator(Cell cell, Box box, boolean ropc) {
+    public ScopeArbitrator(Cell cell, Box box, String grantType) {
         this.cell = cell;
         this.box = box;
-        this.isRopc = ropc;
+        this.grantType = grantType;
+        String unitMaxScopeStr = null;
+        if (OAuth2Helper.GrantType.PASSWORD.equals(this.grantType)) {
+            unitMaxScopeStr = PersoniumUnitConfig.get(PersoniumUnitConfig.Security.TOKEN_DEFAULT_SCOPE_ROPC);
+        } else if (OAuth2Helper.GrantType.AUTHORIZATION_CODE.equals(this.grantType)) {
+            unitMaxScopeStr = PersoniumUnitConfig.get(PersoniumUnitConfig.Security.TOKEN_DEFAULT_SCOPE_CODE);
+        } else if (OAuth2Helper.GrantType.SAML2_BEARER.equals(this.grantType)) {
+            unitMaxScopeStr = PersoniumUnitConfig.get(PersoniumUnitConfig.Security.TOKEN_DEFAULT_SCOPE_ASSERTION);
+        } else {
+            unitMaxScopeStr = PersoniumUnitConfig.get(PersoniumUnitConfig.Security.TOKEN_DEFAULT_SCOPE_ROPC);
+        }
+        this.unitMaxScopePrivilege = Privilege.get(CellPrivilege.class, unitMaxScopeStr);
     }
     public ScopeArbitrator requestString(String requestScopes) {
         return this.request(AbstractOAuth2Token.Scope.parse(requestScopes));
@@ -72,14 +65,13 @@ public class ScopeArbitrator {
         }
         // remove empty entry
         this.requestedScopes.remove("");
-        if (this.requestedScopes.size() == 0 && this.isRopc) {
-            // if ROPC and no scope requested then root will be granted.
-            this.requestedScopes.add("root");
-        }
         this.arbitrate();
         return this;
     }
     private void arbitrate() {
+        if (this.requestedScopes.size() == 0 && this.unitMaxScopePrivilege != null) {
+            this.requestedScopes.add(this.unitMaxScopePrivilege.getName());
+        }
         for (String scope : this.requestedScopes) {
             if (this.check(scope)) {
                 this.permittedScopes.add(scope);
@@ -90,6 +82,10 @@ public class ScopeArbitrator {
         return this.permittedScopes.toArray(new String[0]);
     }
     private boolean check(String scope) {
+        //
+        if (VALID_NON_URL_SCOPES.contains(scope)) {
+            return true;
+        }
         String resolvedScope = UriUtils.resolveLocalUnit(scope);
         // If it looks like a role because it is a http URL.
         if (resolvedScope.startsWith("http://") || resolvedScope.startsWith("https://")) {
@@ -99,17 +95,19 @@ public class ScopeArbitrator {
             }
             return false;
         }
+
         // If not, it should probably be Cell Privilege.
         // make sure.
-        if (!VALID_NON_URL_SCOPES.contains(scope)) {
+        CellPrivilege cp = Privilege.get(CellPrivilege.class, scope);
+        if (cp == null) {
             return false;
         }
         // Now Cell Level privilege can come here.
         // if ROPC then allow any valid scopes.
-        if (this.isRopc) {
+        if (this.unitMaxScopePrivilege != null && this.unitMaxScopePrivilege.includes(cp)) {
             return true;
         }
-        // if not the reject all .. (Tentatively)
+        // if not then reject all .. (Tentatively)
         // TODO implement Box configuration to allow Cell Level privilege, and refer to that
         // setting.
         return false;

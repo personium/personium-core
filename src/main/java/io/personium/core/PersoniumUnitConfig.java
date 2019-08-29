@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014-2018 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2018 Personium Project
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -188,6 +189,16 @@ public class PersoniumUnitConfig {
 
         /** Encrypt the DAV file (true: enabled false: disabled (default)). */
         public static final String DAV_ENCRYPT_ENABLED = KEY_ROOT + "security.dav.encrypt.enabled";
+
+        /** Default scope of token for grant_type=password . */
+        public static final String TOKEN_DEFAULT_SCOPE_ROPC = KEY_ROOT + "token.defaultScope.ropc";
+
+        /** Default scope of token for grant_type=assertion . */
+        public static final String TOKEN_DEFAULT_SCOPE_ASSERTION = KEY_ROOT + "token.defaultScope.assertion";
+
+        /** Default scope of token for grant_type=code . */
+        public static final String TOKEN_DEFAULT_SCOPE_CODE = KEY_ROOT + "token.defaultScope.grant_code";
+
     }
 
     /**
@@ -1472,6 +1483,29 @@ public class PersoniumUnitConfig {
     public static boolean isDavEncryptEnabled() {
         return Boolean.parseBoolean(get(Security.DAV_ENCRYPT_ENABLED));
     }
+
+    /**
+     *
+     * @return scope string
+     */
+    public static boolean getTokenDefaultScopeRopc() {
+        return Boolean.parseBoolean(get(Security.TOKEN_DEFAULT_SCOPE_ROPC));
+    }
+    /**
+     *
+     * @return scope string
+     */
+    public static boolean getTokenDefaultScopeCode() {
+        return Boolean.parseBoolean(get(Security.TOKEN_DEFAULT_SCOPE_CODE));
+    }
+    /**
+     *
+     * @return scope string
+     */
+    public static boolean getTokenDefaultScopeAssertion() {
+        return Boolean.parseBoolean(get(Security.TOKEN_DEFAULT_SCOPE_ASSERTION));
+    }
+
 
     /**
      * Get message queue implementation of EventBus.

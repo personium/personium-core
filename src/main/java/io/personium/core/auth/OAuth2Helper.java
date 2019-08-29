@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2019 Personium Project
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,22 +22,17 @@ import javax.xml.namespace.QName;
 import io.personium.common.utils.CommonUtils;
 
 /**
- * A utility around OAuth 2.
- * The OAuth 2.0 Authorization Protocol
- * http://tools.ietf.org/html/draft-ietf-oauth-v2-27
- * The OAuth 2.0 Authorization Protocol: Bearer Tokens
- * http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-19
- * OAuth SAML Assertion Profiles
- * http://tools.ietf.org/html/draft-ietf-oauth-saml2-bearer-12
+ * A utility around OAuth 2.0.
+ * RFC6749 The OAuth 2.0 Authorization Framework
+ *   https://tools.ietf.org/html/rfc6749
+ * RFC6750 The OAuth 2.0 The OAuth 2.0 Authorization Framework: Bearer Token Usage
+ *   https://tools.ietf.org/html/rfc6750
+ * RFC7522 SAML 2.0 Profile for OAuth 2.0 Client Authentication and Authorization Grants
+ *   https://tools.ietf.org/html/rfc7522
  */
 public final class OAuth2Helper {
     private OAuth2Helper() {
     }
-
-    /**
-     * Version of OAuth 2.
-     */
-    public static final String VERSION = "Draft 27";
 
     /**
      * URN representing SAML Assertion.

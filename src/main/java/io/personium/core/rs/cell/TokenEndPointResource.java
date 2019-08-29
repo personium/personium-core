@@ -309,7 +309,7 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED;
         }
 
-        String[] scopes = this.cell.getScopeArbitrator(schema, true).request(requestScopes).getResults();
+        String[] scopes = this.cell.getScopeArbitrator(schema, grantType).request(requestScopes).getResults();
 
         // Check account is active.
         boolean accountActive = AuthUtils.isActive(idTokenUserOew);
@@ -608,10 +608,10 @@ public class TokenEndPointResource {
 
         //Authentication is successful -------------------------------
 
-        //TODO
-        String[] scopes = this.cell.getScopeArbitrator(schema, true).request(tcToken.getScope()).getResults();
+        // Scope arbitration
+        String[] scopes = this.cell.getScopeArbitrator(schema, OAuth2Helper.GrantType.SAML2_BEARER).request(tcToken.getScope()).getResults();
 
-        //Create a refresh token based on the authentication information
+        // Create a refresh token based on the authentication information
         long issuedAt = new Date().getTime();
         VisitorRefreshToken rToken = new VisitorRefreshToken(
                 tcToken.getId(), //Save ID of received SAML
@@ -931,7 +931,7 @@ public class TokenEndPointResource {
                 throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
             }
         }
-        ScopeArbitrator sa = this.cell.getScopeArbitrator(schema, true);
+        ScopeArbitrator sa = this.cell.getScopeArbitrator(schema, OAuth2Helper.GrantType.PASSWORD);
         String[] scopes = sa.request(scope).getResults();
 
         return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn, scopes);

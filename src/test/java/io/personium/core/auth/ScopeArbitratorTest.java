@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import io.personium.core.model.Box;
@@ -15,10 +16,17 @@ import io.personium.core.model.Cell;
 public class ScopeArbitratorTest {
     Cell mockCell = mock(Cell.class);
     Box mockBox = mock(Box.class);
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
     @Before
     public void setUp() throws Exception {
         doReturn("https://personium.example/").when(mockCell).getUnitUrl();
+//        PersoniumUnitConfig mock = PowerMockito.spy(PersoniumUnitConfig.class);
+//        PowerMockito.when(PersoniumUnitConfig.class, "getTokenDefaultScopeRopc").thenReturn("root");
+//        PowerMockito.doReturn("").when(PersoniumUnitConfig.class, "getTokenDefaultScopeCode");
+//        PowerMockito.doReturn("root").when(PersoniumUnitConfig.class, "getTokenDefaultScopeAssertion");
 
     }
 
@@ -33,7 +41,8 @@ public class ScopeArbitratorTest {
      */
     @Test
     public void When_ROPC_Then_CellLevelPrivileges_CanBeAllowed () {
-        ScopeArbitrator sa  = new ScopeArbitrator(this.mockCell, this.mockBox, true);
+        ScopeArbitrator sa  = new ScopeArbitrator(this.mockCell, this.mockBox, OAuth2Helper.GrantType.PASSWORD);
+        sa.unitMaxScopePrivilege = Privilege.get(CellPrivilege.class, "root");
         sa.requestString("openid root root message foo https://personium.example/__role/__/someRole");
         String[] res = sa.getResults();
         System.out.println(StringUtils.join(sa.requestedScopes, " "));
@@ -45,7 +54,8 @@ public class ScopeArbitratorTest {
      */
     @Test
     public void When_ROPC_noScopeRequest_Then_RootGranted () {
-        ScopeArbitrator sa  = new ScopeArbitrator(this.mockCell, this.mockBox, true);
+        ScopeArbitrator sa  = new ScopeArbitrator(this.mockCell, this.mockBox, OAuth2Helper.GrantType.PASSWORD);
+        sa.unitMaxScopePrivilege = Privilege.get(CellPrivilege.class, "root");
         sa.requestString(null);
         String[] res = sa.getResults();
         assertEquals("root", res[0]);
@@ -56,7 +66,9 @@ public class ScopeArbitratorTest {
      */
     @Test
     public void When_NotROPC_Then_CellLevelPrivileges_CanNotBeAllowed () {
-        ScopeArbitrator sa  = new ScopeArbitrator(this.mockCell, this.mockBox, false);
+
+        ScopeArbitrator sa  = new ScopeArbitrator(this.mockCell, this.mockBox, OAuth2Helper.GrantType.AUTHORIZATION_CODE);
+        sa.unitMaxScopePrivilege = Privilege.get(CellPrivilege.class, "");
         sa.requestString("root message-read");
         String[] res = sa.getResults();
         assertEquals(0, res.length);
