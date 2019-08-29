@@ -46,13 +46,13 @@ public class ScopeArbitrator {
         this.grantType = grantType;
         String unitMaxScopeStr = null;
         if (OAuth2Helper.GrantType.PASSWORD.equals(this.grantType)) {
-            unitMaxScopeStr = PersoniumUnitConfig.get(PersoniumUnitConfig.Security.TOKEN_DEFAULT_SCOPE_ROPC);
+            unitMaxScopeStr = PersoniumUnitConfig.getTokenDefaultScopeRopc();
         } else if (OAuth2Helper.GrantType.AUTHORIZATION_CODE.equals(this.grantType)) {
-            unitMaxScopeStr = PersoniumUnitConfig.get(PersoniumUnitConfig.Security.TOKEN_DEFAULT_SCOPE_CODE);
+            unitMaxScopeStr = PersoniumUnitConfig.getTokenDefaultScopeCode();
         } else if (OAuth2Helper.GrantType.SAML2_BEARER.equals(this.grantType)) {
-            unitMaxScopeStr = PersoniumUnitConfig.get(PersoniumUnitConfig.Security.TOKEN_DEFAULT_SCOPE_ASSERTION);
+            unitMaxScopeStr = PersoniumUnitConfig.getTokenDefaultScopeAssertion();
         } else {
-            unitMaxScopeStr = PersoniumUnitConfig.get(PersoniumUnitConfig.Security.TOKEN_DEFAULT_SCOPE_ROPC);
+            unitMaxScopeStr = PersoniumUnitConfig.getTokenDefaultScopeRopc();
         }
         this.unitMaxScopePrivilege = Privilege.get(CellPrivilege.class, unitMaxScopeStr);
     }

@@ -191,13 +191,13 @@ public class PersoniumUnitConfig {
         public static final String DAV_ENCRYPT_ENABLED = KEY_ROOT + "security.dav.encrypt.enabled";
 
         /** Default scope of token for grant_type=password . */
-        public static final String TOKEN_DEFAULT_SCOPE_ROPC = KEY_ROOT + "token.defaultScope.ropc";
+        public static final String TOKEN_DEFAULT_SCOPE_ROPC = KEY_ROOT + "security.token.defaultScope.ropc";
 
         /** Default scope of token for grant_type=assertion . */
-        public static final String TOKEN_DEFAULT_SCOPE_ASSERTION = KEY_ROOT + "token.defaultScope.assertion";
+        public static final String TOKEN_DEFAULT_SCOPE_ASSERTION = KEY_ROOT + "security.token.defaultScope.assertion";
 
         /** Default scope of token for grant_type=code . */
-        public static final String TOKEN_DEFAULT_SCOPE_CODE = KEY_ROOT + "token.defaultScope.grant_code";
+        public static final String TOKEN_DEFAULT_SCOPE_CODE = KEY_ROOT + "security.token.defaultScope.grant_code";
 
     }
 
@@ -1488,22 +1488,22 @@ public class PersoniumUnitConfig {
      *
      * @return scope string
      */
-    public static boolean getTokenDefaultScopeRopc() {
-        return Boolean.parseBoolean(get(Security.TOKEN_DEFAULT_SCOPE_ROPC));
+    public static String getTokenDefaultScopeRopc() {
+        return get(Security.TOKEN_DEFAULT_SCOPE_ROPC);
     }
     /**
      *
      * @return scope string
      */
-    public static boolean getTokenDefaultScopeCode() {
-        return Boolean.parseBoolean(get(Security.TOKEN_DEFAULT_SCOPE_CODE));
+    public static String getTokenDefaultScopeCode() {
+        return get(Security.TOKEN_DEFAULT_SCOPE_CODE);
     }
     /**
      *
      * @return scope string
      */
-    public static boolean getTokenDefaultScopeAssertion() {
-        return Boolean.parseBoolean(get(Security.TOKEN_DEFAULT_SCOPE_ASSERTION));
+    public static String getTokenDefaultScopeAssertion() {
+        return get(Security.TOKEN_DEFAULT_SCOPE_ASSERTION);
     }
 
 
