@@ -1002,9 +1002,6 @@ public class AccessContext {
                 return true;
             }
         }
-        // if principal:All is granted that privilege then return true;
-        Acl acl = this.cell.getAcl();
-        //acl.allows(this);
         // TODO scope role check
         return false;
     }

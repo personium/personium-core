@@ -1,9 +1,18 @@
 ## 1.7.18
-IMPROVEMENTS:
-* Limit Cell Level API Access to tokens issued via ROPC process. ([#445](https://github.com/personium/personium-core/issues/445))
+NEW FEATURES:
+* Each Cell's OAuth 2.0 token endpoint now accepts scope request.
+  * Apps can request single or multiple Cell level privilege name(s) as scope request.
+  * Issued tokens now carry assigned scope information.
+  * Cell Level API Access is now limited to tokens with appropriate scope. ([#445](https://github.com/personium/personium-core/issues/445))
+  * Added unit config keys for configuring default scopes for different grant type ([#470](https://github.com/personium/personium-core/issues/470))
+  * Default configurations for all grant types are set to "root" for backward compatibility. (Change configuration to use your unit with more security)
 * URL scheme "personium-localunit" is extended and supports a syntax using two colons. ([#284](https://github.com/personium/personium-core/issues/284))
-* Token refreshing between apps disabled. ([#463](https://github.com/personium/personium-core/issues/463))
 
+IMPROVEMENTS:
+* Base URL in ACL is now converted to one using "personium-localunit" scheme when internally pesisted. Unit FQDN change won't require data change.
+
+SECURITY FIX:
+* Token refreshing between apps now disabled. ([#463](https://github.com/personium/personium-core/issues/463))
 
 ## 1.7.17
 IMPROVEMENTS:
