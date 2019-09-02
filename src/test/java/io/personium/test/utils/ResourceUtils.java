@@ -22,10 +22,9 @@ import java.io.File;
 
 import javax.ws.rs.core.MediaType;
 
-import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
@@ -130,8 +129,8 @@ public class ResourceUtils {
         // リクエスト実行
         TResponse res = Http.request("box/odatacol/delete-link.txt").with("cell", cell).with("box", box)
                 .with("collection", col).with("entityType", entity)
-                .with("id", PersoniumCoreUtils.encodeUrlComp(userDataId))
-                .with("navProp", "_" + navProp).with("navKey", PersoniumCoreUtils.encodeUrlComp(navPropId))
+                .with("id", CommonUtils.encodeUrlComp(userDataId))
+                .with("navProp", "_" + navProp).with("navKey", CommonUtils.encodeUrlComp(navPropId))
                 .with("contentType", MediaType.APPLICATION_JSON).with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*").returns().statusCode(code);
         return res;
@@ -392,20 +391,6 @@ public class ResourceUtils {
         return res;
     }
 
-    /**
-     * リフレッシュトークン認証を実行するユーティリティー.
-     * @param cellName セル名
-     * @param refreshToken リフレッシュトークン
-     * @return レスポンス
-     */
-    public static TResponse refreshTokenAuthCl(String cellName, String refreshToken) {
-        TResponse res = Http.request("authn/refresh-cl.txt")
-                .with("remoteCell", cellName)
-                .with("refresh_token", refreshToken)
-                .returns()
-                .statusCode(HttpStatus.SC_OK);
-        return res;
-    }
 
     /**
      * ログ情報取得(PROPFIND).
@@ -422,7 +407,7 @@ public class ResourceUtils {
             String accessToken,
             int code) {
         return Http.request("cell/log-propfind-with-nobody.txt")
-                .with("METHOD", io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND)
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", accessToken)
                 .with("cellPath", cellName)
                 .with("collection", collection)

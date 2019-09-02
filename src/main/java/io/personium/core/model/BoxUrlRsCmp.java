@@ -43,8 +43,10 @@ public class BoxUrlRsCmp extends BoxRsCmp {
      * {@inheritDoc}
      */
     @Override
-    public void checkAccessContext(AccessContext ac, Privilege privilege) {
+    public void checkAccessContext(Privilege privilege) {
         AcceptableAuthScheme allowedAuthScheme = getAcceptableAuthScheme();
+
+        AccessContext ac = this.getAccessContext();
 
         // For unit user token, do not check
         if (ac.isUnitUserToken(privilege)) {
@@ -63,7 +65,7 @@ public class BoxUrlRsCmp extends BoxRsCmp {
         ac.updateBasicAuthenticationStateForResource(null);
 
         // Check access control.
-        if (!this.hasPrivilege(ac, privilege)) {
+        if (!this.hasSubjectPrivilege(privilege)) {
             // If the token is INVALID or Privilege is set to all it is necessary to grant access.
             // For this reason, check the validity of the token at this timing.
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {

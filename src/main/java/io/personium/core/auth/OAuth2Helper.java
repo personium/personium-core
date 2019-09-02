@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2019 Personium Project
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +19,20 @@ package io.personium.core.auth;
 
 import javax.xml.namespace.QName;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 
 /**
- * A utility around OAuth 2.
- * The OAuth 2.0 Authorization Protocol
- * http://tools.ietf.org/html/draft-ietf-oauth-v2-27
- * The OAuth 2.0 Authorization Protocol: Bearer Tokens
- * http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-19
- * OAuth SAML Assertion Profiles
- * http://tools.ietf.org/html/draft-ietf-oauth-saml2-bearer-12
+ * A utility around OAuth 2.0.
+ * RFC6749 The OAuth 2.0 Authorization Framework
+ *   https://tools.ietf.org/html/rfc6749
+ * RFC6750 The OAuth 2.0 The OAuth 2.0 Authorization Framework: Bearer Token Usage
+ *   https://tools.ietf.org/html/rfc6750
+ * RFC7522 SAML 2.0 Profile for OAuth 2.0 Client Authentication and Authorization Grants
+ *   https://tools.ietf.org/html/rfc7522
  */
 public final class OAuth2Helper {
     private OAuth2Helper() {
     }
-
-    /**
-     * Version of OAuth 2.
-     */
-    public static final String VERSION = "Draft 27";
 
     /**
      * URN representing SAML Assertion.
@@ -180,6 +176,7 @@ public final class OAuth2Helper {
     public static class Scope {
         /** openid. It is used with the openid connect of the oauth2 extension. */
         public static final String OPENID = "openid";
+
     }
 
     /**
@@ -210,6 +207,18 @@ public final class OAuth2Helper {
          * client_secret.
          */
         public static final String CLIENT_SECRET = "client_secret";
+        /**
+         * "client_assertion" parameter key defined in RFC7521.
+         * https://tools.ietf.org/html/rfc7521#section-4.2
+         */
+        public static final String CLIENT_ASSERTION = "client_assertion";
+        /**
+         * "client_assertion_type" parameter key defined in RFC7521.
+         * https://tools.ietf.org/html/rfc7521#section-4.2
+         */
+        public static final String CLIENT_ASSERTION_TYPE = "client_assertion_type";
+
+
         /**
          * state.
          */
@@ -292,9 +301,14 @@ public final class OAuth2Helper {
          */
         public static final String OWNER = "p_owner";
         /**
+         * p_cookie.
+         */
+        public static final String P_COOKIE = "p_cookie";
+        /**
          * p_owner value.
          */
         public static final String TRUE_STR = "true";
+
         /**
          * refresh_token_expires_in.
          */
@@ -323,12 +337,12 @@ public final class OAuth2Helper {
          * ownerRepresentativeAccounts.
          */
         public static final QName PROP_KEY_OWNER_REPRESENTIVE_ACCOUNTS =
-                new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, "ownerRepresentativeAccounts");
+                new QName(CommonUtils.XmlConst.NS_PERSONIUM, "ownerRepresentativeAccounts");
         /**
          * ownerRepresentativeAccount.
          */
         public static final QName PROP_KEY_OWNER_REPRESENTIVE_ACCOUNT =
-                new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, "account");
+                new QName(CommonUtils.XmlConst.NS_PERSONIUM, "account");
     }
 
     /**
@@ -354,7 +368,7 @@ public final class OAuth2Helper {
          * @param value Target value
          * @return true:match false:not match
          */
-        public static boolean isMatchPermittedValue(String value) {
+        public static boolean isPermittedValue(String value) {
             if (value == null
                     || NONE.equals(value)
                     || PUBLIC.equals(value)

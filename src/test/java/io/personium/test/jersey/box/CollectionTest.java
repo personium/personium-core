@@ -42,7 +42,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Account;
@@ -768,7 +768,7 @@ public class CollectionTest extends PersoniumTest {
 
             // Confirm results
             PersoniumCoreException expected = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
             JSONObject bodyJson = response.bodyAsJson();
             JSONObject messageJson = (JSONObject) bodyJson.get("message");
             assertThat(bodyJson.get("code"), is(expected.getCode()));
@@ -823,7 +823,7 @@ public class CollectionTest extends PersoniumTest {
 
             // Confirm results
             PersoniumCoreException expected = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
             JSONObject bodyJson = response.bodyAsJson();
             JSONObject messageJson = (JSONObject) bodyJson.get("message");
             assertThat(bodyJson.get("code"), is(expected.getCode()));
@@ -878,7 +878,7 @@ public class CollectionTest extends PersoniumTest {
 
             // Confirm results
             PersoniumCoreException expected = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
             JSONObject bodyJson = response.bodyAsJson();
             JSONObject messageJson = (JSONObject) bodyJson.get("message");
             assertThat(bodyJson.get("code"), is(expected.getCode()));
@@ -1482,13 +1482,13 @@ public class CollectionTest extends PersoniumTest {
             Map<String, List<String>> map = new HashMap<String, List<String>>();
             rolList.add("read");
             rolList.add("write");
-            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
+            map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role1"), rolList);
             list.add(map);
 
             rolList = new ArrayList<String>();
             map = new HashMap<String, List<String>>();
             rolList.add("read");
-            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role2"), rolList);
+            map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role2"), rolList);
             list.add(map);
 
             list.addAll(createDefaultBoxAceMapList());
@@ -1582,7 +1582,7 @@ public class CollectionTest extends PersoniumTest {
             Map<String, List<String>> map = new HashMap<String, List<String>>();
             List<String> rolList = new ArrayList<String>();
             rolList.add("write");
-            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
+            map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role1"), rolList);
             list.add(map);
 
             // top collection ace.
@@ -1590,13 +1590,13 @@ public class CollectionTest extends PersoniumTest {
             map = new HashMap<String, List<String>>();
             rolList.add("read");
             rolList.add("write");
-            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
+            map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role1"), rolList);
             list.add(map);
 
             rolList = new ArrayList<String>();
             map = new HashMap<String, List<String>>();
             rolList.add("read");
-            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role2"), rolList);
+            map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role2"), rolList);
             list.add(map);
 
             // box ace.
@@ -1636,14 +1636,14 @@ public class CollectionTest extends PersoniumTest {
         List<String> rolList = new ArrayList<String>();
         Map<String, List<String>> map = new HashMap<String, List<String>>();
         rolList.add("read");
-        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role2"), rolList);
+        map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role2"), rolList);
         list.add(map);
 
         // role3
         rolList = new ArrayList<String>();
         map = new HashMap<String, List<String>>();
         rolList.add("write");
-        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role3"), rolList);
+        map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role3"), rolList);
         list.add(map);
 
         // role4
@@ -1651,42 +1651,42 @@ public class CollectionTest extends PersoniumTest {
         map = new HashMap<String, List<String>>();
         rolList.add("read");
         rolList.add("write");
-        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role4"), rolList);
+        map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role4"), rolList);
         list.add(map);
 
         // role5
         rolList = new ArrayList<String>();
         map = new HashMap<String, List<String>>();
         rolList.add("exec");
-        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role5"), rolList);
+        map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role5"), rolList);
         list.add(map);
 
         // role6
         rolList = new ArrayList<String>();
         map = new HashMap<String, List<String>>();
         rolList.add("read-acl");
-        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role6"), rolList);
+        map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role6"), rolList);
         list.add(map);
 
         // role7
         rolList = new ArrayList<String>();
         map = new HashMap<String, List<String>>();
         rolList.add("write-acl");
-        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role7"), rolList);
+        map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role7"), rolList);
         list.add(map);
 
         // role8
         rolList = new ArrayList<String>();
         map = new HashMap<String, List<String>>();
         rolList.add("write-properties");
-        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role8"), rolList);
+        map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role8"), rolList);
         list.add(map);
 
         // role9
         rolList = new ArrayList<String>();
         map = new HashMap<String, List<String>>();
         rolList.add("read-properties");
-        map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role9"), rolList);
+        map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role9"), rolList);
         list.add(map);
 
         return list;
@@ -1722,7 +1722,7 @@ public class CollectionTest extends PersoniumTest {
             Map<String, List<String>> map = new HashMap<String, List<String>>();
             List<String> rolList = new ArrayList<String>();
             rolList.add("read");
-            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
+            map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role1"), rolList);
             list.add(map);
 
             list.addAll(createDefaultBoxAceMapList());
@@ -1777,7 +1777,7 @@ public class CollectionTest extends PersoniumTest {
             Map<String, List<String>> map = new HashMap<String, List<String>>();
             List<String> rolList = new ArrayList<String>();
             rolList.add("exec");
-            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
+            map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role1"), rolList);
             list.add(map);
 
             list.addAll(createDefaultBoxAceMapList());
@@ -1835,13 +1835,13 @@ public class CollectionTest extends PersoniumTest {
             List<String> rolList = new ArrayList<String>();
             rolList.add("read");
             rolList.add("write");
-            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
+            map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role1"), rolList);
             list.add(map);
 
             List<String> rolList2 = new ArrayList<String>();
             Map<String, List<String>> map2 = new HashMap<String, List<String>>();
             rolList2.add("read");
-            map2.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role2"), rolList2);
+            map2.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role2"), rolList2);
             list.add(map2);
 
             list.addAll(createDefaultBoxAceMapList());
@@ -1989,13 +1989,13 @@ public class CollectionTest extends PersoniumTest {
             List<String> rolList = new ArrayList<String>();
             rolList.add("read");
             rolList.add("write");
-            map.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role1"), rolList);
+            map.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role1"), rolList);
             list.add(map);
 
             List<String> rolList2 = new ArrayList<String>();
             Map<String, List<String>> map2 = new HashMap<String, List<String>>();
             rolList2.add("read");
-            map2.put(UrlUtils.aclRelativePath(Box.DEFAULT_BOX_NAME, "role2"), rolList2);
+            map2.put(UrlUtils.aclRelativePath(Box.MAIN_BOX_NAME, "role2"), rolList2);
             list.add(map2);
 
             TestMethodUtils.aclResponseTest(root2, resorce, list, 1,

@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 
 /**
  * Create token string.
@@ -36,6 +36,7 @@ public class TokenBuilder {
     private String subject;
     private String schema;
     private List<Role> roleList;
+    private String[] scope;
 
     /**
      * Constructor.
@@ -83,6 +84,15 @@ public class TokenBuilder {
         this.schema = schema;
         return this;
     }
+    /**
+     * Set scope.
+     * @param scope scope
+     * @return TokenBuilder
+     */
+    public TokenBuilder scope(String[] scope) { // CHECKSTYLE IGNORE
+        this.scope = scope;
+        return this;
+    }
 
     /**
      * Set roleList.
@@ -115,20 +125,23 @@ public class TokenBuilder {
                     subject = null;
                 }
                 // AccountAccessToken
-                AccountAccessToken token =
-                    new AccountAccessToken(new Date().getTime(),
-                                           cellUrl,
-                                           subject,
-                                           schema);
+                ResidentLocalAccessToken token =
+                    new ResidentLocalAccessToken(new Date().getTime(),
+                            this.cellUrl,
+                            this.subject,
+                            this.schema,
+                            this.scope);
                 accessToken = token.toTokenString();
             } else {
                 // CellLocalAccessToken
-                CellLocalAccessToken token =
-                    new CellLocalAccessToken(new Date().getTime(),
-                                             cellUrl,
-                                             subject,
-                                             roleList,
-                                             schema);
+                VisitorLocalAccessToken token =
+                    new VisitorLocalAccessToken(new Date().getTime(),
+                            VisitorLocalAccessToken.ACCESS_TOKEN_EXPIRES_MILLISECS,
+                            this.cellUrl,
+                            this.subject,
+                            this.roleList,
+                            this.schema,
+                            this.scope);
                 accessToken = token.toTokenString();
             }
         } else {
@@ -139,7 +152,7 @@ public class TokenBuilder {
                                          subject,
                                          targetCellUrl,
                                          roleList,
-                                         schema);
+                                         schema, scope);
             accessToken = token.toTokenString();
         }
 

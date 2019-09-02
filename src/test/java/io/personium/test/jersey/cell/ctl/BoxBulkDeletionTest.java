@@ -27,7 +27,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -210,7 +210,7 @@ public class BoxBulkDeletionTest extends ODataCommon {
             // ---------------
             BoxUtils.get(cellName, MASTER_TOKEN_NAME, boxName, HttpStatus.SC_OK);
             PersoniumCoreException expected = PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
             checkErrorResponseBody(response, expected.getCode(), expected.getMessage());
         } finally {
             BoxUtils.deleteRecursive(cellName, boxName, MASTER_TOKEN_NAME, -1);
@@ -247,7 +247,7 @@ public class BoxBulkDeletionTest extends ODataCommon {
             // ---------------
             BoxUtils.get(cellName, MASTER_TOKEN_NAME, boxName, HttpStatus.SC_OK);
             PersoniumCoreException expected = PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
             checkErrorResponseBody(response, expected.getCode(), expected.getMessage());
         } finally {
             BoxUtils.deleteRecursive(cellName, boxName, MASTER_TOKEN_NAME, -1);

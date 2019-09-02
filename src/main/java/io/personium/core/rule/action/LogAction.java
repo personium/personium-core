@@ -63,7 +63,7 @@ public class LogAction extends Action {
      */
     public LogAction(final Cell cell, LEVEL level) {
         this();
-        String unitUserName = getUnitUserName(Optional.ofNullable(cell.getOwner()));
+        String unitUserName = getUnitUserName(Optional.ofNullable(cell.getOwnerNormalized()));
         String prefix1 = cell.getId().substring(IDX_1ST_START, IDX_1ST_END);
         String prefix2 = cell.getId().substring(IDX_2ND_START, IDX_2ND_END);
         String path = new StringBuilder(unitUserName)

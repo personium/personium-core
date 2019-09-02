@@ -67,7 +67,7 @@ public class UnitCtlResource extends ODataResource {
      * @param accessContext AccessContext
      */
     public UnitCtlResource(AccessContext accessContext) {
-        super(accessContext, UriUtils.SCHEME_UNIT_URI + "__ctl/",
+        super(accessContext, UriUtils.SCHEME_LOCALUNIT + ":/__ctl/",
                 ModelFactory.ODataCtl.unitCtl(accessContext));
         checkReferenceMode(accessContext);
     }
@@ -89,7 +89,8 @@ public class UnitCtlResource extends ODataResource {
      * {@inheritDoc}
      */
     @Override
-    public void checkAccessContext(AccessContext ac, Privilege privilege) {
+    public void checkAccessContext(Privilege privilege) {
+        AccessContext ac = this.getAccessContext();
         // Accept if UnitMaster, UnitAdmin, UnitUser, UnitLocal.
         if (AccessContext.TYPE_UNIT_MASTER.equals(ac.getType())
                 || AccessContext.TYPE_UNIT_ADMIN.equals(ac.getType())
@@ -117,7 +118,7 @@ public class UnitCtlResource extends ODataResource {
     }
 
     @Override
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
+    public boolean hasPrivilege(Privilege privilege) {
         return false;
     }
 
@@ -135,7 +136,7 @@ public class UnitCtlResource extends ODataResource {
             // If there is a Subject value in UnitUserToken, set that value to Owner.
             String subject = this.getAccessContext().getSubject();
             if (subject != null) {
-                String owner = UriUtils.convertSchemeFromHttpToLocalUnit(getAccessContext().getBaseUri(), subject);
+                String owner = UriUtils.convertSchemeFromHttpToLocalUnit(subject);
                 oEntityWrapper.put("Owner", owner);
             }
         }
@@ -148,14 +149,10 @@ public class UnitCtlResource extends ODataResource {
      */
     @Override
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
-
         String entitySetName = oEntityWrapper.getEntitySet().getName();
-
         EntityResponse er = this.getODataProducer()
                 .getEntity(entitySetName, oEntityKey, new EntityQueryInfo.Builder().build());
-
         OEntityWrapper oew = (OEntityWrapper) er.getEntity();
-
         //Determining accessibility for each entity
         this.checkAccessContextPerEntity(this.getAccessContext(), oew);
     }
@@ -164,22 +161,17 @@ public class UnitCtlResource extends ODataResource {
     public void beforeDelete(final String entitySetName, final OEntityKey oEntityKey) {
         EntityResponse er = this.getODataProducer()
                 .getEntity(entitySetName, oEntityKey, new EntityQueryInfo.Builder().build());
-
         OEntityWrapper oew = (OEntityWrapper) er.getEntity();
 
         //Determining accessibility for each entity
         this.checkAccessContextPerEntity(this.getAccessContext(), oew);
-
         if (Cell.EDM_TYPE_NAME.equals(entitySetName)) {
             String cellId = oew.getUuid();
             cell = ModelFactory.cellFromId(cellId);
-
             //409 error if Cell is not empty
             if (!cell.isEmpty()) {
                 throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
             }
-
-
         }
     }
 
@@ -187,7 +179,7 @@ public class UnitCtlResource extends ODataResource {
     public void afterDelete(final String entitySetName, final OEntityKey oEntityKey) {
         if (Cell.EDM_TYPE_NAME.equals(entitySetName)) {
             //Delete event log if it exists under Cell
-            String owner = cell.getOwner();
+            String owner = cell.getOwnerNormalized();
             try {
                 EventUtils.deleteEventLog(this.cell.getId(), owner);
             } catch (BinaryDataAccessException e) {
@@ -236,7 +228,7 @@ public class UnitCtlResource extends ODataResource {
     @Override
     public void checkAccessContextPerEntity(AccessContext ac, OEntityWrapper oew) {
         Map<String, Object> meta = oew.getMetadata();
-        String owner = UriUtils.convertSchemeFromLocalUnitToHttp(ac.getBaseUri(), (String) meta.get("Owner"));
+        String owner = UriUtils.convertSchemeFromLocalUnitToHttp((String) meta.get("Owner"));
 
         // In case of master token, no check is required.
         if (AccessContext.TYPE_UNIT_MASTER.equals(ac.getType())

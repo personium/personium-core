@@ -29,7 +29,6 @@ import org.odata4j.core.OEntityKey;
 import org.odata4j.core.OProperty;
 
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.CellPrivilege;
@@ -39,7 +38,7 @@ import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.Box;
-import io.personium.core.model.DavRsCmp;
+import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
@@ -56,43 +55,42 @@ import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * JAX-RS Resource handling DC Cell Level Api.
+ * JAX-RS Resource handling Personium Cell control objects.
  */
 public final class CellCtlResource extends ODataResource {
-
     String pCredHeader;
-    DavRsCmp davRsCmp;
+    CellRsCmp cellRsCmp;
 
     /**
      * constructor.
      * @param accessContext AccessContext
      * @param pCredHeader X-Personium-Credential header
-     * @param davRsCmp davRsCmp
+     * @param cellRsCmp davRsCmp
      */
-    public CellCtlResource(final AccessContext accessContext, final String pCredHeader, DavRsCmp davRsCmp) {
+    public CellCtlResource(final AccessContext accessContext, final String pCredHeader, CellRsCmp cellRsCmp) {
         super(accessContext, UriUtils.SCHEME_LOCALCELL + ":/__ctl/", ModelFactory.ODataCtl.cellCtl(accessContext
                 .getCell()));
         this.pCredHeader = pCredHeader;
-        this.davRsCmp = davRsCmp;
+        this.cellRsCmp = cellRsCmp;
     }
 
     @Override
-    public void checkAccessContext(final AccessContext ac, Privilege privilege) {
-        this.davRsCmp.checkAccessContext(ac, privilege);
+    public void checkAccessContext(Privilege privilege) {
+        this.cellRsCmp.checkAccessContext(privilege);
     }
 
     /**
      * Obtain Auth Scheme that can be used for authentication.
-     * Autret Scheme that can be used for @return authentication
+     * @return Auth Scheme that can be used for authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {
-        return this.davRsCmp.getAcceptableAuthScheme();
+        return this.cellRsCmp.getAcceptableAuthScheme();
     }
 
     @Override
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
-        return this.davRsCmp.hasPrivilege(ac, privilege);
+    public boolean hasPrivilege(Privilege privilege) {
+        return this.cellRsCmp.hasSubjectPrivilege(privilege);
     }
 
     @Override
@@ -285,8 +283,7 @@ public final class CellCtlResource extends ODataResource {
                 }
             }
 
-            String error = validateRule(PersoniumUnitConfig.getBaseUrl(),
-                    external, subject, type, object, info, action, targetUrl, boxBound);
+            String error = validateRule(external, subject, type, object, info, action, targetUrl, boxBound);
             if (error != null) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(error);
             }
@@ -306,16 +303,15 @@ public final class CellCtlResource extends ODataResource {
      * @param boxBound flag of box bounded
      * @return property name of format error
      */
-    public static String validateRule(String unitUrl,
-            Boolean external, String subject,
+    public static String validateRule(Boolean external, String subject,
             String type, String object, String info, String action, String targetUrl, Boolean boxBound) {
 
         // check if convert scheme to localunit
-        String converted = UriUtils.convertSchemeFromHttpToLocalUnit(unitUrl, subject);
+        String converted = UriUtils.convertSchemeFromHttpToLocalUnit(subject);
         if (converted != null && !converted.equals(subject)) {
             return Rule.P_SUBJECT.getName();
         }
-        converted = UriUtils.convertSchemeFromHttpToLocalUnit(unitUrl, targetUrl);
+        converted = UriUtils.convertSchemeFromHttpToLocalUnit(targetUrl);
         if (converted != null && !converted.equals(targetUrl)) {
             return Rule.P_TARGETURL.getName();
         }
@@ -480,7 +476,7 @@ public final class CellCtlResource extends ODataResource {
                 .type(type)
                 .object(object)
                 .info(info)
-                .davRsCmp(this.davRsCmp)
+                .davRsCmp(this.cellRsCmp)
                 .build();
         EventBus eventBus = this.getAccessContext().getCell().getEventBus();
         eventBus.post(ev);

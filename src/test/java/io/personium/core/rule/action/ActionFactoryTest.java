@@ -62,7 +62,7 @@ public class ActionFactoryTest {
         // Mock settings
         // --------------------
         Cell cell = mock(Cell.class);
-        doReturn(owner).when(cell).getOwner();
+        doReturn(owner).when(cell).getOwnerNormalized();
         doReturn(cellId).when(cell).getId();
         PowerMockito.spy(LoggerFactory.class);
         PowerMockito.doReturn(null).when(LoggerFactory.class, "getLogger", "io.personium.core.rule.action");
@@ -97,7 +97,7 @@ public class ActionFactoryTest {
         // Mock settings
         // --------------------
         Cell cell = mock(Cell.class);
-        doReturn(owner).when(cell).getOwner();
+        doReturn(owner).when(cell).getOwnerNormalized();
         doReturn(cellId).when(cell).getId();
         PowerMockito.spy(LoggerFactory.class);
         PowerMockito.doReturn(null).when(LoggerFactory.class, "getLogger", "io.personium.core.rule.action");
@@ -132,7 +132,7 @@ public class ActionFactoryTest {
         // Mock settings
         // --------------------
         Cell cell = mock(Cell.class);
-        doReturn(owner).when(cell).getOwner();
+        doReturn(owner).when(cell).getOwnerNormalized();
         doReturn(cellId).when(cell).getId();
         PowerMockito.spy(LoggerFactory.class);
         PowerMockito.doReturn(null).when(LoggerFactory.class, "getLogger", "io.personium.core.rule.action");
@@ -167,7 +167,7 @@ public class ActionFactoryTest {
         // Mock settings
         // --------------------
         Cell cell = mock(Cell.class);
-        doReturn(owner).when(cell).getOwner();
+        doReturn(owner).when(cell).getOwnerNormalized();
         doReturn(cellId).when(cell).getId();
         PowerMockito.spy(LoggerFactory.class);
         PowerMockito.doReturn(null).when(LoggerFactory.class, "getLogger", "io.personium.core.rule.action");
@@ -202,7 +202,7 @@ public class ActionFactoryTest {
         // Mock settings
         // --------------------
         Cell cell = mock(Cell.class);
-        doReturn(owner).when(cell).getOwner();
+        doReturn(owner).when(cell).getOwnerNormalized();
         doReturn(cellId).when(cell).getId();
         PowerMockito.spy(LoggerFactory.class);
         PowerMockito.doReturn(null).when(LoggerFactory.class, "getLogger", "io.personium.core.rule.action");

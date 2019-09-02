@@ -68,7 +68,7 @@ public class EventResource {
     @POST
     public final Response receiveEvent(final Reader reader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.EVENT);
+        this.davRsCmp.checkAccessContext(CellPrivilege.EVENT);
 
         //Analyze the request body and obtain the Event object
         PersoniumEvent event = getRequestBody(reader);

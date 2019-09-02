@@ -1,6 +1,6 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2019 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,14 @@ package io.personium.core.rs.cell;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.ws.rs.HeaderParam;
@@ -48,20 +52,20 @@ import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
-import io.personium.common.auth.token.CellLocalRefreshToken;
+import io.personium.common.auth.token.GrantCode;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.IRefreshToken;
 import io.personium.common.auth.token.IdToken;
-import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
+import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
+import io.personium.common.auth.token.VisitorRefreshToken;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthnException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
@@ -71,11 +75,11 @@ import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
+import io.personium.core.auth.ScopeArbitrator;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellRsCmp;
-import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.impl.fs.CellKeysFile;
 import io.personium.core.odata.OEntityWrapper;
@@ -90,17 +94,13 @@ import io.personium.plugin.base.auth.AuthPluginException;
 import io.personium.plugin.base.auth.AuthenticatedIdentity;
 
 /**
- * JAX-RS Resource class for authentication.
+ * JAX-RS Resource class for Token Endpoint.
  */
 public class TokenEndPointResource {
-    // core issue #223
-    // "issuer" in the token may be interpreted by other units.
-    // For that reason, "path based cell url" is set for "issuer" regardless of unit property setting.
-
     static Logger log = LoggerFactory.getLogger(TokenEndPointResource.class);
 
     private final Cell cell;
-    private final DavRsCmp davRsCmp;
+    private final CellRsCmp davRsCmp;
     private boolean issueCookie = false;
     private UriInfo requestURIInfo;
     //The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
@@ -113,16 +113,17 @@ public class TokenEndPointResource {
      * @param cell  Cell
      * @param davRsCmp davRsCmp
      */
-    public TokenEndPointResource(final Cell cell, final DavRsCmp davRsCmp) {
+    public TokenEndPointResource(final Cell cell, final CellRsCmp davRsCmp) {
         this.cell = cell;
         this.davRsCmp = davRsCmp;
     }
 
     /**
-     * OAuth2.0 Token Endpoint. <h2>Issue some kinds of tokens.</h2>
+     * OAuth2.0 Token Endpoint.
+     * Issues differnt kinds of tokens depending on the parameters.
      * <ul>
-     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
-     * <li> Issue CellLocal if scope does not exist. </ li>
+     * <li> If p_target parameter exists, it issues Trans-Cell access token targeting at the specified URL. </ li>
+     * <li> If p_target parameter is not specified, it issues Cell-local access token. </ li>
      * </ul>
      * @param uriInfo  URI information
      * @param authzHeader Authorization Header
@@ -147,16 +148,27 @@ public class TokenEndPointResource {
         String code = formParams.getFirst(Key.CODE);
         String clientId = formParams.getFirst(Key.CLIENT_ID);
         String clientSecret = formParams.getFirst(Key.CLIENT_SECRET);
+        String clientAssertion = formParams.getFirst(Key.CLIENT_ASSERTION);
+        String clientAssertionType = formParams.getFirst(Key.CLIENT_ASSERTION_TYPE);
         String expiresInStr = formParams.getFirst(Key.EXPIRES_IN);
         String rTokenExpiresInStr = formParams.getFirst(Key.REFRESH_TOKEN_EXPIRES_IN);
-        String pCookie = formParams.getFirst("p_cookie");
+        String pCookie = formParams.getFirst(Key.P_COOKIE);
+        String scopeStr = formParams.getFirst(Key.SCOPE);
 
-        // Accept unit local scheme url.
-        String target = UriUtils.convertSchemeFromLocalUnitToHttp(
-                cell.getUnitUrl(), pTarget);
-        //If p_target is not a URL, it creates a vulnerability of header injection. (Such as a line feed code is included)
-        target = this.checkPTarget(target);
+        String[] scope = AbstractOAuth2Token.Scope.parse(scopeStr);
 
+        // relsolve personium-localunit scheme url.
+        String target = UriUtils.convertSchemeFromLocalUnitToHttp(pTarget);
+
+        //Check the given target to prevent security attacks such as Header Injection.
+        //eg. If p_target is not a URL and include line feed code, it creates a vulnerability of header injection.
+        if (target != null) {
+            this.checkURL(target);
+            target = this.addTrainlingSlash(target);
+            // TODO should do more normalization.
+        }
+
+        // Do not issue cookie if p_target exists, regardless of the p_cookie parameter.
         if (null != pTarget) {
             issueCookie = false;
         } else {
@@ -167,10 +179,12 @@ public class TokenEndPointResource {
         this.ipaddress = xForwardedFor;
 
         String schema = null;
-        //First, check if you want to authenticate Client
-        //If neither Scope nor authzHeader nor clientId exists, it is assumed that Client authentication is not performed.
-        if (clientId != null || authzHeader != null) {
-            schema = clientAuth(clientId, clientSecret, authzHeader, cell.getUrl());
+        // Authenticate client first if necessary.
+        // If neither authzHeader, clientAssertion nor clientId exists,
+        // client authentication is not performed.
+        if (clientId != null || authzHeader != null || clientAssertion != null || clientAssertionType != null) {
+            schema = clientAuth(clientId, clientSecret, clientAssertionType, clientAssertion,
+                    authzHeader, cell.getUrl());
         }
 
         // Check value of expires_in
@@ -205,7 +219,7 @@ public class TokenEndPointResource {
         if (OAuth2Helper.GrantType.PASSWORD.equals(grantType)) {
             //Regular password authentication
             Response response = this.handlePassword(target, pOwner,
-                    schema, username, password, expiresIn, rTokenExpiresIn);
+                    schema, username, password, expiresIn, rTokenExpiresIn, scope);
             return response;
         } else if (OAuth2Helper.GrantType.SAML2_BEARER.equals(grantType)) {
             return this.receiveSaml2(target, pOwner, schema, assertion, expiresIn, rTokenExpiresIn);
@@ -216,7 +230,7 @@ public class TokenEndPointResource {
         } else {
             // Call Auth Plugins
             return this.callAuthPlugins(grantType, formParams, target, pOwner,
-                    schema, expiresIn, rTokenExpiresIn);
+                    schema, expiresIn, rTokenExpiresIn, scope);
         }
     }
 
@@ -240,7 +254,7 @@ public class TokenEndPointResource {
      * @return Response
      */
     private Response callAuthPlugins(String grantType, MultivaluedMap<String, String> params,
-            String target, String owner, String schema, long expiresIn, long rTokenExpiresIn) {
+            String target, String owner, String schema, long expiresIn, long rTokenExpiresIn, String[] requestScopes) {
         // Plugin manager.
         PluginManager pm = PersoniumCoreApplication.getPluginManager();
         // Search target plugin.
@@ -295,13 +309,15 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED;
         }
 
+        String[] scopes = this.cell.getScopeArbitrator(schema, grantType).request(requestScopes).getResults();
+
         // Check account is active.
         boolean accountActive = AuthUtils.isActive(idTokenUserOew);
         boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(idTokenUserOew);
         if (!accountActive) {
             if (passwordChangeRequired) {
                 // Issue password change.
-                issuePasswordChange(schema, accountName, rTokenExpiresIn);
+                issuePasswordChange(schema, accountName, rTokenExpiresIn, scopes);
             } else {
                 PersoniumCoreLog.OIDC.ACCOUNT_IS_DEACTIVATED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, accountName).writeLog();
@@ -310,53 +326,84 @@ public class TokenEndPointResource {
         }
 
         // When processing is normally completed, issue a token.
-        return this.issueToken(target, owner, schema, accountName, expiresIn, rTokenExpiresIn);
+        return this.issueToken(target, owner, schema, accountName, expiresIn, rTokenExpiresIn, scopes);
     }
 
     /**
-     * checkPTarget.
+     * check p_target parameter for security.
      */
-    private String checkPTarget(final String pTarget) {
-        String target = pTarget;
-        if (target != null) {
-            try {
-                new URL(target);
-                if (!target.endsWith("/")) {
-                    target = target + "/";
-                }
-                if (target.contains("\n") || target.contains("\r")) {
-                    //Error when p_target is not a URL
-                    throw PersoniumCoreAuthnException.INVALID_TARGET
-                            .realm(this.cell.getUrl());
-                }
-            } catch (MalformedURLException e) {
+    private void checkURL(final String url) {
+        try {
+            new URL(url);
+            if (url.contains("\n") || url.contains("\r")) {
                 //Error when p_target is not a URL
                 throw PersoniumCoreAuthnException.INVALID_TARGET
                         .realm(this.cell.getUrl());
             }
+        } catch (MalformedURLException e) {
+            //Error when p_target is not a URL
+            throw PersoniumCoreAuthnException.INVALID_TARGET
+                    .realm(this.cell.getUrl());
         }
-        return target;
     }
+
+    private String addTrainlingSlash(final String url) {
+        if (!url.endsWith("/")) {
+            return url + "/";
+        }
+        return url;
+    }
+
+    public static String clientAuth(
+            final String clientId, final String clientSecret,
+            final String clientAssertionType, final String clientAssertion,
+            final String authzHeader, final String cellUrl) {
+        // When clientAssertionType is spesified,
+        if (clientAssertionType != null || clientAssertion != null) {
+            // Then clientAssertionType should be valid value.
+            if (!OAuth2Helper.GrantType.SAML2_BEARER.equals(clientAssertionType)) {
+                throw PersoniumCoreAuthnException.INVALID_CLIENT_ASSERTION_TYPE.params(OAuth2Helper.GrantType.SAML2_BEARER);
+            }
+            // Just ignore clientSecret, authzHeader
+            //
+            return clientAuth(clientId, clientAssertion,
+                    null, cellUrl);
+        } else {
+            // When clientAssertionType is NOT spesified,
+
+            // clientId or authz header should be specified.
+            if (clientId == null && authzHeader == null) {
+                throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
+            }
+            // Then use clientId, clientSecret or authHeader
+            return clientAuth(clientId, clientSecret,
+                    authzHeader, cellUrl);
+
+        }
+    }
+
 
     /**
      * Client authentication processing.
-     * @param clientId Schema
+     * @param clientId Schema URL. if null is specified then skip check.
      * @param clientSecret token
      * @param authzHeader Value of Authorization Header
      * @param cellUrl Cell URL
      * @return null: Client authentication failed.
      */
-    public static String clientAuth(final String clientId, final String clientSecret,
+    public static String clientAuth(
+            final String clientId, final String clientSecret,
             final String authzHeader, final String cellUrl) {
         String targetClientId = clientId;
         String targetClientSecret = clientSecret;
+
         if (targetClientSecret == null) {
             targetClientSecret = "";
         }
 
         //Parsing authzHeader
         if (authzHeader != null) {
-            String[] idpw = PersoniumCoreUtils
+            String[] idpw = CommonUtils
                     .parseBasicAuthzHeader(authzHeader);
             if (idpw != null) {
                 //Specify authzHeader first
@@ -368,6 +415,9 @@ public class TokenEndPointResource {
             }
         }
 
+        // relsolve personium-localunit scheme url.
+        targetClientId = UriUtils.resolveLocalUnit(targetClientId);
+
         //Check pw
         //· Since PW is a SAML token, it is parsed.
         TransCellAccessToken tcToken = null;
@@ -376,7 +426,7 @@ public class TokenEndPointResource {
         } catch (TokenParseException e) {
             //Perth failure
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.realm(
+            throw PersoniumCoreAuthnException.CLIENT_ASSERTION_PARSE_ERROR.realm(
                     cellUrl).reason(e);
         } catch (TokenDsigException e) {
             //Signature validation error
@@ -397,7 +447,8 @@ public class TokenEndPointResource {
         }
 
         // Confirm that Issuer is equal to ID
-        if (!targetClientId.equals(tcToken.getIssuer())) {
+        // if clientId is null, then just skip this check
+        if (clientId != null && !targetClientId.equals(tcToken.getIssuer())) {
             throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
         }
 
@@ -409,7 +460,7 @@ public class TokenEndPointResource {
         //Give # c if the role is a confidential value
         String confidentialRoleUrl = String.format(
                 OAuth2Helper.Key.CONFIDENTIAL_ROLE_URL_FORMAT,
-                tcToken.getIssuer(), Box.DEFAULT_BOX_NAME);
+                tcToken.getIssuer(), Box.MAIN_BOX_NAME);
         for (Role role : tcToken.getRoles()) {
             if (confidentialRoleUrl.equals(role.createUrl())) {
                 //Successful authentication.
@@ -444,13 +495,13 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER
                     .realm(this.cell.getUrl());
         }
-        if (!code.startsWith(CellLocalAccessToken.PREFIX_CODE)) {
+        if (!code.startsWith(GrantCode.PREFIX_CODE)) {
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
         }
 
-        CellLocalAccessToken token;
+        GrantCode token;
         try {
-            token = (CellLocalAccessToken) AbstractOAuth2Token.parse(code, getIssuerUrl(), cell.getUnitUrl());
+            token = (GrantCode) AbstractOAuth2Token.parse(code, getIssuerUrl(), cell.getUnitUrl());
         } catch (TokenParseException e) {
             //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
@@ -477,26 +528,27 @@ public class TokenEndPointResource {
         long issuedAt = new Date().getTime();
 
         //Regenerate AccessToken and RefreshToken from the received Token
-        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, rTokenExpiresIn, getIssuerUrl(),
-                token.getSubject(), schema);
+        ResidentRefreshToken rToken = new ResidentRefreshToken(issuedAt, rTokenExpiresIn, getIssuerUrl(),
+                token.getSubject(), schema, token.getScope());
         IAccessToken aToken = null;
         if (target == null) {
-            aToken = new CellLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    token.getSubject(), token.getRoles(), schema);
+            aToken = new VisitorLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
+                    token.getSubject(), token.getRoles(), schema, token.getScope());
         } else {
             List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
             aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    getIssuerUrl() + "#" + token.getSubject(), target, roleList, schema);
+                    getIssuerUrl() + "#" + token.getSubject(), target, roleList, schema, token.getScope());
         }
 
         // If scope is openid it returns id_token.
         IdToken idToken = null;
-        if (OAuth2Helper.Scope.OPENID.equals(token.getScope())) {
+        Set<String> reqScopes = new HashSet<>(Arrays.asList(token.getScope()));
+        if (reqScopes.contains(OAuth2Helper.Scope.OPENID)) {
             CellCmp cellCmp = (CellCmp) davRsCmp.getDavCmp();
             CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
             String subject = token.getSubject();
             long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
-            long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_A_HOUR;
+            long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_AN_HOUR;
             idToken = new IdToken(
                     cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
                     subject, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
@@ -556,14 +608,17 @@ public class TokenEndPointResource {
 
         //Authentication is successful -------------------------------
 
-        //Create a refresh token based on the authentication information
+        // Scope arbitration
+        String[] scopes = this.cell.getScopeArbitrator(schema, OAuth2Helper.GrantType.SAML2_BEARER).request(tcToken.getScope()).getResults();
+
+        // Create a refresh token based on the authentication information
         long issuedAt = new Date().getTime();
-        TransCellRefreshToken rToken = new TransCellRefreshToken(
+        VisitorRefreshToken rToken = new VisitorRefreshToken(
                 tcToken.getId(), //Save ID of received SAML
                 issuedAt, rTokenExpiresIn, getIssuerUrl(), tcToken.getSubject(),
                 tcToken.getIssuer(), //Save receipt of SAML's
                 tcToken.getRoles(), //Save receipt of SAML's
-                schema);
+                schema, scopes);
 
         //Ask CELL to decide the role of you from the role of TC issuer.
         List<Role> rolesHere = cell.getRoleListHere(tcToken);
@@ -575,12 +630,16 @@ public class TokenEndPointResource {
         //Authentication token issue processing
         //The target can be freely decided.
         IAccessToken aToken = null;
+
+        // TODO
+
+
         if (target == null) {
-            aToken = new CellLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    tcToken.getSubject(), rolesHere, schemaVerified);
+            aToken = new VisitorLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
+                    tcToken.getSubject(), rolesHere, schemaVerified, scopes);
         } else {
             aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    tcToken.getSubject(), target, rolesHere, schemaVerified);
+                    tcToken.getSubject(), target, rolesHere, schemaVerified, scopes);
         }
         return this.responseAuthSuccess(aToken, rToken, issuedAt);
     }
@@ -627,12 +686,21 @@ public class TokenEndPointResource {
         if (token.isRefreshExpired()) {
             throw PersoniumCoreAuthnException.TOKEN_EXPIRED.realm(this.cell.getUrl());
         }
+        String tSchema = token.getSchema();
+
+
+        if (!(Objects.equals(schema, tSchema) || schema == null && StringUtils.isEmpty(tSchema))) {
+            if (schema == null) {
+                throw PersoniumCoreAuthnException.CLIENT_AUTH_REQUIRED;
+            }
+            throw PersoniumCoreAuthnException.CLIENT_MISMATCH_FOR_REFRESH.params(schema);
+        }
 
         long issuedAt = new Date().getTime();
 
         if (Key.TRUE_STR.equals(owner)) {
             //You can be promoted only for your own cell refresh.
-            if (token.getClass() != CellLocalRefreshToken.class) {
+            if (token.getClass() != ResidentRefreshToken.class) {
                 throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER.realm(this.cell.getUrl());
             }
             //Check unit escalation privilege setting
@@ -640,39 +708,41 @@ public class TokenEndPointResource {
                 throw PersoniumCoreAuthnException.NOT_ALLOWED_REPRESENT_OWNER.realm(this.cell.getUrl());
             }
             //Do not promote cells for which the owner of the cell is not set.
-            if (cell.getOwner() == null) {
+            if (cell.getOwnerNormalized() == null) {
                 throw PersoniumCoreAuthnException.NO_CELL_OWNER.realm(this.cell.getUrl());
             }
 
             //uluut issuance processing
             UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt, expiresIn,
-                    cell.getOwner(), cell.getUnitUrl());
+                    cell.getOwnerNormalized(), cell.getUnitUrl());
 
             return this.responseAuthSuccess(uluut, null, issuedAt);
-        } else {
-            //Regenerate AccessToken and RefreshToken from received Refresh Token
-            IRefreshToken rToken = (IRefreshToken) token;
-            rToken = rToken.refreshRefreshToken(issuedAt, rTokenExpiresIn);
-
-            IAccessToken aToken = null;
-            if (rToken instanceof CellLocalRefreshToken) {
-                String subject = rToken.getSubject();
-                List<Role> roleList = cell.getRoleListForAccount(subject);
-                aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target, getIssuerUrl(), roleList, schema);
-            } else {
-                //Ask CELL to determine the role of you from the role of the token issuer.
-                List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
-                aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target,
-                        getIssuerUrl(), rolesHere, schema);
-            }
-
-            if (aToken instanceof TransCellAccessToken) {
-                log.debug("reissuing TransCell Token");
-                // aToken.addRole("admin");
-                // return this.responseAuthSuccess(tcToken);
-            }
-            return this.responseAuthSuccess(aToken, rToken, issuedAt);
         }
+
+
+
+        //Regenerate AccessToken and RefreshToken from received Refresh Token
+        IRefreshToken rToken = (IRefreshToken) token;
+        rToken = rToken.refreshRefreshToken(issuedAt, rTokenExpiresIn);
+
+        IAccessToken aToken = null;
+        if (rToken instanceof ResidentRefreshToken) {
+            String subject = rToken.getSubject();
+            List<Role> roleList = cell.getRoleListForAccount(subject);
+            aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target, getIssuerUrl(), roleList);
+        } else {
+            //Ask CELL to determine the role of you from the role of the token issuer.
+            List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
+            aToken = rToken.refreshAccessToken(issuedAt, expiresIn, target,
+                    getIssuerUrl(), rolesHere);
+        }
+
+        if (aToken instanceof TransCellAccessToken) {
+            log.debug("reissuing TransCell Token");
+            // aToken.addRole("admin");
+            // return this.responseAuthSuccess(tcToken);
+        }
+        return this.responseAuthSuccess(aToken, rToken, issuedAt);
     }
 
     private Response responseAuthSuccess(final IAccessToken accessToken, final IRefreshToken refreshToken,
@@ -686,6 +756,9 @@ public class TokenEndPointResource {
         JSONObject resp = new JSONObject();
         resp.put(OAuth2Helper.Key.ACCESS_TOKEN, accessToken.toTokenString());
         resp.put(OAuth2Helper.Key.EXPIRES_IN, accessToken.expiresIn());
+        if (accessToken.getScope() != null && accessToken.getScope().length > 0) {
+            resp.put(OAuth2Helper.Key.SCOPE, AbstractOAuth2Token.Scope.toConcatValue(accessToken.getScope()));
+        }
         if (refreshToken != null) {
             resp.put(OAuth2Helper.Key.REFRESH_TOKEN, refreshToken.toTokenString());
             resp.put(OAuth2Helper.Key.REFRESH_TOKEN_EXPIRES_IN, refreshToken.refreshExpiresIn());
@@ -701,14 +774,11 @@ public class TokenEndPointResource {
         }
 
         if (issueCookie) {
-            String tokenString = accessToken.toTokenString();
             //Set random UUID as p_cookie_peer
             String pCookiePeer = UUID.randomUUID().toString();
-            String cookieValue = pCookiePeer + "\t" + tokenString;
             //The p_cookie value to return to the header is encrypted
-            String encodedCookieValue = LocalToken.encode(cookieValue,
-                    UnitLocalUnitUserToken.getIvBytes(AccessContext
-                            .getCookieCryptKey(requestURIInfo.getBaseUri().getHost())));
+            String encodedCookieValue = accessToken.getCookieString(pCookiePeer,
+                    AccessContext.getCookieCryptKey(requestURIInfo.getBaseUri().getHost()));
             //Specify cookie version (0)
             int version = 0;
             String path = getCookiePath();
@@ -755,7 +825,7 @@ public class TokenEndPointResource {
 
     private Response handlePassword(final String target, final String owner,
             final String schema, final String username,
-            final String password, long expiresIn, long rTokenExpiresIn) {
+            final String password, long expiresIn, long rTokenExpiresIn, String[] scope) {
 
         //Password check processing
         if (username == null) {
@@ -793,7 +863,7 @@ public class TokenEndPointResource {
         }
 
         // Check if the target account records authentication history.
-        isRecordingAuthHistory = AuthResourceUtils.isRecordingAuthHistory((CellRsCmp) davRsCmp, accountId, username);
+        isRecordingAuthHistory = ((CellRsCmp) davRsCmp).isRecordingAuthHistory(accountId, username);
 
         //Check valid authentication interval
         if (isLockedInterval) {
@@ -849,7 +919,7 @@ public class TokenEndPointResource {
         if (!accountActive) {
             if (passwordChangeRequired) {
                 // Issue password change.
-                issuePasswordChange(schema, username, rTokenExpiresIn);
+                issuePasswordChange(schema, username, rTokenExpiresIn, scope);
             } else {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
@@ -861,8 +931,10 @@ public class TokenEndPointResource {
                 throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
             }
         }
+        ScopeArbitrator sa = this.cell.getScopeArbitrator(schema, OAuth2Helper.GrantType.PASSWORD);
+        String[] scopes = sa.request(scope).getResults();
 
-        return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn);
+        return issueToken(target, owner, schema, username, expiresIn, rTokenExpiresIn, scopes);
     }
 
     /**
@@ -872,11 +944,11 @@ public class TokenEndPointResource {
      * @param username user name
      * @param expiresIn expires in
      */
-    private void issuePasswordChange(final String schema, final String username, long expiresIn) {
+    private void issuePasswordChange(final String schema, final String username, long expiresIn, String[] scope) {
         // create account password change access token.
         long issuedAt = new Date().getTime();
         PasswordChangeAccessToken aToken = new PasswordChangeAccessToken(
-                issuedAt, expiresIn, getIssuerUrl(), username, schema);
+                issuedAt, expiresIn, getIssuerUrl(), username, schema, scope);
 
         // get auth history. (non update auth history)
         AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
@@ -892,7 +964,7 @@ public class TokenEndPointResource {
     }
 
     private Response issueToken(final String target, final String owner,
-            final String schema, final String username, long expiresIn, long rTokenExpiresIn) {
+            final String schema, final String username, long expiresIn, long rTokenExpiresIn, String[] scopes) {
         long issuedAt = new Date().getTime();
 
         if (Key.TRUE_STR.equals(owner)) {
@@ -902,23 +974,23 @@ public class TokenEndPointResource {
                         .realm(this.cell.getUrl());
             }
             //Do not promote cells for which the owner of the cell is not set.
-            if (cell.getOwner() == null) {
+            if (cell.getOwnerNormalized() == null) {
                 throw PersoniumCoreAuthnException.NO_CELL_OWNER.realm(this.cell.getUrl());
             }
 
             //uluut issuance processing
             UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt, expiresIn,
-                    cell.getOwner(), cell.getUnitUrl());
+                    cell.getOwnerNormalized(), cell.getUnitUrl());
             return this.responseAuthSuccess(uluut, null, issuedAt);
         }
 
-        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, rTokenExpiresIn,
-                getIssuerUrl(), username, schema);
+        ResidentRefreshToken rToken = new ResidentRefreshToken(issuedAt, rTokenExpiresIn,
+                getIssuerUrl(), username, schema, scopes);
 
         //Create a response.
         if (target == null) {
-            AccountAccessToken localToken = new AccountAccessToken(issuedAt, expiresIn,
-                    getIssuerUrl(), username, schema);
+            ResidentLocalAccessToken localToken = new ResidentLocalAccessToken(issuedAt, expiresIn,
+                    getIssuerUrl(), username, schema, scopes);
             return this.responseAuthSuccess(localToken, rToken, issuedAt);
         } else {
             //Check that TODO SCHEMA is URL
@@ -927,7 +999,7 @@ public class TokenEndPointResource {
             List<Role> roleList = cell.getRoleListForAccount(username);
 
             TransCellAccessToken tcToken = new TransCellAccessToken(issuedAt, expiresIn,
-                    getIssuerUrl(), getIssuerUrl() + "#" + username, target, roleList, schema);
+                    getIssuerUrl(), getIssuerUrl() + "#" + username, target, roleList, schema, scopes);
             return this.responseAuthSuccess(tcToken, rToken, issuedAt);
         }
     }

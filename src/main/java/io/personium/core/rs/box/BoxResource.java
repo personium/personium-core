@@ -41,7 +41,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MKCOL;
@@ -181,8 +181,8 @@ public class BoxResource {
      */
     private Response getBarFile() {
         // Access control.
-        boxRsCmp.checkAccessContext(boxRsCmp.getAccessContext(), BoxPrivilege.READ);
-        boxRsCmp.checkAccessContext(boxRsCmp.getAccessContext(), BoxPrivilege.READ_ACL);
+        boxRsCmp.checkAccessContext(BoxPrivilege.READ);
+        boxRsCmp.checkAccessContext(BoxPrivilege.READ_ACL);
 
         BarFileExporter exporter = new BarFileExporter(boxRsCmp);
         // Execute export.
@@ -195,7 +195,7 @@ public class BoxResource {
      */
     private Response getMetadata() {
         // Access control.
-        this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.boxRsCmp.checkAccessContext(BoxPrivilege.READ);
 
         //Get asynchronous processing status of box installation from cache.
         //In this case, if null is returned, box installation has not been executed,
@@ -269,16 +269,16 @@ public class BoxResource {
     @WriteAPI
     @DELETE
     public Response recursiveDelete(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         // If the X-Personium-Recursive header is not true, it is an error
         if (!Boolean.TRUE.toString().equalsIgnoreCase(recursiveHeader)) {
             throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
         }
         boolean recursive = Boolean.valueOf(recursiveHeader);
 
         // Check acl.
-        boxRsCmp.checkAccessContext(boxRsCmp.getAccessContext(), CellPrivilege.BOX);
+        boxRsCmp.checkAccessContext(CellPrivilege.BOX);
 
         Response response = boxRsCmp.getDavCmp().delete(null, recursive).build();
 
@@ -309,11 +309,11 @@ public class BoxResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.boxRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        this.boxRsCmp.checkAccessContext(BoxPrivilege.READ_PROPERTIES);
         Response response = this.boxRsCmp.doPropfind(requestBodyXml,
                                                      depth,
                                                      contentLength,
@@ -346,7 +346,7 @@ public class BoxResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
-        this.boxRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.boxRsCmp.checkAccessContext(BoxPrivilege.WRITE_PROPERTIES);
         Response response = this.boxRsCmp.doProppatch(requestBodyXml);
 
         // post event to EventBus
@@ -393,7 +393,7 @@ public class BoxResource {
     @ACL
     public Response acl(final Reader reader) {
         //Access control
-        this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
+        this.boxRsCmp.checkAccessContext(BoxPrivilege.WRITE_ACL);
         Response response = this.boxRsCmp.doAcl(reader);
 
         // post event to EventBus
@@ -424,7 +424,7 @@ public class BoxResource {
     @WriteAPI
     @MKCOL
     public Response mkcol(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader,
             @HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final String contentLength,
             final InputStream inStream) {
@@ -443,7 +443,7 @@ public class BoxResource {
             //TODO findBugs countermeasure ↓
             log.debug(requestKey);
 
-            if (Box.DEFAULT_BOX_NAME.equals(this.boxName)) {
+            if (Box.MAIN_BOX_NAME.equals(this.boxName)) {
                 throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
             }
 
@@ -495,7 +495,7 @@ public class BoxResource {
             @Context HttpHeaders headers) {
 
         //MOVE method for Box resource is disabled
-        this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.boxRsCmp.checkAccessContext(BoxPrivilege.WRITE);
         throw PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_BOX;
     }
 }

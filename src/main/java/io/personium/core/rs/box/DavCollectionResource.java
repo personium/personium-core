@@ -32,7 +32,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MKCOL;
@@ -74,7 +74,7 @@ public class DavCollectionResource {
     @GET
     public Response get() {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ);
 
         StringBuilder sb = new StringBuilder();
         sb.append("URL : " + this.davRsCmp.getUrl() + "\n");
@@ -89,7 +89,7 @@ public class DavCollectionResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_PROPERTIES);
         Response response = this.davRsCmp.doProppatch(requestBodyXml);
 
         // post event to EventBus
@@ -117,18 +117,18 @@ public class DavCollectionResource {
     @WriteAPI
     @DELETE
     public Response delete(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         // X-Personium-Recursive Header
         if (recursiveHeader != null
                 && !Boolean.TRUE.toString().equalsIgnoreCase(recursiveHeader)
                 && !Boolean.FALSE.toString().equalsIgnoreCase(recursiveHeader)) {
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
         }
         boolean recursive = Boolean.valueOf(recursiveHeader);
         // Check acl.(Parent acl check)
         // Since DavCollectionResource always has a parent, result of this.davRsCmp.getParent() will never be null.
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
 
         if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
             throw PersoniumCoreException.Dav.HAS_CHILDREN;
@@ -161,11 +161,11 @@ public class DavCollectionResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ_PROPERTIES);
         Response response = this.davRsCmp.doPropfind(requestBodyXml,
                                                      depth,
                                                      contentLength,
@@ -217,7 +217,7 @@ public class DavCollectionResource {
     @MKCOL
     public Response mkcol() {
         //Access control
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.BIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.BIND);
 
         throw PersoniumCoreException.Dav.METHOD_NOT_ALLOWED;
     }
@@ -231,7 +231,7 @@ public class DavCollectionResource {
     @ACL
     public Response acl(final Reader reader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_ACL);
         Response response = this.davRsCmp.doAcl(reader);
 
         // post event to EventBus
@@ -258,17 +258,17 @@ public class DavCollectionResource {
     @OPTIONS
     public Response options() {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ);
 
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 HttpMethod.DELETE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MKCOL,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MOVE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL
+                io.personium.common.utils.CommonUtils.HttpMethod.MKCOL,
+                io.personium.common.utils.CommonUtils.HttpMethod.MOVE,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH,
+                io.personium.common.utils.CommonUtils.HttpMethod.ACL
                 ).build();
     }
 
@@ -283,7 +283,7 @@ public class DavCollectionResource {
             @Context HttpHeaders headers) {
         //Access control to move source (check parent's authority)
         //Since DavCollectionResource always has a parent (the top is a Box), the result of this.davRsCmp.getParent () will never be null
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }
 }

@@ -31,14 +31,20 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
+import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.Cell;
+import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.UriUtils;
@@ -67,6 +73,8 @@ import io.personium.test.utils.TResponse;
 @Category({Unit.class, Integration.class, Regression.class })
 public class UnitUserCellTest extends PersoniumTest {
 
+    private static Logger log = LoggerFactory.getLogger(UnitUserCellTest.class);
+
     private static final String UNIT_USER_CELL = "unitusercell";
     private static final String UNIT_USER_ACCOUNT = "UnitUserName";
     private static final String UNIT_USER_ACCOUNT_PASS = "password";
@@ -80,7 +88,7 @@ public class UnitUserCellTest extends PersoniumTest {
     private static String issuersBackup = "";
 
     /**
-     * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
+     * Constructor. テスト対象のパッケージをsuperに渡す必要がある
      */
     public UnitUserCellTest() {
         super(new PersoniumCoreApplication());
@@ -95,7 +103,7 @@ public class UnitUserCellTest extends PersoniumTest {
         // Override issuers in unitconfig.
         issuersBackup = PersoniumUnitConfig.get("io.personium.core.unitUser.issuers");
         PersoniumUnitConfig.set("io.personium.core.unitUser.issuers",
-                UriUtils.SCHEME_UNIT_URI + UNIT_USER_CELL + "/");
+        		UriUtils.SCHEME_LOCALUNIT + ":/" + UNIT_USER_CELL + "/");
 
         // Read role name from AccessContext
         Field admin = AccessContext.class.getDeclaredField("ROLE_UNIT_ADMIN");
@@ -140,11 +148,72 @@ public class UnitUserCellTest extends PersoniumTest {
 
     /**
      * ユニットユーザートークンでセル作成を行いオーナーが設定されることを確認.
+     * @throws TokenRootCrtException
+     * @throws TokenDsigException
+     * @throws TokenParseException
      */
     @Test
-    public void ユニットユーザートークンでセル作成を行いオーナーが設定されることを確認() {
+    public void ユニットユーザートークンでセル作成を行いオーナーが設定されることを確認() throws TokenParseException, TokenDsigException, TokenRootCrtException {
         try {
-            // 本テスト用セルの作成
+            // 本テスト用 Unit User Cell の作成
+            CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, -1);
+
+            // アカウント追加
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
+                    UNIT_USER_ACCOUNT, UNIT_USER_ACCOUNT_PASS,  -1);
+
+            // 認証（ユニットユーザートークン取得）
+            TResponse res = Http.request("authn/password-tc-c0.txt")
+                    .with("remoteCell", UNIT_USER_CELL)
+                    .with("username", UNIT_USER_ACCOUNT)
+                    .with("password", UNIT_USER_ACCOUNT_PASS)
+                    .with("p_target", UrlUtils.unitRoot())
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            JSONObject json = res.bodyAsJson();
+            String unitUserToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            //
+            TransCellAccessToken tcToken = TransCellAccessToken.parse(unitUserToken);
+            String subject = tcToken.getSubject();
+            log.info("##TOKEN##");
+            log.info("Subject: "+ subject);
+            log.info("Issuer : "+ tcToken.getSubject());
+            log.info("Target : "+ tcToken.getTarget());
+            String localunitSubject = UriUtils.convertSchemeFromHttpToLocalUnit(subject);
+            log.info("Owner Should be : "+ localunitSubject);
+
+            // ユニットユーザートークンを使ってセル作成をする.
+            //   オーナーがユニットユーザー（ここだとuserNameアカウントのURL）になるはず。
+            CellUtils.create(CREATE_CELL, unitUserToken, HttpStatus.SC_CREATED);
+
+            Cell cell = ModelFactory.cellFromName(CREATE_CELL);
+            String owner = cell.getOwnerRaw();
+            log.info(" OWNER = " + owner);
+            assertEquals(localunitSubject, owner);
+
+
+        } finally {
+            // アカウント削除
+            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME,
+                    UNIT_USER_ACCOUNT, -1);
+            // 本テスト用セルの削除
+            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, CREATE_CELL, -1);
+            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
+        }
+    }
+
+    /**
+     * ユニットユーザートークンでセル作成を行いオーナーとして各種処理が可能なことを確認.
+     * @throws TokenRootCrtException
+     * @throws TokenDsigException
+     * @throws TokenParseException
+     */
+    @Test
+    public void ユニットユーザートークンでセル作成を行いオーナーとして各種処理が可能なことを確認() throws TokenParseException, TokenDsigException, TokenRootCrtException {
+        try {
+            // 本テスト用 Unit User Cell の作成
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
 
             // アカウント追加
@@ -163,7 +232,8 @@ public class UnitUserCellTest extends PersoniumTest {
             JSONObject json = res.bodyAsJson();
             String unitUserToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-            // ユニットユーザートークンを使ってセル作成をするとオーナーがユニットユーザー（ここだとuserNameアカウントのURL）になるはず。
+            // ユニットユーザートークンを使ってセル作成をする.
+            //   オーナーがユニットユーザー（ここだとuserNameアカウントのURL）になるはず。
             CellUtils.create(CREATE_CELL, unitUserToken, HttpStatus.SC_CREATED);
 
             // ユニットユーザートークンを使ってセル更新ができることを確認
@@ -201,6 +271,7 @@ public class UnitUserCellTest extends PersoniumTest {
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
         }
     }
+
 
     /**
      * ユニットアドミンロールをもつユニットユーザートークンでセル作成を行いオーナーが設定されないことを確認.
@@ -242,7 +313,7 @@ public class UnitUserCellTest extends PersoniumTest {
             // UnitUserTokenを自作
             TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
                     UrlUtils.subjectUrl(UNIT_USER_CELL, UNIT_USER_ACCOUNT),
-                    UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
+                    UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
 
             // ユニットユーザトークンでは取得できないことを確認
             CellUtils.get(CREATE_CELL, tcat.toTokenString(), HttpStatus.SC_FORBIDDEN);
@@ -522,7 +593,7 @@ public class UnitUserCellTest extends PersoniumTest {
     public void セルレベルPROPPATCHをユニットユーザトークンで実行可能なことを確認() throws TokenParseException {
         // UnitUserTokenを自作
         TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
-                Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
+                Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
 
         String unitUserToken = tcat.toTokenString();
 
@@ -540,7 +611,7 @@ public class UnitUserCellTest extends PersoniumTest {
     public void セルレベルPROPPATCHをオーナーの違うユニットユーザトークンでは実行不可なことを確認() throws TokenParseException {
         // UnitUserTokenを自作
         TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
-                Setup.OWNER_HMC, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
+                Setup.OWNER_HMC, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
 
         String unitUserToken = tcat.toTokenString();
 
@@ -721,7 +792,7 @@ public class UnitUserCellTest extends PersoniumTest {
     public void セルの検索でオーナーが一致するものだけ検索できることの確認() throws TokenParseException {
         // VETをオーナーにもつUnitUserTokenを自作
         TransCellAccessToken tcatvet = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
-                Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
+                Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
 
         // ユニットユーザトークンではオーナーが一致するセルのみ検索できることの確認（vetをオーナーに持つのはsetupで作っているtestcell1,schema1のみの想定）
         TResponse tcatget = CellUtils.list(tcatvet.toTokenString(), HttpStatus.SC_OK);

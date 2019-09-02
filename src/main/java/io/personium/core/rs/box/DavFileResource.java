@@ -30,7 +30,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MOVE;
@@ -77,7 +77,7 @@ public class DavFileResource {
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
             final InputStream inputStream) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_CONTENT);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_CONTENT);
 
         ResponseBuilder rb = this.davRsCmp.getDavCmp().putForUpdate(contentType, inputStream, ifMatch);
         Response res = rb.build();
@@ -111,7 +111,7 @@ public class DavFileResource {
             @HeaderParam("Range") final String rangeHeaderField) {
 
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ);
 
         ResponseBuilder rb = this.davRsCmp.get(ifNoneMatch, rangeHeaderField);
         Response res = rb.build();
@@ -143,7 +143,7 @@ public class DavFileResource {
     public Response delete(@HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
         // Access Control
         //The result of this.davRsCmp.getParent () is never null since DavFileResource always has a parent (the top is Box)
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
 
         ResponseBuilder rb = this.davRsCmp.getDavCmp().delete(ifMatch, false);
         Response res = rb.build();
@@ -174,7 +174,7 @@ public class DavFileResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_PROPERTIES);
         Response response = this.davRsCmp.doProppatch(requestBodyXml);
 
         // post event to EventBus
@@ -204,11 +204,11 @@ public class DavFileResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ_PROPERTIES);
         Response response = this.davRsCmp.doPropfind(requestBodyXml,
                                                      depth,
                                                      contentLength,
@@ -250,7 +250,7 @@ public class DavFileResource {
     @ACL
     public Response acl(final Reader reader) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_ACL);
         Response response = this.davRsCmp.doAcl(reader);
 
         // post event to EventBus
@@ -281,7 +281,7 @@ public class DavFileResource {
             @Context HttpHeaders headers) {
         // Access Control against the move source
         //The result of this.davRsCmp.getParent () is never null since DavFileResource always has a parent (the top is Box)
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
 
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }
@@ -293,15 +293,15 @@ public class DavFileResource {
     @OPTIONS
     public Response options() {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 HttpMethod.DELETE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MOVE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL
+                io.personium.common.utils.CommonUtils.HttpMethod.MOVE,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH,
+                io.personium.common.utils.CommonUtils.HttpMethod.ACL
                 ).build();
     }
 }

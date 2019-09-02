@@ -3,7 +3,7 @@
     <groupId>io.personium</groupId>
     <artifactId>personium-core</artifactId>
     <packaging>war</packaging>
-    <version>1.7.17_es6.6.1</version>
+    <version>1.7.18_es6.6.1</version>
     <name>personium-core Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <licenses>
@@ -28,11 +28,11 @@
         <kafka.version>1.1.1</kafka.version>
     </properties>
     <dependencies>
-        <!-- personium-lib. -->
+        <!-- personium-lib.-->
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-common</artifactId>
-            <version>1.4.20</version>
+            <version>1.5.1</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>

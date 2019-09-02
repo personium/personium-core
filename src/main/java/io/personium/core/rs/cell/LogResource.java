@@ -57,7 +57,7 @@ import org.apache.wink.webdav.model.Resourcetype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.PROPFIND;
@@ -129,11 +129,11 @@ public class LogResource {
             @Context UriInfo uriInfo,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth
             ) {
 
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG_READ);
+        this.davRsCmp.checkAccessContext(CellPrivilege.LOG_READ);
 
         //Valid values ​​of Depth header are 0, 1
         //Since it does not support when infinity, return it with 403
@@ -266,7 +266,7 @@ public class LogResource {
             @PathParam("filename") final String fileName) {
 
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG_READ);
+        this.davRsCmp.checkAccessContext(CellPrivilege.LOG_READ);
 
         //Check the collection name of the event log
         if (!isValidLogCollection(logCollection)) {
@@ -279,7 +279,7 @@ public class LogResource {
         }
 
         String cellId = davRsCmp.getCell().getId();
-        String owner = davRsCmp.getCell().getOwner();
+        String owner = davRsCmp.getCell().getOwnerNormalized();
 
         //Get the path of the log file
         StringBuilder logFileName = EventUtils.getEventLogDir(cellId, owner);
@@ -368,7 +368,7 @@ public class LogResource {
             @PathParam("filename") final String fileName) {
 
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG);
+        this.davRsCmp.checkAccessContext(CellPrivilege.LOG);
 
         //Check the collection name of the event log
         if (CURRENT_COLLECTION.equals(logCollection)) {
@@ -383,7 +383,7 @@ public class LogResource {
         }
 
         String cellId = davRsCmp.getCell().getId();
-        String owner = davRsCmp.getCell().getOwner();
+        String owner = davRsCmp.getCell().getOwnerNormalized();
 
         //Delete event log file
         StringBuilder logFilePath = EventUtils.getEventLogDir(cellId, owner);

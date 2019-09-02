@@ -916,7 +916,7 @@ public class AclAlterSchemaTest extends PersoniumTest {
         privileges.add("write");
         privileges.add("alter-schema");
         acl.getAce().add(DavResourceUtils.createAce(false, roleCombPrivilege, privileges));
-        acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.DEFAULT_BOX_NAME));
+        acl.setXmlbase(String.format("%s/%s/__role/%s/", UrlUtils.getBaseUrl(), CELL_NAME, Box.MAIN_BOX_NAME));
 
         DavResourceUtils.setAcl(MASTER_TOKEN, CELL_NAME, BOX_NAME, COL_NAME, acl, HttpStatus.SC_OK);
 

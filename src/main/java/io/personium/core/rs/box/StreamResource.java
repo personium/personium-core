@@ -16,9 +16,9 @@
  */
 package io.personium.core.rs.box;
 
-import java.net.URI;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +137,7 @@ public abstract class StreamResource {
         List<String> allow = new ArrayList<>();
 
         try {
-            this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.STREAM_SEND);
+            this.davRsCmp.checkAccessContext(BoxPrivilege.STREAM_SEND);
             allow.add(HttpMethod.POST);
             allow.add(HttpMethod.PUT);
         } catch (Exception e) {
@@ -145,7 +145,7 @@ public abstract class StreamResource {
         }
 
         try {
-            this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.STREAM_RECEIVE);
+            this.davRsCmp.checkAccessContext(BoxPrivilege.STREAM_RECEIVE);
             allow.add(HttpMethod.GET);
         } catch (Exception e) {
             logger.debug("no privilege for receive");
@@ -187,8 +187,7 @@ public abstract class StreamResource {
      */
     private String createDestination(String name) {
         // convert to localunit url
-        String localunit = UriUtils.convertSchemeFromHttpToLocalUnit(this.davRsCmp.getCell().getUnitUrl(),
-                                                                     getUrl(name));
+        String localunit = UriUtils.convertSchemeFromHttpToLocalUnit(getUrl(name));
         try {
             URI uri = new URI(localunit);
             return Stream.of(uri.getPath().split(Pattern.quote("/")))
@@ -217,7 +216,7 @@ public abstract class StreamResource {
      */
     private Response receiveCommon(String name) {
         // access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.STREAM_RECEIVE);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.STREAM_RECEIVE);
 
         // resource exist?
         checkExistence(name);
@@ -236,7 +235,7 @@ public abstract class StreamResource {
      */
     private Response sendCommon(String name, InputStream is) {
         // access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.STREAM_SEND);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.STREAM_SEND);
 
         // resource exist?
         checkExistence(name);

@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONObject;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 
 /**
  * ExtCell用ユーティリティ.
@@ -58,7 +58,7 @@ public class ExtCellUtils {
                 .with("cellPath", cellName)
                 .with("token", token)
                 .with("accept", accept)
-                .with("url", PersoniumCoreUtils.encodeUrlComp(url))
+                .with("url", CommonUtils.encodeUrlComp(url))
                 .returns()
                 .debug()
                 .statusCode(code);
@@ -160,7 +160,7 @@ public class ExtCellUtils {
                 .with("cellPath", cellName)
                 .with("token", token)
                 .with("accept", "application/xml")
-                .with("url", PersoniumCoreUtils.encodeUrlComp(url))
+                .with("url", CommonUtils.encodeUrlComp(url))
                 .with("newUrl", newUrl)
                 .returns()
                 .statusCode(code);
@@ -180,7 +180,7 @@ public class ExtCellUtils {
                 .with("cellPath", cellName)
                 .with("token", token)
                 .with("accept", "application/xml")
-                .with("url", PersoniumCoreUtils.encodeUrlComp(url))
+                .with("url", CommonUtils.encodeUrlComp(url))
                 .with("body", body)
                 .returns()
                 .statusCode(code);
@@ -196,7 +196,7 @@ public class ExtCellUtils {
         Http.request("cell/extCell-delete.txt")
                 .with("cellPath", cellName)
                 .with("token", token)
-                .with("url", PersoniumCoreUtils.encodeUrlComp(url))
+                .with("url", CommonUtils.encodeUrlComp(url))
                 .returns();
     }
 
@@ -212,7 +212,7 @@ public class ExtCellUtils {
         Http.request("cell/extCell-delete.txt")
                 .with("cellPath", cellName)
                 .with("token", token)
-                .with("url", PersoniumCoreUtils.encodeUrlComp(url))
+                .with("url", CommonUtils.encodeUrlComp(url))
                 .returns()
                 .statusCode(code);
     }
@@ -231,7 +231,7 @@ public class ExtCellUtils {
                 .with("method", method)
                 .with("cellPath", cellName)
                 .with("token", token)
-                .with("url", PersoniumCoreUtils.encodeUrlComp(url))
+                .with("url", CommonUtils.encodeUrlComp(url))
                 .with("body", body)
                 .returns()
                 .statusCode(code);

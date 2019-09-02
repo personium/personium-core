@@ -25,7 +25,7 @@ import org.junit.experimental.categories.Category;
 import org.odata4j.core.ODataConstants;
 import org.odata4j.core.ODataVersion;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Role;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -126,7 +126,7 @@ public class ExtRoleDeleteTest extends ODataCommon {
         TResponse res = Http.request("cell/extRole/extRole-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(testExtRoleName))
+                .with("extRoleName", CommonUtils.encodeUrlComp(testExtRoleName))
                 .with("relationName", relationName)
                 .with("relationBoxName", relationBoxName)
                 .returns()
@@ -146,7 +146,7 @@ public class ExtRoleDeleteTest extends ODataCommon {
         Http.request("cell/extRole/extRole-delete-norelation.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(testExtRoleName))
+                .with("extRoleName", CommonUtils.encodeUrlComp(testExtRoleName))
                 .returns()
                 .statusCode(HttpStatus.SC_NOT_FOUND);
     }
@@ -175,12 +175,12 @@ public class ExtRoleDeleteTest extends ODataCommon {
             RelationUtils.create(cellName, token, relationBody, -1);
             ExtRoleUtils.create(token, cellName, extRoleBody, HttpStatus.SC_CREATED);
             RoleUtils.create(cellName, token, roleName, boxName, HttpStatus.SC_CREATED);
-            LinksUtils.createLinksExtRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
+            LinksUtils.createLinksExtRole(cellName, CommonUtils.encodeUrlComp(extRoleName),
                     "relation", null, Role.EDM_TYPE_NAME, roleName, null, token, HttpStatus.SC_NO_CONTENT);
 
             ExtRoleUtils.delete(cellName, extRoleName, "relation", null, token, HttpStatus.SC_NO_CONTENT);
         } finally {
-            LinksUtils.deleteLinksExtRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
+            LinksUtils.deleteLinksExtRole(cellName, CommonUtils.encodeUrlComp(extRoleName),
                     "relation", null, Role.EDM_TYPE_NAME, roleName, null, token, -1);
             RoleUtils.delete(cellName, token, roleName, boxName, -1);
             ExtRoleUtils.delete(cellName, extRoleName, "relation", null, token, -1);

@@ -38,7 +38,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
@@ -357,7 +357,7 @@ public class Setup extends AbstractCase {
         for (int i = 0; i < NUM_ROLES; i++) {
             // ExtRole作成
             ExtRoleConfig extRole = new ExtRoleConfig();
-            extRole.extRole = UrlUtils.roleResource(extCell, Box.DEFAULT_BOX_NAME, "role" + i);
+            extRole.extRole = UrlUtils.roleResource(extCell, Box.MAIN_BOX_NAME, "role" + i);
             extRole.relationName = CELL_RELATION;
             extRole.relationBoxName = null;
             extRoles.add(extRole);
@@ -393,7 +393,7 @@ public class Setup extends AbstractCase {
                     HttpStatus.SC_CREATED);
             // RelationとExtCellの$link
             for (String extCell : relation.linkExtCell) {
-                LinksUtils.createLinksExtCell(conf.cellName, PersoniumCoreUtils.encodeUrlComp(extCell),
+                LinksUtils.createLinksExtCell(conf.cellName, CommonUtils.encodeUrlComp(extCell),
                         Relation.EDM_TYPE_NAME, relation.name, null,
                         AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
             }
@@ -422,7 +422,7 @@ public class Setup extends AbstractCase {
             // ExtRoleとRoleの紐付け
             if (role.linkExtRole != null) {
                 for (ExtRoleConfig extRole : role.linkExtRole) {
-                    LinksUtils.createLinksExtRole(conf.cellName, PersoniumCoreUtils.encodeUrlComp(extRole.extRole),
+                    LinksUtils.createLinksExtRole(conf.cellName, CommonUtils.encodeUrlComp(extRole.extRole),
                             extRole.relationName, extRole.relationBoxName, Role.EDM_TYPE_NAME, role.roleName, null,
                             AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
                 }
@@ -430,7 +430,7 @@ public class Setup extends AbstractCase {
             if ("testcell2".equals(conf.cellName)) {
                 // ExtCellとロールの結びつけ
                 // testcell2のtestxell1向けのExtCellにrole2（readができるロール）を結びつけてやる
-                this.linkExtCelltoRole(PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("testcell1")), conf.cellName,
+                this.linkExtCelltoRole(CommonUtils.encodeUrlComp(UrlUtils.cellRoot("testcell1")), conf.cellName,
                         roleUrl);
             }
         }
@@ -1286,7 +1286,7 @@ public class Setup extends AbstractCase {
         // Owner指定があればセット
         String owner = config.owner;
         if (owner != null) {
-            requestheaders.put(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER, owner);
+            requestheaders.put(CommonUtils.HttpHeaders.X_PERSONIUM_UNIT_USER, owner);
         }
 
         // リクエストボディを生成

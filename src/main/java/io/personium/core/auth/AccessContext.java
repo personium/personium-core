@@ -16,10 +16,15 @@
  */
 package io.personium.core.auth;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.UriInfo;
 
@@ -27,20 +32,20 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.auth.token.AbstractLocalAccessToken;
 import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.IAccessToken;
-import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.PasswordChangeAccessToken;
+import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
+import io.personium.common.auth.token.VisitorRefreshToken;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
@@ -67,23 +72,23 @@ public class AccessContext {
 
     /** Anonymous access : No Authorization header. */
     public static final String TYPE_ANONYMOUS = "anon";
-    /** Access with invalid permissions : Authorization header was present, but it was not authenticated. */
+    /** Access with invalid access token : Authorization header was present, but it was not authenticated. */
     public static final String TYPE_INVALID = "invalid";
-    /** Access with master token : Authorization header content is master token. */
+    /** Access with master token : Authorization header content is unit master token. */
     public static final String TYPE_UNIT_MASTER = "unit-master";
-    /** Access by basic authentication. */
+    /** Access with basic authentication. */
     public static final String TYPE_BASIC = "basic";
-    /** Access by account access token. */
-    public static final String TYPE_ACCOUNT = "account";
-    /** Access by password change access token. */
+    /** Access with Resident Local  Access Token. */
+    public static final String TYPE_RESIDENT = "account";
+    /** Access with password change access token. */
     public static final String TYPE_PASSWORD_CHANGE = "password-change";
-    /** Access by cell local access token. */
-    public static final String TYPE_LOCAL = "local";
-    /** Access by TransCell Access Token. */
+    /** Access with visitor local access token. */
+    public static final String TYPE_VISITOR = "local";
+    /** Access with Trans Cell Access Token. */
     public static final String TYPE_TRANS = "trans";
-    /** Access by Unit User Access token. */
+    /** Access with Unit User Access token. */
     public static final String TYPE_UNIT_USER = "unit-user";
-    /** Access by "Unit User Access token" assigned "UnitAdmin authority". */
+    /** Access with "Unit User Access token" assigned "UnitAdmin authority". */
     public static final String TYPE_UNIT_ADMIN = "unit-admin";
     /** Access by Unit Local Unit User Token. */
     public static final String TYPE_UNIT_LOCAL = "unit-local";
@@ -134,12 +139,19 @@ public class AccessContext {
     private Cell cell;
     /** Access token type. */
     private String accessType;
-    /** subject. */
+    /** accessing user subject. */
     private String subject;
-    /** issuer. */
+    /** access token issuer. */
     private String issuer;
-    /** schema. */
+    /** accessing app schema. */
     private String schema;
+    /** scopes granted to the app. */
+    private Set<String> scopes = new HashSet<>();
+    /** CellPrivilege granted for App  as scope. */
+    private Set<CellPrivilege> scopePrivileges = new HashSet<>();
+    /** Roles granted for App as scope. */
+    private Set<Role> scopeRoles = new HashSet<>();
+
     /** confidentialLevel. */
     private String confidentialLevel;
     /** Roles associated with access account. */
@@ -163,6 +175,7 @@ public class AccessContext {
         this.baseUri = baseUri;
         this.uriInfo = uriInfo;
         this.invalidReason = invalidReason;
+
     }
 
     /**
@@ -184,40 +197,22 @@ public class AccessContext {
             if (pCookiePeer == null || 0 == pCookiePeer.length()) {
                 return new AccessContext(TYPE_ANONYMOUS, cell, baseUri, requestURIInfo);
             }
-            //Cookie authentication
-            //Get decrypted value of cookie value
-            if (null == pCookieAuthValue) {
-                return new AccessContext(
-                        TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
-            }
+            String nonPortHost = headerHost.split(":")[0];
+
             // Cookie related processing requires no port number.
-            String decodedCookieValue;
+            String authToken = null;
             try {
-                String nonPortHost = headerHost.split(":")[0];
-                decodedCookieValue = LocalToken.decode(pCookieAuthValue,
-                        UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(nonPortHost)));
-            } catch (TokenParseException e) {
-                return new AccessContext(
-                        TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
-            }
-            int separatorIndex = decodedCookieValue.indexOf("\t");
-            String peer = decodedCookieValue.substring(0, separatorIndex);
-            //Obtain authorizationHeader equivalent token from information in cookie
-            String authToken = decodedCookieValue.substring(separatorIndex + 1);
-            if (pCookiePeer.equals(peer)) {
-                //Generate appropriate AccessContext with recursive call.
+                authToken = AbstractLocalAccessToken.parseCookie(pCookieAuthValue, pCookiePeer,
+                        AccessContext.getCookieCryptKey(nonPortHost), true);
                 return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
                         requestURIInfo, null, null, cell, baseUri, headerHost, xPersoniumUnitUser);
-            } else {
+            } catch (TokenParseException e) {
                 return new AccessContext(
                         TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
             }
         }
 
-        //TODO V1.1 Here is the part that can be cached. You can get it from the cache here.
-
-        //First branch depending on the authentication method
-
+        // First branch depending on the authentication method
         if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BASIC)) {
             //Basic authentication
             return createBasicAuthz(authzHeaderValue, cell, baseUri, requestURIInfo);
@@ -284,6 +279,13 @@ public class AccessContext {
     public String getSchema() {
         return schema;
     }
+    /**
+     * Get scopes.
+     * @return scopes
+     */
+    public String[] getScope() {
+        return this.scopes.toArray(new String[0]);
+    }
 
     /**
      * Get confidentialLevel.
@@ -327,12 +329,11 @@ public class AccessContext {
 
     /**
      * Merge with the parent's ACL information and judge whether access is possible.
-     * @param acl ALC set in the resource
+     * @param acl ACL set in the resource
      * @param resourcePrivilege Privilege required to access the resource
-     * @param cellUrl Cell URL
      * @return boolean
      */
-    public boolean requirePrivilege(Acl acl, Privilege resourcePrivilege, String cellUrl) {
+    public boolean hasSubjectPrivilegeForAcl(Acl acl, Privilege resourcePrivilege) {
         //No access if ACL is not set
         if (acl == null || acl.getAceList() == null) {
             return false;
@@ -371,7 +372,7 @@ public class AccessContext {
                 }
 
                 //Detect setting corresponding to role
-                if (role.localCreateUrl(cellUrl).equals(principalHref)) {
+                if (role.localCreateUrl(this.cell.getUrl()).equals(principalHref)) {
                     //Confirm whether Root is set
                     if (ace.getGrantedPrivilegeList().contains(CellPrivilege.ROOT.getName())) {
                         return true;
@@ -392,16 +393,16 @@ public class AccessContext {
      */
     public boolean isUnitUserToken() {
         String type = getType();
-        if (TYPE_UNIT_MASTER.equals(type)
-                || TYPE_UNIT_ADMIN.equals(type)) {
+        if (TYPE_UNIT_MASTER.equals(type) || TYPE_UNIT_ADMIN.equals(type)) {
             return true;
         } else if ((TYPE_UNIT_USER.equals(type) || TYPE_UNIT_LOCAL.equals(type))
-                && getSubject().equals(getCell().getOwner())) {
+                && getSubject().equals(getCell().getOwnerNormalized())) {
             //↑ Unit user, Unit For local unit users, this is valid only when the unit owner name included in the token and the cell owner to be processed match.
             return true;
         }
         return false;
     }
+
 
     /**
      * Perform access control (only master token, unit user token, unit local unit user token accessible).
@@ -414,7 +415,7 @@ public class AccessContext {
             return true;
         } else if (TYPE_UNIT_ADMIN.equals(type)
                 || ((TYPE_UNIT_USER.equals(type) || TYPE_UNIT_LOCAL.equals(type)) //NOPMD - To maintain readability
-                        && getSubject().equals(getCell().getOwner()))) {
+                        && getSubject().equals(getCell().getOwnerNormalized()))) {
             // In the case of a UnitUser or UnitLocal, it is effective only when the unit owner name included
             // in the processing target cell owner and the token matches.
 
@@ -444,8 +445,9 @@ public class AccessContext {
     }
 
     /**
-     * Access control is performed (Subject can access only token of CELL).
-     * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
+     * Check that the subject in the TCAT is identical to the issuer.
+     * @param acceptableAuthScheme
+     *  Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkCellIssueToken(AcceptableAuthScheme acceptableAuthScheme) {
         if (TYPE_TRANS.equals(this.getType())
@@ -469,7 +471,7 @@ public class AccessContext {
      * @param cellname cell
      * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
-    public void checkMyLocalOrPasswordChangeToken(Cell cellname, AcceptableAuthScheme acceptableAuthScheme) {
+    public void checkResidentLocalOrPasswordChangeToken(AcceptableAuthScheme acceptableAuthScheme) {
         //Returning 401 if there is no illegal token or token designation
         //Returning 403 for a token other than your own cell local token
         if (TYPE_INVALID.equals(this.getType())) {
@@ -477,8 +479,13 @@ public class AccessContext {
         } else if (TYPE_ANONYMOUS.equals(this.getType())
                 || TYPE_BASIC.equals(this.getType())) {
             throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
-        } else if (!TYPE_ACCOUNT.equals(this.getType()) && !TYPE_PASSWORD_CHANGE.equals(this.getType())) {
+        } else if (!TYPE_RESIDENT.equals(this.getType()) && !TYPE_PASSWORD_CHANGE.equals(this.getType())) {
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        }
+
+        // Check that the subject is resident and the app scope include auth priv.
+        if (TYPE_RESIDENT.equals(this.getType()) && !this.hasScopeCellPrivilege(CellPrivilege.AUTH)) {
+            throw PersoniumCoreException.Auth.INSUFFICIENT_SCOPE.params(CellPrivilege.AUTH.getName());
         }
     }
 
@@ -489,7 +496,8 @@ public class AccessContext {
      * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkSchemaAccess(String settingConfidentialLevel, Box box, AcceptableAuthScheme acceptableAuthScheme) {
-        //If you are a master token or unit user, unit local unit user pass through schema authentication.
+        // If accessed with a master, unit user token, or unit local unit user token,
+        // Then pass through schema authentication.
         if (this.isUnitUserToken()) {
             return;
         }
@@ -532,7 +540,7 @@ public class AccessContext {
      */
     public void checkSchemaMatches(Box box) {
         if (box != null) {
-            String boxSchema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema());
+            String boxSchema = UriUtils.convertSchemeFromLocalUnitToHttp(box.getSchema());
             String tokenSchema = getSchema();
 
             // Do not check if box schema is not set.
@@ -548,8 +556,10 @@ public class AccessContext {
     }
 
     /**
-     * If basic authentication can not be done, it is checked whether basic authentication can be performed or not, and the state of Basic authentication disabled is set in context. <br />
-     * In this method, only checking is performed, and whether or not it is actually an authentication error is left to the access right check process of the structure.
+     * If basic authentication can not be done, it is checked whether basic authentication can be performed or not,
+     *  and the state of Basic authentication disabled is set in context. <br />
+     * In this method, only checking is performed, and whether or not it is actually an authentication error
+     * is left to the access right check process of the structure.
      * @param box Box object (specify null for Cell level)
      */
     public void updateBasicAuthenticationStateForResource(Box box) {
@@ -565,7 +575,7 @@ public class AccessContext {
         }
 
         //The main box has a schema but basic authentication is possible
-        if (Role.DEFAULT_BOX_NAME.equals(box.getName())) {
+        if (Box.MAIN_BOX_NAME.equals(box.getName())) {
             return;
         }
 
@@ -647,7 +657,7 @@ public class AccessContext {
             return new AccessContext(TYPE_INVALID, null, baseUri, uriInfo, InvalidReason.basicAuthError);
         }
 
-        String[] idpw = PersoniumCoreUtils.parseBasicAuthzHeader(authzHeaderValue);
+        String[] idpw = CommonUtils.parseBasicAuthzHeader(authzHeaderValue);
         if (idpw == null) {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthFormat);
         }
@@ -680,7 +690,26 @@ public class AccessContext {
         ret.subject = username;
         //Acquire role information
         ret.roles = cell.getRoleListForAccount(username);
+        // TODO Make configurable
+        ret.addScope("root");
+
         return ret;
+    }
+    public void addScope(String scopeStr) {
+        this.scopes.add(scopeStr);
+        if (scopeStr.startsWith("https://")||scopeStr.startsWith("http://")) {
+            try {
+                this.scopeRoles.add(new Role(new URL(scopeStr)));
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            CellPrivilege prv = CellPrivilege.get(CellPrivilege.class, scopeStr);
+            if (prv != null) {
+                this.scopePrivileges.add(prv);
+            }
+        }
+
     }
 
     /**
@@ -736,7 +765,7 @@ public class AccessContext {
         }
         log.debug(tk.getClass().getCanonicalName());
         //If it is not an AccessToken, ie a refresh token.
-        if (!(tk instanceof IAccessToken) || tk instanceof TransCellRefreshToken) {
+        if (!(tk instanceof IAccessToken) || tk instanceof VisitorRefreshToken) {
             //Access by refresh token is not permitted.
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.refreshToken);
         }
@@ -747,8 +776,8 @@ public class AccessContext {
         }
 
         AccessContext ret = new AccessContext(null, cell, baseUri, uriInfo);
-        if (tk instanceof AccountAccessToken) {
-            ret.accessType = TYPE_ACCOUNT;
+        if (tk instanceof ResidentLocalAccessToken) {
+            ret.accessType = TYPE_RESIDENT;
             //Retrieve role information.
             String acct = tk.getSubject();
             ret.roles = cell.getRoleListForAccount(acct);
@@ -763,9 +792,9 @@ public class AccessContext {
             ret.accessType = TYPE_PASSWORD_CHANGE;
             ret.subject = cell.getUrl() + "#" + tk.getSubject();
             ret.issuer = tk.getIssuer();
-        } else if (tk instanceof CellLocalAccessToken) {
-            CellLocalAccessToken clat = (CellLocalAccessToken) tk;
-            ret.accessType = TYPE_LOCAL;
+        } else if (tk instanceof VisitorLocalAccessToken) {
+            VisitorLocalAccessToken clat = (VisitorLocalAccessToken) tk;
+            ret.accessType = TYPE_VISITOR;
             //Acquire roll information and pack it.
             ret.roles = clat.getRoles();
             ret.subject = tk.getSubject();
@@ -791,8 +820,26 @@ public class AccessContext {
         } else {
             ret.confidentialLevel = OAuth2Helper.SchemaLevel.PUBLIC;
         }
-
-        // TODO Cache Cell Level
+        if (tk.getScope() != null) {
+            ret.scopes.addAll(Arrays.asList(tk.getScope()));
+            for (String scope : ret.scopes) {
+                if (OAuth2Helper.Scope.OPENID.contentEquals(scope)) {
+                    continue;
+                }
+                if (scope.startsWith("https://")||scope.startsWith("http://")) {
+                    try {
+                        ret.scopeRoles.add(new Role(new URL(scope)));
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    CellPrivilege prv = CellPrivilege.get(CellPrivilege.class, scope);
+                    if (prv != null) {
+                        ret.scopePrivileges.add(prv);
+                    }
+                }
+            }
+        }
         return ret;
     }
 
@@ -887,8 +934,8 @@ public class AccessContext {
 
         String issuer = tca.getIssuer();
         if ((tca.getTarget().equals(baseUri) || tca.getTarget().equals(escapedBaseUri))
-                && (PersoniumUnitConfig.checkUnitUserIssuers(issuer, baseUri)
-                        || PersoniumUnitConfig.checkUnitUserIssuers(issuer, escapedBaseUri))) {
+                && (PersoniumUnitConfig.checkUnitUserIssuers(issuer)
+                        || PersoniumUnitConfig.checkUnitUserIssuers(issuer))) {
             //Processing unit user tokens
             ret.accessType = TYPE_UNIT_USER;
             ret.subject = tca.getSubject();
@@ -896,12 +943,12 @@ public class AccessContext {
 
             //Take role information and if you have unit admin roll, promote to unit admin.
             List<Role> roles = tca.getRoles();
-            Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.DEFAULT_BOX_NAME, null, tca.getIssuer());
+            Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.MAIN_BOX_NAME, null, tca.getIssuer());
             String unitAdminRoleUrl = unitAdminRole.createUrl();
-            Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.DEFAULT_BOX_NAME,
+            Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.MAIN_BOX_NAME,
                     null, tca.getIssuer());
             String cellContentsReaderUrl = cellContentsReaderRole.createUrl();
-            Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.DEFAULT_BOX_NAME,
+            Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.MAIN_BOX_NAME,
                     null, tca.getIssuer());
             String cellContentsAdminUrl = cellContentsAdminRole.createUrl();
 
@@ -944,4 +991,18 @@ public class AccessContext {
         }
     }
 
+    /**
+     * Check if this access context has the cell level privilege.
+     * @param cellPriv
+     * @return
+     */
+    public boolean hasScopeCellPrivilege(CellPrivilege cellPriv) {
+        for (CellPrivilege scopePriv : this.scopePrivileges) {
+            if (scopePriv.includes(cellPriv)) {
+                return true;
+            }
+        }
+        // TODO scope role check
+        return false;
+    }
 }

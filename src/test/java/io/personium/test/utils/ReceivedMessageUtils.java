@@ -51,7 +51,7 @@ public class ReceivedMessageUtils {
             String targetCellUrl = UrlUtils.cellRoot(cellName);
             String cellUrl = UrlUtils.cellRoot(Setup.TEST_CELL2);
             List<io.personium.common.auth.token.Role> list = new ArrayList<io.personium.common.auth.token.Role>();
-            TransCellAccessToken ttk = new TransCellAccessToken(cellUrl, cellUrl, targetCellUrl, list, "");
+            TransCellAccessToken ttk = new TransCellAccessToken(cellUrl, cellUrl, targetCellUrl, list, "", null);
             token = ttk.toTokenString();
         }
         TResponse response = Http.request("received-message.txt")

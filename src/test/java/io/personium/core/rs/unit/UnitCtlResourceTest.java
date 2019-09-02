@@ -87,7 +87,7 @@ public class UnitCtlResourceTest {
         doReturn("http://personiumunit/").when(accessContext).getBaseUri();
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("personium-localunit:/admincell/#admin").when(UriUtils.class,
-                "convertSchemeFromHttpToLocalUnit", "http://personiumunit/", "http://personiumunit/admincell/#admin");
+                "convertSchemeFromHttpToLocalUnit", "http://personiumunit/admincell/#admin");
 
         doNothing().when(oEntityWrapper).put("Owner", "personium-localunit:/admincell/#admin");
 
@@ -189,7 +189,7 @@ public class UnitCtlResourceTest {
         // None.
 
         // Run method
-        unitCtlResource.checkAccessContext(ac, privilege);
+        unitCtlResource.checkAccessContext(privilege);
     }
 
     /**
@@ -219,7 +219,7 @@ public class UnitCtlResourceTest {
 
         try {
             // Run method
-            unitCtlResource.checkAccessContext(ac, privilege);
+            unitCtlResource.checkAccessContext(privilege);
             fail("Not throws exception.");
         } catch (PersoniumCoreAuthzException e) {
             // Confirm result
@@ -255,7 +255,7 @@ public class UnitCtlResourceTest {
 
         try {
             // Run method
-            unitCtlResource.checkAccessContext(ac, privilege);
+            unitCtlResource.checkAccessContext(privilege);
             fail("Not throws exception.");
         } catch (PersoniumCoreAuthzException e) {
             // Confirm result
@@ -282,14 +282,14 @@ public class UnitCtlResourceTest {
         doReturn(uri).when(uriInfo).getBaseUri();
         unitCtlResource = spy(new UnitCtlResource(ac));
 
-        doReturn(AccessContext.TYPE_LOCAL).when(ac).getType();
+        doReturn(AccessContext.TYPE_VISITOR).when(ac).getType();
 
         // Expected result
         PersoniumCoreException expected = PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
 
         try {
             // Run method
-            unitCtlResource.checkAccessContext(ac, privilege);
+            unitCtlResource.checkAccessContext(privilege);
             fail("Not throws exception.");
         } catch (PersoniumCoreException e) {
             // Confirm result
@@ -323,7 +323,7 @@ public class UnitCtlResourceTest {
         doReturn("http://personiumunit/").when(ac).getBaseUri();
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("http://personiumunit/admincell/#admin").when(UriUtils.class,
-                "convertSchemeFromLocalUnitToHttp", "http://personiumunit/", "personium-localunit:/admincell/#admin");
+                "convertSchemeFromLocalUnitToHttp", "personium-localunit:/admincell/#admin");
 
         doReturn(AccessContext.TYPE_UNIT_MASTER).when(ac).getType();
 
@@ -362,7 +362,7 @@ public class UnitCtlResourceTest {
         doReturn("http://personiumunit/").when(ac).getBaseUri();
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("http://personiumunit/admincell/#admin").when(UriUtils.class,
-                "convertSchemeFromLocalUnitToHttp", "http://personiumunit/", "personium-localunit:/admincell/#admin");
+                "convertSchemeFromLocalUnitToHttp", "personium-localunit:/admincell/#admin");
 
         doReturn(AccessContext.TYPE_UNIT_USER).when(ac).getType();
 
@@ -403,7 +403,7 @@ public class UnitCtlResourceTest {
         doReturn("http://personiumunit/").when(ac).getBaseUri();
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("http://personiumunit/admincell/#admin").when(UriUtils.class,
-                "convertSchemeFromLocalUnitToHttp", "http://personiumunit/", "personium-localunit:/admincell/#admin");
+                "convertSchemeFromLocalUnitToHttp", "personium-localunit:/admincell/#admin");
 
         doReturn(AccessContext.TYPE_UNIT_USER).when(ac).getType();
 

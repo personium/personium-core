@@ -94,7 +94,7 @@ public class NullResource {
     public final Response get() {
 
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
@@ -113,7 +113,7 @@ public class NullResource {
 
         //Access control
         if (!this.isParentNull) {
-            this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.BIND);
+            this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.BIND);
         }
 
         //If there is no intermediate path 409 error
@@ -191,7 +191,7 @@ public class NullResource {
 
         //Access control
         if (!this.isParentNull) {
-            this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.BIND);
+            this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.BIND);
         }
 
         //If there is no intermediate path 409 error
@@ -284,7 +284,7 @@ public class NullResource {
     public final Response delete() {
         //Access control
         if (!this.isParentNull) {
-            this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+            this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
         }
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
@@ -297,7 +297,7 @@ public class NullResource {
     @POST
     public final Response post() {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
@@ -309,7 +309,7 @@ public class NullResource {
     @REPORT
     public final Response report() {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
@@ -321,7 +321,7 @@ public class NullResource {
     @PROPFIND
     public final Response propfind() {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ_PROPERTIES);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
@@ -333,7 +333,7 @@ public class NullResource {
     @PROPPATCH
     public final Response proppatch() {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_PROPERTIES);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
@@ -344,9 +344,10 @@ public class NullResource {
      */
     @ACL
     public final Response acl() {
-        //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
-
+        //Check Access control first.
+        // and throw access control related exception if the request is not authorized.
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_ACL);
+       // If the parent resource is accessible then return not found.
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
@@ -358,7 +359,7 @@ public class NullResource {
     public final Response move() {
         //Access control
         if (!this.isParentNull) {
-            this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+            this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
         }
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());

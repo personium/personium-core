@@ -20,7 +20,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.utils.Http;
@@ -268,7 +268,7 @@ public class CellCtlUtils {
         Http.request("cell/extRole/extRole-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(testExtRoleName))
+                .with("extRoleName", CommonUtils.encodeUrlComp(testExtRoleName))
                 .with("relationName", relName)
                 .with("relationBoxName", relBoxName)
                 .returns()
@@ -287,7 +287,7 @@ public class CellCtlUtils {
         Http.request("cell/extRole/extRole-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(testExtRoleName))
+                .with("extRoleName", CommonUtils.encodeUrlComp(testExtRoleName))
                 .with("relationName", "'" + relationName + "'")
                 .with("relationBoxName", "null")
                 .returns()
@@ -303,7 +303,7 @@ public class CellCtlUtils {
         Http.request("cell/extRole/extRole-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(testExtRoleName))
+                .with("extRoleName", CommonUtils.encodeUrlComp(testExtRoleName))
                 .with("relationName", "null")
                 .with("relationBoxName", "null")
                 .returns()

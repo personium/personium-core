@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
@@ -173,7 +173,7 @@ public class BarInstallTest extends PersoniumTest {
         String reqCell = Setup.TEST_CELL1;
         try {
             // Delete link.
-            String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellname/__role/__/role2");
+            String extRole = CommonUtils.encodeUrlComp("https://fqdn/cellname/__role/__/role2");
             String key = "Name='role1',_Box.Name='" + INSTALL_TARGET + "'";
             String navKey = "ExtRole='" + extRole + "'"
                     + ",_Relation.Name='relation1',_Relation._Box.Name='" + INSTALL_TARGET + "'";
@@ -195,7 +195,7 @@ public class BarInstallTest extends PersoniumTest {
 
         try {
             // Delete ExtRole.
-            String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellname/__role/__/role2");
+            String extRole = CommonUtils.encodeUrlComp("https://fqdn/cellname/__role/__/role2");
             Http.request("cell/extRole/extRole-delete.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("cellPath", Setup.TEST_CELL1)
@@ -336,7 +336,7 @@ public class BarInstallTest extends PersoniumTest {
     @Test
     public final void メインボックスに対してbarインストールすると405エラーとなること() {
         String reqCell = Setup.TEST_CELL1;
-        String reqPath = Box.DEFAULT_BOX_NAME;
+        String reqPath = Box.MAIN_BOX_NAME;
 
         TResponse res = null;
         File barFile = new File(RESOURCE_PATH + BAR_FILE_MINIMUM);
@@ -646,7 +646,7 @@ public class BarInstallTest extends PersoniumTest {
                 "Name='relation1',_Box.Name='" + INSTALL_TARGET + "'", Role.EDM_TYPE_NAME,
                 role1, AbstractCase.MASTER_TOKEN_NAME, -1);
         // Role <--> ExtRole
-        String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellname/__role/__/role2");
+        String extRole = CommonUtils.encodeUrlComp("https://fqdn/cellname/__role/__/role2");
         LinksUtils.deleteLinks(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, role1, ExtRole.EDM_TYPE_NAME,
                 "ExtRole='" + extRole + "'" + ",_Relation.Name='relation1',_Relation._Box.Name='"
                 + INSTALL_TARGET + "'",

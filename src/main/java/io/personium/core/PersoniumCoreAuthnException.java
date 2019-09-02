@@ -38,9 +38,6 @@ import io.personium.plugin.base.auth.AuthPluginException;
 /**
  * Log message creation class.
  */
-/**
- * @author naoki
- */
 @SuppressWarnings("serial")
 public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
@@ -56,7 +53,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     /**
      * Client Secret Parsing error.
      */
-    public static final PersoniumCoreAuthnException CLIENT_SECRET_PARSE_ERROR =
+    public static final PersoniumCoreAuthnException CLIENT_ASSERTION_PARSE_ERROR =
             create("PR400-AN-0003", Error.INVALID_CLIENT);
     /**
      * Client Secret expiration date check.
@@ -69,7 +66,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     public static final PersoniumCoreAuthnException CLIENT_SECRET_DSIG_INVALID =
             create("PR400-AN-0005", Error.INVALID_CLIENT);
     /**
-     * Issuer of Client Secret is not equal to ID.
+     * Issuer of Client Secret does not match client id.
      */
     public static final PersoniumCoreAuthnException CLIENT_SECRET_ISSUER_MISMATCH =
             create("PR400-AN-0006", Error.INVALID_CLIENT);
@@ -130,10 +127,27 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     public static final PersoniumCoreAuthnException AUTH_HEADER_IS_INVALID =
             create("PR400-AN-0018", Error.INVALID_CLIENT);
     /**
+     * Invalid assertion type parameter.
+     */
+    public static final PersoniumCoreAuthnException INVALID_CLIENT_ASSERTION_TYPE =
+            create("PR400-AN-0022", Error.INVALID_CLIENT);
+    /**
+     * Authenticated Client does not match the refresh token.
+     */
+    public static final PersoniumCoreAuthnException CLIENT_MISMATCH_FOR_REFRESH =
+            create("PR401-AN-0020", Error.INVALID_CLIENT);
+    /**
+     * Client auth required to refresh the token.
+     */
+    public static final PersoniumCoreAuthnException CLIENT_AUTH_REQUIRED =
+            create("PR401-AN-0021", Error.INVALID_CLIENT);
+    /**
      * Password change required.
      */
     public static final PersoniumCoreAuthnException PASSWORD_CHANGE_REQUIRED =
             create("PR401-AN-0001", Error.UNAUTHORIZED_CLIENT);
+
+
 
     /**
      * NetWork related error.

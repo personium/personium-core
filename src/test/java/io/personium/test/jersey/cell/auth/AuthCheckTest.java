@@ -36,10 +36,10 @@ import org.w3c.dom.NodeList;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.CellLocalAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Account;
@@ -101,9 +101,9 @@ public class AuthCheckTest extends PersoniumTest {
     static final String EXTCELL_URL = UrlUtils.extCellResource(CELL_NAME1, UrlUtils.cellRoot(CELL_NAME2));
     static final String ROLE_URI = UrlUtils.roleUrl(CELL_NAME1, null, ROLE_NAME);
     static final String RELATION_BOX_NAME = null;
-    static final String EXTROLE_NAME1 = UrlUtils.roleResource(APP_CELL_NAME, Box.DEFAULT_BOX_NAME, ROLE_NAME1);
-    static final String EXTROLE_NAME2 = UrlUtils.roleResource(CELL_NAME2, Box.DEFAULT_BOX_NAME, ROLE_NAME2);
-    static final String EXTROLE_NAME4 = UrlUtils.roleResource(APP_CELL_NAME, Box.DEFAULT_BOX_NAME, ROLE_NAME4);
+    static final String EXTROLE_NAME1 = UrlUtils.roleResource(APP_CELL_NAME, Box.MAIN_BOX_NAME, ROLE_NAME1);
+    static final String EXTROLE_NAME2 = UrlUtils.roleResource(CELL_NAME2, Box.MAIN_BOX_NAME, ROLE_NAME2);
+    static final String EXTROLE_NAME4 = UrlUtils.roleResource(APP_CELL_NAME, Box.MAIN_BOX_NAME, ROLE_NAME4);
 
     /**
      * コンストラクタ.
@@ -158,7 +158,7 @@ public class AuthCheckTest extends PersoniumTest {
             TransCellAccessToken aToken = TransCellAccessToken.parse(transCellAccessToken);
 
             // 取得トークン内のロール確認
-            assertEquals(UrlUtils.roleResource(testCellName, Box.DEFAULT_BOX_NAME, roleNameNoneBox),
+            assertEquals(UrlUtils.roleResource(testCellName, Box.MAIN_BOX_NAME, roleNameNoneBox),
                     aToken.getRoles().get(0).createUrl());
         } finally {
 
@@ -366,7 +366,7 @@ public class AuthCheckTest extends PersoniumTest {
             RelationUtils.create(testCellName1, AbstractCase.MASTER_TOKEN_NAME, body, HttpStatus.SC_CREATED);
             // Cell1のExtCellとRelationを結びつけ
             LinksUtils.createLinksExtCell(testCellName1,
-                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName2)),
+                    CommonUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName2)),
                     Relation.EDM_TYPE_NAME, relationName, null, masterToken, HttpStatus.SC_NO_CONTENT);
 
             // Cell1のRelationとRoleを結びつけ
@@ -381,7 +381,7 @@ public class AuthCheckTest extends PersoniumTest {
             String token1RoleUrl = tokenRoles1.get(0).createUrl();
 
             // 取得トークン内のロール確認
-            assertEquals(UrlUtils.roleResource(testCellName1, Box.DEFAULT_BOX_NAME, roleName), token1RoleUrl);
+            assertEquals(UrlUtils.roleResource(testCellName1, Box.MAIN_BOX_NAME, roleName), token1RoleUrl);
 
             // テスト２（user3でのアクセス時にTCAT内にrole2が入っていないこと）
             List<Role> tokenRoles2 = this.checkTransCellAccessToken(testCellName1,
@@ -395,7 +395,7 @@ public class AuthCheckTest extends PersoniumTest {
 
             // Cell1のExtCellとRelationの削除
             LinksUtils.deleteLinksExtCell(testCellName1,
-                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName2)),
+                    CommonUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName2)),
                     Relation.EDM_TYPE_NAME, relationName, null, masterToken, -1);
             // Cell1のRelationを削除
             RelationUtils.delete(testCellName1, masterToken, relationName, null, HttpStatus.SC_NO_CONTENT);
@@ -485,16 +485,16 @@ public class AuthCheckTest extends PersoniumTest {
             extRoleBody4.put("_Relation._Box.Name", null);
             ExtRoleUtils.create(masterToken, CELL_NAME1, extRoleBody4, HttpStatus.SC_CREATED);
             // Cell1のExtCellとRelationを結びつけ
-            LinksUtils.createLinksExtCell(CELL_NAME1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(CELL_NAME2)),
+            LinksUtils.createLinksExtCell(CELL_NAME1, CommonUtils.encodeUrlComp(UrlUtils.cellRoot(CELL_NAME2)),
                     Relation.EDM_TYPE_NAME, RELATION_NAME, null, masterToken, HttpStatus.SC_NO_CONTENT);
             // Cell1のExtRoleとRoleを結びつけ
-            LinksUtils.createLinksExtRole(CELL_NAME1, PersoniumCoreUtils.encodeUrlComp(EXTROLE_NAME1),
+            LinksUtils.createLinksExtRole(CELL_NAME1, CommonUtils.encodeUrlComp(EXTROLE_NAME1),
                     RELATION_NAME, null, Role.EDM_TYPE_NAME, ROLE_NAME, null,
                     masterToken, HttpStatus.SC_NO_CONTENT);
-            LinksUtils.createLinksExtRole(CELL_NAME1, PersoniumCoreUtils.encodeUrlComp(EXTROLE_NAME2),
+            LinksUtils.createLinksExtRole(CELL_NAME1, CommonUtils.encodeUrlComp(EXTROLE_NAME2),
                     RELATION_NAME, null, Role.EDM_TYPE_NAME, ROLE_NAME, null,
                     masterToken, HttpStatus.SC_NO_CONTENT);
-            LinksUtils.createLinksExtRole(CELL_NAME1, PersoniumCoreUtils.encodeUrlComp(EXTROLE_NAME4),
+            LinksUtils.createLinksExtRole(CELL_NAME1, CommonUtils.encodeUrlComp(EXTROLE_NAME4),
                     RELATION_NAME, null, Role.EDM_TYPE_NAME, ROLE_NAME, null,
                     masterToken, HttpStatus.SC_NO_CONTENT);
 
@@ -505,7 +505,7 @@ public class AuthCheckTest extends PersoniumTest {
             // テスト環境がロール１つのため、１以外はテスト失敗
             assertEquals(1, tokenRoles1.size());
             // 取得トークン内のロール確認
-            assertEquals(UrlUtils.roleResource(CELL_NAME1, Box.DEFAULT_BOX_NAME, ROLE_NAME),
+            assertEquals(UrlUtils.roleResource(CELL_NAME1, Box.MAIN_BOX_NAME, ROLE_NAME),
                     tokenRoles1.get(0).createUrl());
 
             // テスト２（user2でのアクセス時にTCAT内にdoctorが入っていること）
@@ -514,7 +514,7 @@ public class AuthCheckTest extends PersoniumTest {
             // テスト環境がロール１つのため、１以外はテスト失敗
             assertEquals(1, tokenRoles2.size());
             // 取得トークン内のロール確認
-            assertEquals(UrlUtils.roleResource(CELL_NAME1, Box.DEFAULT_BOX_NAME, ROLE_NAME),
+            assertEquals(UrlUtils.roleResource(CELL_NAME1, Box.MAIN_BOX_NAME, ROLE_NAME),
                     tokenRoles2.get(0).createUrl());
 
             // テスト３（user3でのアクセス時にTCAT内にdoctorが入っていないこと）
@@ -530,14 +530,14 @@ public class AuthCheckTest extends PersoniumTest {
             assertEquals(0, tokenRoles4.size());
         } finally {
             // Cell1のExtRoleとRoleを結びつけを削除
-            LinksUtils.deleteLinksExtRole(CELL_NAME1, PersoniumCoreUtils.encodeUrlComp(EXTROLE_NAME1),
+            LinksUtils.deleteLinksExtRole(CELL_NAME1, CommonUtils.encodeUrlComp(EXTROLE_NAME1),
                     RELATION_NAME, null, Role.EDM_TYPE_NAME, ROLE_NAME, null, masterToken, -1);
-            LinksUtils.deleteLinksExtRole(CELL_NAME1, PersoniumCoreUtils.encodeUrlComp(EXTROLE_NAME2),
+            LinksUtils.deleteLinksExtRole(CELL_NAME1, CommonUtils.encodeUrlComp(EXTROLE_NAME2),
                     RELATION_NAME, null, Role.EDM_TYPE_NAME, ROLE_NAME, null, masterToken, -1);
-            LinksUtils.deleteLinksExtRole(CELL_NAME1, PersoniumCoreUtils.encodeUrlComp(EXTROLE_NAME4),
+            LinksUtils.deleteLinksExtRole(CELL_NAME1, CommonUtils.encodeUrlComp(EXTROLE_NAME4),
                     RELATION_NAME, null, Role.EDM_TYPE_NAME, ROLE_NAME, null, masterToken, -1);
             // Cell1のExtCellとRelationの削除
-            LinksUtils.deleteLinksExtCell(CELL_NAME1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(CELL_NAME2)),
+            LinksUtils.deleteLinksExtCell(CELL_NAME1, CommonUtils.encodeUrlComp(UrlUtils.cellRoot(CELL_NAME2)),
                     Relation.EDM_TYPE_NAME, RELATION_NAME, null, masterToken, -1);
             // Cell1のExtRoleを削除する
             ExtRoleUtils.delete(CELL_NAME1, EXTROLE_NAME1,
@@ -754,7 +754,7 @@ public class AuthCheckTest extends PersoniumTest {
 
             // extCellとロールの結びつけ
             LinksUtils.createLinksExtCell(testCellName2,
-                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName)),
+                    CommonUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName)),
                     Role.EDM_TYPE_NAME, roleNameWithBox1, boxNameNoneScheme,
                     AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
@@ -791,7 +791,7 @@ public class AuthCheckTest extends PersoniumTest {
 
             // ロールとextCellの結びつけ削除
             LinksUtils.deleteLinksExtCell(testCellName2,
-                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName)),
+                    CommonUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName)),
                     Role.EDM_TYPE_NAME, roleNameWithBox1, boxNameNoneScheme, AbstractCase.MASTER_TOKEN_NAME, -1);
 
             // ExtCell削除
@@ -1071,9 +1071,9 @@ public class AuthCheckTest extends PersoniumTest {
 
         JSONObject json2 = res2.bodyAsJson();
         String localToken2 = (String) json2.get(OAuth2Helper.Key.ACCESS_TOKEN);
-        CellLocalAccessToken aToken = null;
+        VisitorLocalAccessToken aToken = null;
         try {
-            aToken = CellLocalAccessToken.parse(localToken2, UrlUtils.cellRoot(tokenAuthCellName));
+            aToken = VisitorLocalAccessToken.parse(localToken2, UrlUtils.cellRoot(tokenAuthCellName));
         } catch (TokenParseException e) {
             fail();
         }

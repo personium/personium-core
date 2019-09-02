@@ -84,7 +84,7 @@ public class UnitCtlODataProducerTest {
         doReturn("http://personiumunit/admincell/#admin").when(accessContext).getSubject();
         PowerMockito.mockStatic(UriUtils.class);
         PowerMockito.doReturn("personium-localunit:/admincell/#admin").when(UriUtils.class,
-                "convertSchemeFromHttpToLocalUnit", "http://personiumunit/", "http://personiumunit/admincell/#admin");
+                "convertSchemeFromHttpToLocalUnit", "http://personiumunit/admincell/#admin");
 
         Map<String, Object> term1 = new HashMap<>();
         Map<String, Object> term2 = new HashMap<>();

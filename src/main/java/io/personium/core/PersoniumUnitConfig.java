@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014-2018 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2018 Personium Project
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.utils.UriUtils;
 
@@ -188,6 +189,16 @@ public class PersoniumUnitConfig {
 
         /** Encrypt the DAV file (true: enabled false: disabled (default)). */
         public static final String DAV_ENCRYPT_ENABLED = KEY_ROOT + "security.dav.encrypt.enabled";
+
+        /** Default scope of token for grant_type=password . */
+        public static final String TOKEN_DEFAULT_SCOPE_ROPC = KEY_ROOT + "security.token.defaultScope.ropc";
+
+        /** Default scope of token for grant_type=assertion . */
+        public static final String TOKEN_DEFAULT_SCOPE_ASSERTION = KEY_ROOT + "security.token.defaultScope.assertion";
+
+        /** Default scope of token for grant_type=code . */
+        public static final String TOKEN_DEFAULT_SCOPE_CODE = KEY_ROOT + "security.token.defaultScope.grant_code";
+
     }
 
     /**
@@ -538,14 +549,14 @@ public class PersoniumUnitConfig {
         }
     }
 
-    private static boolean isSpaceSeparatedValueIncluded(String spaceSeparatedValue, String testValue, String unitUrl) {
+    private static boolean isSpaceSeparatedValueIncluded(String spaceSeparatedValue, String testValue) {
         if (testValue == null || spaceSeparatedValue == null) {
             return false;
         }
         String[] values = spaceSeparatedValue.split(" ");
         for (String val : values) {
             // Correspondence when "localunit" is set for issuers.
-            String convertedValue = UriUtils.convertSchemeFromLocalUnitToHttp(unitUrl, val);
+            String convertedValue = UriUtils.convertSchemeFromLocalUnitToHttp(val);
             if (testValue.equals(convertedValue)) {
                 return true;
             }
@@ -871,7 +882,7 @@ public class PersoniumUnitConfig {
     public static String getBaseUrl() {
          return UriBuilder.fromPath("/")
                           .scheme(getUnitScheme())
-                          .host(PersoniumCoreUtils.getFQDN())
+                          .host(CommonUtils.getFQDN())
                           .port(getUnitPort())
                           .build()
                           .toString();
@@ -1474,6 +1485,29 @@ public class PersoniumUnitConfig {
     }
 
     /**
+     *
+     * @return scope string
+     */
+    public static String getTokenDefaultScopeRopc() {
+        return get(Security.TOKEN_DEFAULT_SCOPE_ROPC);
+    }
+    /**
+     *
+     * @return scope string
+     */
+    public static String getTokenDefaultScopeCode() {
+        return get(Security.TOKEN_DEFAULT_SCOPE_CODE);
+    }
+    /**
+     *
+     * @return scope string
+     */
+    public static String getTokenDefaultScopeAssertion() {
+        return get(Security.TOKEN_DEFAULT_SCOPE_ASSERTION);
+    }
+
+
+    /**
      * Get message queue implementation of EventBus.
      * @return message queue
      */
@@ -1614,8 +1648,8 @@ public class PersoniumUnitConfig {
      * @param unitUrl Unit URL
      * @return Included:true
      */
-    public static boolean checkUnitUserIssuers(String url, String unitUrl) {
-        return isSpaceSeparatedValueIncluded(getUnitUserIssuers(), url, unitUrl);
+    public static boolean checkUnitUserIssuers(String url) {
+        return isSpaceSeparatedValueIncluded(getUnitUserIssuers(), url);
     }
 
     /**

@@ -301,7 +301,7 @@ public class CellResourceTest {
         initCellResource(cell, cellCmp, cellRsCmp, accessContext);
 
         doNothing().when(accessContext).updateBasicAuthenticationStateForResource(null);
-        doReturn(AccessContext.TYPE_LOCAL).when(accessContext).getType();
+        doReturn(AccessContext.TYPE_VISITOR).when(accessContext).getType();
 
         // Expected result
         PersoniumCoreException expected = PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;

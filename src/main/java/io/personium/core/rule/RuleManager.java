@@ -784,7 +784,7 @@ public class RuleManager {
                 if (bi != null) {
                     bi.name = box.getName();
                     String schema = box.getSchema();
-                    bi.schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
+                    bi.schema = UriUtils.convertSchemeFromLocalUnitToHttp(schema);
                 }
             }
         }
@@ -853,7 +853,7 @@ public class RuleManager {
         RuleInfo rule = createRuleInfo(oEntity);
 
         // Replace personium-localunit scheme to http scheme.
-        rule.subject = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.subject);
+        rule.subject = UriUtils.convertSchemeFromLocalUnitToHttp(rule.subject);
         // Remove fragment from TargetUrl
         rule.targeturl = removeFragment(rule.targeturl);
         try {
@@ -868,7 +868,7 @@ public class RuleManager {
                     list.remove(0);
                     relative = list.stream().collect(Collectors.joining("/"));
                 }
-                String turl = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.targeturl);
+                String turl = UriUtils.convertSchemeFromLocalUnitToHttp(rule.targeturl);
                 if (relative != null) {
                     turl += "#" + relative;
                 }
@@ -904,7 +904,7 @@ public class RuleManager {
                         bi.id = box.getId();
                         bi.name = box.getName();
                         String schema = box.getSchema();
-                        bi.schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
+                        bi.schema = UriUtils.convertSchemeFromLocalUnitToHttp(schema);
                         bi.count = 0;
                         bmap.put(bi.id, bi);
                     }

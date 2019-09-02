@@ -740,6 +740,11 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException INSUFFICIENT_SCHEMA_AUTHZ_LEVEL = create("PR403-AU-0006");
         /**
+         * Scope is insufficient.
+         */
+        public static final PersoniumCoreException INSUFFICIENT_SCOPE = create("PR403-AU-0007");
+
+        /**
          * Error setting root CA certificate.
          */
         public static final PersoniumCoreException ROOT_CA_CRT_SETTING_ERROR = create("PR500-AN-0001");
@@ -1014,6 +1019,13 @@ public class PersoniumCoreException extends RuntimeException {
          * {0} : Overview of failed processing
          */
         public static final PersoniumCoreException FILE_IO_ERROR = create("PR500-CM-0002");
+
+        /**
+         * Unchecked Invalid URL used internally.
+         * <p>
+         * {0} : URL
+         */
+        public static final PersoniumCoreException INVALID_URL = create("PR500-CM-0003");
     }
 
     /**

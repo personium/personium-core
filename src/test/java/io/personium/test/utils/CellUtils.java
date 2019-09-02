@@ -28,7 +28,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumException;
 import io.personium.test.jersey.PersoniumRequest;
@@ -643,7 +643,7 @@ public class CellUtils {
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, authorization);
-        requestheaders.put(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL, newPassword);
+        requestheaders.put(CommonUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL, newPassword);
 
         return rest.put(UrlUtils.cellRoot(cellName) + "__mypassword", "", requestheaders);
     }
@@ -675,7 +675,7 @@ public class CellUtils {
         // リクエストヘッダをセット
         String schemaCellUrl = UrlUtils.cellRoot(schemaCell);
         String authorization =
-                PersoniumCoreUtils.createBasicAuthzHeader(schemaCellUrl, schemaAuthenticatedToken);
+                CommonUtils.createBasicAuthzHeader(schemaCellUrl, schemaAuthenticatedToken);
 
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);

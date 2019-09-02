@@ -360,17 +360,6 @@ public final class ODataUtils {
         return isValidUrnScheme(scheme) || isValidCellUrlScheme(scheme);
     }
 
-    private static boolean isValidLocalUnitUrlScheme(String scheme) {
-        return UriUtils.SCHEME_LOCALUNIT.equals(scheme);
-    }
-
-    private static boolean isValidLocalCellUrlScheme(String scheme) {
-        return UriUtils.SCHEME_LOCALCELL.equals(scheme);
-    }
-
-    private static boolean isValidLocalBoxUrlScheme(String scheme) {
-        return UriUtils.SCHEME_LOCALBOX.equals(scheme);
-    }
 
     /**
      * Check if string is valid Uri.
@@ -454,8 +443,10 @@ public final class ODataUtils {
         }
         String scheme = uri.getScheme();
         boolean isValidScheme = isValidCellUrlScheme(scheme);
-        if (isValidScheme && isValidLocalUnitUrlScheme(scheme)) {
-            isValidScheme = validateLocalUnitUrl(str, Common.PATTERN_CELL_LOCALUNIT_PATH);
+        if (isValidScheme && UriUtils.SCHEME_LOCALUNIT.equals(scheme)) {
+            boolean b1 = validateLocalUnitUrl(str, Common.PATTERN_CELL_LOCALUNIT_PATH);
+            boolean b2 = UriUtils.REGEX_LOCALUNIT_DOUBLE_COLONS.matcher(str).matches();
+            isValidScheme = b1 || b2;
         }
         boolean isNormalized = uri.normalize().toString().equals(str);
         boolean hasTrailingSlash = str.endsWith("/");
@@ -488,7 +479,7 @@ public final class ODataUtils {
             return false;
         }
         String scheme = uri.getScheme();
-        boolean isValidScheme = isValidLocalCellUrlScheme(scheme);
+        boolean isValidScheme = UriUtils.SCHEME_LOCALCELL.equals(scheme);
         boolean isNormalized = uri.normalize().toString().equals(str);
         return isValidLength && isValidScheme && isNormalized;
     }
@@ -510,7 +501,7 @@ public final class ODataUtils {
             return false;
         }
         String scheme = uri.getScheme();
-        boolean isValidScheme = isValidLocalBoxUrlScheme(scheme);
+        boolean isValidScheme = UriUtils.SCHEME_LOCALBOX.equals(scheme);
         boolean isNormalized = uri.normalize().toString().equals(str);
         return isValidLength && isValidScheme && isNormalized;
     }
@@ -532,7 +523,7 @@ public final class ODataUtils {
             return false;
         }
         String scheme = uri.getScheme();
-        boolean isValidScheme = isValidLocalUnitUrlScheme(scheme);
+        boolean isValidScheme = UriUtils.SCHEME_LOCALUNIT.equals(scheme);
         boolean isNormalized = uri.normalize().toString().equals(str);
         return isValidLength && isValidScheme && isNormalized;
     }
@@ -561,7 +552,7 @@ public final class ODataUtils {
             uri = new URI(str);
             String scheme = uri.getScheme();
             // Scheme check
-            if (!isValidLocalUnitUrlScheme(scheme)) {
+            if (!UriUtils.SCHEME_LOCALUNIT.equals(scheme)) {
                 return false;
             }
             // String length check

@@ -1,6 +1,22 @@
+## 1.7.18
+NEW FEATURES:
+* Each Cell's OAuth 2.0 token endpoint now accepts scope request.
+  * Apps can request single or multiple Cell level privilege name(s) as scope request.
+  * Issued tokens now carry assigned scope information.
+  * Cell Level API Access is now limited to tokens with appropriate scope. ([#445](https://github.com/personium/personium-core/issues/445))
+  * Added unit config keys for configuring default scopes for different grant type ([#470](https://github.com/personium/personium-core/issues/470))
+  * Default configurations for all grant types are set to "root" for backward compatibility. (Change configuration to use your unit with more security)
+* URL scheme "personium-localunit" is extended and supports a syntax using two colons. ([#284](https://github.com/personium/personium-core/issues/284))
+
+IMPROVEMENTS:
+* Base URL in ACL is now converted to one using "personium-localunit" scheme when internally pesisted. Unit FQDN change won't require data change.
+
+SECURITY FIX:
+* Token refreshing between apps now disabled. ([#463](https://github.com/personium/personium-core/issues/463))
+
 ## 1.7.17
 IMPROVEMENTS:
-* Add IO logging with IO time. ([#446](https://github.com/personium/personium-core/issues/446))
+* Add IO logging with elapsed time. ([#446](https://github.com/personium/personium-core/issues/446))
 
 ## 1.7.16
 BUG FIXES:
@@ -8,7 +24,7 @@ BUG FIXES:
 * If Accept request header contains extra values, 409 is returned ([#435](https://github.com/personium/personium-core/issues/435))
 
 IMPROVEMENTS:
-* Fix crossdomain.xml error in Eclipse. ([#448](https://github.com/personium/personium-core/issues/444))
+* Fix crossdomain.xml namespace URL. ([#448](https://github.com/personium/personium-core/issues/444))
 
 ## 1.7.15
 BUG FIXES:

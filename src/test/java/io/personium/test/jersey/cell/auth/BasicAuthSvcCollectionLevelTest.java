@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.common.auth.token.Role;
+import io.personium.core.model.Box;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -132,11 +132,11 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
 
             // コレクションACL設定(Basic認証-成功)
             DavResourceUtils.setACLwithBox(cellName, tokenForACLWrite, HttpStatus.SC_OK,
-                    boxName, colName, "box/acl-2role-setting.txt", "role4", "role4", Role.DEFAULT_BOX_NAME,
+                    boxName, colName, "box/acl-2role-setting.txt", "role4", "role4", Box.MAIN_BOX_NAME,
                     "<D:read/>", "<D:write/>", "");
             // コレクションACL設定(Basic認証-失敗)
             res = DavResourceUtils.setACLwithBox(cellName, invalidToken, HttpStatus.SC_UNAUTHORIZED,
-                    boxName, colName, "box/acl-2role-setting.txt", "role4", "role4", Role.DEFAULT_BOX_NAME,
+                    boxName, colName, "box/acl-2role-setting.txt", "role4", "role4", Box.MAIN_BOX_NAME,
                     "<D:read/>", "<D:write/>", "");
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
@@ -264,13 +264,13 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
             // ファイルにACL設定(Basic認証-成功)
             DavResourceUtils.setACLwithBox(cellName, tokenForACLWrite, HttpStatus.SC_METHOD_NOT_ALLOWED,
                     boxName, srcFile, "box/acl-2role-setting.txt", "role4", "role4",
-                    Role.DEFAULT_BOX_NAME,
+                    Box.MAIN_BOX_NAME,
                     "<D:read/>",
                     "<D:write/>", "");
             // ファイルにACL設定(Basic認証-失敗)
             res = DavResourceUtils.setACLwithBox(cellName, invalidToken, HttpStatus.SC_UNAUTHORIZED,
                     boxName, srcFile, "box/acl-2role-setting.txt", "role4", "role4",
-                    Role.DEFAULT_BOX_NAME,
+                    Box.MAIN_BOX_NAME,
                     "<D:read/>",
                     "<D:write/>", "");
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);

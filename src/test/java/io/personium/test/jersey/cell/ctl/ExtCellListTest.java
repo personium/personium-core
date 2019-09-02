@@ -31,7 +31,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -66,7 +66,7 @@ public class ExtCellListTest extends ODataCommon {
     @Test
     public final void test_ExtCell_normal_json() {
         String expectedMetadataUri = "http://localhost:9998/testcell1/__ctl/ExtCell('"
-                + PersoniumCoreUtils.encodeUrlComp(testExtCellUrl) + "')";
+                + CommonUtils.encodeUrlComp(testExtCellUrl) + "')";
 
         TResponse res = ExtCellUtils.list(token, cellName, "application/json", HttpStatus.SC_OK);
         JSONObject body = res.bodyAsJson();
@@ -87,7 +87,7 @@ public class ExtCellListTest extends ODataCommon {
      */
     @Test
     public final void test_ExtCell_normal_xml() {
-        String expectedExtCellFunction = "ExtCell('" + PersoniumCoreUtils.encodeUrlComp(testExtCellUrl) + "')";
+        String expectedExtCellFunction = "ExtCell('" + CommonUtils.encodeUrlComp(testExtCellUrl) + "')";
         String expectedMetadataUri = "http://localhost:9998/testcell1/__ctl/" + expectedExtCellFunction;
 
         TResponse res = ExtCellUtils.list(token, cellName, "application/xml", HttpStatus.SC_OK);

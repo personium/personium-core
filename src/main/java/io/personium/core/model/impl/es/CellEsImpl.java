@@ -17,25 +17,19 @@
 package io.personium.core.model.impl.es;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.core.OProperty;
-import org.odata4j.expression.BoolCommonExpression;
 import org.odata4j.producer.EntitiesResponse;
-import org.odata4j.producer.EntityResponse;
 import org.odata4j.producer.InlineCount;
 import org.odata4j.producer.ODataProducer;
 import org.odata4j.producer.QueryInfo;
-import org.odata4j.producer.resources.OptionsQueryParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +44,8 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
-import io.personium.core.auth.AuthUtils;
-import io.personium.core.event.EventBus;
 import io.personium.core.eventlog.EventUtils;
 import io.personium.core.model.Box;
-import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellSnapshotCellCmp;
@@ -63,16 +54,12 @@ import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ExtRole;
-import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.Relation;
-import io.personium.core.model.ctl.Rule;
-import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.impl.es.accessor.CellAccessor;
 import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.accessor.ODataLinkAccessor;
-import io.personium.core.model.impl.es.cache.BoxCache;
 import io.personium.core.model.impl.es.cache.CellCache;
 import io.personium.core.model.impl.es.doc.CellDocHandler;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
@@ -86,18 +73,13 @@ import net.spy.memcached.internal.CheckedOperationTimeoutException;
 /**
  * Cell object implemented using ElasticSearch.
  */
-public class CellEsImpl implements Cell {
+public class CellEsImpl extends Cell {
     /** logger. */
     static Logger log = LoggerFactory.getLogger(CellEsImpl.class);
 
     /** Es search result output upper limit. */
     private static final int TOP_NUM = PersoniumUnitConfig.getEsTopNum();
 
-    private String id;
-    private String name;
-    private String url; // Note: path base
-    private String owner;
-    private Long published;
     private Map<String, Object> json;
 
     /**
@@ -136,7 +118,6 @@ public class CellEsImpl implements Cell {
         CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", cellName);
         if (cell != null) {
             cell.url = PersoniumUnitConfig.getBaseUrl() + cell.name + "/";
-            cell.owner = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), cell.owner);
         }
         return cell;
     }
@@ -204,90 +185,6 @@ public class CellEsImpl implements Cell {
         return ret;
     }
 
-    /**
-     * Check the value of property item with regular expression.
-     * @param propValue
-     * Property value
-     * @param dcFormat
-     * Value of dcFormat
-     * @return In case of format error, return false
-     */
-    private static boolean validatePropertyRegEx(String propValue, String dcFormat) {
-        //Perform format check
-        Pattern pattern = Pattern.compile(dcFormat);
-        Matcher matcher = pattern.matcher(propValue);
-        if (!matcher.matches()) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Get the Cell name.
-     * @return Cell Name
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Returns the internal ID of this Cell.
-     * @return internal identity string
-     */
-    @Override
-    public String getId() {
-        return this.id;
-    }
-
-    /**
-     * Returns the URL of this Cell.
-     * @return URL string
-     */
-    @Override
-    public String getUrl() {
-        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
-            return this.url;
-        } else {
-            return getFqdnBaseUrl();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFqdnBaseUrl() {
-        try {
-            return UriUtils.convertPathBaseToFqdnBase(url);
-        } catch (URISyntaxException e) {
-            // Usually it does not occur.
-            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getPathBaseUrl() {
-        return url;
-    }
-
-    /**
-     * Returns the Unit URL of this Cell.
-     * @return unitUrl string
-     */
-    @Override
-    public String getUnitUrl() {
-        return PersoniumUnitConfig.getBaseUrl();
-    }
-
-    @Override
-    public String getOwner() {
-        return this.owner;
-    }
-
     @Override
     public String getDataBundleNameWithOutPrefix() {
         String unitUserName;
@@ -303,52 +200,6 @@ public class CellEsImpl implements Cell {
     public String getDataBundleName() {
         String unitUserName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + getDataBundleNameWithOutPrefix();
         return unitUserName;
-    }
-
-    @Override
-    public EventBus getEventBus() {
-        return new EventBus(this);
-    }
-
-    /**
-     * Return the creation time of Cell.
-     * @return Cell creation time
-     */
-    @Override
-    public long getPublished() {
-        return this.published;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        CellCtlODataProducer producer = new CellCtlODataProducer(this);
-        // check no box exists.
-        QueryInfo queryInfo = new QueryInfo(InlineCount.ALLPAGES, null, null, null, null, null, null, null, null);
-        if (producer.getEntitiesCount(Box.EDM_TYPE_NAME, queryInfo).getCount() > 0) {
-            return false;
-        }
-
-        // check that Main Box is empty
-        Box defaultBox = this.getBoxForName(Box.DEFAULT_BOX_NAME);
-        BoxCmp defaultBoxCmp = ModelFactory.boxCmp(defaultBox);
-        if (!defaultBoxCmp.isEmpty()) {
-            return false;
-        }
-
-        // check that no Cell Control Object exists
-        //In order to improve the TODO performance, change the type so as to check the value of c: (uuid of the cell) in the Type traversal
-        if (producer.getEntitiesCount(Account.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(Role.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(ExtCell.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(ExtRole.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(Relation.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(SentMessage.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(ReceivedMessage.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(Rule.EDM_TYPE_NAME, queryInfo).getCount() > 0) {
-            return false;
-        }
-        // TODO check EventLog
-        return true;
     }
 
     /**
@@ -374,7 +225,7 @@ public class CellEsImpl implements Cell {
 
         // Delete event log file.
         try {
-            EventUtils.deleteEventLog(this.getId(), this.getOwner());
+            EventUtils.deleteEventLog(this.getId(), this.getOwnerNormalized());
         } catch (BinaryDataAccessException e) {
             // If the deletion fails, output a log and continue processing.
             log.warn("Delete EventLog Failed." + cellInfoLog, e);
@@ -428,81 +279,6 @@ public class CellEsImpl implements Cell {
             }
         });
         thread.start();
-
-    }
-
-    @Override
-    public Box getBoxForName(String boxName) {
-        if (Box.DEFAULT_BOX_NAME.equals(boxName)) {
-            return new Box(this, null);
-        }
-
-        //Check the format of the Box name specified in URl. In case of invalid Because none of Box exists, return null
-        if (!validatePropertyRegEx(boxName, Common.PATTERN_NAME)) {
-            return null;
-        }
-        //Attempt to acquire the cached Box.
-        Box cachedBox = BoxCache.get(boxName, this);
-        if (cachedBox != null) {
-            return cachedBox;
-        }
-
-        Box loadedBox = null;
-        try {
-            ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
-            EntityResponse er = op.getEntity(Box.EDM_TYPE_NAME, OEntityKey.create(boxName), null);
-            loadedBox = new Box(this, er.getEntity());
-            BoxCache.cache(loadedBox);
-            return loadedBox;
-        } catch (RuntimeException e) {
-            if (e.getCause() instanceof CheckedOperationTimeoutException) {
-                return loadedBox;
-            } else {
-                return null;
-            }
-        }
-    }
-
-    @Override
-    public Box getBoxForSchema(String boxSchema) {
-        //Retrieving the schema name list (including aliases)
-        List<String> boxSchemas = UriUtils.getUrlVariations(this.getUnitUrl(), boxSchema);
-
-        ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
-        for (int i = 0; i < boxSchemas.size(); i++) {
-            BoolCommonExpression filter = OptionsQueryParser.parseFilter("Schema eq '" + boxSchemas.get(i) + "'");
-            QueryInfo qi = QueryInfo.newBuilder().setFilter(filter).build();
-            try {
-                EntitiesResponse er = op.getEntities(Box.EDM_TYPE_NAME, qi);
-                List<OEntity> entList = er.getEntities();
-                if (entList.size() == 1) {
-                    return new Box(this, entList.get(0));
-                }
-                continue;
-            } catch (RuntimeException e) {
-                return null;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public OEntityWrapper getAccount(final String username) {
-        ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
-        OEntityKey key = OEntityKey.create(username);
-        OEntityWrapper oew = null;
-        try {
-            EntityResponse resp = op.getEntity("Account", key, null);
-            oew = (OEntityWrapper) resp.getEntity();
-        } catch (PersoniumCoreException dce) {
-            log.debug(dce.getMessage());
-        }
-        return oew;
-    }
-
-    @Override
-    public boolean authenticateAccount(final OEntityWrapper oew, final String password) {
-        return AuthUtils.isMatchePassword(oew, password);
     }
 
     @SuppressWarnings("unchecked")
@@ -656,7 +432,7 @@ public class CellEsImpl implements Cell {
         }
 
         //It is not permitted to designate the cell URL portion of the role resource different from the cell URL of the ACL setting target
-        if (!(this.getUrl().equals(role.getBaseUrl()))) {
+        if (!UriUtils.equalIgnoringPort(this.getUrl(), role.getBaseUrl())) {
             PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Cell different").writeLog();
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
@@ -668,7 +444,7 @@ public class CellEsImpl implements Cell {
         Map<String, Object> query = QueryMapFactory.filteredQuery(null, QueryMapFactory.mustQuery(queries));
 
         List<Map<String, Object>> filters = new ArrayList<Map<String, Object>>();
-        if (!(Box.DEFAULT_BOX_NAME.equals(role.getBoxName()))) {
+        if (!(Box.MAIN_BOX_NAME.equals(role.getBoxName()))) {
             //Add search queries when Role is tied to a box
             Box targetBox = this.getBoxForName(role.getBoxName());
             if (targetBox == null) {
@@ -757,7 +533,7 @@ public class CellEsImpl implements Cell {
      */
     private void addRoleListExtCelltoRole(final IExtRoleContainingToken token, List<Role> roles) {
         //Acquisition of Role corresponding to ExtCell-Role binding
-        String extCell = token.getExtCellUrl();
+        String extCell = token.getIssuer();
         String principal = token.getSubject();
         String principalCell;
         if (principal.contains("#")) {
@@ -773,7 +549,7 @@ public class CellEsImpl implements Cell {
             //Number of search result output setting
             QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
 
-            List<String> list = UriUtils.getUrlVariations(this.getUnitUrl(), extCell);
+            List<String> list = UriUtils.getUrlVariations(extCell);
             for (int i = 0; i < list.size(); i++) {
                 String extCellUrl = list.get(i);
                 try {
@@ -822,7 +598,7 @@ public class CellEsImpl implements Cell {
         EntitiesResponse response = null;
         //Number of search result output setting
         QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
-        List<String> list = UriUtils.getUrlVariations(this.getUnitUrl(), extCell);
+        List<String> list = UriUtils.getUrlVariations(extCell);
         for (int i = 0; i < list.size(); i++) {
             try {
                 String extCellUrl = list.get(i);
@@ -989,4 +765,6 @@ public class CellEsImpl implements Cell {
 
         roles.add(new Role(roleName, boxName, schema, this.url));
     }
+
+
 }

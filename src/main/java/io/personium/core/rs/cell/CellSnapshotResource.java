@@ -25,7 +25,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.annotations.PROPFIND;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.model.CellRsCmp;
@@ -75,11 +75,11 @@ public class CellSnapshotResource {
      */
     @PROPFIND
     public Response propfind(Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) Long contentLength,
             @HeaderParam("Transfer-Encoding") String transferEncoding) {
         // Access Control
-        cellSnapshotCellRsCmp.checkAccessContext(cellSnapshotCellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        cellSnapshotCellRsCmp.checkAccessContext(CellPrivilege.ROOT);
         return cellSnapshotCellRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
                 CellPrivilege.ROOT);
     }
@@ -91,9 +91,9 @@ public class CellSnapshotResource {
     @OPTIONS
     public Response options() {
         // Access Control
-        cellSnapshotCellRsCmp.checkAccessContext(cellSnapshotCellRsCmp.getAccessContext(), CellPrivilege.ROOT);
+        cellSnapshotCellRsCmp.checkAccessContext(CellPrivilege.ROOT);
         return ResourceUtils.responseBuilderForOptions(
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND
                 ).build();
     }
 

@@ -33,7 +33,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
@@ -468,7 +468,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("box", box)
                 .with("collection", col)
                 .with("entityType", entityType)
-                .with("id", PersoniumCoreUtils.encodeUrlComp(userDataId))
+                .with("id", CommonUtils.encodeUrlComp(userDataId))
                 .with("token", token)
                 .with("ifMatch", ifMatch)
                 .returns()

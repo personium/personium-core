@@ -29,7 +29,7 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
@@ -82,11 +82,11 @@ public class MessageResource extends ODataCtlResource {
     @POST
     @Path("send")
     public Response messages(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VERSION) final String version,
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_VERSION) final String version,
             @Context final UriInfo uriInfo,
             final Reader reader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
+        this.davRsCmp.checkAccessContext(CellPrivilege.MESSAGE);
 
         //Data registration
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
@@ -131,7 +131,7 @@ public class MessageResource extends ODataCtlResource {
     public Response messagesApprove(@PathParam("key") final String key,
             final Reader reader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
+        this.davRsCmp.checkAccessContext(CellPrivilege.MESSAGE);
 
         //Approve received messages
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);

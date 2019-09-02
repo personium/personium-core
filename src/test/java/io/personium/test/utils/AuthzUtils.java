@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.commons.lang.CharEncoding;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.model.Box;
 import io.personium.core.rs.cell.AuthResourceUtils;
@@ -341,15 +341,15 @@ public class AuthzUtils {
 
         paramsList.add(AuthResourceUtils.getJavascript("ajax.js"));
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-        paramsList.add(clientId + Box.DEFAULT_BOX_NAME + "/profile.json");
-        paramsList.add(cellUrl + Box.DEFAULT_BOX_NAME + "/profile.json");
+        paramsList.add(clientId + Box.MAIN_BOX_NAME + "/profile.json");
+        paramsList.add(cellUrl + Box.MAIN_BOX_NAME + "/profile.json");
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
         paramsList.add(cellUrl + "__authz");
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0002"));
 
         Object[] params = paramsList.toArray();
 
-        String html = PersoniumCoreUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
+        String html = CommonUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
         html = MessageFormat.format(html, params);
 
         return html;
@@ -378,15 +378,15 @@ public class AuthzUtils {
 
         paramsList.add(AuthResourceUtils.getJavascript("ajax.js"));
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-        paramsList.add(clientId + Box.DEFAULT_BOX_NAME + "/profile.json");
-        paramsList.add(cellUrl + Box.DEFAULT_BOX_NAME + "/profile.json");
+        paramsList.add(clientId + Box.MAIN_BOX_NAME + "/profile.json");
+        paramsList.add(cellUrl + Box.MAIN_BOX_NAME + "/profile.json");
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
         paramsList.add(cellUrl + "__authz");
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0006"));
 
         Object[] params = paramsList.toArray();
 
-        String html = PersoniumCoreUtils.readStringResource("html/authform_passwordchange.html", CharEncoding.UTF_8);
+        String html = CommonUtils.readStringResource("html/authform_passwordchange.html", CharEncoding.UTF_8);
         html = MessageFormat.format(html, params);
 
         return html;

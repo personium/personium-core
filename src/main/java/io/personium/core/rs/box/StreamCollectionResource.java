@@ -27,7 +27,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.MOVE;
@@ -73,11 +73,11 @@ public class StreamCollectionResource {
      */
     @PROPFIND
     public Response propfind(final Reader requestBodyXml,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
+            @HeaderParam(CommonUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ_PROPERTIES);
         Response response = this.davRsCmp.doPropfind(requestBodyXml,
                                                      depth,
                                                      contentLength,
@@ -118,18 +118,18 @@ public class StreamCollectionResource {
     @WriteAPI
     @DELETE
     public Response delete(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+            @HeaderParam(CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         // X-Personium-Recursive Header
         if (recursiveHeader != null
                 && !Boolean.TRUE.toString().equalsIgnoreCase(recursiveHeader)
                 && !Boolean.FALSE.toString().equalsIgnoreCase(recursiveHeader)) {
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
+                    CommonUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
         }
         boolean recursive = Boolean.valueOf(recursiveHeader);
         // Check acl.(Parent acl check)
         // Since DavCollectionResource always has a parent, result of this.davRsCmp.getParent() will never be null.
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
 
         if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
             throw PersoniumCoreException.Dav.HAS_CHILDREN;
@@ -162,7 +162,7 @@ public class StreamCollectionResource {
     @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        this.davRsCmp.checkAccessContext( BoxPrivilege.WRITE_PROPERTIES);
         Response response = this.davRsCmp.doProppatch(requestBodyXml);
 
         // post event to EventBus
@@ -191,7 +191,7 @@ public class StreamCollectionResource {
     @ACL
     public Response acl(final Reader reader) {
         //Access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_ACL);
         Response response = this.davCmp.acl(reader).build();
 
         // post event to EventBus
@@ -221,7 +221,7 @@ public class StreamCollectionResource {
     public Response move(
             @Context HttpHeaders headers) {
         //Access control to move source (check parent's authority)
-        this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.UNBIND);
+        this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }
 
@@ -232,13 +232,13 @@ public class StreamCollectionResource {
     @OPTIONS
     public Response options() {
         // access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.davRsCmp.checkAccessContext(BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.DELETE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MOVE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL
+                io.personium.common.utils.CommonUtils.HttpMethod.MOVE,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH,
+                io.personium.common.utils.CommonUtils.HttpMethod.ACL
                 ).build();
     }
 

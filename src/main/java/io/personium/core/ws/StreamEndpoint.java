@@ -60,7 +60,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.stream.DataSubscriber;
 import io.personium.core.stream.IDataListener;
@@ -384,7 +384,7 @@ public class StreamEndpoint implements IDataListener {
         }
 
         req.addHeader(HttpHeaders.AUTHORIZATION,
-                      PersoniumCoreUtils.createBearerAuthzHeader(token));
+                      CommonUtils.createBearerAuthzHeader(token));
         req.addHeader(HttpHeaders.DEPTH, "0");
         req.addHeader(HttpHeaders.ACCEPT, "application/xml");
 
@@ -420,19 +420,19 @@ public class StreamEndpoint implements IDataListener {
                         }
                         Element resourcetypeElem = (Element) resourcetypeList.item(0);
                         NodeList streamList;
-                        streamList = resourcetypeElem.getElementsByTagNameNS(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
+                        streamList = resourcetypeElem.getElementsByTagNameNS(CommonUtils.XmlConst.NS_PERSONIUM,
                                                                              "stream");
                         if (streamList.getLength() != 1) {
                             break;
                         }
                         // check topics
                         NodeList topicsList;
-                        topicsList = propstatElem.getElementsByTagNameNS(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
+                        topicsList = propstatElem.getElementsByTagNameNS(CommonUtils.XmlConst.NS_PERSONIUM,
                                                                          "topics");
                         for (int j = 0; j < topicsList.getLength(); j++) {
                             Element topicElem = (Element) topicsList.item(j);
                             NodeList topicList;
-                            topicList = topicElem.getElementsByTagNameNS(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
+                            topicList = topicElem.getElementsByTagNameNS(CommonUtils.XmlConst.NS_PERSONIUM,
                                                                          "topic");
                             for (int k = 0; k < topicList.getLength(); k++) {
                                 if (topicName.equals(topicList.item(k).getTextContent())) {
@@ -496,7 +496,7 @@ public class StreamEndpoint implements IDataListener {
         }
 
         req.addHeader(HttpHeaders.AUTHORIZATION,
-                      PersoniumCoreUtils.createBearerAuthzHeader(token));
+                      CommonUtils.createBearerAuthzHeader(token));
 
         try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
              CloseableHttpResponse response = client.execute(req)) {
@@ -537,7 +537,7 @@ public class StreamEndpoint implements IDataListener {
             params.add(new BasicNameValuePair("token", token));
             req.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
             req.addHeader(HttpHeaders.AUTHORIZATION,
-                          PersoniumCoreUtils.createBasicAuthzHeader(PersoniumUnitConfig.getIntrospectUsername(),
+                          CommonUtils.createBasicAuthzHeader(PersoniumUnitConfig.getIntrospectUsername(),
                                                                     PersoniumUnitConfig.getIntrospectPassword()));
         } catch (Exception e) {
             return result;

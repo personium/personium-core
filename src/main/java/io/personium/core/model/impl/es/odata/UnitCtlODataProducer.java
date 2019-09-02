@@ -76,8 +76,7 @@ public class UnitCtlODataProducer extends EsODataProducer {
         if (AccessContext.TYPE_UNIT_USER.equals(this.accesscontext.getType())
                 || AccessContext.TYPE_UNIT_LOCAL.equals(this.accesscontext.getType())) {
             // Search for matching owner in http format or localunit format.
-            String localOwner = UriUtils.convertSchemeFromHttpToLocalUnit(
-                    accesscontext.getBaseUri(), accesscontext.getSubject());
+            String localOwner = UriUtils.convertSchemeFromHttpToLocalUnit(accesscontext.getSubject());
             List<Map<String, Object>> orQueries = new ArrayList<Map<String, Object>>();
             orQueries.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_OWNER, accesscontext.getSubject()));
             orQueries.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_OWNER, localOwner));

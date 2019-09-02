@@ -70,7 +70,7 @@ public class ArchiveLogCollection {
         urlSb.append(uriInfo.getPath());
         this.url = urlSb.toString();
 
-        StringBuilder archiveDirName = EventUtils.getEventLogDir(cell.getId(), cell.getOwner()).append("archive");
+        StringBuilder archiveDirName = EventUtils.getEventLogDir(cell.getId(), cell.getOwnerNormalized()).append("archive");
         this.directoryPath = archiveDirName.toString();
     }
 

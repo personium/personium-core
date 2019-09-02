@@ -27,20 +27,29 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
+import io.personium.core.model.Cell;
+import io.personium.core.model.CellCmp;
+import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.model.jaxb.Acl;
 import io.personium.core.rs.PersoniumCoreApplication;
+import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -68,7 +77,7 @@ import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
 
 /**
- * CellレベルACLのテスト.
+ * Cell level ACL testing.
  */
 @Category({Unit.class, Integration.class, Regression.class })
 public class AclTest extends AbstractCase {
@@ -78,8 +87,11 @@ public class AclTest extends AbstractCase {
     static final String TEST_ROLE2 = "role5";
     static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
 
+    private static Logger log = LoggerFactory.getLogger(AclTest.class);
+
+
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public AclTest() {
         super(new PersoniumCoreApplication());
@@ -128,7 +140,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
         } finally {
             // ACLの設定を元に戻す
@@ -137,6 +149,38 @@ public class AclTest extends AbstractCase {
                     .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, "")).with("level", "").returns()
                     .statusCode(HttpStatus.SC_OK);
         }
+    }
+    /**
+     * Base URL of ACL is stored using localunit scheme whenever possible.
+     * @throws ParseException
+     */
+    @Test
+    public final void baseUrlStoredUsingLocalUnitSchemeWheneverPossible() throws ParseException {
+
+        try {
+            // Configure acl includng role4, role5 onto testcell1
+            Http.request("cell/acl-setting-request.txt").with("url", TEST_CELL1).with("token", TOKEN)
+                    .with("role1", TEST_ROLE1).with("role2", TEST_ROLE2)
+                    .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, "")).returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            Cell cell = ModelFactory.cellFromName(TEST_CELL1);
+            CellCmp cc = ModelFactory.cellCmp(cell);
+            Acl acl = cc.getAcl();
+            log.info(acl.toJSON());
+            JSONObject j = (JSONObject) new JSONParser().parse(acl.toJSON());
+            String base = (String)j.get("@xml.base");
+            assertTrue(base.startsWith(UriUtils.SCHEME_LOCALUNIT));
+
+        } finally {
+            // ACLの設定を元に戻す
+            Http.request("cell/acl-default.txt").with("url", TEST_CELL1).with("token", TOKEN).with("role1", TEST_ROLE1)
+                    .with("role2", TEST_ROLE2).with("box", Setup.TEST_BOX1)
+                    .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, "")).with("level", "").returns()
+                    .statusCode(-1);
+        }
+
+
     }
 
     /**
@@ -185,7 +229,7 @@ public class AclTest extends AbstractCase {
             StringBuffer sb = new StringBuffer(resorce);
             sb.deleteCharAt(resorce.length() - 1);
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                     UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                     UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
             // Boxの作成
             BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
@@ -227,7 +271,7 @@ public class AclTest extends AbstractCase {
                     .with("token", TOKEN)
                     .with("level", "none")
                     .returns()
-                    .statusCode(HttpStatus.SC_OK);
+                    .statusCode(-1);
 
             // Cell ACLの設定を元に戻す
             Http.request("cell/acl-default.txt").with("url", TEST_CELL1)
@@ -237,7 +281,7 @@ public class AclTest extends AbstractCase {
                     .with("box", testBox1)
                     .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
                     .returns()
-                    .statusCode(HttpStatus.SC_OK);
+                    .statusCode(-1);
         }
     }
 
@@ -282,7 +326,7 @@ public class AclTest extends AbstractCase {
             StringBuffer sb = new StringBuffer(resorce);
             sb.deleteCharAt(resorce.length() - 1);
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                     UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                     UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
             // Boxの作成
             BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
@@ -359,7 +403,7 @@ public class AclTest extends AbstractCase {
             StringBuffer sb = new StringBuffer(resorce);
             sb.deleteCharAt(resorce.length() - 1);
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                     UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                     UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
             // Boxの作成
             BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
@@ -436,7 +480,7 @@ public class AclTest extends AbstractCase {
             StringBuffer sb = new StringBuffer(resorce);
             sb.deleteCharAt(resorce.length() - 1);
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                     UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                     UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
             // Boxの作成
             BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
@@ -557,7 +601,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
         } finally {
             // ACLの設定を元に戻す
@@ -630,7 +674,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
             // PROPPATCH設定実行
             DavResourceUtils.setProppatch(TEST_CELL1, TOKEN, HttpStatus.SC_MULTI_STATUS, "author1", "hoge1");
@@ -667,7 +711,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
         } finally {
             // ACLの設定を元に戻す
             Http.request("cell/acl-default.txt")
@@ -731,7 +775,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
         } finally {
             // ACLの設定を元に戻す
@@ -797,7 +841,7 @@ public class AclTest extends AbstractCase {
             sb.deleteCharAt(resorce.length() - 1);
 
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
-                    UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+                    UrlUtils.roleResource(TEST_CELL1, Box.MAIN_BOX_NAME, ""), null);
 
         } finally {
             // ロールの削除
@@ -956,7 +1000,7 @@ public class AclTest extends AbstractCase {
     @SuppressWarnings("unchecked")
     @Test
     public final void CellレベルACL設定アクセス制御$link確認() {
-        String extCellUrl = PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2));
+        String extCellUrl = CommonUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2));
         String relationName = "testRelation";
         try {
             List<String> account = new ArrayList<String>();
@@ -1007,7 +1051,7 @@ public class AclTest extends AbstractCase {
                     account.get(4), HttpStatus.SC_NO_CONTENT);
             // 削除
             LinksUtils.deleteLinksExtCell(TEST_CELL1,
-                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2)),
+                    CommonUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2)),
                     Relation.EDM_TYPE_NAME, relationName, null, account.get(10), HttpStatus.SC_NO_CONTENT);
 
             // $link extCellとrole→SOCIALとAUTHの権限が必要
@@ -1022,7 +1066,7 @@ public class AclTest extends AbstractCase {
 
             // 削除
             LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
-                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2)),
+                    CommonUtils.encodeUrlComp(UrlUtils.cellRoot(Setup.TEST_CELL2)),
                     Role.EDM_TYPE_NAME, "role1", null, account.get(10), HttpStatus.SC_NO_CONTENT);
         } finally {
             // Relationの削除
@@ -1643,7 +1687,7 @@ public class AclTest extends AbstractCase {
             // OK: ROOT
             apvRes4 = ReceivedMessageUtils.approve(account.get(10), TEST_CELL1, uuid, HttpStatus.SC_NO_CONTENT);
             // Relation-ExtCell $links削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
                     Relation.EDM_TYPE_NAME, "user", null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // ExtCell削除
             ExtCellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, UrlUtils.cellRoot("targetcell"));
@@ -1657,7 +1701,7 @@ public class AclTest extends AbstractCase {
             // OK: message+social
             apvRes5 = ReceivedMessageUtils.approve(account.get(18), TEST_CELL1, uuid, HttpStatus.SC_NO_CONTENT);
             // Relation-ExtCell $links削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
                     Relation.EDM_TYPE_NAME, "user", null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "user", null, -1);
@@ -1726,7 +1770,7 @@ public class AclTest extends AbstractCase {
                 ODataCommon.deleteOdataResource(apvRes7.getLocationHeader());
             }
             // Relation-ExtCell $links削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
                     Relation.EDM_TYPE_NAME, "user", null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "user", null, -1);
@@ -2061,7 +2105,7 @@ public class AclTest extends AbstractCase {
                     "_" + ExtCell.EDM_TYPE_NAME,
                     extCellBody, account.get(4), HttpStatus.SC_CREATED);
             // 作成した$linkの削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(extCellUrl),
                     Relation.EDM_TYPE_NAME, relationName, null, account.get(10), HttpStatus.SC_NO_CONTENT);
             // 作成したExtCell削除
             ExtCellUtils.delete(TOKEN, TEST_CELL1, extCellUrl,
@@ -2072,28 +2116,28 @@ public class AclTest extends AbstractCase {
 
             // extCellとrole→SOCIALとAUTHの権限が必要
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    CommonUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(0), HttpStatus.SC_FORBIDDEN);
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    CommonUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(1), HttpStatus.SC_FORBIDDEN);
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    CommonUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(4), HttpStatus.SC_FORBIDDEN);
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    CommonUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(9), HttpStatus.SC_CREATED);
             // 作成した$linkの削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(extCellUrl),
                     Role.EDM_TYPE_NAME, roleName, null, TOKEN, HttpStatus.SC_NO_CONTENT);
             // Role削除
             RoleUtils.delete(TEST_CELL1, TOKEN, roleName, null);
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    CommonUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(10), HttpStatus.SC_CREATED);
             // Role削除
@@ -2101,7 +2145,7 @@ public class AclTest extends AbstractCase {
 
         } finally {
             // 作成した$linkの削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, CommonUtils.encodeUrlComp(extCellUrl),
                     Relation.EDM_TYPE_NAME, relationName, null, TOKEN, -1);
             // ExtCell 削除
             ExtCellUtils.delete(TOKEN, TEST_CELL1, extCellUrl,
@@ -2110,6 +2154,9 @@ public class AclTest extends AbstractCase {
             RelationUtils.delete(TEST_CELL1, TOKEN, relationName, null, HttpStatus.SC_NO_CONTENT);
         }
     }
+
+
+
 
     private void deleteBox(String boxName, String location) {
 

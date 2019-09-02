@@ -57,8 +57,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import io.personium.common.auth.token.Role;
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
@@ -235,7 +234,7 @@ public class DavRsCmp {
         // ACL config output is allowed by Unit User or when ACL Privilege is configured.
         boolean canAclRead = false;
         if (this.getAccessContext().isUnitUserToken(requiredForReadAcl)
-                || this.hasPrivilege(this.getAccessContext(), requiredForReadAcl)) {
+                || this.hasSubjectPrivilege(requiredForReadAcl)) {
             canAclRead = true;
         }
 
@@ -381,8 +380,8 @@ public class DavRsCmp {
      * @param privilege ACL Privilege (read/write/bind/unbind)
      * @return boolean
      */
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
-        return hasPrivilege(ac, privilege, privilege);
+    public boolean hasSubjectPrivilege(Privilege privilege) {
+        return hasSubjectPrivilege( privilege, privilege);
     }
 
     /**
@@ -392,16 +391,17 @@ public class DavRsCmp {
      * @param parentPrivilege parent ACL Privilege (read/write/bind/unbind) If it is null, it does not refer to the parent's authority.
      * @return boolean
      */
-    public boolean hasPrivilege(AccessContext ac, Privilege privilege, Privilege parentPrivilege) {
+    public boolean hasSubjectPrivilege(Privilege privilege, Privilege parentPrivilege) {
         // skip ACL check if davCmp does not exist.
         // (nonexistent resource is specified)
         if (privilege != null && this.davCmp != null
-                && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege, this.getCell().getUrl())) {
+                && this.getAccessContext().hasSubjectPrivilegeForAcl(this.davCmp.getAcl(), privilege)) {
             return true;
         }
 
         // check parent (recursively)
-        if (parentPrivilege != null && this.parent != null && this.parent.hasPrivilege(ac, parentPrivilege)) {
+        if (parentPrivilege != null && this.parent != null
+                && this.parent.hasSubjectPrivilege(parentPrivilege)) {
             return true;
         }
 
@@ -415,16 +415,16 @@ public class DavRsCmp {
     @OPTIONS
     public Response options() {
         // AccessControl
-        this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
+        this.checkAccessContext(BoxPrivilege.READ);
 
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 HttpMethod.DELETE,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MKCOL,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH,
-                io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL
+                io.personium.common.utils.CommonUtils.HttpMethod.MKCOL,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND,
+                io.personium.common.utils.CommonUtils.HttpMethod.PROPPATCH,
+                io.personium.common.utils.CommonUtils.HttpMethod.ACL
                 ).build();
     }
 
@@ -434,8 +434,8 @@ public class DavRsCmp {
      * @param ac AccessContext
      * @param privilege Privilege to check if it is given
      */
-    public void checkAccessContext(final AccessContext ac, Privilege privilege) {
-        checkAccessContext(ac, privilege, privilege);
+    public void checkAccessContext(Privilege privilege) {
+        checkAccessContext(privilege, privilege);
     }
 
     /**
@@ -445,7 +445,8 @@ public class DavRsCmp {
      * @param privilege Privilege to check if it is given
      * @param parentPrivilege parent ACL Privilege
      */
-    public void checkAccessContext(final AccessContext ac, Privilege privilege, Privilege parentPrivilege) {
+    public void checkAccessContext(Privilege privilege, Privilege parentPrivilege) {
+        AccessContext ac = this.getAccessContext();
         // if accessed with valid UnitUserToken then fine.
         if (ac.isUnitUserToken(privilege)) {
             return;
@@ -466,7 +467,7 @@ public class DavRsCmp {
         ac.updateBasicAuthenticationStateForResource(this.getBox());
 
         // check Access Privilege
-        if (!this.hasPrivilege(ac, privilege, parentPrivilege)) {
+        if (!this.hasSubjectPrivilege(privilege, parentPrivilege)) {
             // check token validity
             // check here because access should be allowed when Privilege "all" is configured
             // even if the token is invalid
@@ -488,7 +489,7 @@ public class DavRsCmp {
         // check if this resource if under a box with Schema URL
         String boxSchema = this.getBox().getSchema();
         // only Bearer scheme is allowed if Box Schema URL is defined
-        if (boxSchema != null && boxSchema.length() > 0 && !Role.DEFAULT_BOX_NAME.equals(this.getBox().getName())) {
+        if (boxSchema != null && boxSchema.length() > 0 && !Box.MAIN_BOX_NAME.equals(this.getBox().getName())) {
             allowedAuthScheme = AcceptableAuthScheme.BEARER;
         }
         return allowedAuthScheme;
@@ -591,8 +592,8 @@ public class DavRsCmp {
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             List<Element> listElement = colRt.getAny();
-            QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.ODATA,
-                    PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+            QName qname = new QName(CommonUtils.XmlConst.NS_PERSONIUM, CommonUtils.XmlConst.ODATA,
+                    CommonUtils.XmlConst.NS_PREFIX_PERSONIUM);
             Element element = WebDAVModelHelper.createElement(qname);
             listElement.add(element);
             ret.setPropertyOk(colRt);
@@ -602,8 +603,8 @@ public class DavRsCmp {
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             List<Element> listElement = colRt.getAny();
-            QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.SERVICE,
-                    PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+            QName qname = new QName(CommonUtils.XmlConst.NS_PERSONIUM, CommonUtils.XmlConst.SERVICE,
+                    CommonUtils.XmlConst.NS_PREFIX_PERSONIUM);
             Element element = WebDAVModelHelper.createElement(qname);
             listElement.add(element);
             ret.setPropertyOk(colRt);
@@ -613,8 +614,8 @@ public class DavRsCmp {
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             List<Element> listElement = colRt.getAny();
-            QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.STREAM,
-                    PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+            QName qname = new QName(CommonUtils.XmlConst.NS_PERSONIUM, CommonUtils.XmlConst.STREAM,
+                    CommonUtils.XmlConst.NS_PREFIX_PERSONIUM);
             Element element = WebDAVModelHelper.createElement(qname);
             listElement.add(element);
             ret.setPropertyOk(colRt);
@@ -626,8 +627,8 @@ public class DavRsCmp {
             ret.setPropertyOk(colRt);
 
             // Add cellstatus.
-            QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.CELL_STATUS,
-                    PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+            QName qname = new QName(CommonUtils.XmlConst.NS_PERSONIUM, CommonUtils.XmlConst.CELL_STATUS,
+                    CommonUtils.XmlConst.NS_PREFIX_PERSONIUM);
             Element element = WebDAVModelHelper.createElement(qname);
             element.setTextContent(dCmp.getCellStatus());
             ret.setPropertyOk(element);

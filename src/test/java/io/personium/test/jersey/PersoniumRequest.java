@@ -108,7 +108,7 @@ public class PersoniumRequest {
      */
     public static PersoniumRequest move(String url) {
         PersoniumRequest req = new PersoniumRequest(url);
-        req.method = io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MOVE;
+        req.method = io.personium.common.utils.CommonUtils.HttpMethod.MOVE;
         return req;
     }
 

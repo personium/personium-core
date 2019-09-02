@@ -40,7 +40,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
+import io.personium.common.utils.CommonUtils.HttpHeaders;
 import io.personium.core.PersoniumCoreException;
 
 /**

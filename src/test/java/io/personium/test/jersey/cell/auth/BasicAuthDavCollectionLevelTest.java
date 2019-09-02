@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.common.auth.token.Role;
+import io.personium.core.model.Box;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -159,12 +159,12 @@ public class BasicAuthDavCollectionLevelTest extends PersoniumTest {
 
             // スキーマなしのBox直下のファイルにACL設定(Basic認証-成功)
             DavResourceUtils.setACLwithBox(cellName, tokenForACLWrite, HttpStatus.SC_OK,
-                    boxName, fileName, "box/acl-2role-setting.txt", "role4", "role4", Role.DEFAULT_BOX_NAME,
+                    boxName, fileName, "box/acl-2role-setting.txt", "role4", "role4", Box.MAIN_BOX_NAME,
                     "<D:read/>",
                     "<D:write/>", "");
             // スキーマなしのBox直下のファイルにACL設定(Basic認証-失敗)
             res = DavResourceUtils.setACLwithBox(cellName, invalidToken, HttpStatus.SC_UNAUTHORIZED,
-                    boxName, fileName, "box/acl-2role-setting.txt", "role4", "role4", Role.DEFAULT_BOX_NAME,
+                    boxName, fileName, "box/acl-2role-setting.txt", "role4", "role4", Box.MAIN_BOX_NAME,
                     "<D:read/>",
                     "<D:write/>", "");
             AuthTestCommon.checkAuthenticateHeader(res, cellName);
@@ -210,16 +210,16 @@ public class BasicAuthDavCollectionLevelTest extends PersoniumTest {
         try {
             // メインボックスにACL(read + write)を設定
             DavResourceUtils.setACLwithBox(cellName, AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_OK,
-                    Role.DEFAULT_BOX_NAME, "",
-                    "box/acl-2role-setting.txt", "role4", "role4", Role.DEFAULT_BOX_NAME, "<D:read/>",
+                    Box.MAIN_BOX_NAME, "",
+                    "box/acl-2role-setting.txt", "role4", "role4", Box.MAIN_BOX_NAME, "<D:read/>",
                     "<D:write/>", "");
 
             // メインボックス直下にファイル作成(Basic認証-成功)
             DavResourceUtils.createWebDavFile(cellName, token, "box/dav-put-anyAuthSchema.txt", "hoge",
-                    Role.DEFAULT_BOX_NAME, fileName, HttpStatus.SC_CREATED);
+                    Box.MAIN_BOX_NAME, fileName, HttpStatus.SC_CREATED);
             // メインボックス直下にファイル作成(Basic認証-失敗)
             TResponse res = DavResourceUtils.createWebDavFile(cellName, invalidToken,
-                    "box/dav-put-anyAuthSchema.txt", "hoge", Role.DEFAULT_BOX_NAME, fileName,
+                    "box/dav-put-anyAuthSchema.txt", "hoge", Box.MAIN_BOX_NAME, fileName,
                     HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
@@ -227,57 +227,57 @@ public class BasicAuthDavCollectionLevelTest extends PersoniumTest {
 
             // メインボックスにACL(read-acl + write-acl)を設定
             DavResourceUtils.setACLwithBox(cellName, AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_OK,
-                    Role.DEFAULT_BOX_NAME, "",
-                    "box/acl-2role-setting.txt", "role7", "role7", Role.DEFAULT_BOX_NAME, "<D:read-acl/>",
+                    Box.MAIN_BOX_NAME, "",
+                    "box/acl-2role-setting.txt", "role7", "role7", Box.MAIN_BOX_NAME, "<D:read-acl/>",
                     "<D:write-acl/>", "");
 
             // メインボックス直下のファイルにACL設定(Basic認証-成功)
             DavResourceUtils.setACLwithBox(cellName, tokenForACLWrite, HttpStatus.SC_OK,
-                    Role.DEFAULT_BOX_NAME, fileName, "box/acl-2role-setting.txt", "role4", "role4",
-                    Role.DEFAULT_BOX_NAME, "<D:read/>", "<D:write/>", "");
+                    Box.MAIN_BOX_NAME, fileName, "box/acl-2role-setting.txt", "role4", "role4",
+                    Box.MAIN_BOX_NAME, "<D:read/>", "<D:write/>", "");
             // メインボックス直下のファイルにACL設定(Basic認証-失敗)
             res = DavResourceUtils.setACLwithBox(cellName, invalidToken, HttpStatus.SC_UNAUTHORIZED,
-                    Role.DEFAULT_BOX_NAME, fileName, "box/acl-2role-setting.txt", "role4", "role4",
-                    Role.DEFAULT_BOX_NAME, "<D:read/>", "<D:write/>", "");
+                    Box.MAIN_BOX_NAME, fileName, "box/acl-2role-setting.txt", "role4", "role4",
+                    Box.MAIN_BOX_NAME, "<D:read/>", "<D:write/>", "");
             AuthTestCommon.checkAuthenticateHeader(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
             AuthTestCommon.waitForIntervalLock();
 
             // メインボックスにACL(read + write)を設定
             DavResourceUtils.setACLwithBox(cellName, AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_OK,
-                    Role.DEFAULT_BOX_NAME, "",
-                    "box/acl-2role-setting.txt", "role4", "role4", Role.DEFAULT_BOX_NAME, "<D:read/>",
+                    Box.MAIN_BOX_NAME, "",
+                    "box/acl-2role-setting.txt", "role4", "role4", Box.MAIN_BOX_NAME, "<D:read/>",
                     "<D:write/>", "");
 
             // メインボックス直下のファイルを取得(Basic認証-成功)
-            DavResourceUtils.getWebDavFile(cellName, token, "box/dav-get-anyAuthSchema.txt", Role.DEFAULT_BOX_NAME,
+            DavResourceUtils.getWebDavFile(cellName, token, "box/dav-get-anyAuthSchema.txt", Box.MAIN_BOX_NAME,
                     fileName, HttpStatus.SC_OK);
             // メインボックス直下のファイルを取得(Basic認証-失敗)
             res = DavResourceUtils.getWebDavFile(cellName, invalidToken, "box/dav-get-anyAuthSchema.txt",
-                    Role.DEFAULT_BOX_NAME, fileName, HttpStatus.SC_UNAUTHORIZED);
+                    Box.MAIN_BOX_NAME, fileName, HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
             AuthTestCommon.waitForIntervalLock();
 
             // メインボックス直下のファイルをPROPFIND(Basic認証-成功)
             DavResourceUtils.propfind("box/propfind-box-allprop-anyAuthSchema.txt", token, cellName,
-                    Role.DEFAULT_BOX_NAME + "/" + fileName, 1, HttpStatus.SC_MULTI_STATUS);
+                    Box.MAIN_BOX_NAME + "/" + fileName, 1, HttpStatus.SC_MULTI_STATUS);
             // メインボックス直下のファイルをPROPFIND(Basic認証-失敗)
             res = DavResourceUtils.propfind("box/propfind-box-allprop-anyAuthSchema.txt", invalidToken, cellName,
-                    Role.DEFAULT_BOX_NAME + "/" + fileName, 1, HttpStatus.SC_UNAUTHORIZED);
+                    Box.MAIN_BOX_NAME + "/" + fileName, 1, HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
             AuthTestCommon.waitForIntervalLock();
 
             // メインボックス直下のファイルをPROPPATCH(Basic認証-成功)
-            Http.request("box/proppatch.txt").with("cell", cellName).with("box", Role.DEFAULT_BOX_NAME)
+            Http.request("box/proppatch.txt").with("cell", cellName).with("box", Box.MAIN_BOX_NAME)
                     .with("path", fileName)
                     .with("token", token)
                     .with("author1", "Author1 update")
                     .with("hoge", "fuga")
                     .returns().statusCode(HttpStatus.SC_MULTI_STATUS);
             // メインボックス直下のファイルをPROPPATCH(Basic認証-失敗)
-            res = Http.request("box/proppatch.txt").with("cell", cellName).with("box", Role.DEFAULT_BOX_NAME)
+            res = Http.request("box/proppatch.txt").with("cell", cellName).with("box", Box.MAIN_BOX_NAME)
                     .with("path", fileName)
                     .with("token", invalidToken)
                     .with("author1", "Author1 update")
@@ -289,30 +289,30 @@ public class BasicAuthDavCollectionLevelTest extends PersoniumTest {
 
             // メインボックス直下のファイルを変名(Basic認証-成功)
             String dstFileName = "dstFileName";
-            String destinationPath = UrlUtils.box(cellName, Role.DEFAULT_BOX_NAME, dstFileName);
-            DavResourceUtils.moveWebDavWithAnyAuthSchema(token, cellName, Role.DEFAULT_BOX_NAME + "/" + fileName,
+            String destinationPath = UrlUtils.box(cellName, Box.MAIN_BOX_NAME, dstFileName);
+            DavResourceUtils.moveWebDavWithAnyAuthSchema(token, cellName, Box.MAIN_BOX_NAME + "/" + fileName,
                     destinationPath, HttpStatus.SC_CREATED);
-            String originalPath = UrlUtils.box(cellName, Role.DEFAULT_BOX_NAME, fileName);
-            DavResourceUtils.moveWebDav(AbstractCase.MASTER_TOKEN_NAME, cellName, Role.DEFAULT_BOX_NAME + "/"
+            String originalPath = UrlUtils.box(cellName, Box.MAIN_BOX_NAME, fileName);
+            DavResourceUtils.moveWebDav(AbstractCase.MASTER_TOKEN_NAME, cellName, Box.MAIN_BOX_NAME + "/"
                     + dstFileName, originalPath, -1);
             // メインボックス直下のファイルをMOVE(Basic認証-失敗)
-            DavResourceUtils.moveWebDavWithAnyAuthSchema(invalidToken, cellName, Role.DEFAULT_BOX_NAME + "/"
+            DavResourceUtils.moveWebDavWithAnyAuthSchema(invalidToken, cellName, Box.MAIN_BOX_NAME + "/"
                     + fileName, destinationPath, HttpStatus.SC_UNAUTHORIZED);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
             AuthTestCommon.waitForIntervalLock();
 
             // メインボックス直下のファイルを削除(Basic認証-成功)
             DavResourceUtils.deleteWebDavFile("box/dav-delete-anyAuthSchema.txt", cellName, token,
-                    fileName, HttpStatus.SC_NO_CONTENT, Role.DEFAULT_BOX_NAME);
+                    fileName, HttpStatus.SC_NO_CONTENT, Box.MAIN_BOX_NAME);
             // メインボックス直下のファイルを削除(Basic認証-失敗)
             res = DavResourceUtils.deleteWebDavFile("box/dav-delete-anyAuthSchema.txt", cellName, invalidToken,
-                    fileName, HttpStatus.SC_UNAUTHORIZED, Role.DEFAULT_BOX_NAME);
+                    fileName, HttpStatus.SC_UNAUTHORIZED, Box.MAIN_BOX_NAME);
             AuthTestCommon.checkAuthenticateHeader(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
             AuthTestCommon.waitForIntervalLock();
         } finally {
             DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", cellName, AbstractCase.MASTER_TOKEN_NAME, fileName,
-                    -1, Role.DEFAULT_BOX_NAME);
+                    -1, Box.MAIN_BOX_NAME);
         }
     }
 
@@ -364,11 +364,11 @@ public class BasicAuthDavCollectionLevelTest extends PersoniumTest {
 
             // コレクションACL設定(Basic認証-成功)
             DavResourceUtils.setACLwithBox(cellName, tokenForACLWrite, HttpStatus.SC_OK,
-                    boxName, thisMethodColName, "box/acl-2role-setting.txt", "role4", "role4", Role.DEFAULT_BOX_NAME,
+                    boxName, thisMethodColName, "box/acl-2role-setting.txt", "role4", "role4", Box.MAIN_BOX_NAME,
                     "<D:read/>", "<D:write/>", "");
             // コレクションACL設定(Basic認証-失敗)
             res = DavResourceUtils.setACLwithBox(cellName, invalidToken, HttpStatus.SC_UNAUTHORIZED,
-                    boxName, thisMethodColName, "box/acl-2role-setting.txt", "role4", "role4", Role.DEFAULT_BOX_NAME,
+                    boxName, thisMethodColName, "box/acl-2role-setting.txt", "role4", "role4", Box.MAIN_BOX_NAME,
                     "<D:read/>", "<D:write/>", "");
             AuthTestCommon.checkAuthenticateHeader(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
@@ -455,13 +455,13 @@ public class BasicAuthDavCollectionLevelTest extends PersoniumTest {
             // ファイルにACL設定(Basic認証-成功)
             DavResourceUtils.setACLwithBox(cellName, tokenForACLWrite, HttpStatus.SC_OK,
                     boxName, colName + "/" + fileName, "box/acl-2role-setting.txt", "role4", "role4",
-                    Role.DEFAULT_BOX_NAME,
+                    Box.MAIN_BOX_NAME,
                     "<D:read/>",
                     "<D:write/>", "");
             // ファイルにACL設定(Basic認証-失敗)
             res = DavResourceUtils.setACLwithBox(cellName, invalidToken, HttpStatus.SC_UNAUTHORIZED,
                     boxName, colName + "/" + fileName, "box/acl-2role-setting.txt", "role4", "role4",
-                    Role.DEFAULT_BOX_NAME,
+                    Box.MAIN_BOX_NAME,
                     "<D:read/>",
                     "<D:write/>", "");
             AuthTestCommon.checkAuthenticateHeader(res, cellName);

@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -38,7 +38,7 @@ import io.personium.core.model.ModelFactory;
 import io.personium.core.utils.ODataUtils;
 
 /**
- * JOX-RS Resource for obtaining Box URL.
+ * JAX-RS Resource for obtaining Box URL.
  */
 public class BoxUrlResource {
 
@@ -105,7 +105,7 @@ public class BoxUrlResource {
         //Validity check of the authentication token (such as tokens that have expired)
         DavCmp davCmp = ModelFactory.boxCmp(box);
         DavRsCmp boxUrlRsCmp = new BoxUrlRsCmp(this.cellRsCmp, davCmp, this.accessContext, box);
-        boxUrlRsCmp.checkAccessContext(this.accessContext, BoxPrivilege.READ);
+        boxUrlRsCmp.checkAccessContext(BoxPrivilege.READ);
 
         // Response body
         JSONObject responseBody = new JSONObject();
@@ -113,7 +113,7 @@ public class BoxUrlResource {
 
         //Return response
         return Response.status(HttpStatus.SC_OK)
-                .header(PersoniumCoreUtils.HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS, HttpHeaders.LOCATION)
+                .header(CommonUtils.HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS, HttpHeaders.LOCATION)
                 .header(HttpHeaders.LOCATION, box.getUrl())
                 .entity(responseBody.toJSONString())
                 .build();
