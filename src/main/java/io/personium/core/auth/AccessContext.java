@@ -690,7 +690,26 @@ public class AccessContext {
         ret.subject = username;
         //Acquire role information
         ret.roles = cell.getRoleListForAccount(username);
+        // TODO Make configurable
+        ret.addScope("root");
+
         return ret;
+    }
+    public void addScope(String scopeStr) {
+        this.scopes.add(scopeStr);
+        if (scopeStr.startsWith("https://")||scopeStr.startsWith("http://")) {
+            try {
+                this.scopeRoles.add(new Role(new URL(scopeStr)));
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            CellPrivilege prv = CellPrivilege.get(CellPrivilege.class, scopeStr);
+            if (prv != null) {
+                this.scopePrivileges.add(prv);
+            }
+        }
+
     }
 
     /**

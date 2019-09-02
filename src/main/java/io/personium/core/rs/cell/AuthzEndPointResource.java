@@ -77,6 +77,7 @@ import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
+import io.personium.core.auth.ScopeArbitrator;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
@@ -295,13 +296,17 @@ public class AuthzEndPointResource {
                         OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0008");
             }
         }
+        // scope arbitration
+        ScopeArbitrator sa = this.cell.getScopeArbitrator(clientId, OAuth2Helper.GrantType.AUTHORIZATION_CODE);
+        String[] assignedScopes = sa.request(scope).getResults();
+
 
         // response_type = token || response_type = code || (response_type = id_token && scope = openid)
         if (!OAuth2Helper.ResponseType.TOKEN.equals(responseType)
                 && !OAuth2Helper.ResponseType.CODE.equals(responseType)
                 && (!OAuth2Helper.ResponseType.ID_TOKEN.equals(responseType)
                         || OAuth2Helper.ResponseType.ID_TOKEN.equals(responseType)
-                        && !OAuth2Helper.Scope.OPENID.equals(scope))) {
+                        && !OAuth2Helper.Scope.OPENID.equals(assignedScopes[0]))) {
             return this.returnErrorRedirect(responseType, redirectUri,
                     OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE, state, "PR400-AZ-0001");
         }
@@ -317,15 +322,15 @@ public class AuthzEndPointResource {
             if (accessTokenStr != null && !accessTokenStr.isEmpty()) {
                 //password change and authentication
                 return handlePasswordChange(responseType, clientId, redirectUri, accessTokenStr,
-                        password, state, scope, keepLogin, expiresIn);
+                        password, state, assignedScopes, keepLogin, expiresIn);
             } else if (username != null || password != null) {
                 //When there is a setting in either user ID or password
                 Response response = handlePassword(responseType, clientId, redirectUri,
-                        username, password, state, scope, keepLogin, expiresIn);
+                        username, password, state, assignedScopes, keepLogin, expiresIn);
                 return response;
             } else if (pCookie != null) {
                 return handlePCookie(isPost, responseType, clientId, redirectUri,
-                        pCookie, state, scope, keepLogin, expiresIn, uriInfo);
+                        pCookie, state, assignedScopes, keepLogin, expiresIn, uriInfo);
             } else {
                 //If user ID, password, cookie are not specified,
                 return returnFormRedirect(responseType, clientId, redirectUri,
@@ -335,8 +340,9 @@ public class AuthzEndPointResource {
             if (Boolean.parseBoolean(passwordChangeRequiredStr)) {
                 return returnPasswordChangeHtmlForm(clientId);
             } else if (pCookie != null) {
+
                 return handlePCookie(isPost, responseType, clientId, redirectUri,
-                        pCookie, state, scope, keepLogin, expiresIn, uriInfo);
+                        pCookie, state, assignedScopes, keepLogin, expiresIn, uriInfo);
             } else {
                 return returnHtmlForm(clientId);
             }
