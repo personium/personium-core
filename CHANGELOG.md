@@ -1,3 +1,7 @@
+## 1.7.18b
+BUG FIXES:
+* Cell Owner URL being persisted without #fragment info. ([#479](https://github.com/personium/personium-core/issues/479))
+
 ## 1.7.18a
 BUG FIXES:
 * 500 Error when Non-Cell URL (incl. Unit URL) is given in p_target param at TokenEndpoint. ([#475](https://github.com/personium/personium-core/issues/475))

@@ -143,6 +143,9 @@ public class UriUtilsTest {
         assertThat(
             UriUtils.convertSchemeFromHttpToLocalUnit("https://unit.example/cell/"),
             is("personium-localunit:/cell/"));
+        assertThat(
+                UriUtils.convertSchemeFromHttpToLocalUnit("https://unit.example/cell/#acct"),
+                is("personium-localunit:/cell/#acct"));
     }
 
     /**
@@ -161,6 +164,18 @@ public class UriUtilsTest {
         assertThat(
             UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/"),
             is("personium-localunit:cell:/"));
+        assertThat(
+                UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/#account"),
+                is("personium-localunit:cell:/#account"));
+        assertThat(
+                UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/ab/?query=23"),
+                is("personium-localunit:cell:/ab/?query=23"));
+        assertThat(
+                UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/ab/?query=23#frag"),
+                is("personium-localunit:cell:/ab/?query=23#frag"));
+        assertThat(
+                UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/ab/#frag?query"),
+                is("personium-localunit:cell:/ab/#frag?query"));
     }
     /**
      * Test convertSchemeFromHttpToLocalUnit().

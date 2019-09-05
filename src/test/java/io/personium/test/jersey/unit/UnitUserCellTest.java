@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.jersey.cell;
+package io.personium.test.jersey.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -86,6 +86,7 @@ public class UnitUserCellTest extends PersoniumTest {
 
     /** unitUser.issuers in properties. */
     private static String issuersBackup = "";
+    private static String urlModeBackup = "";
 
     /**
      * Constructor. テスト対象のパッケージをsuperに渡す必要がある
@@ -101,9 +102,12 @@ public class UnitUserCellTest extends PersoniumTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         // Override issuers in unitconfig.
-        issuersBackup = PersoniumUnitConfig.get("io.personium.core.unitUser.issuers");
-        PersoniumUnitConfig.set("io.personium.core.unitUser.issuers",
-        		UriUtils.SCHEME_LOCALUNIT + ":/" + UNIT_USER_CELL + "/");
+        urlModeBackup = PersoniumUnitConfig.get(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED);
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED,
+                "true");
+        issuersBackup = PersoniumUnitConfig.get(PersoniumUnitConfig.UNIT_USER_ISSUERS);
+        PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_USER_ISSUERS,
+        		UriUtils.SCHEME_LOCALUNIT + ":" + UNIT_USER_CELL + ":/");
 
         // Read role name from AccessContext
         Field admin = AccessContext.class.getDeclaredField("ROLE_UNIT_ADMIN");
@@ -123,8 +127,9 @@ public class UnitUserCellTest extends PersoniumTest {
     @AfterClass
     public static void afterClass() {
         // Restore issuers in unitconfig.
-        PersoniumUnitConfig.set("io.personium.core.unitUser.issuers",
+        PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_USER_ISSUERS,
                 issuersBackup != null ? issuersBackup : ""); // CHECKSTYLE IGNORE
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, urlModeBackup);
     }
 
     /**
@@ -216,7 +221,7 @@ public class UnitUserCellTest extends PersoniumTest {
             // 本テスト用 Unit User Cell の作成
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
 
-            // アカウント追加
+            // AddAccount
             AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
                     UNIT_USER_ACCOUNT, UNIT_USER_ACCOUNT_PASS, HttpStatus.SC_CREATED);
 
