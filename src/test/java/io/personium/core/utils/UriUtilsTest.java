@@ -320,8 +320,9 @@ public class UriUtilsTest {
                    is("https://cell.host.domain/#account"));
         assertThat(UriUtils.convertPathBaseToFqdnBase("https://cell.host.domain/box"),
                    is("https://box.cell.host.domain"));
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host/cell/"),
-                   is("https://cell.host/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host/cell/"), is("https://cell.host/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/"), is("https://host.domain/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/__ctl/"), is("https://host.domain/__ctl/"));
         assertThat(UriUtils.convertPathBaseToFqdnBase("hoge"),
                    is("hoge"));
     }
