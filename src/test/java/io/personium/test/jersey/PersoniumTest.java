@@ -88,10 +88,9 @@ public class PersoniumTest extends JerseyTest {
                         }
                     }
 
-                    @SuppressWarnings("deprecation")
                     @Override
                     public void stop() {
-                        this.server.stop();
+                        this.server.shutdownNow();;
                     }
 
                 };
