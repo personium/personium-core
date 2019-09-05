@@ -337,7 +337,8 @@ public class UriUtils {
     static Logger log = LoggerFactory.getLogger(UriUtils.class);
 
     /**
-     * "https://{domain}/{cellname}/..." to "https://{cellname}.{domain}/...".
+     * Convert such URL in the format of "https://{domain}/{cellname}/..." to "https://{cellname}.{domain}/...".
+     * if the givne URL is not in the above format then return the Given URL as is
      * @param sourceUrl Source url
      * @return Converted url
      * @throws URISyntaxException Source url is not URI
@@ -350,12 +351,30 @@ public class UriUtils {
         }
 
         String domain = uri.getHost();
-        String cellName = uri.getPath().split("/")[1];
+        String path = uri.getPath();
+        String[] pathAry = path.split("/");
+        String cellName = null;
+        String firstPath = null;
+
         StringBuilder hostBuilder = new StringBuilder();
-        hostBuilder.append(cellName).append(".").append(domain);
         StringBuilder cellPathBuilder = new StringBuilder();
-        cellPathBuilder.append("/").append(cellName);
-        String path = uri.getPath().replaceFirst(cellPathBuilder.toString(), "");
+        if (pathAry.length > 1) {
+            firstPath = pathAry[1];
+            if (!firstPath.startsWith("__")) {
+                cellName = firstPath;
+            }
+        }
+        // Construct FQNDN
+        if (cellName != null) {
+            hostBuilder.append(cellName).append(".");
+        }
+        hostBuilder.append(domain);
+
+        // Construct Path
+        if (cellName != null) {
+            cellPathBuilder.append("/").append(cellName);
+            path = path.replaceFirst(cellPathBuilder.toString(), "");
+        }
 
         UriBuilder uriBuilder = UriBuilder.fromUri(uri);
         uriBuilder.host(hostBuilder.toString());
