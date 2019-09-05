@@ -237,6 +237,12 @@ public class UriUtils {
             StringBuilder sb = new StringBuilder(SCHEME_LOCALUNIT);
             sb.append(":").append(cellName).append(":");
             sb.append(uri.getPath());
+            if (uri.getQuery() != null) {
+                sb.append("?").append(uri.getQuery());
+            }
+            if (uri.getFragment() != null) {
+                sb.append("#").append(uri.getFragment());
+            }
             return sb.toString();
         }
     }

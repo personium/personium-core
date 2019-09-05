@@ -16,6 +16,8 @@
  */
 package io.personium.core.utils;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -25,6 +27,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
@@ -34,6 +37,7 @@ import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
+import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.ssl.SSLContextBuilder;
 
 /**
@@ -44,6 +48,8 @@ public class HttpClientFactory {
     public static final String TYPE_DEFAULT = "default";
     /** Type of HTTP communication.*/
     public static final String TYPE_INSECURE = "insecure";
+    /** Type name of HTTP client that always connect to .*/
+    public static final String TYPE_ALWAYS_LOCAL = "alwayslocal";
 
     /** Connection timeout value.*/
     private static final int TIMEOUT = 60000; // 20000;
@@ -69,10 +75,50 @@ public class HttpClientFactory {
                     .setDefaultRequestConfig(config)
                     .useSystemProperties()
                     .build();
-        } else if (!TYPE_INSECURE.equalsIgnoreCase(type)) {
+        } else if (TYPE_INSECURE.equalsIgnoreCase(type)) {
+            return createInsecure(config);
+        } else if (TYPE_ALWAYS_LOCAL.equalsIgnoreCase(type)) {
+            return createAlwaysLocal(config);
+        }
+        return null;
+
+    }
+    private static CloseableHttpClient createAlwaysLocal(RequestConfig config) {
+        SSLConnectionSocketFactory sf = null;
+        try {
+            sf = createInsecureSSLConnectionSocketFactory();
+        } catch (Exception e) {
             return null;
         }
 
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("https", sf)
+                .register("http", PlainConnectionSocketFactory.INSTANCE)
+                .build();
+        /* Custom DNS resolver */
+        DnsResolver dnsResolver = new SystemDefaultDnsResolver() {
+            @Override
+            public InetAddress[] resolve(final String host) throws UnknownHostException {
+                // Always 127.0.0.1
+                return new InetAddress[] { InetAddress.getByName("127.0.0.1") };
+            }
+        };
+        HttpClientConnectionManager cm = new BasicHttpClientConnectionManager(registry,
+                null, /* Default ConnectionFactory */
+                null, /* Default SchemePortResolver */
+                dnsResolver  /* Our DnsResolver */
+                );
+
+
+        return HttpClientBuilder.create()
+                                .setDefaultRequestConfig(config)
+                                .setConnectionManager(cm)
+                                .useSystemProperties()
+                                .build();
+
+
+    }
+    private static CloseableHttpClient createInsecure(RequestConfig config) {
         SSLConnectionSocketFactory sf = null;
         try {
             sf = createInsecureSSLConnectionSocketFactory();
@@ -91,6 +137,7 @@ public class HttpClientFactory {
                                 .setConnectionManager(cm)
                                 .useSystemProperties()
                                 .build();
+
     }
 
     private static SSLConnectionSocketFactory createInsecureSSLConnectionSocketFactory()
