@@ -1,3 +1,7 @@
+## 1.7.18a
+BUG FIXES:
+* 500 Error when Non-Cell URL (incl. Unit URL) is given in p_target param at TokenEndpoint. ([#475](https://github.com/personium/personium-core/issues/475))
+
 ## 1.7.18
 NEW FEATURES:
 * Each Cell's OAuth 2.0 token endpoint now accepts scope request.
