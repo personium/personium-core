@@ -1034,7 +1034,7 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
      * Edm_DateTime_$filter_gt_lt_ge_le.
      */
     @Test
-    public void Edm_DateTime型の$filter_gt_lt_ge_le_検索の検証() {
+    public void Edm_DateTime_$filter_gt_lt_ge_le() {
 
         // We have the following two records
         //  2015-01-07T00:19:16.172
@@ -1096,6 +1096,11 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
 
         // should match 0
         query = "?\\$filter=datetime+gt+datetime'2020-01-01T00:00:00.000'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+
+        // should match 0
+        query = "?\\$filter=__published+lt+datetime'1970-01-01T00:00:00.900'&\\$inlinecount=allpages";
         res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
         ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
 
