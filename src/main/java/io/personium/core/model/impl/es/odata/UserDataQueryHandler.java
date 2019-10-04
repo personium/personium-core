@@ -127,7 +127,8 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
                 || Common.P_UPDATED.getName().equals(name)
                 || EdmSimpleType.SINGLE.equals(edmProperty.getType())
                 || EdmSimpleType.DOUBLE.equals(edmProperty.getType())
-                || EdmSimpleType.INT32.equals(edmProperty.getType())) {
+                || EdmSimpleType.INT32.equals(edmProperty.getType())
+                || EdmSimpleType.DATETIME.equals(edmProperty.getType())) {
             return false;
         }
         return true;
@@ -139,9 +140,8 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
             if (EdmSimpleType.SINGLE.equals(edmProperty.getType())
                     || EdmSimpleType.DOUBLE.equals(edmProperty.getType())) {
                 suffix = "double";
-            } else if (EdmSimpleType.INT32.equals(edmProperty.getType())) {
-                suffix = "long";
-            } else if (EdmSimpleType.DATETIME.equals(edmProperty.getType())) {
+            } else if (EdmSimpleType.INT32.equals(edmProperty.getType())
+                    ||EdmSimpleType.DATETIME.equals(edmProperty.getType())) {
                 suffix = "long";
             }
         }
