@@ -141,6 +141,8 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
                 suffix = "double";
             } else if (EdmSimpleType.INT32.equals(edmProperty.getType())) {
                 suffix = "long";
+            } else if (EdmSimpleType.DATETIME.equals(edmProperty.getType())) {
+                suffix = "long";
             }
         }
         return suffix;
