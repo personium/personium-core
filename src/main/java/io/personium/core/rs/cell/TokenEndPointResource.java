@@ -138,6 +138,9 @@ public class TokenEndPointResource {
             @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
         // Using @FormParam will cause a closed error on the library side in case of an incorrect body.
         // Since we can not catch Exception, retrieve the value after receiving it with MultivaluedMap.
+        if (formParams == null) {
+            throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.params(OAuth2Helper.Key.GRANT_TYPE);
+        }
         String grantType = formParams.getFirst(Key.GRANT_TYPE);
         String username = formParams.getFirst(Key.USERNAME);
         String password = formParams.getFirst(Key.PASSWORD);
