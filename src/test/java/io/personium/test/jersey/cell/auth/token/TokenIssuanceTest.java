@@ -16,6 +16,7 @@
  */
 package io.personium.test.jersey.cell.auth.token;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -92,6 +93,34 @@ public class TokenIssuanceTest extends PersoniumTest {
 
         assertFalse(aud.startsWith(UriUtils.SCHEME_LOCALUNIT));
         assertTrue(aud.startsWith("http"));
+    }
+
+    /**
+     * When request with empty body and no header, then token endpoint should respond with 400.
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws TokenRootCrtException
+     * @throws TokenDsigException
+     * @throws TokenParseException
+     */
+    @Test
+    public final void When_RequestWithNoHeadersEmptyBody_Then_Return400BadRequest()
+            throws IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
+        String cellUrl = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        cellUrl = UriUtils.resolveLocalUnit(cellUrl);
+        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_DEFAULT);
+
+        String tokenEndpoint = cellUrl + "__token";
+        log.info("Testing against: " + tokenEndpoint);
+
+        HttpPost post = new HttpPost(tokenEndpoint);
+        HttpResponse res = client.execute(post);
+        assertEquals(400, res.getStatusLine().getStatusCode());
+
+        try (InputStream is = res.getEntity().getContent()){
+            JsonObject obj = Json.createReader(is).readObject();
+            System.out.println(obj.toString());
+        }
     }
 
 
