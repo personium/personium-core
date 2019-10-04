@@ -1,3 +1,8 @@
+## 1.7.19
+BUG FIXES:
+* DateTime properties are handled as text properties for range query. ([#487](https://github.com/personium/personium-core/issues/487))
+* 500 Error occurs at token endpoint API when the request body is empty. ([#489](https://github.com/personium/personium-core/issues/489))
+
 ## 1.7.18b
 BUG FIXES:
 * Cell Owner URL being persisted without #fragment info. ([#479](https://github.com/personium/personium-core/issues/479))
