@@ -1030,6 +1030,76 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
         res.checkErrorResponse(PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.getCode(),
                 PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());
     }
+    /**
+     * Edm_DateTime_$filter_gt_lt_ge_le.
+     */
+    @Test
+    public void Edm_DateTime型の$filter_gt_lt_ge_le_検索の検証() {
+
+        // We have the following two records
+        //  2015-01-07T00:19:16.172
+        //  2015-01-07T00:19:16.173
+        // So the following queries :
+        String query = "?\\$filter=datetime+lt+datetime'2015-01-07T00:19:16.172'&\\$inlinecount=allpages";
+        TResponse res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 0
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+
+        query = "?\\$filter=datetime+le+datetime'2015-01-07T00:19:16.172'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 1
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
+
+        query = "?\\$filter=datetime+lt+datetime'2015-01-07T00:19:16.173'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 1
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
+
+        query = "?\\$filter=datetime+le+datetime'2015-01-07T00:19:16.173'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 2
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+
+
+        query = "?\\$filter=datetime+gt+datetime'2015-01-07T00:19:16.173'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 0
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+
+        query = "?\\$filter=datetime+ge+datetime'2015-01-07T00:19:16.173'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 1
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
+
+
+        query = "?\\$filter=datetime+gt+datetime'2015-01-07T00:19:16.172'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 1
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
+
+        query = "?\\$filter=datetime+ge+datetime'2015-01-07T00:19:16.172'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 2
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+
+
+
+        // should match 0
+        query = "?\\$filter=datetime+lt+datetime'1970-01-01T00:00:00.900'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+
+        // should match 0
+        query = "?\\$filter=datetime+lt+datetime'2000-01-01T00:00:00.000'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+
+        // should match 0
+        query = "?\\$filter=datetime+gt+datetime'2020-01-01T00:00:00.000'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+
+    }
 
     /**
      * 動的プロパティの$filter_eq検索の検証.
