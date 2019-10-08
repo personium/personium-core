@@ -45,6 +45,7 @@ import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
 import io.personium.common.auth.token.ResidentLocalAccessToken;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.HttpClientFactory;
 import io.personium.core.utils.UriUtils;
@@ -119,7 +120,8 @@ public class TokenIssuanceTest extends PersoniumTest {
 
         try (InputStream is = res.getEntity().getContent()){
             JsonObject obj = Json.createReader(is).readObject();
-            System.out.println(obj.toString());
+            log.info("Response: " + obj.toString());
+            assertTrue(obj.getString(OAuth2Helper.Key.ERROR_DESCRIPTION).startsWith("[PR400-AN-0016]"));
         }
     }
 
