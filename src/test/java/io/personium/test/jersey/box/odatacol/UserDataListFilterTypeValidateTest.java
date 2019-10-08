@@ -1030,13 +1030,15 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
         res.checkErrorResponse(PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.getCode(),
                 PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());
     }
+
     /**
-     * Edm_DateTime_$filter_gt_lt_ge_le.
+     * Edm DateTime propertiy test using $filter query with gt, lt, ge and le operators.
      */
     @Test
     public void Edm_DateTime_$filter_gt_lt_ge_le() {
+        //  Boundary value tests for gt / lt / ge / le operators
 
-        // We have the following two records
+        // We have the following two records set up in Setup script.
         //  2015-01-07T00:19:16.172
         //  2015-01-07T00:19:16.173
         // So the following queries :
@@ -1071,7 +1073,6 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
         // should match 1
         ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
 
-
         query = "?\\$filter=datetime+gt+datetime'2015-01-07T00:19:16.172'&\\$inlinecount=allpages";
         res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
         // should match 1
@@ -1082,28 +1083,42 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
         // should match 2
         ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
 
+        //  Make sure "number" index, not "text" index is used.
+        /*
+         *    if compared as String
+         *    "1970-01-01T00:00:00.900" = unix time "900".
+         *     is greater than
+         *    "2015-01-07T00:19:16.172" = unix time "1420557556"
+         */
 
-
-        // should match 0
+        // lt 900
         query = "?\\$filter=datetime+lt+datetime'1970-01-01T00:00:00.900'&\\$inlinecount=allpages";
         res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 0
         ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
 
-        // should match 0
+        // lt 946652400 unix time  (another check that comparison is done by number, not text )
         query = "?\\$filter=datetime+lt+datetime'2000-01-01T00:00:00.000'&\\$inlinecount=allpages";
         res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 0
         ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
 
-        // should match 0
+        //  gt 1577804400 unix time (normal date comparison)
         query = "?\\$filter=datetime+gt+datetime'2020-01-01T00:00:00.000'&\\$inlinecount=allpages";
         res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 0
         ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
 
-        // should match 0
+        // Testing against __published
+        /*
+         *  System defined DateTime property is treated differently
+         *  from user defined properties. So we need a test for it.
+         */
+        // __published lt 900
         query = "?\\$filter=__published+lt+datetime'1970-01-01T00:00:00.900'&\\$inlinecount=allpages";
         res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        // should match 0 (unless we take a time machine and run this test)
         ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
-
     }
 
     /**
