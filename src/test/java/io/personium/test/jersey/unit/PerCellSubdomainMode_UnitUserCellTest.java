@@ -100,7 +100,8 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
     private static String unitUserToken = null;
 
     /**
-     * Constructor. テスト対象のパッケージをsuperに渡す必要がある
+     * Constructor.
+     * Need to pass the target package to super
      */
     public PerCellSubdomainMode_UnitUserCellTest() {
         super(new PersoniumCoreApplication());
@@ -171,9 +172,9 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
 
 
     private static void linkUuAccountAndUnitAdminRole() {
-        //            LinksUtils.createLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null, Role.EDM_TYPE_NAME,
-        //                    unitAdminRole, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
-        String roleODataUrl = unitUserCellUrl + "__ctl/Role(Name=%27" + unitAdminRole + "%27)";
+        //  LinksUtils.createLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null, Role.EDM_TYPE_NAME,
+        //   unitAdminRole, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+        String roleODataUrl = unitUserCellUrl + "__ctl/Role('" + unitAdminRole + "')";
         String accountRoleLinkUrl = unitUserCellUrl + "__ctl/Account(%27" + UNIT_USER_ACCOUNT + "%27)/$links/_Role";
         try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
             HttpPost post = new HttpPost(accountRoleLinkUrl);
@@ -183,7 +184,9 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
                     .build().toString();
             HttpEntity entity = new StringEntity(jsonStr);
             post.setEntity(entity);
-            client.execute(post);
+            try(CloseableHttpResponse res = client.execute(post)){
+                assertEquals(204, res.getStatusLine().getStatusCode());
+            };
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -191,8 +194,8 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
 
 
     private static void createUnitAdminRole() {
-//          RoleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, unitAdminRole,
-//          null, HttpStatus.SC_CREATED);
+        // RoleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, unitAdminRole,
+        // null, HttpStatus.SC_CREATED);
         String roleODataUrl = unitUserCellUrl + "__ctl/Role";
         try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
             HttpPost post = new HttpPost(roleODataUrl);
@@ -303,11 +306,9 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
             log.info(" OWNER = " + owner);
             assertEquals(localunitSubject, owner);
 
-
         } finally {
             // Delete Unit User Account
             deleteUnitUserAccount();
-
 
             // 本テスト用セルの削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, CREATE_CELL, -1);
@@ -377,10 +378,10 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
      * ユニットアドミンロールをもつユニットユーザートークンでセル作成を行いオーナーが設定されないことを確認.
      */
     @Test
-    public void ユニットアドミンロールをもつユニットユーザートークンでセル作成を行いオーナーが設定されないことを確認() {
-
+    public void ユニットアドミンロールをもつユニットユーザートークンでセル作成を行いオーナーが設定されないことを確認()
+            throws Exception {
         try {
-            // 本テスト用セルの作成
+            // 本テスト用 Unit User Cell の作成
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
 
             // アカウント追加
@@ -392,24 +393,31 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
             // linkUnit AdminRole with account
             linkUuAccountAndUnitAdminRole();
 
-
             // 認証（ユニットユーザートークン取得）
             unitUserToken = getUnitUserToken();
+            TransCellAccessToken uu1 = TransCellAccessToken.parse(unitUserToken);
+            log.info("UUT1 with subject: " + uu1.getSubject());
+            log.info("Roles: " + uu1.getRoleList().size());
 
-            // ユニットユーザートークンを使ってセル作成をするとオーナーがユニットユーザー（ここだとuserNameアカウントのURL）になるはず。
+            // Unit User Token トークンを使ってセル作成をするとオーナーが
+            // Unit User Token （ここだとuserNameアカウントのURL）になるはず。
+            log.info("Creating Cell with UUT1: " + CREATE_CELL);
             CellUtils.create(CREATE_CELL, unitUserToken, HttpStatus.SC_CREATED);
 
-            // UnitUserTokenを自作
-            TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
-                    UrlUtils.subjectUrl(UNIT_USER_CELL, UNIT_USER_ACCOUNT),
+            // Unit User Token を自作
+            String subj = UrlUtils.subjectUrl(UNIT_USER_CELL, UNIT_USER_ACCOUNT);
+            log.info("UUT2 with subject: " + subj);
+            TransCellAccessToken uut2 = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL), subj,
                     UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
 
-            // ユニットユーザトークンでは取得できないことを確認
-            CellUtils.get(CREATE_CELL, tcat.toTokenString(), HttpStatus.SC_FORBIDDEN);
+            // Unit User Token では取得できないことを確認
+            log.info("Getting the cell with UUT2 should fail");
+            CellUtils.get(CREATE_CELL, uut2.toTokenString(), HttpStatus.SC_FORBIDDEN);
 
-            // セルのオーナーが見指定のため、マスタートークンのオーナーヘッダ指定を使うと取得不可なことを確認
+            // セルのオーナーが未指定のため、マスタートークンのオーナーヘッダ指定を使うと取得不可なことを確認
+            log.info("Getting the cell with UMT with subj fail. Subj= " + subj);
             CellUtils.get(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME,
-                    UrlUtils.subjectUrl(UNIT_USER_CELL, UNIT_USER_ACCOUNT), HttpStatus.SC_FORBIDDEN);
+                    subj, HttpStatus.SC_FORBIDDEN);
 
             // オーナーが設定されていないのでマスタートークンのみアクセス可能
             CellUtils.get(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK);

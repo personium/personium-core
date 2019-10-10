@@ -89,7 +89,8 @@ public class UnitUserCellTest extends PersoniumTest {
     private static String urlModeBackup = "";
 
     /**
-     * Constructor. テスト対象のパッケージをsuperに渡す必要がある
+     * Constructor.
+     * Need to pass the target package to super
      */
     public UnitUserCellTest() {
         super(new PersoniumCoreApplication());
@@ -279,15 +280,15 @@ public class UnitUserCellTest extends PersoniumTest {
 
 
     /**
-     * ユニットアドミンロールをもつユニットユーザートークンでセル作成を行いオーナーが設定されないことを確認.
+     * UnitAdmin Role をもつUnit User Tokenでセル作成を行いOwnerが設定されないことを確認.
+     * @throws Exception
      */
     @Test
-    public void ユニットアドミンロールをもつユニットユーザートークンでセル作成を行いオーナーが設定されないことを確認() {
-
+    public void ユニットアドミンロールをもつユニットユーザートークンでセル作成を行いオーナーが設定されないことを確認()
+            throws Exception {
         try {
-            // 本テスト用セルの作成
+            // 本テスト用 Unit User Cell の作成
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
-
             // アカウント追加
             AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
                     UNIT_USER_ACCOUNT, UNIT_USER_ACCOUNT_PASS, HttpStatus.SC_CREATED);
@@ -311,19 +312,28 @@ public class UnitUserCellTest extends PersoniumTest {
 
             JSONObject json = res.bodyAsJson();
             String unitUserToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
+            TransCellAccessToken uut1 = TransCellAccessToken.parse(unitUserToken);
+            log.info("UUT1 with subject: " + uut1.getSubject());
+            log.info("Roles: " + uut1.getRoleList().size());
+            log.info("UUT1 with subject: " + uut1.getSubject());
 
-            // ユニットユーザートークンを使ってセル作成をするとオーナーがユニットユーザー（ここだとuserNameアカウントのURL）になるはず。
+            // Unit User Token を使ってセル作成をするとオーナーが
+            // Unit User Token （ここだとuserNameアカウントのURL）になるはず。
+            log.info("Creating Cell with UUT1: " + CREATE_CELL);
             CellUtils.create(CREATE_CELL, unitUserToken, HttpStatus.SC_CREATED);
 
-            // UnitUserTokenを自作
-            TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
-                    UrlUtils.subjectUrl(UNIT_USER_CELL, UNIT_USER_ACCOUNT),
-                    UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
+            // Unit User Token を自作
+            String subj = UrlUtils.subjectUrl(UNIT_USER_CELL, UNIT_USER_ACCOUNT);
+            log.info("UUT2 with subject: " + subj);
+            TransCellAccessToken uut2 = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
+                    subj,  UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null, null);
 
-            // ユニットユーザトークンでは取得できないことを確認
-            CellUtils.get(CREATE_CELL, tcat.toTokenString(), HttpStatus.SC_FORBIDDEN);
+            // Unit User Token では取得できないことを確認
+            log.info("Getting the cell with UUT2 should fail");
+            CellUtils.get(CREATE_CELL, uut2.toTokenString(), HttpStatus.SC_FORBIDDEN);
 
-            // セルのオーナーが見指定のため、マスタートークンのオーナーヘッダ指定を使うと取得不可なことを確認
+            // セルのオーナーが未指定のため、マスタートークンのオーナーヘッダ指定を使うと取得不可なことを確認
+            log.info("Getting the cell with UMT with subj fail. Subj= " + subj);
             CellUtils.get(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME,
                     UrlUtils.subjectUrl(UNIT_USER_CELL, UNIT_USER_ACCOUNT), HttpStatus.SC_FORBIDDEN);
 
