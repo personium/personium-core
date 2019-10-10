@@ -737,7 +737,7 @@ public class AccessContext {
         } else if (PersoniumUnitConfig.getMasterToken().equals(accessToken) && xPersoniumUnitUser != null) {
             //Demote from master to unit user token with X-Personium-UnitUser header specification
             AccessContext ret = new AccessContext(TYPE_UNIT_USER, cell, baseUri, uriInfo);
-            ret.subject = xPersoniumUnitUser;
+            ret.subject = UriUtils.resolveLocalUnit(xPersoniumUnitUser);
             return ret;
         }
         //Since, Cell level.
@@ -961,7 +961,7 @@ public class AccessContext {
                         ret = new AccessContext(TYPE_UNIT_ADMIN, cell, baseUri, uriInfo);
                     } else {
                         // If there is an X-Personium-UnitUser header, UnitUser
-                        ret.subject = xPersoniumUnitUser;
+                        ret.subject = UriUtils.resolveLocalUnit(xPersoniumUnitUser);
                     }
                 } else if (cellContentsReaderUrl.equals(roleUrl) && unitUserRole == null) {
                     // If roles are not set, set the CellContentsReader role.
