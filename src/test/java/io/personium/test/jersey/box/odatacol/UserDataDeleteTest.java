@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2019 Personium Project
+ *  - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +55,7 @@ public class UserDataDeleteTest extends AbstractUserDataTest {
     String userDataId = "userdata001";
 
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public UserDataDeleteTest() {
         super(new PersoniumCoreApplication());
@@ -115,7 +116,7 @@ public class UserDataDeleteTest extends AbstractUserDataTest {
 
         // DELETEを実行
         deleteUserData(cellName, boxName, "colhoge", entityTypeName,
-                userDataId, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NOT_FOUND);
+                userDataId, AbstractCase.MASTER_TOKEN_NAME,null,HttpStatus.SC_NOT_FOUND);
 
     }
 
