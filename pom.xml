@@ -3,7 +3,7 @@
     <groupId>io.personium</groupId>
     <artifactId>personium-core</artifactId>
     <packaging>war</packaging>
-    <version>1.7.19</version>
+    <version>1.7.20</version>
     <name>personium-core Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <licenses>
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.18</version>
+            <version>1.19</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
