@@ -16,7 +16,9 @@
  */
 package io.personium.test.jersey.box.odatacol;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -34,6 +36,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
@@ -115,7 +118,8 @@ public class UserDataCreateTest extends AbstractUserDataTest {
             String etag = response.getHeader(HttpHeaders.ETAG);
 
             // レスポンスヘッダーのチェック
-            String location = UrlUtils.userData(cellName, boxName, colName, entityTypeName + "('" + userDataId + "')");
+            String location = UrlUtils.userData(cellName, boxName, colName, entityTypeName
+                    + "('" + CommonUtils.encodeUrlComp(userDataId) + "')");
             ODataCommon.checkCommonResponseHeader(response, location);
 
             // レスポンスボディーのチェック
@@ -756,6 +760,40 @@ public class UserDataCreateTest extends AbstractUserDataTest {
                     .toString();
         } finally {
             deleteUserData(userDataId);
+        }
+    }
+
+    /**
+     * When_URL_isGivenAs__id_Then_ItShouldBe_Escaped.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void When_URL_isGivenAs__id_Then_ItShouldBe_Escaped() {
+        String userDataId = "https://server.exapmle/path?abc=def#ghi";
+        // Prepare Request Body
+        JSONObject body = new JSONObject();
+        body.put("__id", userDataId);
+        body.put("testword", "xxx");
+
+        try {
+            // make an request
+            TResponse response = createUserData(body, HttpStatus.SC_CREATED);
+
+            // get a result
+            JSONObject result = (JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results");
+            userDataId = result.get("__id")
+                    .toString();
+            String uri = (String)((JSONObject)result.get("__metadata")).get("uri");
+
+            // key in the __metadata.uri should be encoded
+            //    not found in plain format
+            assertEquals(-1, uri.indexOf(userDataId));
+            //    found in encoded format
+            assertNotEquals(-1, uri.indexOf(CommonUtils.encodeUrlComp(userDataId)));
+
+        } finally {
+            // delete the data
+            deleteUserData(CommonUtils.encodeUrlComp(userDataId));
         }
     }
 
