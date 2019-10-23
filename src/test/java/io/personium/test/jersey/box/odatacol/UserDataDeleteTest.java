@@ -116,7 +116,7 @@ public class UserDataDeleteTest extends AbstractUserDataTest {
 
         // DELETEを実行
         deleteUserData(cellName, boxName, "colhoge", entityTypeName,
-                userDataId, AbstractCase.MASTER_TOKEN_NAME,null,HttpStatus.SC_NOT_FOUND);
+                userDataId, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_PRECONDITION_FAILED);
 
     }
 
