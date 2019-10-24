@@ -525,6 +525,7 @@ public class TokenEndPointResource {
         }
 
         if (!StringUtils.equals(schema, token.getSchema())) {
+            //log.info("schema mismatch: " + schema + "  " + token.getSchema());
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
@@ -535,8 +536,8 @@ public class TokenEndPointResource {
                 token.getSubject(), schema, token.getScope());
         IAccessToken aToken = null;
         if (target == null) {
-            aToken = new VisitorLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    token.getSubject(), token.getRoles(), schema, token.getScope());
+            aToken = new ResidentLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
+                    token.getSubject(), schema, token.getScope());
         } else {
             List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
             aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
