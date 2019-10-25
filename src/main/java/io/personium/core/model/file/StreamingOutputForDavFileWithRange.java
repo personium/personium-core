@@ -25,10 +25,10 @@ import javax.ws.rs.WebApplicationException;
 
 import org.apache.commons.io.IOUtils;
 
+import io.personium.common.file.FileDataNotFoundException;
+import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
-import io.personium.common.file.BinaryDataNotFoundException;
-import io.personium.core.ElapsedTimeLog;
 import io.personium.core.http.header.ByteRangeSpec;
 import io.personium.core.http.header.RangeHeaderHandler;
 
@@ -55,7 +55,7 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
             final long fileSize,
             final RangeHeaderHandler range,
             String cellId,
-            String encryptionType) throws BinaryDataNotFoundException {
+            String encryptionType) throws FileDataNotFoundException {
         super(fileFullPath, cellId, encryptionType);
         this.range = range;
         this.fileSize = fileSize;

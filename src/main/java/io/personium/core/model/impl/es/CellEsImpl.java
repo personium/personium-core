@@ -40,7 +40,7 @@ import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.common.file.BinaryDataAccessException;
+import io.personium.common.file.FileDataAccessException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
@@ -226,7 +226,7 @@ public class CellEsImpl extends Cell {
         // Delete event log file.
         try {
             EventUtils.deleteEventLog(this.getId(), this.getOwnerNormalized());
-        } catch (BinaryDataAccessException e) {
+        } catch (FileDataAccessException e) {
             // If the deletion fails, output a log and continue processing.
             log.warn("Delete EventLog Failed." + cellInfoLog, e);
         }

@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.common.file.BinaryDataAccessException;
+import io.personium.common.file.FileDataAccessException;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
@@ -182,7 +182,7 @@ public class UnitCtlResource extends ODataResource {
             String owner = cell.getOwnerNormalized();
             try {
                 EventUtils.deleteEventLog(this.cell.getId(), owner);
-            } catch (BinaryDataAccessException e) {
+            } catch (FileDataAccessException e) {
                 log.warn("Failed to delete eventlog. CellName=[" + this.cell.getName() + "] owner=[" + owner + "] "
                         + e.getMessage());
             }
