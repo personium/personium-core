@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.personium.common.es.util.IndexNameEncoder;
+import io.personium.common.file.BinaryDataAccessException;
+import io.personium.common.file.BinaryDataAccessor;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.model.file.BinaryDataAccessException;
-import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.rs.cell.LogResource;
 
 /**

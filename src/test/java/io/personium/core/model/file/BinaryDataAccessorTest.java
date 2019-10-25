@@ -28,6 +28,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+import io.personium.common.file.BinaryDataAccessor;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 

@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreLog;
+import io.personium.common.file.BinaryDataNotFoundException;
+import io.personium.common.file.DataCryptor;
 import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumUnitConfig;
 

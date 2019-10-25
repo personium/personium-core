@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.IndexNameEncoder;
+import io.personium.common.file.BinaryDataAccessException;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
@@ -44,7 +45,6 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellSnapshotCellCmp;
 import io.personium.core.model.ModelFactory;
-import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.ODataResource;

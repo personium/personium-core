@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
+import io.personium.common.file.BinaryDataNotFoundException;
 import io.personium.core.ElapsedTimeLog;
 import io.personium.core.http.header.ByteRangeSpec;
 import io.personium.core.http.header.RangeHeaderHandler;
