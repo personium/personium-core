@@ -120,7 +120,7 @@ public class HomeAppScenarioTest extends PersoniumTest {
             throws ClientProtocolException, IOException, TokenParseException {
         //ROPC at Test Cell1 By Homeapp
         //account2 (linked with role2) can read the box1 (schema = appCellUrl)
-        JsonHttpResponse res = this.callROPC(this.usrCellUrl, "account2", "password2", null, null, null, true);
+        JsonHttpResponse res = this.callTokenEndpointWithRopcFlow(this.usrCellUrl, "account2", "password2", null, null, null, true);
 
         //Start OAuth 2.0 process
         //   call authorization endpoint
@@ -142,7 +142,7 @@ public class HomeAppScenarioTest extends PersoniumTest {
         // simulate the redirect receiver
         //  account0 has no role
         //  account1 has confidential role
-        res = this.callROPC(this.appCellUrl, "account0", "password0", this.usrCellUrl, null, null, false);
+        res = this.callTokenEndpointWithRopcFlow(this.appCellUrl, "account0", "password0", this.usrCellUrl, null, null, false);
         String appAuthToken = res.jsonObject.getString("access_token");
         log.info("AppAuthToken: " + appAuthToken);
 
@@ -189,7 +189,8 @@ public class HomeAppScenarioTest extends PersoniumTest {
             throw new RuntimeException(e);
         }
     }
-    private JsonHttpResponse callROPC(String cellUrl, String username, String password, String pTarget,
+
+    private JsonHttpResponse callTokenEndpointWithRopcFlow(String cellUrl, String username, String password, String pTarget,
             String clientId, String clientSecret, Boolean pCookie)
             throws ClientProtocolException, IOException {
         try(CloseableHttpClient client = this.createHttpClient()) {
