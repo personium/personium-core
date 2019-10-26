@@ -436,7 +436,7 @@ public class TokenEndPointResource {
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage())
                     .writeLog();
             throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID
-                    .realm(cellUrl);
+                    .realm(cellUrl).reason(e);
         } catch (TokenRootCrtException e) {
             //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(
@@ -488,29 +488,29 @@ public class TokenEndPointResource {
             final String code, long expiresIn, long rTokenExpiresIn) {
         if (code == null) {
             //If code is not set, it is regarded as a parse error
-            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
+            throw PersoniumCoreAuthnException.INVALID_GRANT_CODE.reason(new IllegalArgumentException("grant code not provided"));
         }
         if (schema == null) {
-            throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(
-                    this.cell.getUrl()).params(Key.CLIENT_ID);
+            throw PersoniumCoreAuthnException.CLIENT_AUTH_REQUIRED.realm(
+                    this.cell.getUrl());
         }
         if (Key.TRUE_STR.equals(owner)) {
             throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER
                     .realm(this.cell.getUrl());
         }
         if (!code.startsWith(GrantCode.PREFIX_CODE)) {
-            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
+            throw PersoniumCoreAuthnException.INVALID_GRANT_CODE.reason(new IllegalArgumentException("Invalid Prefix"));
         }
 
-        GrantCode token;
+        GrantCode grantCode;
         try {
-            token = (GrantCode) AbstractOAuth2Token.parse(code, getIssuerUrl(), cell.getUnitUrl());
+            grantCode = (GrantCode) AbstractOAuth2Token.parse(code, getIssuerUrl(), cell.getUnitUrl());
         } catch (TokenParseException e) {
-            //Because I failed in Perth
+            // failed in parse
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl()).reason(e);
+            throw PersoniumCoreAuthnException.INVALID_GRANT_CODE.reason(e);
         } catch (TokenDsigException e) {
-            //Because certificate validation failed
+            //certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID.realm(this.cell.getUrl());
         } catch (TokenRootCrtException e) {
@@ -520,37 +520,37 @@ public class TokenEndPointResource {
         }
 
         // Check if expired.
-        if (token.isRefreshExpired()) {
+        if (grantCode.isExpired()) {
             throw PersoniumCoreAuthnException.TOKEN_EXPIRED.realm(this.cell.getUrl());
         }
 
-        if (!StringUtils.equals(schema, token.getSchema())) {
-            //log.info("schema mismatch: " + schema + "  " + token.getSchema());
-            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+        String gcSchema = grantCode.getSchema();
+        if (!StringUtils.equals(gcSchema, schema.replaceAll(OAuth2Helper.Key.CONFIDENTIAL_MARKER, ""))) {
+            throw PersoniumCoreAuthnException.CLIENT_MISMATCH.params(gcSchema, schema).realm(this.cell.getUrl());
         }
 
         long issuedAt = new Date().getTime();
 
         //Regenerate AccessToken and RefreshToken from the received Token
         ResidentRefreshToken rToken = new ResidentRefreshToken(issuedAt, rTokenExpiresIn, getIssuerUrl(),
-                token.getSubject(), schema, token.getScope());
+                grantCode.getSubject(), schema, grantCode.getScope());
         IAccessToken aToken = null;
         if (target == null) {
             aToken = new ResidentLocalAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    token.getSubject(), schema, token.getScope());
+                    grantCode.getSubject(), schema, grantCode.getScope());
         } else {
-            List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
+            List<Role> roleList = cell.getRoleListForAccount(grantCode.getSubject());
             aToken = new TransCellAccessToken(issuedAt, expiresIn, getIssuerUrl(),
-                    getIssuerUrl() + "#" + token.getSubject(), target, roleList, schema, token.getScope());
+                    getIssuerUrl() + "#" + grantCode.getSubject(), target, roleList, schema, grantCode.getScope());
         }
 
         // If scope is openid it returns id_token.
         IdToken idToken = null;
-        Set<String> reqScopes = new HashSet<>(Arrays.asList(token.getScope()));
+        Set<String> reqScopes = new HashSet<>(Arrays.asList(grantCode.getScope()));
         if (reqScopes.contains(OAuth2Helper.Scope.OPENID)) {
             CellCmp cellCmp = (CellCmp) davRsCmp.getDavCmp();
             CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
-            String subject = token.getSubject();
+            String subject = grantCode.getSubject();
             long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
             long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_AN_HOUR;
             idToken = new IdToken(
@@ -572,7 +572,7 @@ public class TokenEndPointResource {
         //Assertion null check
         if (assertion == null) {
             //If assertion is not set, it is regarded as a parse error
-            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl()).reason(new IllegalArgumentException("assertion not provided"));
         }
 
         //First to parse
@@ -582,15 +582,15 @@ public class TokenEndPointResource {
         } catch (TokenParseException e) {
             //When parsing fails
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl()).reason(e);
         } catch (TokenDsigException e) {
             //Error in signature verification
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
-            throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID.realm(this.cell.getUrl());
+            throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID.realm(this.cell.getUrl()).reason(e);
         } catch (TokenRootCrtException e) {
             //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
-            throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
+            throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR.reason(e);
         }
 
         //Verification of Token
@@ -697,7 +697,7 @@ public class TokenEndPointResource {
             if (schema == null) {
                 throw PersoniumCoreAuthnException.CLIENT_AUTH_REQUIRED;
             }
-            throw PersoniumCoreAuthnException.CLIENT_MISMATCH_FOR_REFRESH.params(schema);
+            throw PersoniumCoreAuthnException.CLIENT_MISMATCH.params(tSchema, schema);
         }
 
         long issuedAt = new Date().getTime();

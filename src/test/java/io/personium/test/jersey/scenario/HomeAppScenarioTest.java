@@ -142,7 +142,7 @@ public class HomeAppScenarioTest extends PersoniumTest {
         // simulate the redirect receiver
         //  account0 has no role
         //  account1 has confidential role
-        res = this.callTokenEndpointWithRopcFlow(this.appCellUrl, "account0", "password0", this.usrCellUrl, null, null, false);
+        res = this.callTokenEndpointWithRopcFlow(this.appCellUrl, "account1", "password1", this.usrCellUrl, null, null, false);
         String appAuthToken = res.jsonObject.getString("access_token");
         log.info("AppAuthToken: " + appAuthToken);
 
