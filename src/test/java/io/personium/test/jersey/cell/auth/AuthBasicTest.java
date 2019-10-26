@@ -251,8 +251,8 @@ public class AuthBasicTest extends PersoniumTest {
             assertThat(headers).contains(expectedBasic);
 
             // レスポンスボディのチェック
-            ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getCode(),
-                    PersoniumCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getCode(),
+                    PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getMessage());
         } finally {
             // Cellを再帰的削除
             Setup.cellBulkDeletion(MY_CELL);
