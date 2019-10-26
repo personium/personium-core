@@ -75,7 +75,11 @@ public class DavFileResource {
     @PUT
     public Response put(@HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
+            @HeaderParam(HttpHeaders.IF_NONE_MATCH) final String ifNoneMatch,
             final InputStream inputStream) {
+    	if ("*".equals(ifNoneMatch)) {
+    		throw PersoniumCoreException.Dav.ETAG_MATCH;
+    	}
         // Access Control
         this.davRsCmp.checkAccessContext(BoxPrivilege.WRITE_CONTENT);
 

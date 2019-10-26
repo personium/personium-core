@@ -491,6 +491,10 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException NO_ENTITY_MATCH = create("PR412-DV-0003");
         /**
+         * The Etag of the corresponding resource match.
+         */
+        public static final PersoniumCoreException ETAG_MATCH = create("PR412-DV-0004");
+        /**
          * Range header specification error.
          */
         public static final PersoniumCoreException REQUESTED_RANGE_NOT_SATISFIABLE = create("PR416-DV-0001");
