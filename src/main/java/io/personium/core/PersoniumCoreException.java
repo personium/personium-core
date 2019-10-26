@@ -24,6 +24,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.personium.core.exceptions.ODataErrorMessage;
 import io.personium.core.utils.EscapeControlCode;
@@ -1216,4 +1218,45 @@ public class PersoniumCoreException extends RuntimeException {
         }
         return Integer.parseInt(m.group(1));
     }
+    static Logger defaultLogger = LoggerFactory.getLogger(PersoniumCoreException.class);
+    /*
+     * Handling of PersoniumCoreException.
+     */
+    public void log(final Logger log) {
+    	Logger l = log;
+    	if (l == null) {
+    		l = defaultLogger;
+    	}
+        Severity sv = this.getSeverity();
+        String code = this.getCode();
+        String message = this.getMessage();
+        String format = String.format("[%s] - %s", code, message);
+        Throwable cause = this.getCause();
+        //Log output
+        switch (sv) {
+        case INFO:
+            l.info(format);
+            break;
+        case WARN:
+            l.warn(format, cause);
+            break;
+        case ERROR:
+            l.error(format, cause);
+            break;
+        default:
+            l.error("Exception Severity Not Defined");
+            l.error(format, cause);
+        }
+    	logCauseChain(l, cause);
+    }
+    private static void logCauseChain(final Logger log, Throwable cause) {
+        if (cause == null) {
+        	return;
+        }
+    	log.info("   reason = " + cause.getMessage() + " (" + cause.getClass().getCanonicalName() + ")");
+    	if (cause.getCause() != null) {
+    		logCauseChain(log, cause.getCause());
+    	}
+    }
+
 }
