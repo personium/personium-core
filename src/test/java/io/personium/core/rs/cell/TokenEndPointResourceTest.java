@@ -23,7 +23,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.ArrayList;
@@ -57,7 +56,8 @@ import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmType;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.GrantCode;
@@ -66,28 +66,23 @@ import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
-import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreAuthnException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
-import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.PersoniumCoreApplication;
-import io.personium.core.rs.PersoniumCoreExceptionMapper;
 import io.personium.test.categories.Unit;
 
 /**
  * TokenEndPointResource unit test class.
  */
-//@RunWith(PowerMockRunner.class)
-@PrepareForTest({ TokenEndPointResource.class, ResidentRefreshToken.class, VisitorRefreshToken.class,
-    AbstractOAuth2Token.class })
 @Category({ Unit.class })
-//@PowerMockIgnore({"javax.crypto.*" })
 public class TokenEndPointResourceTest {
+    static Logger log = LoggerFactory.getLogger(TokenEndPointResourceTest.class);
+
 
     /** Target class of unit test. */
     private TokenEndPointResource tokenEndPointResource;
@@ -102,7 +97,6 @@ public class TokenEndPointResourceTest {
         TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                 PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
         PersoniumCoreApplication.loadPlugins();
-
     }
     @AfterClass
     public static void afterClass() {
@@ -476,7 +470,7 @@ public class TokenEndPointResourceTest {
             tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
             fail("Should throw exception");
         } catch (PersoniumCoreAuthnException e) {
-        	PersoniumCoreExceptionMapper.logPersoniumCoreException(e);
+        	e.log(log);
             assertEquals(PersoniumCoreAuthnException.INVALID_GRANT_CODE.getCode(), e.getCode());
         }
     }
