@@ -128,17 +128,17 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      * Authentication error.
      */
     public static final PersoniumCoreAuthnException AUTHN_FAILED =
-    		create("PR400-AN-0017", Error.INVALID_GRANT);
+            create("PR400-AN-0017", Error.INVALID_GRANT);
     /**
      * Invalid specification of authentication header.
      */
     public static final PersoniumCoreAuthnException AUTH_HEADER_IS_INVALID =
-    		create("PR400-AN-0018", Error.INVALID_CLIENT);
+            create("PR400-AN-0018", Error.INVALID_CLIENT);
     /**
      * Invalid Grant Code.
      */
     public static final PersoniumCoreAuthnException INVALID_GRANT_CODE =
-    		create("PR400-AN-0019", Error.INVALID_GRANT);
+            create("PR400-AN-0019", Error.INVALID_GRANT);
     /**
      * Authenticated Client does not match the refresh token.
      */
