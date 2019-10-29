@@ -50,7 +50,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      * Abnormal value of p_target.
      */
     public static final PersoniumCoreAuthnException INVALID_TARGET =
-    		create("PR400-AN-0002", Error.INVALID_REQUEST);
+            create("PR400-AN-0002", Error.INVALID_REQUEST);
     /**
      * Client Secret Parsing error.
      */
@@ -86,28 +86,28 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      * Token parsing error.
      */
     public static final PersoniumCoreAuthnException TOKEN_PARSE_ERROR =
-    		create("PR400-AN-0009", Error.INVALID_GRANT);
+            create("PR400-AN-0009", Error.INVALID_GRANT);
     /**
      * Expired.
      */
     public static final PersoniumCoreAuthnException TOKEN_EXPIRED =
-    		create("PR400-AN-0010", Error.INVALID_GRANT);
+            create("PR400-AN-0010", Error.INVALID_GRANT);
     /**
      * Error in signature verification.
      */
     public static final PersoniumCoreAuthnException TOKEN_DSIG_INVALID =
-    		create("PR400-AN-0011", Error.INVALID_GRANT);
+            create("PR400-AN-0011", Error.INVALID_GRANT);
     /**
      * The target of the token is not yourself.
      * {0}: target URL of token
      */
     public static final PersoniumCoreAuthnException TOKEN_TARGET_WRONG =
-    		create("PR400-AN-0012", Error.INVALID_GRANT);
+            create("PR400-AN-0012", Error.INVALID_GRANT);
     /**
      * It is not a refresh token.
      */
     public static final PersoniumCoreAuthnException NOT_REFRESH_TOKEN =
-    		create("PR400-AN-0013", Error.INVALID_GRANT);
+            create("PR400-AN-0013", Error.INVALID_GRANT);
     /**
      * I can not be promoted because I do not have permission.
      */
@@ -117,7 +117,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      * A cell without an owner can not be promoted.
      */
     public static final PersoniumCoreAuthnException NO_CELL_OWNER =
-    		create("PR400-AN-0015", Error.INVALID_GRANT);
+            create("PR400-AN-0015", Error.INVALID_GRANT);
     /**
      * There is no required parameter.
      * {0}: Parameter key name
@@ -159,29 +159,27 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      */
     public static final PersoniumCoreAuthnException PASSWORD_CHANGE_REQUIRED =
             create("PR401-AN-0023", Error.INVALID_GRANT);
-
-
-
+    
     /**
      * NetWork related error.
      */
     public static final PersoniumCoreAuthnException NETWORK_ERROR =
-    		create("PR500-NW-0000", Error.SERVER_ERROR);
+            create("PR500-NW-0000", Error.SERVER_ERROR);
     /**
      * HTTP request failed.
      */
     public static final PersoniumCoreAuthnException HTTP_REQUEST_FAILED =
-    		create("PR500-NW-0001", Error.SERVER_ERROR);
+            create("PR500-NW-0001", Error.SERVER_ERROR);
     /**
      * The connection destination returns an unexpected response.
      */
     public static final PersoniumCoreAuthnException UNEXPECTED_RESPONSE =
-    		create("PR500-NW-0002", Error.SERVER_ERROR);
+            create("PR500-NW-0002", Error.SERVER_ERROR);
     /**
      * The connection destination returns an unexpected value.
      */
     public static final PersoniumCoreAuthnException UNEXPECTED_VALUE =
-    		create("PR500-NW-0003", Error.SERVER_ERROR);
+            create("PR500-NW-0003", Error.SERVER_ERROR);
 
     /**
      * Force load inner class.
@@ -193,8 +191,6 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     String realm;
     private Map<String, Object> errorJsonOptionParams = new HashMap<>();
 
-    
-    
     /**
      * constructor.
      * @param status HTTP response status
@@ -221,7 +217,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
             final int status,
             final String error,
             final String realm) {
-    	this(code, severity, message, status, error, realm, null);
+        this(code, severity, message, status, error, realm, null);
     }
 
     /**
