@@ -72,7 +72,7 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
      * Handling of PersoniumCoreException.
      */
     public Response handlePersoniumCoreException(final PersoniumCoreException pce) {
-    	pce.log(log);
+        pce.log(log);
         Response res = pce.createResponse();
         return res;
     }
