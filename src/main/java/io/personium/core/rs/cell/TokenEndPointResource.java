@@ -499,7 +499,8 @@ public class TokenEndPointResource {
                     .realm(this.cell.getUrl());
         }
         if (!code.startsWith(GrantCode.PREFIX_CODE)) {
-            throw PersoniumCoreAuthnException.INVALID_GRANT_CODE.reason(new IllegalArgumentException("Invalid Prefix"));
+            throw PersoniumCoreAuthnException.INVALID_GRANT_CODE
+                .reason(new IllegalArgumentException("Invalid Prefix"));
         }
 
         GrantCode grantCode;
