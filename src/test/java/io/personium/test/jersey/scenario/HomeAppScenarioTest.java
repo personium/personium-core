@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +33,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 
 import org.apache.commons.io.Charsets;
+import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -41,15 +43,16 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -57,7 +60,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
-import io.personium.common.utils.CommonUtils;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
@@ -103,7 +105,6 @@ public class HomeAppScenarioTest extends PersoniumTest {
         this.hcContext.setCookieStore(cookieStore);
     }
 
-
     /**
      * App launch flow used before the introduction of OpenID Connect.
      *  - ROPC Login (Home App side)
@@ -121,6 +122,7 @@ public class HomeAppScenarioTest extends PersoniumTest {
         //ROPC at Test Cell1 By Homeapp
         //account2 (linked with role2) can read the box1 (schema = appCellUrl)
         JsonHttpResponse res = this.callTokenEndpointWithRopcFlow(this.usrCellUrl, "account2", "password2", null, null, null, true);
+        assertEquals(200, res.statusCode);
 
         //Start OAuth 2.0 process
         //   call authorization endpoint
@@ -143,6 +145,7 @@ public class HomeAppScenarioTest extends PersoniumTest {
         //  account0 has no role
         //  account1 has confidential role
         res = this.callTokenEndpointWithRopcFlow(this.appCellUrl, "account1", "password1", this.usrCellUrl, null, null, false);
+        assertEquals(200, res.statusCode);
         String appAuthToken = res.jsonObject.getString("access_token");
         log.info("AppAuthToken: " + appAuthToken);
 
@@ -151,12 +154,6 @@ public class HomeAppScenarioTest extends PersoniumTest {
         assertEquals(200, res.statusCode);
         String at = res.jsonObject.getString("access_token");
         log.info("AccessToken: " + at);
-
-        //        ResidentLocalAccessToken vlat = ResidentLocalAccessToken.parse(at, this.usrCellUrl);
-        //        log.info(" Scopes:"+String.join(" ", vlat.getScope()));
-        //        log.info(" Roles:"+vlat.getRoles());
-        //        log.info(" Subject:"+vlat.getSubject());
-        //        log.info(" Issuer :"+vlat.getIssuer());
 
         // Box URL discovery
         res = this.getBoxUrl(this.usrCellUrl, at);
@@ -197,26 +194,23 @@ public class HomeAppScenarioTest extends PersoniumTest {
             String tokenEndpoint = cellUrl + "__token";
             HttpPost post = new HttpPost(tokenEndpoint);
             // POST payload
-            StringBuilder sb = new StringBuilder();
-            sb.append("grant_type=password&username=");
-            sb.append(username);
-            sb.append("&password=");
-            sb.append(password);
+            List<NameValuePair> form = new ArrayList<>();
+            form.add(new BasicNameValuePair("grant_type", "password"));
+            form.add(new BasicNameValuePair("username", username));
+            form.add(new BasicNameValuePair("password", password));
             if (pTarget != null) {
-                sb.append("&p_target=");
-                sb.append(pTarget);
+                form.add(new BasicNameValuePair("p_target", pTarget));
             }
             if (clientId != null) {
-                sb.append("&client_id=");
-                sb.append(CommonUtils.encodeUrlComp(clientId));
-                sb.append("&client_secret=");
-                sb.append(clientSecret);
+                form.add(new BasicNameValuePair("client_id", clientId));
+                form.add(new BasicNameValuePair("client_secret", clientSecret));
             }
             if (pCookie) {
-                sb.append("&p_cookie=true");
+                form.add(new BasicNameValuePair("p_cookie", "true"));
             }
-            HttpEntity reqEntity = new StringEntity(sb.toString());
+            HttpEntity reqEntity = new UrlEncodedFormEntity(form, Consts.UTF_8);
             post.setEntity(reqEntity);
+
             // Request Headers
             post.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
@@ -231,24 +225,22 @@ public class HomeAppScenarioTest extends PersoniumTest {
             String tokenEndpoint = cellUrl + "__token";
             HttpPost post = new HttpPost(tokenEndpoint);
             // POST payload
-            StringBuilder sb = new StringBuilder();
-            sb.append("grant_type=authorization_code&code=");
-            sb.append(grantCode);
+            List<NameValuePair> form = new ArrayList<>();
+            form.add(new BasicNameValuePair("grant_type", "authorization_code"));
+            form.add(new BasicNameValuePair("code", grantCode));
             if (pTarget != null) {
-                sb.append("&p_target=");
-                sb.append(pTarget);
+                form.add(new BasicNameValuePair("p_target", pTarget));
             }
             if (clientId != null) {
-                sb.append("&client_id=");
-                sb.append(CommonUtils.encodeUrlComp(clientId));
-                sb.append("&client_secret=");
-                sb.append(clientSecret);
+                form.add(new BasicNameValuePair("client_id", clientId));
+                form.add(new BasicNameValuePair("client_secret", clientSecret));
             }
             if (pCookie) {
-                sb.append("&p_cookie=true");
+                form.add(new BasicNameValuePair("p_cookie", "true"));
             }
-            HttpEntity reqEntity = new StringEntity(sb.toString());
+            HttpEntity reqEntity = new UrlEncodedFormEntity(form, Consts.UTF_8);
             post.setEntity(reqEntity);
+            
             // Request Headers
             post.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
@@ -263,16 +255,14 @@ public class HomeAppScenarioTest extends PersoniumTest {
             String authzEndpoint = cellUrl + "__authz";
             HttpPost post = new HttpPost(authzEndpoint);
             // POST payload
-            StringBuilder sb = new StringBuilder();
-            sb.append("response_type=code&");
-            sb.append("client_id=");
-            sb.append(CommonUtils.encodeUrlComp(clientId));
-            sb.append("&redirect_uri=");
-            sb.append(CommonUtils.encodeUrlComp(redirectUri));
-            sb.append("&state=");
-            sb.append(CommonUtils.encodeUrlComp(state));
-            HttpEntity reqEntity = new StringEntity(sb.toString());
+            List<NameValuePair> form = new ArrayList<>();
+            form.add(new BasicNameValuePair("response_type", "code"));
+            form.add(new BasicNameValuePair("client_id", clientId));
+            form.add(new BasicNameValuePair("redirect_uri", redirectUri));
+            form.add(new BasicNameValuePair("state", state));
+            HttpEntity reqEntity = new UrlEncodedFormEntity(form, Consts.UTF_8);
             post.setEntity(reqEntity);
+
             // Request Headers
             post.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
