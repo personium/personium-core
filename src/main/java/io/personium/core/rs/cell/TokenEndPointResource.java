@@ -572,7 +572,8 @@ public class TokenEndPointResource {
         //Assertion null check
         if (assertion == null) {
             //If assertion is not set, it is regarded as a parse error
-            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl()).reason(new IllegalArgumentException("assertion not provided"));
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl())
+                .reason(new IllegalArgumentException("assertion not provided"));
         }
 
         //First to parse
@@ -692,7 +693,6 @@ public class TokenEndPointResource {
         }
         String tSchema = token.getSchema();
 
-
         if (!(Objects.equals(schema, tSchema) || schema == null && StringUtils.isEmpty(tSchema))) {
             if (schema == null) {
                 throw PersoniumCoreAuthnException.CLIENT_AUTH_REQUIRED;
@@ -722,8 +722,6 @@ public class TokenEndPointResource {
 
             return this.responseAuthSuccess(uluut, null, issuedAt);
         }
-
-
 
         //Regenerate AccessToken and RefreshToken from received Refresh Token
         IRefreshToken rToken = (IRefreshToken) token;
