@@ -1,7 +1,15 @@
+## 1.7.20
+BUG FIXES:
+* When grant code is used at token end point to issue an access token, the token subject does not have the association with the roles that should be allocated to it. ([#501](https://github.com/personium/personium-core/issues/501))
+* Presenting grant code with confidentialClient app auth token at token endpoint fails for schema mismatch. ([#506](https://github.com/personium/personium-core/issues/506))
+* Some OData keys in URLs including `__id` for OData service collection entity sets is not escaped in response payload items such as `__metadata.uri`. ([#486](https://github.com/personium/personium-core/issues/486))
+* PUT / DELETE against non-existent resource with If-Match: * should return 412 ([#483](https://github.com/personium/personium-core/issues/483))
+* PUT against an existing file with If-None-Match: * should return 412 ([#484](https://github.com/personium/personium-core/issues/484))
+
 ## 1.7.19
 BUG FIXES:
 * DateTime properties are handled as text properties for range query. ([#487](https://github.com/personium/personium-core/issues/487))
-* 500 Error occurs at token endpoint API when the request body is empty. ([#489](https://github.com/personium/personium-core/issues/489))
+* 500 Error occurs at token end point API when the request body is empty. ([#489](https://github.com/personium/personium-core/issues/489))
 
 ## 1.7.18b
 BUG FIXES:
@@ -16,9 +24,11 @@ NEW FEATURES:
 * Each Cell's OAuth 2.0 token endpoint now accepts scope request.
   * Apps can request single or multiple Cell level privilege name(s) as scope request.
   * Issued tokens now carry assigned scope information.
-  * Cell Level API Access is now limited to tokens with appropriate scope. ([#445](https://github.com/personium/personium-core/issues/445))
   * Added unit config keys for configuring default scopes for different grant type ([#470](https://github.com/personium/personium-core/issues/470))
   * Default configurations for all grant types are set to "root" for backward compatibility. (Change configuration to use your unit with more security)
+
+BREAKING CHANGES:
+* Cell Level API Access is now limited to tokens with appropriate scope. ([#445](https://github.com/personium/personium-core/issues/445))
 * URL scheme "personium-localunit" is extended and supports a syntax using two colons. ([#284](https://github.com/personium/personium-core/issues/284))
 
 IMPROVEMENTS:
