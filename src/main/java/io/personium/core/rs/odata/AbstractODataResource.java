@@ -50,6 +50,7 @@ import org.odata4j.core.ODataVersion;
 import org.odata4j.core.OEntities;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
+import org.odata4j.core.OEntityKey.KeyType;
 import org.odata4j.core.OLink;
 import org.odata4j.core.OObject;
 import org.odata4j.core.OProperties;
@@ -72,9 +73,7 @@ import org.odata4j.producer.EntityResponse;
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
-import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
-import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker;
@@ -1102,14 +1101,14 @@ public abstract class AbstractODataResource {
 
     /**
      * URL encode the uri part of EntityKey and return it.
-     * Correspondence of core-issue #214.
+     *   core issue #214, #486
      * @param entitySet EntitySet
      * @param entityKey EntityKey
      * @return Converted EntityKey
      */
     public static OEntityKey convertToUrlEncodeKey(EdmEntitySet entitySet, OEntityKey entityKey) {
-        // Responses that require URL encoding are ExtCell and ExtRole only.
-        if (ExtCell.EDM_TYPE_NAME.equals(entitySet.getName()) || Account.EDM_TYPE_NAME.equals(entitySet.getName())) {
+        // all single type key including user odata should be url-encoded.
+        if (KeyType.SINGLE.equals(entityKey.getKeyType())) {
             String encoded;
             try {
                 encoded = URLEncoder.encode((String) entityKey.asSingleValue(), "utf-8");

@@ -41,7 +41,7 @@ public class ExtCellCreateTest extends ODataCommon {
     private static final String TRAILING_SLASH = "/";
 
     /**
-     * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
+     * Constructor. テスト対象のパッケージをsuperに渡す必要がある
      */
     public ExtCellCreateTest() {
         super(new PersoniumCoreApplication());
