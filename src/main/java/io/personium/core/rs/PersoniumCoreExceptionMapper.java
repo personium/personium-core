@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.exceptions.ODataErrorMessage;
-import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
  * Exception mapper for this application. Perform log output and error response output in an appropriate form.
@@ -72,27 +71,9 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
     /*
      * Handling of PersoniumCoreException.
      */
-    private Response handlePersoniumCoreException(final PersoniumCoreException pce) {
-        Severity sv = pce.getSeverity();
-        String code = pce.getCode();
-        String message = pce.getMessage();
+    public Response handlePersoniumCoreException(final PersoniumCoreException pce) {
+        pce.log(log);
         Response res = pce.createResponse();
-        String format = String.format("[%s] - %s", code, message);
-        Throwable cause = pce.getCause();
-        //Log output
-        switch (sv) {
-        case INFO:
-            log.info(format, cause);
-            break;
-        case WARN:
-            log.warn(format, cause);
-            break;
-        case ERROR:
-            log.error(format, cause);
-            break;
-        default:
-            log.error("Exception Severity Not Defined", pce);
-        }
         return res;
     }
 

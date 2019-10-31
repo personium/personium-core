@@ -22,12 +22,17 @@ import static org.junit.Assert.fail;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.naming.InvalidNameException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriBuilder;
@@ -37,23 +42,28 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.odata4j.core.OEntities;
+import org.odata4j.core.OEntityKey;
+import org.odata4j.core.OProperty;
+import org.odata4j.edm.EdmEntitySet;
 
+import io.personium.common.auth.token.Role;
+import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
 
 /**
  * Unit test class for AccessContext.
  */
-@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class AccessContextTest {
 
@@ -74,9 +84,17 @@ public class AccessContextTest {
 
     /**
      * トークン処理ライブラリの初期設定.
+     * @throws IOException 
+     * @throws InvalidNameException 
+     * @throws CertificateException 
+     * @throws InvalidKeySpecException 
+     * @throws Exception 
      */
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws Exception {
+        PersoniumCoreApplication.loadConfig();
+        TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
+                PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
     }
 
     /**
@@ -134,10 +152,9 @@ public class AccessContextTest {
     }
 
     /**
-     * testCreateBasicのテスト.
      */
     @Test
-    public void testCreate() {
+    public void create_NoAuthzHeader_ShouldReturn_TypeAnonymous() {
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
 
@@ -147,29 +164,34 @@ public class AccessContextTest {
         assertEquals(accessContext.getType(), AccessContext.TYPE_ANONYMOUS);
     }
 
-    /**
-     * testCreateBasicのテスト.
-     * TODO V1.1 Basic認証に対応後有効化する
-     */
     @Test
-    @Ignore
-    public void testCreateBasic() {
+    public void create_Basic_Valid_ShouldReturn_TypeBasic() {
         String auth = "Basic "
-                + CommonUtils.encodeBase64Url("user:pass".getBytes());
+                + CommonUtils.encodeBase64Url("username:password".getBytes());
         Cell cell = (Cell) mock(Cell.class);
+        List<OProperty<?>> props = new ArrayList<>();
+        OEntityWrapper oew = new OEntityWrapper(
+    		UUID.randomUUID().toString(), 
+    		OEntities.create(
+    				EdmEntitySet.newBuilder().build(),
+    				OEntityKey.create("k","dum"), props,
+    				null
+    		),
+    		null
+        );
+        when(cell.getAccount(Matchers.anyString())).thenReturn(oew);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(auth,
                 null, null, null, cell, BASE_URL, UrlUtils.getHost(), OWNER);
-        assertEquals(accessContext.getType(), AccessContext.TYPE_BASIC);
-
+        assertEquals(AccessContext.TYPE_BASIC, accessContext.getType());
     }
 
     /**
      * testCreateBasicでInvalidになるテスト.
      */
     @Test
-    public void testCreateBasicINVALID() {
+    public void create_Basic_INVALID() {
         String auth = "Basic "
                 + CommonUtils.encodeBase64Url("user:pass".getBytes());
         Cell cell = (Cell) mock(Cell.class);
@@ -185,7 +207,7 @@ public class AccessContextTest {
      * Bearer形式 マスタートークンを指定して、UNIT_MASTERのアクセスコンテキストが取得できること.
      */
     @Test
-    public void testCreateBearerAuthzMasterToken() {
+    public void create_Bearer_MasterToken_ShouldReturn_TypeUnitMaster() {
         String authzHeader = "Bearer " + MASTER_TOKEN;
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(authzHeader,
@@ -197,7 +219,7 @@ public class AccessContextTest {
      * Bearer形式 Cell指定がない状態でパースエラーが発生した場合、ACCESS_INVALIDのアクセスコンテキストが取得できること.
      */
     @Test
-    public void testCreateBearerAuthzCellNullParseError() {
+    public void create_Bearer_CellNull_ShoudReturn_TypeInvalid() {
         // 「dGVzdA==」=>「test」のBase64化した文字列
         String authzHeader = "Bearer dGVzdA==";
         System.out.println(authzHeader);
@@ -211,7 +233,7 @@ public class AccessContextTest {
      * Bearer形式 Cell指定がない状態で「Bearer」のみ指定した場合、ACCESS_INVALIDのアクセスコンテキストが取得できること.
      */
     @Test
-    public void testCreateBearerAuthzCellNullParamBearer() {
+    public void create_BearerOnly_ShouldReturn_TypeInvalid() {
         String authzHeader = "Bearer";
         System.out.println(authzHeader);
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
@@ -224,7 +246,7 @@ public class AccessContextTest {
      * Bearer形式 Cell指定がない状態で「Bearer 」のみ指定した場合、ACCESS_INVALIDのアクセスコンテキストが取得できること.
      */
     @Test
-    public void testCreateBearerAuthzCellNullParamBearerSpace() {
+    public void create_BearerSpace_ShouldReturn_TypeInvalid() {
         String authzHeader = "Bearer ";
         System.out.println(authzHeader);
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
@@ -359,6 +381,23 @@ public class AccessContextTest {
         AccessContext accessContext = AccessContext.create(masterTokenAuth, uriInfo, pCookiePeer, encodedCookieValue,
                 cell, BASE_URL, UrlUtils.getHost(), OWNER);
         assertEquals(AccessContext.TYPE_UNIT_MASTER, accessContext.getType());
+    }
+    
+    
+    @Test
+    public void create_Bearer_VisitorLocalAccessToken_WithSchemaWithConfidentialMarker_When_Valid_Succeeds() {
+    	String schema = "https://app1.unit.example/";
+        Cell cell = (Cell) mock(Cell.class);
+        when(cell.getUrl()).thenReturn("https://cell1.unit.example/");
+        
+        Box box = new Box(cell, "box", schema, "abcde", new Date().getTime()-1000000);
+
+        List<Role> roleList = new ArrayList<>();
+        VisitorLocalAccessToken vlat = new VisitorLocalAccessToken(new Date().getTime(), 3600, cell.getUrl(), "https://user1.unit.example/#me",
+        		roleList, schema + OAuth2Helper.Key.CONFIDENTIAL_MARKER, new String[] {"root"});
+        String authzHeaderValue = "Bearer " + vlat.toTokenString();
+        AccessContext ac = AccessContext.create(authzHeaderValue, new TestUriInfo(), null, null, cell, BASE_URL, UrlUtils.getHost(), null);
+        ac.checkSchemaMatches(box);
     }
 
     /**
