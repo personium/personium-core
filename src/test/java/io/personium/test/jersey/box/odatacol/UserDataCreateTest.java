@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014 - 2019 Personium Project
+ *  - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +19,6 @@ package io.personium.test.jersey.box.odatacol;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -59,7 +59,7 @@ import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
 
 /**
- * UserData登録のテスト.
+ * User OData registration Test.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
@@ -81,7 +81,7 @@ public class UserDataCreateTest extends AbstractUserDataTest {
     public static final String TEST_ENTITYTYPE = "testentity";
 
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public UserDataCreateTest() {
         super(new PersoniumCoreApplication());
@@ -764,11 +764,11 @@ public class UserDataCreateTest extends AbstractUserDataTest {
     }
 
     /**
-     * When_URL_isGivenAs__id_Then_ItShouldBe_Escaped.
+     * When_id_appearsAsKeyInUrl_Then_ItShouldBe_UrlEncoded.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void When_URL_isGivenAs__id_Then_ItShouldBe_Escaped() {
+    public final void When_id_appearsAsKeyInUrl_Then_ItShouldBe_UrlEncoded() {
         String userDataId = "https://server.exapmle/path?abc=def#ghi";
         // Prepare Request Body
         JSONObject body = new JSONObject();
@@ -786,11 +786,13 @@ public class UserDataCreateTest extends AbstractUserDataTest {
             String uri = (String)((JSONObject)result.get("__metadata")).get("uri");
 
             // key in the __metadata.uri should be encoded
-            //    not found in plain format
-            assertEquals(-1, uri.indexOf(userDataId));
-            //    found in encoded format
-            assertNotEquals(-1, uri.indexOf(CommonUtils.encodeUrlComp(userDataId)));
-
+            String expectedUrl = Http.getBaseUrl() + "/"
+                    + this.cellName + "/"
+                    + this.boxName + "/"
+                    + this.colName + "/"
+                    + this.entityTypeName
+                    +"('" + CommonUtils.encodeUrlComp(userDataId) + "')";
+            assertEquals(expectedUrl, uri);
         } finally {
             // delete the data
             deleteUserData(CommonUtils.encodeUrlComp(userDataId));
