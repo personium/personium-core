@@ -36,10 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.PersoniumUUID;
+import io.personium.common.file.DataCryptor;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.DavCmp;
-import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.impl.fs.DavMetadataFile;
 
 /**

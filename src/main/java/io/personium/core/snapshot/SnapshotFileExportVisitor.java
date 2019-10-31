@@ -31,8 +31,8 @@ import org.apache.commons.io.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.file.DataCryptor;
 import io.personium.core.auth.AuthHistoryLastFile;
-import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.impl.fs.CellKeys;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.impl.fs.DavMetadataFile;

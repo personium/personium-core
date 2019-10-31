@@ -164,7 +164,7 @@ public class BarFileValidateTest {
         JsonFactory f = new JsonFactory();
         JsonParser jp;
         try {
-            jp = f.createJsonParser(file);
+            jp = f.createParser(file);
             ObjectMapper mapper = new ObjectMapper();
             String jsonName = "10_relations.json";
 
@@ -192,7 +192,7 @@ public class BarFileValidateTest {
         JsonFactory f = new JsonFactory();
         JsonParser jp;
         try {
-            jp = f.createJsonParser(file);
+            jp = f.createParser(file);
             ObjectMapper mapper = new ObjectMapper();
             String jsonName = "20_roles.json";
 
@@ -220,7 +220,7 @@ public class BarFileValidateTest {
         JsonFactory f = new JsonFactory();
         JsonParser jp;
         try {
-            jp = f.createJsonParser(file);
+            jp = f.createParser(file);
             String jsonName = "30_extroles.json";
             ObjectMapper mapper = new ObjectMapper();
 
@@ -248,7 +248,7 @@ public class BarFileValidateTest {
         JsonFactory f = new JsonFactory();
         JsonParser jp;
         try {
-            jp = f.createJsonParser(file);
+            jp = f.createParser(file);
             String jsonName = "30_extroles.json";
             ObjectMapper mapper = new ObjectMapper();
 
@@ -277,7 +277,7 @@ public class BarFileValidateTest {
 
         JsonFactory f = new JsonFactory();
         try {
-            JsonParser jp = f.createJsonParser(json.toJSONString());
+            JsonParser jp = f.createParser(json.toJSONString());
             String jsonName = "30_extroles.json";
             ObjectMapper mapper = new ObjectMapper();
             jp.nextToken();
@@ -303,7 +303,7 @@ public class BarFileValidateTest {
         JsonFactory f = new JsonFactory();
         JsonParser jp;
         try {
-            jp = f.createJsonParser(file);
+            jp = f.createParser(file);
             ObjectMapper mapper = new ObjectMapper();
             String jsonName = "10_relations.json";
 
@@ -328,7 +328,7 @@ public class BarFileValidateTest {
         JsonFactory f = new JsonFactory();
         JsonParser jp;
         try {
-            jp = f.createJsonParser(file);
+            jp = f.createParser(file);
             ObjectMapper mapper = new ObjectMapper();
             String jsonName = "10_relations.json";
 
@@ -353,7 +353,7 @@ public class BarFileValidateTest {
         JsonFactory f = new JsonFactory();
         JsonParser jp;
         try {
-            jp = f.createJsonParser(file);
+            jp = f.createParser(file);
             ObjectMapper mapper = new ObjectMapper();
             String jsonName = "10_relations.json";
 
@@ -379,7 +379,7 @@ public class BarFileValidateTest {
         JsonFactory f = new JsonFactory();
         JsonParser jp;
         try {
-            jp = f.createJsonParser(file);
+            jp = f.createParser(file);
             ObjectMapper mapper = new ObjectMapper();
             String jsonName = "70_$links.json";
 
@@ -413,7 +413,7 @@ public class BarFileValidateTest {
             JsonFactory f = new JsonFactory();
             JsonParser jp;
             try {
-                jp = f.createJsonParser(file);
+                jp = f.createParser(file);
                 ObjectMapper mapper = new ObjectMapper();
                 String jsonName = "70_$links.json";
 
@@ -447,7 +447,7 @@ public class BarFileValidateTest {
             JsonFactory f = new JsonFactory();
             JsonParser jp;
             try {
-                jp = f.createJsonParser(file);
+                jp = f.createParser(file);
                 ObjectMapper mapper = new ObjectMapper();
                 String jsonName = "70_$links.json";
 
@@ -487,7 +487,7 @@ public class BarFileValidateTest {
 
         JsonFactory f = new JsonFactory();
         try {
-            JsonParser jp = f.createJsonParser(links.toJSONString());
+            JsonParser jp = f.createParser(links.toJSONString());
             ObjectMapper mapper = new ObjectMapper();
             String jsonName = "70_$links.json";
 
@@ -530,7 +530,7 @@ public class BarFileValidateTest {
 
         JsonFactory f = new JsonFactory();
         try {
-            JsonParser jp = f.createJsonParser(links.toJSONString());
+            JsonParser jp = f.createParser(links.toJSONString());
             ObjectMapper mapper = new ObjectMapper();
             String jsonName = "10_odatarelations.json";
 
@@ -569,7 +569,7 @@ public class BarFileValidateTest {
         json.put("schema", "http://app1.example.com");
 
         try {
-            JsonParser jp = f.createJsonParser(json.toJSONString());
+            JsonParser jp = f.createParser(json.toJSONString());
             ObjectMapper mapper = new ObjectMapper();
             jp.nextToken();
 
@@ -599,7 +599,7 @@ public class BarFileValidateTest {
         json.put("schema", "http://app1.example.com");
 
         try {
-            JsonParser jp = f.createJsonParser(json.toJSONString());
+            JsonParser jp = f.createParser(json.toJSONString());
             ObjectMapper mapper = new ObjectMapper();
             jp.nextToken();
 
@@ -628,7 +628,7 @@ public class BarFileValidateTest {
         json.put("schema", "http://app1.example.com");
 
         try {
-            JsonParser jp = f.createJsonParser(json.toJSONString());
+            JsonParser jp = f.createParser(json.toJSONString());
             ObjectMapper mapper = new ObjectMapper();
             jp.nextToken();
 
@@ -657,7 +657,7 @@ public class BarFileValidateTest {
         json.put("schema", "http://app1.example.com");
 
         try {
-            JsonParser jp = f.createJsonParser(json.toJSONString());
+            JsonParser jp = f.createParser(json.toJSONString());
             ObjectMapper mapper = new ObjectMapper();
             jp.nextToken();
 
@@ -687,7 +687,7 @@ public class BarFileValidateTest {
         json.put("schema", "http://app1.example.com");
 
         try {
-            JsonParser jp = f.createJsonParser(json.toJSONString());
+            JsonParser jp = f.createParser(json.toJSONString());
             ObjectMapper mapper = new ObjectMapper();
             jp.nextToken();
 
@@ -716,7 +716,7 @@ public class BarFileValidateTest {
         json.put("DefaultPath", "boxName");
 
         try {
-            JsonParser jp = f.createJsonParser(json.toJSONString());
+            JsonParser jp = f. createParser(json.toJSONString());
             ObjectMapper mapper = new ObjectMapper();
             jp.nextToken();
 
@@ -748,7 +748,7 @@ public class BarFileValidateTest {
         json.put("InvalidKey", "SomeValue");
 
         try {
-            JsonParser jp = f.createJsonParser(json.toJSONString());
+            JsonParser jp = f.createParser(json.toJSONString());
             ObjectMapper mapper = new ObjectMapper();
             jp.nextToken();
 
@@ -1713,8 +1713,7 @@ public class BarFileValidateTest {
         URL fileUrl = ClassLoader.getSystemResource("requestData/barInstall/V1_1_2_bar_minimum.bar");
         File file = new File(fileUrl.getPath());
 
-        try {
-            ZipFile zipFile = new ZipFile(file, "UTF-8");
+        try (ZipFile zipFile = new ZipFile(file, "UTF-8")){
             Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
             long maxBarEntryFileSize = 0;
             while (entries.hasMoreElements()) {

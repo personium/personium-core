@@ -28,6 +28,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+import io.personium.common.file.FileDataAccessor;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 
@@ -45,8 +46,8 @@ public class BinaryDataAccessorTest {
      */
     @Test
     public void testCloseOutputStream() throws Exception {
-        BinaryDataAccessor bda = Mockito.spy(new BinaryDataAccessor("/dummy", "dummy", true, true));
-        Method closeOSMethod = BinaryDataAccessor.class.getDeclaredMethod(
+        FileDataAccessor bda = Mockito.spy(new FileDataAccessor("/dummy", "dummy", true, true));
+        Method closeOSMethod = FileDataAccessor.class.getDeclaredMethod(
                 "closeOutputStream", new Class<?>[] {OutputStream.class});
         closeOSMethod.setAccessible(true);
         closeOSMethod.invoke(bda, new FileOutputStream("hoge"));
@@ -60,8 +61,8 @@ public class BinaryDataAccessorTest {
      */
     @Test
     public void testCloseOutputStream2() throws Exception {
-        BinaryDataAccessor bda = Mockito.spy(new BinaryDataAccessor("/dummy", "dummy", true, false));
-        Method closeOSMethod = BinaryDataAccessor.class.getDeclaredMethod(
+        FileDataAccessor bda = Mockito.spy(new FileDataAccessor("/dummy", "dummy", true, false));
+        Method closeOSMethod = FileDataAccessor.class.getDeclaredMethod(
                 "closeOutputStream", new Class<?>[] {OutputStream.class});
         closeOSMethod.setAccessible(true);
         closeOSMethod.invoke(bda, new FileOutputStream("hoge"));
@@ -75,8 +76,8 @@ public class BinaryDataAccessorTest {
      */
     @Test
     public void testCloseOutputStream3() throws Exception {
-        BinaryDataAccessor bda = Mockito.spy(new BinaryDataAccessor("/dummy", "dummy", true, true));
-        Method closeOSMethod = BinaryDataAccessor.class.getDeclaredMethod(
+        FileDataAccessor bda = Mockito.spy(new FileDataAccessor("/dummy", "dummy", true, true));
+        Method closeOSMethod = FileDataAccessor.class.getDeclaredMethod(
                 "closeOutputStream", new Class<?>[] {OutputStream.class});
         closeOSMethod.setAccessible(true);
         closeOSMethod.invoke(bda, new BufferedOutputStream(new FileOutputStream("hoge")));
@@ -90,8 +91,8 @@ public class BinaryDataAccessorTest {
      */
     @Test
     public void testCloseOutputStream4() throws Exception {
-        BinaryDataAccessor bda = Mockito.spy(new BinaryDataAccessor("/dummy", "dummy", true, true));
-        Method closeOSMethod = BinaryDataAccessor.class.getDeclaredMethod(
+        FileDataAccessor bda = Mockito.spy(new FileDataAccessor("/dummy", "dummy", true, true));
+        Method closeOSMethod = FileDataAccessor.class.getDeclaredMethod(
                 "closeOutputStream", new Class<?>[] {OutputStream.class});
         closeOSMethod.setAccessible(true);
         closeOSMethod.invoke(bda, new ByteArrayOutputStream());

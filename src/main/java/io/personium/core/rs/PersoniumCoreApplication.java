@@ -23,12 +23,12 @@ import javax.ws.rs.core.Application;
 
 import io.personium.common.auth.token.AbstractLocalToken;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.file.DataCryptor;
 import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.jersey.filter.PersoniumCoreContainerFilter;
 import io.personium.core.jersey.filter.WriteMethodFilter;
-import io.personium.core.model.file.DataCryptor;
 import io.personium.core.plugin.PluginManager;
 
 /**

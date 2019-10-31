@@ -148,7 +148,6 @@ public class RuleUtils {
      * @param sc status code
      * @return response
      */
-    @SuppressWarnings("unchecked")
     public static TResponse update(String token, String cellName, String ruleName,
             String boxName, final JSONObject body, final int sc) {
         String boxNameStr = null;
