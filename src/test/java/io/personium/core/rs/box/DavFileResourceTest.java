@@ -41,19 +41,16 @@ public class DavFileResourceTest {
     private DavFileResource davFileResource;
 
     /**
-     * Test delete().
-     * error.
-     * recursiveHeader is unexpected value.
+     *  put with If-None-Match header value * should fail with 412.
      */
     @Test
     public void put_IfNoneMatchWildcard_ShouldFail() {
-
-        // Mock settings
+        // Prepare test target object
         davFileResource = new DavFileResource(null, null);
 
         // Run method
         try {
-        	InputStream is = new ByteArrayInputStream("{test:1}".getBytes(Charsets.UTF_8));
+            InputStream is = new ByteArrayInputStream("{test:1}".getBytes(Charsets.UTF_8));
             davFileResource.put(org.apache.http.entity.ContentType.APPLICATION_JSON.toString(), null, "*", is);
             fail("Not throws exception.");
         } catch (PersoniumCoreException e) {
@@ -62,6 +59,4 @@ public class DavFileResourceTest {
             assertEquals(expected.getCode(), e.getCode());
         }
     }
-
-
 }
