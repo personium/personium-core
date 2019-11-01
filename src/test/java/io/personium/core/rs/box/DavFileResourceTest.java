@@ -17,9 +17,8 @@
  */
 package io.personium.core.rs.box;
 
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.spy;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -50,7 +49,7 @@ public class DavFileResourceTest {
     public void put_IfNoneMatchWildcard_ShouldFail() {
 
         // Mock settings
-        davFileResource = spy(new DavFileResource(null, null));
+        davFileResource = new DavFileResource(null, null);
 
         // Run method
         try {
