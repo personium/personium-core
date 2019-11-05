@@ -109,7 +109,6 @@ public class NullResource {
     @PUT
     public final Response put(
             @HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
-            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
             final InputStream inputStream) {
 
         //Access control
@@ -129,16 +128,6 @@ public class NullResource {
 
         if (this.isParentNull) {
             throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(this.davRsCmp.getParent().getUrl());
-        }
-
-        // If If-Match: * is specified, then should return 412
-        // https://tools.ietf.org/html/rfc7232#section-3.1
-        //   If the field-value is "*", the condition is false
-        //   if the origin server does not have a current representation
-        //   for the target resource.
-        // Interpretation: if any value is specified then should evaluated as false
-        if (ifMatch != null) {
-            throw PersoniumCoreException.Dav.NO_ENTITY_MATCH;
         }
 
         Response response = this.davRsCmp.getDavCmp().putForCreate(contentType, inputStream).build();
@@ -292,19 +281,10 @@ public class NullResource {
      * @return Jax-RS response object
      */
     @DELETE
-    public final Response delete(@HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
+    public final Response delete() {
         //Access control
         if (!this.isParentNull) {
             this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.UNBIND);
-        }
-
-        // If If-Match: * is specified, then should return 412
-        // https://tools.ietf.org/html/rfc7232#section-3.1
-        //   If the field-value is "*", the condition is false
-        //   if the origin server does not have a current representation
-        //   for the target resource.
-        if (ifMatch != null) {
-            throw PersoniumCoreException.Dav.NO_ENTITY_MATCH;
         }
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());

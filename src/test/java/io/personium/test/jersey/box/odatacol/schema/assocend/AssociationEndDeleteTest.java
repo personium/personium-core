@@ -1,7 +1,6 @@
 /**
- * Personium
- * Copyright 2014-2019 Personium Project
- *  - FUJITSU LIMITED
+ * personium.io
+ * Copyright 2014 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +48,7 @@ public class AssociationEndDeleteTest extends AbstractCase {
     private static final String ENTITY_TYPE_NAME = "Product";
 
     /**
-     * Constructor.
+     * コンストラクタ.
      */
     public AssociationEndDeleteTest() {
         super(new PersoniumCoreApplication());
@@ -148,7 +147,7 @@ public class AssociationEndDeleteTest extends AbstractCase {
                 .with("entityTypeName", ENTITY_TYPE_NAME)
                 .with("ifMatch", "*")
                 .returns()
-                .statusCode(HttpStatus.SC_PRECONDITION_FAILED)
+                .statusCode(HttpStatus.SC_NOT_FOUND)
                 .debug();
 
         // レスポンスヘッダーのチェック
