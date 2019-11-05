@@ -27,7 +27,10 @@ import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
@@ -39,6 +42,8 @@ import io.personium.test.categories.Unit;
 /**
  * DavCollectionResource unit test classs.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ AccessContext.class })
 @Category({ Unit.class })
 public class DavCollectionResourceTest {
 
@@ -111,5 +116,4 @@ public class DavCollectionResourceTest {
             assertThat(e.getCode(), is(PersoniumCoreException.Dav.HAS_CHILDREN.getCode()));
         }
     }
-
 }
