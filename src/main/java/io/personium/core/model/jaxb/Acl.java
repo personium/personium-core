@@ -94,7 +94,20 @@ public final class Acl {
      * @param base baseUrl
      */
     public void setBase(String base) {
-        this.base = UriUtils.convertSchemeFromHttpToLocalUnit(base);
+        this.setBase(base, true);
+    }
+
+    /**
+     * xml:base setter.
+     * @param base baseUrl
+     * @param convertLocalUnit true if given base url should be converted to personium-localunit scheme when possible.
+     */
+    public void setBase(String base, boolean convertLocalUnit) {
+        if (convertLocalUnit) {
+            this.base = UriUtils.convertSchemeFromHttpToLocalUnit(base);
+        } else {
+            this.base = base;
+        }
     }
 
     /**
