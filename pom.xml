@@ -3,7 +3,7 @@
     <groupId>io.personium</groupId>
     <artifactId>personium-core</artifactId>
     <packaging>war</packaging>
-    <version>1.7.19</version>
+    <version>1.7.20-SNAPSHOT</version>
     <name>personium-core Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <licenses>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-common</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.18</version>
+            <version>1.19</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -424,7 +424,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <configLocation>personium-checkstyle.xml</configLocation>
@@ -508,7 +508,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <configLocation>personium-checkstyle.xml</configLocation>

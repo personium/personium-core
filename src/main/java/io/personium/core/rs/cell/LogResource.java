@@ -57,6 +57,8 @@ import org.apache.wink.webdav.model.Resourcetype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.file.FileDataAccessException;
+import io.personium.common.file.FileDataAccessor;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
@@ -69,8 +71,6 @@ import io.personium.core.eventlog.ArchiveLogFile;
 import io.personium.core.eventlog.EventUtils;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
-import io.personium.core.model.file.BinaryDataAccessException;
-import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.utils.ResourceUtils;
 
 /**
@@ -412,10 +412,10 @@ public class LogResource {
 
         // File delete.
         try {
-            BinaryDataAccessor accessor = new BinaryDataAccessor("", null,
+            FileDataAccessor accessor = new FileDataAccessor("", null,
                     PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
             accessor.deleteWithFullPath(archiveLogFileName);
-        } catch (BinaryDataAccessException e) {
+        } catch (FileDataAccessException e) {
             log.info("Failed delete eventLog : " + e.getMessage());
             throw PersoniumCoreException.Event.FILE_DELETE_FAILED;
         }

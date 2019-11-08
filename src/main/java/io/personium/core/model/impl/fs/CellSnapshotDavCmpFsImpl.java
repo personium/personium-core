@@ -29,11 +29,11 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.http.HttpStatus;
 
+import io.personium.common.file.DataCryptor;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.CellSnapshotDavCmp;
 import io.personium.core.model.DavCmp;
-import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.model.lock.LockManager;
 

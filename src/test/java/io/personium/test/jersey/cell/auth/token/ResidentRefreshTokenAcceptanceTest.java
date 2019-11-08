@@ -60,20 +60,20 @@ import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 
 /**
- * Tests about tokens issuance at the Token Endpoint.
+ * Tests about refreshing tokens using ResidentRefeshToken at the Token Endpoint.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class TokenAcceptanceTest extends PersoniumTest {
+public class ResidentRefreshTokenAcceptanceTest extends PersoniumTest {
 
     static final int MILLISECS_IN_AN_MINITE = 60 * 1000;
-    private static Logger log = LoggerFactory.getLogger(TokenAcceptanceTest.class);
+    private static Logger log = LoggerFactory.getLogger(ResidentRefreshTokenAcceptanceTest.class);
 
 
     /**
      * Constructor.
      */
-    public TokenAcceptanceTest() {
+    public ResidentRefreshTokenAcceptanceTest() {
         super(new PersoniumCoreApplication());
     }
 

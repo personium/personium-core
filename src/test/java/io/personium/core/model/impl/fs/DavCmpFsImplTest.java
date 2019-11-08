@@ -63,6 +63,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import io.personium.common.es.EsClient;
+import io.personium.common.file.DataCryptor;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
@@ -74,7 +75,6 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavDestination;
 import io.personium.core.model.DavRsCmp;
-import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.file.StreamingOutputForDavFile;
 import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
 import io.personium.core.model.impl.es.EsModel;
