@@ -60,7 +60,7 @@ public final class Ace {
      */
     public void setPrincipalHref(String href) {
         if (this.principal == null || this.principal.href == null) {
-        throw new IllegalStateException("This principal does not have href");
+            this.principal = new Principal();
         }
         this.principal.href = href;
     }
@@ -89,6 +89,18 @@ public final class Ace {
             }
         }
         return ret;
+    }
+    /**
+     * Add a granted privilege.
+     * @param privilege
+     */
+    public void addGrantedPrivilege(String privilege) {
+        if (this.grant == null) {
+            this.grant = new Grant();
+            this.grant.privileges = new ArrayList<>();
+        }
+        Privilege p = new Privilege();
+        this.grant.privileges.add(p);
     }
 
     /**

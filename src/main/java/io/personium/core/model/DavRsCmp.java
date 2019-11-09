@@ -540,12 +540,12 @@ public class DavRsCmp {
         }
         return reqUri;
     }
-
     static final org.apache.wink.webdav.model.Response createDavResponse(final String pathName,
             final String href,
             final DavCmp dCmp,
             final Propfind propfind,
-            final boolean isAclRead) {
+            final boolean isAclRead,
+            final boolean useRoleClassUrl) {
         ObjectFactory of = new ObjectFactory();
         org.apache.wink.webdav.model.Response ret = of.createResponse();
         ret.getHref().add(href);
@@ -647,7 +647,14 @@ public class DavRsCmp {
         if (isAclRead && acl != null) {
 
             Acl outputAcl = new Acl();
-            outputAcl.setBase(acl.getBase());
+            String baseUrl = acl.getBase();
+            if (useRoleClassUrl) {
+                String schema = dCmp.getBox().getSchema();
+                if (schema != null) {
+                    baseUrl = schema + "__role/__/";
+                }
+            }
+            outputAcl.setBase(baseUrl, false);
             outputAcl.setRequireSchemaAuthz(acl.getRequireSchemaAuthz());
 
             // Get ace list including parents.
@@ -693,6 +700,13 @@ public class DavRsCmp {
 
         }
         return ret;
+    }
+    static final org.apache.wink.webdav.model.Response createDavResponse(final String pathName,
+            final String href,
+            final DavCmp dCmp,
+            final Propfind propfind,
+            final boolean isAclRead) {
+        return createDavResponse(pathName, href, dCmp, propfind, isAclRead, false);
     }
     private static Element parseProp(String value) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
