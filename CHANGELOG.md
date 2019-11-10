@@ -3,8 +3,6 @@ BUG FIXES:
 * When grant code is used at token end point to issue an access token, the token subject does not have the association with the roles that should be allocated to it. ([#501](https://github.com/personium/personium-core/issues/501))
 * Presenting grant code with confidentialClient app auth token at token endpoint fails for schema mismatch. ([#506](https://github.com/personium/personium-core/issues/506))
 * Some OData keys in URLs including `__id` for OData service collection entity sets is not escaped in response payload items such as `__metadata.uri`. ([#486](https://github.com/personium/personium-core/issues/486))
-* PUT / DELETE against non-existent resource with If-Match: * should return 412 ([#483](https://github.com/personium/personium-core/issues/483))
-* PUT against an existing file with If-None-Match: * should return 412 ([#484](https://github.com/personium/personium-core/issues/484))
 
 ## 1.7.19
 BUG FIXES:
