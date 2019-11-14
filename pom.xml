@@ -32,7 +32,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-common</artifactId>
-            <version>1.5.2-SNAPSHOT</version>
+            <version>1.5.2</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
@@ -289,7 +289,7 @@
         <repository>
             <id>personium.io</id>
             <name>personium.io</name>
-            <url>http://personium.io/mvnrepo</url>
+            <url>https://personium.io/mvnrepo</url>
         </repository>
         <repository>
             <id>spy</id>
@@ -522,6 +522,7 @@
                     </reportSet>
                 </reportSets>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
@@ -534,6 +535,7 @@
                     <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
                 </configuration>
             </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
