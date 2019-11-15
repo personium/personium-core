@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.jersey.filter;
+package io.personium.core.rs;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;

@@ -23,7 +23,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import io.personium.core.rs.odata.ODataMessageResourceTest;
 
 /**
- * Test suite for executing all the test cases under package.
+ * Test suite for executing all the test cases under this package.
  */
 @RunWith(Suite.class)
 @SuiteClasses({
