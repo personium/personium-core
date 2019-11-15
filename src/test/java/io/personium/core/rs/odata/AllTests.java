@@ -25,7 +25,11 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-        AbstractODataResourceTest.class
+    AbstractODataResourceTest.class,
+    DecideOutputFormatTest.class,
+    EscapeResponseBodyTest.class,
+    ReceivedMessageValidateTest.class,
+    SentMessageValidateTest.class
 })
 public class AllTests {
 }

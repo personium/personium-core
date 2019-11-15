@@ -32,6 +32,7 @@ import junit.framework.TestSuite;
         io.personium.core.AllTests.class,
         io.personium.core.auth.AllTests.class,
         io.personium.core.bar.AllTests.class,
+        io.personium.core.rs.odata.AllTests.class,
         io.personium.core.model.AllTests.class,
         io.personium.core.model.file.AllTests.class,
         io.personium.core.model.impl.es.AllTests.class,
@@ -56,7 +57,6 @@ import junit.framework.TestSuite;
         io.personium.test.jersey.concurrent.AllTests.class,
         io.personium.test.performance.box.odatacol.AllTests.class,
         io.personium.test.unit.core.AllTests.class,
-        io.personium.test.unit.core.rs.odata.AllTests.class,
         io.personium.test.unit.core.rs.odata.validate.AllTests.class
 })
 @IncludeCategory(Performance.class)
