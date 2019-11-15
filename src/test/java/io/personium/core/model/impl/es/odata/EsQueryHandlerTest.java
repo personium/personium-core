@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.model.impl.es.odata;
+package io.personium.core.model.impl.es.odata;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

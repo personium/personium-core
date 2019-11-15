@@ -54,9 +54,8 @@ import junit.framework.TestSuite;
         io.personium.test.unit.core.AllTests.class,
         io.personium.core.auth.AllTests.class,
         io.personium.core.bar.AllTests.class,
-        io.personium.test.unit.core.jersey.filter.AllTests.class,
         io.personium.test.unit.core.model.impl.es.AllTests.class,
-        io.personium.test.unit.core.model.impl.es.doc.AllTests.class,
+        io.personium.core.model.impl.es.doc.AllTests.class,
         io.personium.test.unit.core.model.impl.es.odata.AllTests.class,
         io.personium.test.unit.core.rs.odata.AllTests.class,
         io.personium.test.unit.core.rs.odata.validate.AllTests.class

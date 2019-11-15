@@ -14,18 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.model.impl.es.doc;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
 /**
- * パッケージ配下のテストケースを全て実行するためのテストスイート.
+ * JUnit test.
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-    OEntityDocHandlerTest.class
-    })
-public class AllTests {
-}
+package io.personium.core.model.impl.es.doc;
+

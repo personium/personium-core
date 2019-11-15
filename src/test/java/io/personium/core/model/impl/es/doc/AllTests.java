@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.jersey.filter;
+package io.personium.core.model.impl.es.doc;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
-import io.personium.core.rs.PersoniumCoreContainerFilterTest;
 
 /**
  * パッケージ配下のテストケースを全て実行するためのテストスイート.
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    PersoniumCoreContainerFilterTest.class
+    OEntityDocHandlerTest.class
     })
 public class AllTests {
 }
