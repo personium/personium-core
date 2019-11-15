@@ -14,13 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.bar;
+package io.personium.core.bar;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
-import io.personium.core.bar.BarFileUtilsTest;
 
 /**
  * パッケージ配下のテストケースを全て実行するためのテストスイート.

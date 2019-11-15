@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.model.jaxb;
+package io.personium.core.model.jaxb;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

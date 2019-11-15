@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.bar;
+package io.personium.core.bar;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

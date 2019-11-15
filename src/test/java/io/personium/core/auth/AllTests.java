@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2019 Personium Project Authors
+ *  - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.bar.jackson;
+package io.personium.core.auth;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * パッケージ配下のテストケースを全て実行するためのテストスイート.
+ * Test suite for executing all test cases under this package.
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-        JSONManifestTest.class
-})
+        AccessContextTest.class,
+        AuthHistoryLastFileTest.class,
+        ScopeArbitratorTest.class
+    })
 public class AllTests {
 }

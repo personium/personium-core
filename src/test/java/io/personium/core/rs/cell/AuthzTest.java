@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.auth;
+package io.personium.core.rs.cell;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -33,6 +33,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.auth.OAuth2Helper.Key;
+import io.personium.core.auth.OAuth2Helper.Scheme;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.rs.cell.AuthzEndPointResource;

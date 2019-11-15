@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.cell;
+package io.personium.core.rs.cell;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -49,7 +49,7 @@ import io.personium.test.categories.Unit;
  * LogResourceユニットテストクラス.
  */
 @Category({Unit.class })
-public class LogTest {
+public class LogResourceTest {
 
     /**
      * テスト用LogResourceクラス.
