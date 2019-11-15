@@ -367,7 +367,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>2.22.2</version>
                 <configuration>
                     <argLine>${jacocoArgs} -Xms512m -Xmx1024m</argLine>
                     <excludes>
@@ -387,8 +387,7 @@
                         <configuration>
                             <skip>false</skip>
                             <includes>
-                                <!--  include>**/test/jersey/**/*Test.java</include-->
-                                <include>**/test/jersey/*Test.java</include>
+                                <include>**/test/jersey/**/*Test.java</include>
                             </includes>
                             <excludes>
                                 <!-- Tests that fail when running tests from outside for various reasons. -->
@@ -470,7 +469,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.1</version>
+                <version>0.8.5</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -551,11 +550,11 @@
                 <artifactId>jdepend-maven-plugin</artifactId>
                 <version>2.0</version>
             </plugin>
-            <plugin>
+            <!-- plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.1</version>
-            </plugin>
+                <version>0.8.5</version>
+            </plugin-->
         </plugins>
     </reporting>
 </project>
