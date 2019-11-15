@@ -387,7 +387,8 @@
                         <configuration>
                             <skip>false</skip>
                             <includes>
-                                <include>**/test/jersey/**/*Test.java</include>
+                                <!--  include>**/test/jersey/**/*Test.java</include-->
+                                <include>**/test/jersey/*Test.java</include>
                             </includes>
                             <excludes>
                                 <!-- Tests that fail when running tests from outside for various reasons. -->
