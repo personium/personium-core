@@ -14,8 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * JUnit test.
- */
-package io.personium.test.unit.core;
+package io.personium.core.model.progress;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+/**
+ * パッケージ配下のテストケースを全て実行するためのテストスイート.
+ */
+@RunWith(Suite.class)
+@SuiteClasses({
+    MemcachedProgressManagerTest.class
+    })
+public class AllTests {
+}

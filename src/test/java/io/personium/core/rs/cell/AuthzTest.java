@@ -40,7 +40,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.rs.cell.AuthzEndPointResource;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * AccessContext ユニットテストクラス.

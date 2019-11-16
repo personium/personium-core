@@ -27,7 +27,6 @@ import org.json.simple.JSONObject;
 
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * Httpリクエストドキュメントを利用するユーティリティ.

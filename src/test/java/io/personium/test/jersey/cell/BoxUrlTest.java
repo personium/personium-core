@@ -45,9 +45,9 @@ import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.ResourceUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * BoxURL取得 APIのテスト.

@@ -28,7 +28,8 @@ import org.junit.runners.Suite.SuiteClasses;
     LockManagerTest.class,
     AccountLockManagerTest.class,
     AccountValidAuthnIntervalLockManagerTest.class,
-    CellLockManagerTest.class
+    CellLockManagerTest.class,
+    UnitUserLockManagerTest.class
     })
 public class AllTests {
 }

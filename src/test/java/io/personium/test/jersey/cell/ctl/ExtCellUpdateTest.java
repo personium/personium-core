@@ -30,8 +30,8 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.ExtCellUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * ExtCell更新のテスト.

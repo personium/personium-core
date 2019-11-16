@@ -25,38 +25,11 @@ import io.personium.test.categories.Performance;
 import junit.framework.TestSuite;
 
 /**
- * 結合テスト用テストスイート.
+ * Test Suite for performance test.
  */
 @RunWith(Categories.class)
 @SuiteClasses({
-        io.personium.core.AllTests.class,
-        io.personium.core.auth.AllTests.class,
-        io.personium.core.bar.AllTests.class,
-        io.personium.core.rs.odata.AllTests.class,
-        io.personium.core.model.AllTests.class,
-        io.personium.core.model.file.AllTests.class,
-        io.personium.core.model.impl.es.AllTests.class,
-        io.personium.core.model.impl.es.accessor.AllTests.class,
-        io.personium.core.model.impl.es.doc.AllTests.class,
-        io.personium.core.model.impl.es.odata.AllTests.class,
-        io.personium.core.model.lock.AllTests.class,
-        io.personium.core.rs.AllTests.class,
-        io.personium.test.jersey.AllTests.class,
-        io.personium.test.jersey.bar.AllTests.class,
-        io.personium.test.jersey.box.AllTests.class,
-        io.personium.test.jersey.box.odatacol.AllTests.class,
-        io.personium.test.jersey.box.odatacol.schema.assocend.AllTests.class,
-        io.personium.test.jersey.box.odatacol.schema.complextype.AllTests.class,
-        io.personium.test.jersey.box.odatacol.schema.complextypeproperty.AllTests.class,
-        io.personium.test.jersey.box.odatacol.schema.entitytype.AllTests.class,
-        io.personium.test.jersey.box.odatacol.schema.property.AllTests.class,
-        io.personium.test.jersey.cell.AllTests.class,
-        io.personium.test.jersey.cell.auth.AllTests.class,
-        io.personium.test.jersey.cell.auth.token.AllTests.class,
-        io.personium.test.jersey.cell.ctl.AllTests.class,
-        io.personium.test.jersey.concurrent.AllTests.class,
-        io.personium.test.performance.box.odatacol.AllTests.class,
-        io.personium.test.unit.core.AllTests.class
+        io.personium.test.performance.box.odatacol.AllTests.class
 })
 @IncludeCategory(Performance.class)
 public class PerformanceTests extends TestSuite {

@@ -50,7 +50,6 @@ import io.personium.test.jersey.box.acl.jaxb.Acl;
 import io.personium.test.jersey.box.odatacol.schema.complextype.ComplexTypeUtils;
 import io.personium.test.jersey.box.odatacol.schema.complextypeproperty.ComplexTypePropertyUtils;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.AssociationEndUtils;
 import io.personium.test.utils.BoxUtils;
@@ -61,6 +60,7 @@ import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.ODataSchemaUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
+import io.personium.test.utils.UrlUtils;
 import io.personium.test.utils.UserDataUtils;
 
 /**

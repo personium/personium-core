@@ -37,7 +37,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * ODataEntityAccessorTestの単体テストケース.
