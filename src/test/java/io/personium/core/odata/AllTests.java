@@ -25,7 +25,8 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-        PersoniumJsonWriterTest.class
+        PersoniumJsonWriterTest.class,
+        PersoniumExpressionParserTest.class
 })
 public class AllTests {
 }
