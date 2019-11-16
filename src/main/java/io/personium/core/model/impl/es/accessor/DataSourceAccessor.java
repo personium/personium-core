@@ -27,7 +27,6 @@ import io.personium.common.es.EsBulkRequest;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.EsType;
 import io.personium.common.es.response.EsClientException;
-import io.personium.common.es.response.PersoniumActionResponse;
 import io.personium.common.es.response.PersoniumBulkResponse;
 import io.personium.common.es.response.PersoniumDeleteResponse;
 import io.personium.common.es.response.PersoniumGetResponse;
@@ -39,7 +38,6 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
-import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
  * Base class that implements basic processing of the data store layer.
