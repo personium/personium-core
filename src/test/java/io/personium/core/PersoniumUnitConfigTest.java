@@ -31,6 +31,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.common.utils.CommonUtils;
 import io.personium.test.categories.Unit;
@@ -38,22 +42,20 @@ import io.personium.test.categories.Unit;
 /**
  * Test for PersoniumUnitConfig.
  */
-
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(CommonUtils.class)
 @Category({ Unit.class })
 public class PersoniumUnitConfigTest {
-    public volatile static String fqdn;
     public static String scheme;
     public static int port;
     
     @BeforeClass
     public static void beforeClass() {
-        fqdn = CommonUtils.getFQDN();
         scheme = PersoniumUnitConfig.getUnitScheme();
         port = PersoniumUnitConfig.getUnitPort();
     }
     @AfterClass
     public static void afterClass() {
-        CommonUtils.setFQDN(fqdn);
         PersoniumUnitConfig.set(UNIT_SCHEME, scheme);
         PersoniumUnitConfig.set(UNIT_PORT, String.valueOf(port));
     }
@@ -65,7 +67,8 @@ public class PersoniumUnitConfigTest {
     @Test
     public void getBaseUrl_Noraml() throws Exception {
         String testFqdn = "host.domain";
-        CommonUtils.setFQDN(testFqdn);
+        PowerMockito.mockStatic(CommonUtils.class);
+        PowerMockito.when(CommonUtils.getFQDN()).thenReturn(testFqdn);
         PersoniumUnitConfig.set(UNIT_SCHEME, "https");
         PersoniumUnitConfig.set(UNIT_PORT, "9998");
         assertEquals("https://host.domain:9998/", PersoniumUnitConfig.getBaseUrl());
@@ -78,12 +81,12 @@ public class PersoniumUnitConfigTest {
         PersoniumUnitConfig.set(UNIT_PORT, "443");
         assertEquals("https://host.domain:443/", PersoniumUnitConfig.getBaseUrl());
 
-        CommonUtils.setFQDN("localhost");
+        PowerMockito.when(CommonUtils.getFQDN()).thenReturn("localhost");
         PersoniumUnitConfig.set(UNIT_SCHEME, "https");
         PersoniumUnitConfig.set(UNIT_PORT, "-1");
         assertEquals("https://localhost/", PersoniumUnitConfig.getBaseUrl());
 
-        CommonUtils.setFQDN("192.168.1.10");
+        PowerMockito.when(CommonUtils.getFQDN()).thenReturn("192.168.1.10");
         PersoniumUnitConfig.set(UNIT_SCHEME, "https");
         PersoniumUnitConfig.set(UNIT_PORT, "-1");
         assertEquals("https://192.168.1.10/", PersoniumUnitConfig.getBaseUrl());
