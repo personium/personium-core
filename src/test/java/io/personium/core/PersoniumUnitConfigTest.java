@@ -44,6 +44,7 @@ public class PersoniumUnitConfigTest {
     public volatile static String fqdn;
     public static String scheme;
     public static int port;
+    
     @BeforeClass
     public static void beforeClass() {
         fqdn = CommonUtils.getFQDN();

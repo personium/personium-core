@@ -44,7 +44,7 @@ public class AccountLockManagerTest {
     @BeforeClass
     public static void beforeClass() {
         AccountLockManager.accountLockCount = 5;
-        AccountLockManager.accountLockTime = 1;
+        AccountLockManager.accountLockTime = 2;
     }
 
     /**
