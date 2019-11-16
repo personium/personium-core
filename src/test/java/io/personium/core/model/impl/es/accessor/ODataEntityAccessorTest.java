@@ -19,30 +19,40 @@ package io.personium.core.model.impl.es.accessor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.support.PlainActionFuture;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
+import io.personium.common.es.impl.InternalEsClient;
 import io.personium.common.es.response.PersoniumIndexResponse;
-import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.utils.UrlUtils;
-
 /**
- * ODataEntityAccessorTestの単体テストケース.
+ * Unit test for ODataEntityAccessor.
  */
-@RunWith(PersoniumIntegTestRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(InternalEsClient.class)
 @Category({Unit.class })
 public class ODataEntityAccessorTest {
 
@@ -50,52 +60,60 @@ public class ODataEntityAccessorTest {
     private static final String TYPE_NAME = "userdata";
     private static final String ROUTING_ID = "RoutingIdTest";
 
-    private static EsClient esClient;
+    private static EsIndex index;
 
-    /**
-     * 各テスト実行前の初期化処理.
-     * @throws Exception 異常が発生した場合の例外
-     */
-    @Before
-    public void setUp() throws Exception {
-        esClient = new EsClient(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
-    }
+    @BeforeClass
+    public static void beforeClass() {
+        PowerMockito.spy(InternalEsClient.class);
+        PowerMockito.mockStatic(InternalEsClient.class);
+        InternalEsClient mockClient = PowerMockito.mock(InternalEsClient.class);
+        PowerMockito.when(InternalEsClient.getInstance(anyString(), anyString())).thenReturn(mockClient);
+        PowerMockito.when(mockClient.createIndex(anyString(), any())).thenReturn(new PlainActionFuture<CreateIndexResponse>() {
+            @Override
+            public CreateIndexResponse get() {
+                CreateIndexResponse ret = PowerMockito.mock(CreateIndexResponse.class);
+                return ret;
+            }
+        });
+        PowerMockito.when(mockClient.asyncIndex(anyString(), anyString(), anyString(), anyString(), any(), any(), anyLong()))
+            .thenReturn(new PlainActionFuture<IndexResponse>() {
+            @Override
+            public IndexResponse get() {
+                IndexResponse ret = PowerMockito.mock(IndexResponse.class);
+                PowerMockito.when(ret.getId()).thenReturn("12");
+                return ret;
+            }
+        });
+        PowerMockito.when(mockClient.asyncDelete(anyString(), anyString(), anyString(), anyString(), anyLong()))
+        .thenReturn(new PlainActionFuture<DeleteResponse>() {
+	        @Override
+	        public DeleteResponse get() {
+	            DeleteResponse ret = PowerMockito.mock(DeleteResponse.class);
+	            //PowerMockito.when(ret.getId()).thenReturn("12");
+	            return ret;
+	        }
+	    });
 
-    /**
-     * 各テスト実行後のクリーンアップ処理.
-     * @throws Exception 異常が発生した場合の例外
-     */
-    @After
-    public void tearDown() throws Exception {
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
-        EsIndex index = esClient.idxUser(esUnitPrefix, INDEX_NAME);
-        try {
-            index.delete();
-        } catch (Exception ex) {
-            System.out.println("");
-        }
+        index = EsModel.idxUserWithUnitPrefix("test");
     }
 
     /**
      * create処理が正常に終了する.
      */
     @Test
-    public void create処理が正常に終了する() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
-        EsIndex index = esClient.idxUser(esUnitPrefix, INDEX_NAME);
-        assertNotNull(index);
+    public void create処理が正常に終了する()  {
+        // Preparation
         ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
         OEntityDocHandler docHandler = createTestOEntityDocHandler();
 
-        // データ登録実行
+        // Create a data record
         PersoniumIndexResponse response = entityAccessor.create(docHandler);
 
-        // レスポンスのチェック
+        // check the response
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
 
-        // データを削除する
+        // delete the data
         entityAccessor.delete(docHandler);
     }
 
@@ -104,28 +122,25 @@ public class ODataEntityAccessorTest {
      */
     @Test
     public void update処理が正常に終了する() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
-        EsIndex index = esClient.idxUser(esUnitPrefix, INDEX_NAME);
-        assertNotNull(index);
+        // Preparation
         ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
         OEntityDocHandler docHandler = createTestOEntityDocHandler();
         PersoniumIndexResponse createResponse = entityAccessor.create(docHandler);
         assertNotNull(createResponse);
         assertFalse(createResponse.getId().equals(""));
 
-        // データ更新実行
+        // Data Update
         Map<String, Object> staticFields = new HashMap<String, Object>();
         staticFields.put("test", "testdata");
         docHandler.setStaticFields(staticFields);
 
         PersoniumIndexResponse updateResponse = entityAccessor.update(createResponse.getId(), docHandler);
 
-        // レスポンスのチェック
+        // Check the response
         assertNotNull(updateResponse);
         assertEquals(createResponse.getId(), updateResponse.getId());
 
-        // データを削除する
+        // Delete the data
         entityAccessor.delete(docHandler);
     }
 
@@ -134,17 +149,14 @@ public class ODataEntityAccessorTest {
      */
     @Test
     public void delete処理が正常に終了する() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
-        EsIndex index = esClient.idxUser(esUnitPrefix, INDEX_NAME);
-        assertNotNull(index);
+        // Preparation
         ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
         OEntityDocHandler docHandler = createTestOEntityDocHandler();
         PersoniumIndexResponse response = entityAccessor.create(docHandler);
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
 
-        // データを削除する
+        // Delete the data
         entityAccessor.delete(docHandler);
     }
 
