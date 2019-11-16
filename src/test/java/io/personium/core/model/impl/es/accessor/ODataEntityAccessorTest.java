@@ -31,12 +31,10 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.PlainActionFuture;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -86,13 +84,13 @@ public class ODataEntityAccessorTest {
         });
         PowerMockito.when(mockClient.asyncDelete(anyString(), anyString(), anyString(), anyString(), anyLong()))
         .thenReturn(new PlainActionFuture<DeleteResponse>() {
-	        @Override
-	        public DeleteResponse get() {
-	            DeleteResponse ret = PowerMockito.mock(DeleteResponse.class);
-	            //PowerMockito.when(ret.getId()).thenReturn("12");
-	            return ret;
-	        }
-	    });
+            @Override
+            public DeleteResponse get() {
+                DeleteResponse ret = PowerMockito.mock(DeleteResponse.class);
+                //PowerMockito.when(ret.getId()).thenReturn("12");
+                return ret;
+            }
+        });
 
         index = EsModel.idxUserWithUnitPrefix("test");
     }
