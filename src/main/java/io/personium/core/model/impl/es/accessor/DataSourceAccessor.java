@@ -122,17 +122,6 @@ public class DataSourceAccessor {
         return this.create(id, data);
     }
 
-    /**
-     * Create a new document.
-     * @param id ID
-     * @param data document
-     * @return ES response
-     */
-    @SuppressWarnings({"rawtypes" })
-    public PersoniumActionResponse createForDavNodeFile(final String id, final Map data) {
-        PersoniumIndexResponse res = create(id, data);
-        return res;
-    }
 
     /**
      * Create a new document.
@@ -142,32 +131,6 @@ public class DataSourceAccessor {
      */
     @SuppressWarnings({"rawtypes" })
     public PersoniumIndexResponse create(final String id, final Map data) {
-        try {
-            return this.type.create(id, data);
-        } catch (EsClientException.EsSchemaMismatchException e) {
-            throw PersoniumCoreException.OData.SCHEMA_MISMATCH;
-        } catch (EsClientException.EsIndexMissingException e) {
-            PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
-            try {
-                this.index.create();
-                return this.type.create(id, data);
-            } catch (EsClientException.EsNoResponseException esRetry) {
-                throw PersoniumCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
-            }
-        } catch (EsClientException.EsNoResponseException e) {
-            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
-        }
-    }
-
-    /**
-     * Create a new document (for Cell creation).
-     * @param id ID
-     * @param data document
-     * @param docHandler document handler
-     * @return ES response
-     */
-    @SuppressWarnings({"rawtypes" })
-    public PersoniumIndexResponse create(final String id, final Map data, final EntitySetDocHandler docHandler) {
         try {
             return this.type.create(id, data);
         } catch (EsClientException.EsSchemaMismatchException e) {
