@@ -667,7 +667,7 @@ public class AccessContext {
 
         OEntityWrapper oew = cell.getAccount(username);
         if (oew == null) {
-            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthFormat);
+            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthError);
         }
 
         //Check valid authentication interval

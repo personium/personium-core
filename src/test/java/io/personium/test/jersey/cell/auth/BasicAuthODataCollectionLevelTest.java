@@ -41,11 +41,11 @@ import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.box.odatacol.batch.AbstractUserDataBatchTest;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BatchUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 import io.personium.test.utils.UserDataUtils;
 
 /**

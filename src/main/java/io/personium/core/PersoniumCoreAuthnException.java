@@ -49,7 +49,8 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     /**
      * Abnormal value of p_target.
      */
-    public static final PersoniumCoreAuthnException INVALID_TARGET = create("PR400-AN-0002", Error.INVALID_REQUEST);
+    public static final PersoniumCoreAuthnException INVALID_TARGET =
+            create("PR400-AN-0002", Error.INVALID_REQUEST);
     /**
      * Client Secret Parsing error.
      */
@@ -84,24 +85,29 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     /**
      * Token parsing error.
      */
-    public static final PersoniumCoreAuthnException TOKEN_PARSE_ERROR = create("PR400-AN-0009", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException TOKEN_PARSE_ERROR =
+            create("PR400-AN-0009", Error.INVALID_GRANT);
     /**
      * Expired.
      */
-    public static final PersoniumCoreAuthnException TOKEN_EXPIRED = create("PR400-AN-0010", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException TOKEN_EXPIRED =
+            create("PR400-AN-0010", Error.INVALID_GRANT);
     /**
      * Error in signature verification.
      */
-    public static final PersoniumCoreAuthnException TOKEN_DSIG_INVALID = create("PR400-AN-0011", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException TOKEN_DSIG_INVALID =
+            create("PR400-AN-0011", Error.INVALID_GRANT);
     /**
      * The target of the token is not yourself.
      * {0}: target URL of token
      */
-    public static final PersoniumCoreAuthnException TOKEN_TARGET_WRONG = create("PR400-AN-0012", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException TOKEN_TARGET_WRONG =
+            create("PR400-AN-0012", Error.INVALID_GRANT);
     /**
      * It is not a refresh token.
      */
-    public static final PersoniumCoreAuthnException NOT_REFRESH_TOKEN = create("PR400-AN-0013", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException NOT_REFRESH_TOKEN =
+            create("PR400-AN-0013", Error.INVALID_GRANT);
     /**
      * I can not be promoted because I do not have permission.
      */
@@ -110,7 +116,8 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     /**
      * A cell without an owner can not be promoted.
      */
-    public static final PersoniumCoreAuthnException NO_CELL_OWNER = create("PR400-AN-0015", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException NO_CELL_OWNER =
+            create("PR400-AN-0015", Error.INVALID_GRANT);
     /**
      * There is no required parameter.
      * {0}: Parameter key name
@@ -120,21 +127,22 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     /**
      * Authentication error.
      */
-    public static final PersoniumCoreAuthnException AUTHN_FAILED = create("PR400-AN-0017", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException AUTHN_FAILED =
+            create("PR400-AN-0017", Error.INVALID_GRANT);
     /**
      * Invalid specification of authentication header.
      */
     public static final PersoniumCoreAuthnException AUTH_HEADER_IS_INVALID =
             create("PR400-AN-0018", Error.INVALID_CLIENT);
     /**
-     * Invalid assertion type parameter.
+     * Invalid Grant Code.
      */
-    public static final PersoniumCoreAuthnException INVALID_CLIENT_ASSERTION_TYPE =
-            create("PR400-AN-0022", Error.INVALID_CLIENT);
+    public static final PersoniumCoreAuthnException INVALID_GRANT_CODE =
+            create("PR400-AN-0019", Error.INVALID_GRANT);
     /**
      * Authenticated Client does not match the refresh token.
      */
-    public static final PersoniumCoreAuthnException CLIENT_MISMATCH_FOR_REFRESH =
+    public static final PersoniumCoreAuthnException CLIENT_MISMATCH =
             create("PR401-AN-0020", Error.INVALID_CLIENT);
     /**
      * Client auth required to refresh the token.
@@ -142,29 +150,36 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     public static final PersoniumCoreAuthnException CLIENT_AUTH_REQUIRED =
             create("PR401-AN-0021", Error.INVALID_CLIENT);
     /**
+     * Invalid assertion type parameter.
+     */
+    public static final PersoniumCoreAuthnException INVALID_CLIENT_ASSERTION_TYPE =
+            create("PR400-AN-0022", Error.INVALID_CLIENT);
+    /**
      * Password change required.
      */
     public static final PersoniumCoreAuthnException PASSWORD_CHANGE_REQUIRED =
-            create("PR401-AN-0001", Error.UNAUTHORIZED_CLIENT);
-
-
-
+            create("PR401-AN-0023", Error.INVALID_GRANT);
+    
     /**
      * NetWork related error.
      */
-    public static final PersoniumCoreAuthnException NETWORK_ERROR = create("PR500-NW-0000", Error.SERVER_ERROR);
+    public static final PersoniumCoreAuthnException NETWORK_ERROR =
+            create("PR500-NW-0000", Error.SERVER_ERROR);
     /**
      * HTTP request failed.
      */
-    public static final PersoniumCoreAuthnException HTTP_REQUEST_FAILED = create("PR500-NW-0001", Error.SERVER_ERROR);
+    public static final PersoniumCoreAuthnException HTTP_REQUEST_FAILED =
+            create("PR500-NW-0001", Error.SERVER_ERROR);
     /**
      * The connection destination returns an unexpected response.
      */
-    public static final PersoniumCoreAuthnException UNEXPECTED_RESPONSE = create("PR500-NW-0002", Error.SERVER_ERROR);
+    public static final PersoniumCoreAuthnException UNEXPECTED_RESPONSE =
+            create("PR500-NW-0002", Error.SERVER_ERROR);
     /**
      * The connection destination returns an unexpected value.
      */
-    public static final PersoniumCoreAuthnException UNEXPECTED_VALUE = create("PR500-NW-0003", Error.SERVER_ERROR);
+    public static final PersoniumCoreAuthnException UNEXPECTED_VALUE =
+            create("PR500-NW-0003", Error.SERVER_ERROR);
 
     /**
      * Force load inner class.
@@ -184,16 +199,25 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      * @param message error message
      * @param error Error code of OAuth authentication error
      * @param realm To return the WWWW-Authenticate header, set the realm value here
+     * @param cause Causing Throwable
      */
     PersoniumCoreAuthnException(final String code,
             final Severity severity,
             final String message,
             final int status,
             final String error,
-            final String realm) {
-        super(code, severity, message, status);
+            final String realm, final Throwable cause) {
+        super(code, severity, message, status, cause);
         this.error = error;
         this.realm = realm;
+    }
+    PersoniumCoreAuthnException(final String code,
+            final Severity severity,
+            final String message,
+            final int status,
+            final String error,
+            final String realm) {
+        this(code, severity, message, status, error, realm, null);
     }
 
     /**
@@ -253,7 +277,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     public PersoniumCoreException reason(final Throwable t) {
         //Make a clone
         PersoniumCoreException ret = new PersoniumCoreAuthnException(
-                this.code, this.severity, this.message, this.status, this.error, this.realm);
+                this.code, this.severity, this.message, this.status, this.error, this.realm, t);
         //Set stack trace
         ret.setStackTrace(t.getStackTrace());
         return ret;

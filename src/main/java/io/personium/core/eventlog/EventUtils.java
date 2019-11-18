@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.personium.common.es.util.IndexNameEncoder;
+import io.personium.common.file.FileDataAccessException;
+import io.personium.common.file.FileDataAccessor;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.model.file.BinaryDataAccessException;
-import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.rs.cell.LogResource;
 
 /**
@@ -83,10 +83,10 @@ public class EventUtils {
      * @param owner Cell owner (URL format)
      * @throws BinaryDataAccessException Failed to delete event log file
      */
-    public static void deleteEventLog(String cellId, String owner) throws BinaryDataAccessException {
+    public static void deleteEventLog(String cellId, String owner) throws FileDataAccessException {
         //Retrieve log list
         List<String> logFiles = getLogFileList(cellId, owner);
-        BinaryDataAccessor accessor = new BinaryDataAccessor("", null,
+        FileDataAccessor accessor = new FileDataAccessor("", null,
                 PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
 
         //File logical deletion

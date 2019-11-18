@@ -59,7 +59,7 @@
         <sift>
             <appender name="FILE-${eventlog_path}" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <file>/personium_nfs/personium-core/eventlog/${eventlog_path}/current/default.log</file>
-                <rollingPolicy class="io.personium.logging.rolling.PersoniumFixedWindowRollingPolicy">
+                <rollingPolicy class="io.personium.common.logging.rolling.PersoniumFixedWindowRollingPolicy">
                     <fileNamePattern>/personium_nfs/personium-core/eventlog/${eventlog_path}/archive/default.log.%i.zip</fileNamePattern>
                     <minIndex>1</minIndex>
                     <maxIndex>12</maxIndex>

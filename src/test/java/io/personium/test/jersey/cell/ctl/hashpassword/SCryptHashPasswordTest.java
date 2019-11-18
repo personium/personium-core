@@ -49,10 +49,10 @@ import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumException;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * test SCrypt hash password.

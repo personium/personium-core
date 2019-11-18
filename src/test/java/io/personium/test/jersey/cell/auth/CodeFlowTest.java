@@ -56,10 +56,10 @@ import io.personium.test.categories.Integration;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AuthzUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TokenUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * Authz endpoint tests.

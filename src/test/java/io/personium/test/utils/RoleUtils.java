@@ -23,7 +23,6 @@ import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * Httpリクエストドキュメントを利用するユーティリティ.

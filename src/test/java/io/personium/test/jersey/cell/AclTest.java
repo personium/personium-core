@@ -59,7 +59,6 @@ import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.jersey.cell.ctl.BoxCrudTest;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
@@ -75,6 +74,7 @@ import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.SentMessageUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * Cell level ACL testing.

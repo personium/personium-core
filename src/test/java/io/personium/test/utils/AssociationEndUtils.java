@@ -23,7 +23,6 @@ import org.apache.http.HttpStatus;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * Odata関連のHttpリクエストドキュメントを利用するユーティリティ.

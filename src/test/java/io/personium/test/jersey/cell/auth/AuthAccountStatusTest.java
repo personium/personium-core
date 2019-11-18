@@ -128,9 +128,9 @@ public class AuthAccountStatusTest extends PersoniumTest {
         String url = (String) responseBody.get("url");
         String lastAuthenticated = (String) responseBody.get("last_authenticated");
         Long failedCount = (Long) responseBody.get("failed_count");
-        assertThat(error, is(OAuth2Helper.Error.UNAUTHORIZED_CLIENT));
+        assertThat(error, is(OAuth2Helper.Error.INVALID_GRANT));
         assertThat(errorDescription,
-                is("[PR401-AN-0001] - The password should be changed."));
+                is("[PR401-AN-0023] - The password should be changed."));
         assertTrue(aToken.startsWith(PasswordChangeAccessToken.PREFIX_ACCESS));
         assertTrue(url.endsWith("/__mypassword"));
         assertNull(lastAuthenticated);

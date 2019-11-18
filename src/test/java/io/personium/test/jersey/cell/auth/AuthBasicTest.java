@@ -46,7 +46,6 @@ import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.box.acl.jaxb.Acl;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
@@ -57,6 +56,7 @@ import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 import io.personium.test.utils.UserDataUtils;
 
 /**
@@ -251,8 +251,8 @@ public class AuthBasicTest extends PersoniumTest {
             assertThat(headers).contains(expectedBasic);
 
             // レスポンスボディのチェック
-            ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getCode(),
-                    PersoniumCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getCode(),
+                    PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getMessage());
         } finally {
             // Cellを再帰的削除
             Setup.cellBulkDeletion(MY_CELL);

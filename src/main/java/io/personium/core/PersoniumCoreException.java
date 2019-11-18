@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2019 Personium Project
+ *  - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +25,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.personium.core.exceptions.ODataErrorMessage;
 import io.personium.core.utils.EscapeControlCode;
@@ -1215,5 +1218,44 @@ public class PersoniumCoreException extends RuntimeException {
                     "message code should be in \"PR000-OD-0000\" format. code=[" + code + "].");
         }
         return Integer.parseInt(m.group(1));
+    }
+    static Logger defaultLogger = LoggerFactory.getLogger(PersoniumCoreException.class);
+    /*
+     * Handling of PersoniumCoreException.
+     */
+    public void log(final Logger log) {
+        Logger l = log;
+        if (l == null) {
+            l = defaultLogger;
+        }
+        Severity sv = this.getSeverity();
+        String code = this.getCode();
+        String message = String.format("[%s] - %s", code, this.getMessage());
+        Throwable cause = this.getCause();
+        //Log output
+        switch (sv) {
+        case INFO:
+            l.info(message);         // Info-level do not print stack trace
+            logCauseChain(l, cause); // instead log the causing exception chain in a simple format.
+            break;
+        case WARN:
+            l.warn(message, cause);
+            break;
+        case ERROR:
+            l.error(message, cause);
+            break;
+        default:
+            l.error("Exception Severity Not Defined");
+            l.error(message, cause);
+        }
+    }
+    private static void logCauseChain(final Logger log, Throwable cause) {
+        if (cause == null) {
+            return;
+        }
+        log.info("   reason = " + cause.getMessage() + " (" + cause.getClass().getCanonicalName() + ")");
+        if (cause.getCause() != null) {
+            logCauseChain(log, cause.getCause());
+        }
     }
 }

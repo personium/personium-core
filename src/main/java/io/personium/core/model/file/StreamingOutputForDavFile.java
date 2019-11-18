@@ -32,8 +32,10 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.PersoniumCoreLog;
+import io.personium.common.file.DataCryptor;
+import io.personium.common.file.FileDataNotFoundException;
 import io.personium.core.ElapsedTimeLog;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
@@ -72,9 +74,9 @@ public class StreamingOutputForDavFile implements StreamingOutput {
      * @throws BinaryDataNotFoundException Error when file does not exist.
      */
     public StreamingOutputForDavFile(String fileFullPath, String cellId, String encryptionType)
-            throws BinaryDataNotFoundException {
+            throws FileDataNotFoundException {
         if (!Files.exists(Paths.get(fileFullPath))) {
-            throw new BinaryDataNotFoundException(fileFullPath);
+            throw new FileDataNotFoundException(fileFullPath);
         }
 
         //Generate a unique name to create a read-only hard link.
@@ -105,7 +107,7 @@ public class StreamingOutputForDavFile implements StreamingOutput {
             }
         }
 
-        throw new BinaryDataNotFoundException("Unable to create hard link for DAV file: " + hardLinkName);
+        throw new FileDataNotFoundException("Unable to create hard link for DAV file: " + hardLinkName);
     }
 
     /**
@@ -114,7 +116,7 @@ public class StreamingOutputForDavFile implements StreamingOutput {
     @Override
     public void write(OutputStream output) throws IOException, WebApplicationException {
         if (null == hardLinkInput) {
-            throw new WebApplicationException(new BinaryDataNotFoundException(hardLinkPath.toString()));
+            throw new WebApplicationException(new FileDataNotFoundException(hardLinkPath.toString()));
         }
         // write start log
         PersoniumCoreLog.Dav.FILE_OPERATION_START.params("-").writeLog();

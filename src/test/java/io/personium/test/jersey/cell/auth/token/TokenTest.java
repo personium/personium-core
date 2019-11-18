@@ -42,9 +42,9 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * Access Token Acceptance test.
@@ -186,7 +186,6 @@ public class TokenTest extends PersoniumTest {
         String subject = issuer + "#account1";
         String target = UrlUtils.cellRoot(TEST_CELL1);
         List<Role> roleList = new ArrayList<Role>();
-        String schema = "";
 
         String account = "account1";
         String pass = "password1";
@@ -260,8 +259,6 @@ public class TokenTest extends PersoniumTest {
         List<Role> roleList = new ArrayList<Role>();
         Role role = new Role(new URL(UrlUtils.roleResource(TEST_CELL1, "__", "role2")));
         roleList.add(role);
-        String schema = "";
-        String[] scope = new String[] {"scope"};
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         VisitorLocalAccessToken validToken = new VisitorLocalAccessToken(

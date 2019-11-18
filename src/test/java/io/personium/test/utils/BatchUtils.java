@@ -20,8 +20,6 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 
-import io.personium.test.unit.core.UrlUtils;
-
 /**
  * $batch用のUtilクラス.
  */

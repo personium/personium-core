@@ -43,12 +43,12 @@ import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * Cell一括削除のテスト.

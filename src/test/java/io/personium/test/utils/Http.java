@@ -48,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.test.PersoniumCoreTestConfig;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * Httpリクエストを送るテスト用ユーティリティ.

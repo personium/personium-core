@@ -54,6 +54,9 @@ public class HttpClientFactory {
     /** Connection timeout value.*/
     private static final int TIMEOUT = 60000; // 20000;
 
+    /** Addr local. */
+    public static final String IP_ADDR_LOCAL = "127.0.0.1";
+
     /** Constructor. */
     private HttpClientFactory() {
     }
@@ -100,7 +103,7 @@ public class HttpClientFactory {
             @Override
             public InetAddress[] resolve(final String host) throws UnknownHostException {
                 // Always 127.0.0.1
-                return new InetAddress[] { InetAddress.getByName("127.0.0.1") };
+                return new InetAddress[] { InetAddress.getByName(IP_ADDR_LOCAL) };
             }
         };
         HttpClientConnectionManager cm = new BasicHttpClientConnectionManager(registry,

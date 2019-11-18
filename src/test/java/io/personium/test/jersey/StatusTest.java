@@ -22,7 +22,7 @@ import org.json.simple.JSONObject;
 import org.junit.Test;
 
 import io.personium.core.rs.PersoniumCoreApplication;
-import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * __statusのテスト.

@@ -64,11 +64,14 @@ import org.xml.sax.SAXException;
 import io.personium.common.auth.token.Role;
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.util.IndexNameEncoder;
+import io.personium.common.file.CipherInputStream;
+import io.personium.common.file.DataCryptor;
+import io.personium.common.file.FileDataAccessor;
+import io.personium.common.file.FileDataNotFoundException;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
-import io.personium.core.ElapsedTimeLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -81,10 +84,6 @@ import io.personium.core.model.DavDestination;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.EntityType;
-import io.personium.core.model.file.BinaryDataAccessor;
-import io.personium.core.model.file.BinaryDataNotFoundException;
-import io.personium.core.model.file.CipherInputStream;
-import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.file.StreamingOutputForDavFile;
 import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
 import io.personium.core.model.impl.es.EsModel;
@@ -742,7 +741,7 @@ public class DavCmpFsImpl implements DavCmp {
             return res.header(HttpHeaders.ETAG, getEtag()).header(CommonUtils.HttpHeaders.ACCEPT_RANGES,
                     RangeHeaderHandler.BYTES_UNIT);
 
-        } catch (BinaryDataNotFoundException nex) {
+        } catch (FileDataNotFoundException nex) {
             this.load();
             if (!exists()) {
                 throw getNotFoundException().params(getUrl());
@@ -1066,7 +1065,7 @@ public class DavCmpFsImpl implements DavCmp {
      * Creates and returns an instance of an accessor of binary data.
      * @return instance of accessor
      */
-    protected BinaryDataAccessor getBinaryDataAccessor() {
+    protected FileDataAccessor getBinaryDataAccessor() {
         String owner = cell.getOwnerNormalized();
         String unitUserName = null;
         if (owner == null) {
@@ -1075,7 +1074,7 @@ public class DavCmpFsImpl implements DavCmp {
             unitUserName = IndexNameEncoder.encodeEsIndexName(owner);
         }
 
-        return new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(), unitUserName,
+        return new FileDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(), unitUserName,
                 PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
     }
 
