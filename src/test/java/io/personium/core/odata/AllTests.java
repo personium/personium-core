@@ -21,11 +21,12 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * パッケージ配下のテストケースを全て実行するためのテストスイート.
+ * Test suite for executing all test cases under this package.
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-        PersoniumJsonWriterTest.class
+        PersoniumJsonWriterTest.class,
+        PersoniumExpressionParserTest.class
 })
 public class AllTests {
 }

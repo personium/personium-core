@@ -30,7 +30,7 @@ import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * Accept-Encodingヘッダのテスト.

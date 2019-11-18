@@ -29,7 +29,6 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * Httpリクエストドキュメントを利用するユーティリティ.

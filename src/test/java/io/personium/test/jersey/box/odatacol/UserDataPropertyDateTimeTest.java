@@ -45,11 +45,11 @@ import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * UserDataComplexType登録のテスト.

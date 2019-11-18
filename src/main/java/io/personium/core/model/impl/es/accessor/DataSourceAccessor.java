@@ -27,7 +27,6 @@ import io.personium.common.es.EsBulkRequest;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.EsType;
 import io.personium.common.es.response.EsClientException;
-import io.personium.common.es.response.PersoniumActionResponse;
 import io.personium.common.es.response.PersoniumBulkResponse;
 import io.personium.common.es.response.PersoniumDeleteResponse;
 import io.personium.common.es.response.PersoniumGetResponse;
@@ -39,7 +38,6 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
-import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
  * Base class that implements basic processing of the data store layer.
@@ -122,17 +120,6 @@ public class DataSourceAccessor {
         return this.create(id, data);
     }
 
-    /**
-     * Create a new document.
-     * @param id ID
-     * @param data document
-     * @return ES response
-     */
-    @SuppressWarnings({"rawtypes" })
-    public PersoniumActionResponse createForDavNodeFile(final String id, final Map data) {
-        PersoniumIndexResponse res = create(id, data);
-        return res;
-    }
 
     /**
      * Create a new document.
@@ -142,32 +129,6 @@ public class DataSourceAccessor {
      */
     @SuppressWarnings({"rawtypes" })
     public PersoniumIndexResponse create(final String id, final Map data) {
-        try {
-            return this.type.create(id, data);
-        } catch (EsClientException.EsSchemaMismatchException e) {
-            throw PersoniumCoreException.OData.SCHEMA_MISMATCH;
-        } catch (EsClientException.EsIndexMissingException e) {
-            PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
-            try {
-                this.index.create();
-                return this.type.create(id, data);
-            } catch (EsClientException.EsNoResponseException esRetry) {
-                throw PersoniumCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
-            }
-        } catch (EsClientException.EsNoResponseException e) {
-            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
-        }
-    }
-
-    /**
-     * Create a new document (for Cell creation).
-     * @param id ID
-     * @param data document
-     * @param docHandler document handler
-     * @return ES response
-     */
-    @SuppressWarnings({"rawtypes" })
-    public PersoniumIndexResponse create(final String id, final Map data, final EntitySetDocHandler docHandler) {
         try {
             return this.type.create(id, data);
         } catch (EsClientException.EsSchemaMismatchException e) {

@@ -41,7 +41,6 @@ import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.box.acl.jaxb.Acl;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
@@ -50,6 +49,7 @@ import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * サービスソースに対する親子関係のアクセス制御のテスト.<br />

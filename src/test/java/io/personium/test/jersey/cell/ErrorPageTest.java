@@ -42,7 +42,7 @@ import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * Test for Error Page.

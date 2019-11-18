@@ -61,7 +61,7 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      */
     public PersoniumIndexResponse create(String id, EntitySetDocHandler docHandler) {
         docHandler.setId(id);
-        PersoniumIndexResponse response = create(id, docHandler.getSource(), docHandler);
+        PersoniumIndexResponse response = create(id, docHandler.getSource());
         return response;
     }
 

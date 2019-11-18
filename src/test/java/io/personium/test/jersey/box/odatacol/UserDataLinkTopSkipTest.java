@@ -39,7 +39,6 @@ import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AssociationEndUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
@@ -47,6 +46,7 @@ import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 import io.personium.test.utils.UserDataUtils;
 
 /**
