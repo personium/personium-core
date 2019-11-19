@@ -79,10 +79,9 @@ import io.personium.test.categories.Unit;
 /**
  * TokenEndPointResource unit test class.
  */
-@Category({ Unit.class })
+@Category({Unit.class })
 public class TokenEndPointResourceTest {
     static Logger log = LoggerFactory.getLogger(TokenEndPointResourceTest.class);
-
 
     /** Target class of unit test. */
     private TokenEndPointResource tokenEndPointResource;
@@ -98,11 +97,11 @@ public class TokenEndPointResourceTest {
                 PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
         PersoniumCoreApplication.loadPlugins();
     }
+
     @AfterClass
     public static void afterClass() {
 
     }
-
 
     /**
      * Before.
@@ -111,15 +110,19 @@ public class TokenEndPointResourceTest {
     @Before
     public void before() throws Exception {
         String unitUrl = PersoniumUnitConfig.getBaseUrl();
-        String cellUrl =  unitUrl + "testcell/";
+        String cellUrl = unitUrl + "testcell/";
 
+        String username = "username";
         this.mockCellRsCmp = mock(CellRsCmp.class);
         doReturn(null).when(this.mockCellRsCmp).getAccountsNotRecordingAuthHistory();
-        doReturn(false).when(this.mockCellRsCmp).isRecordingAuthHistory(null, "username");
+        doReturn(false).when(this.mockCellRsCmp).isRecordingAuthHistory(null, username);
 
         this.mockCell = Mockito.spy(Cell.class);
         doReturn(unitUrl).when(this.mockCell).getUnitUrl();
         doReturn(cellUrl).when(this.mockCell).getUrl();
+        List<Role> roleList = new ArrayList<>();
+        roleList.add(new Role("MyBoardViewer", "box1", this.mockCell.getUnitUrl() + "appcell/", this.mockCell.getUnitUrl()));
+        doReturn(roleList).when(this.mockCell).getRoleListForAccount(username);
         Map<String, String> o = new HashMap<>();
         o.put(Account.P_IP_ADDRESS_RANGE.getName(), null);
         o.put(Account.P_TYPE.getName(), Account.P_TYPE.getDefaultValue());
@@ -188,7 +191,6 @@ public class TokenEndPointResourceTest {
         doReturn(oew).when(this.mockCell).getAccount("username");
         doReturn(true).when(this.mockCell).authenticateAccount(oew, "password");
 
-
         this.tokenEndPointResource = PowerMockito.spy(new TokenEndPointResource(mockCell, this.mockCellRsCmp));
         this.mockUriInfo = mock(UriInfo.class);
         doReturn(new URI(cellUrl)).when(this.mockUriInfo).getBaseUri();
@@ -207,30 +209,30 @@ public class TokenEndPointResourceTest {
         String owner = "false";
         String schema = "https://personium/appcell/";
         String[] scopes = new String[0];
-        
+
         // --------------------
         // Vaild ResidentRefreshToken
         // --------------------
-        ResidentRefreshToken refreshToken = new ResidentRefreshToken(
-        		this.mockCell.getUrl(), this.mockCell.getUrl() + "#me", schema, scopes);
+        ResidentRefreshToken refreshToken = new ResidentRefreshToken(this.mockCell.getUrl(),
+                this.mockCell.getUrl() + "#me", schema, scopes);
 
         // --------------------
         // Run method
         // --------------------
         // Load methods for private
-        Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh",
-                String.class, String.class, String.class, String.class, long.class, long.class);
+        Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh", String.class, String.class,
+                String.class, String.class, long.class, long.class);
         method.setAccessible(true);
         // Run method
-        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema, 
-        		refreshToken.toTokenString(),
-                AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
+        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema,
+                refreshToken.toTokenString(), AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
                 AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS);
-	    // --------------------
-	    // Confirm result
-	    // --------------------
-	    assertEquals(Response.ok().build().getStatus(), actual.getStatus());
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertEquals(Response.ok().build().getStatus(), actual.getStatus());
     }
+
     /**
      * Test receiveRefresh() using ResidentRefreshToken.
      * @throws Exception Unexpected error.
@@ -244,35 +246,33 @@ public class TokenEndPointResourceTest {
         String owner = "false";
         String schema = "https://personium/appcell/";
         String[] scopes = new String[0];
-        
+
         // --------------------
         // Expired ResidentRefreshToken
         // --------------------
         ResidentRefreshToken refreshToken = new ResidentRefreshToken(
-        		new Date().getTime() - 2 * AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
-        		1000,
-        		this.mockCell.getUrl(), this.mockCell.getUrl() + "#me", schema, scopes);
+                new Date().getTime() - 2 * AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS, 1000,
+                this.mockCell.getUrl(), this.mockCell.getUrl() + "#me", schema, scopes);
 
         // --------------------
         // Run method
         // --------------------
         // Access private method
-        Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh",
-                String.class, String.class, String.class, String.class, long.class, long.class);
+        Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh", String.class, String.class,
+                String.class, String.class, long.class, long.class);
         method.setAccessible(true);
         // Run method
         try {
-        	method.invoke(tokenEndPointResource, target, owner, schema, 
-        		refreshToken.toTokenString(),
-                AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
-                AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS);
+            method.invoke(tokenEndPointResource, target, owner, schema, refreshToken.toTokenString(),
+                    AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
+                    AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS);
             fail("Should throw exception");
         } catch (Exception e) {
-        	PersoniumCoreAuthnException pcae = (PersoniumCoreAuthnException)e.getCause();
-    	    // --------------------
-    	    // Confirm result
-    	    // --------------------
-    	    assertEquals(PersoniumCoreAuthnException.TOKEN_EXPIRED.getCode(), pcae.getCode());
+            PersoniumCoreAuthnException pcae = (PersoniumCoreAuthnException) e.getCause();
+            // --------------------
+            // Confirm result
+            // --------------------
+            assertEquals(PersoniumCoreAuthnException.TOKEN_EXPIRED.getCode(), pcae.getCode());
         }
     }
 
@@ -289,35 +289,30 @@ public class TokenEndPointResourceTest {
         String owner = "false";
         String schema = "https://personium/appcell/";
         String[] scopes = new String[0];
-        
+
         // --------------------
         // Valid VisitorRefreshToken
         // --------------------
         List<Role> roleList = new ArrayList<Role>();
-        VisitorRefreshToken refreshToken = new VisitorRefreshToken(UUID.randomUUID().toString(), 
-        		new Date().getTime(),
-        		this.mockCell.getUrl(), 
-        		this.mockCell.getUrl() + "#me", 
-        		this.mockCell.getUrl(), 
-        		roleList, 
-        		schema, scopes);
+        VisitorRefreshToken refreshToken = new VisitorRefreshToken(UUID.randomUUID().toString(), new Date().getTime(),
+                this.mockCell.getUrl(), this.mockCell.getUrl() + "#me", this.mockCell.getUrl(), roleList, schema,
+                scopes);
 
         // --------------------
         // Run method
         // --------------------
         // Load methods for private
-        Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh",
-                String.class, String.class, String.class, String.class, long.class, long.class);
+        Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh", String.class, String.class,
+                String.class, String.class, long.class, long.class);
         method.setAccessible(true);
         // Run method
-        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema, 
-        		refreshToken.toTokenString(),
-                AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
+        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema,
+                refreshToken.toTokenString(), AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
                 AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS);
-	    // --------------------
-	    // Confirm result
-	    // --------------------
-	    assertEquals(Response.ok().build().getStatus(), actual.getStatus());
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertEquals(Response.ok().build().getStatus(), actual.getStatus());
     }
 
     /**
@@ -333,45 +328,39 @@ public class TokenEndPointResourceTest {
         String owner = "false";
         String schema = "https://personium/appcell/";
         String[] scopes = new String[0];
-        
+
         // --------------------
         // Expired VisitorRefreshToken
         // --------------------
         List<Role> roleList = new ArrayList<Role>();
-        VisitorRefreshToken refreshToken = new VisitorRefreshToken(UUID.randomUUID().toString(), 
-           		new Date().getTime() - 2 * AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
-        		1000,
-        		this.mockCell.getUrl(), 
-        		this.mockCell.getUrl() + "#me", 
-        		this.mockCell.getUrl(), 
-        		roleList, 
-        		schema, scopes);
+        VisitorRefreshToken refreshToken = new VisitorRefreshToken(UUID.randomUUID().toString(),
+                new Date().getTime() - 2 * AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS, 1000,
+                this.mockCell.getUrl(), this.mockCell.getUrl() + "#me", this.mockCell.getUrl(), roleList, schema,
+                scopes);
 
         // --------------------
         // Run method
         // --------------------
         // Load methods for private
-        Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh",
-                String.class, String.class, String.class, String.class, long.class, long.class);
+        Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh", String.class, String.class,
+                String.class, String.class, long.class, long.class);
         method.setAccessible(true);
         // Run method
         try {
-        	method.invoke(tokenEndPointResource, target, owner, schema, 
-        		refreshToken.toTokenString(),
-                AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
-                AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS);
-        	// Should throw Exception
+            method.invoke(tokenEndPointResource, target, owner, schema, refreshToken.toTokenString(),
+                    AbstractOAuth2Token.ACCESS_TOKEN_EXPIRES_MILLISECS,
+                    AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS);
+            // Should throw Exception
             fail("Should throw exception");
         } catch (Exception e) {
-        	PersoniumCoreAuthnException pcae = (PersoniumCoreAuthnException)e.getCause();
-    	    // --------------------
-    	    // Confirm result
-    	    // --------------------
-    	    assertEquals(PersoniumCoreAuthnException.TOKEN_EXPIRED.getCode(), pcae.getCode());
+            PersoniumCoreAuthnException pcae = (PersoniumCoreAuthnException) e.getCause();
+            // --------------------
+            // Confirm result
+            // --------------------
+            assertEquals(PersoniumCoreAuthnException.TOKEN_EXPIRED.getCode(), pcae.getCode());
         }
     }
 
-    
     /**
      * test for token() method with grant_type=password params setting.
      * @throws Exception
@@ -385,7 +374,9 @@ public class TokenEndPointResourceTest {
         formParams.add("scope", "root https://personium/appcell/");
 
         Response res = tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
-        JsonObject j = Json.createReader(new ByteArrayInputStream(res.getEntity().toString().getBytes(Charsets.UTF8_CHARSET))).readObject();
+        JsonObject j = Json
+                .createReader(new ByteArrayInputStream(res.getEntity().toString().getBytes(Charsets.UTF8_CHARSET)))
+                .readObject();
         assertEquals(200, res.getStatus());
         assertEquals("root", j.getString("scope"));
     }
@@ -432,6 +423,7 @@ public class TokenEndPointResourceTest {
         }
         fail("Should throw exception");
     }
+
     /**
      * test for token() method with null client_assertion_type and valid client_assertion.
      * @throws Exception
@@ -439,7 +431,7 @@ public class TokenEndPointResourceTest {
     @Test
     public void token_When_ClientAssertionType_IsNull_And_ClientAssertion_Valid_Then_Fails() throws Exception {
 
-        //PowerMockito.doReturn(cellUrl).when(tokenEndPointResource, "getIssuerUrl");
+        // PowerMockito.doReturn(cellUrl).when(tokenEndPointResource, "getIssuerUrl");
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("grant_type", "password");
         formParams.add("username", "username");
@@ -454,67 +446,72 @@ public class TokenEndPointResourceTest {
             assertEquals(PersoniumCoreAuthnException.INVALID_CLIENT_ASSERTION_TYPE.getCode(), e.getCode());
         }
     }
-    
+
     @Test
     public void token_GrantCode_When_Invalid_Fails() throws Exception {
-    	String clientId = this.mockCell.getUnitUrl() + "appcell/";
-    	TransCellAccessToken appAuthToken = new TransCellAccessToken(clientId, clientId + "#app", this.mockCell.getUrl(), new ArrayList<Role>(), "", new String[0]);
+        String clientId = this.mockCell.getUnitUrl() + "appcell/";
+        TransCellAccessToken appAuthToken = new TransCellAccessToken(clientId, clientId + "#app",
+                this.mockCell.getUrl(), new ArrayList<Role>(), "", new String[0]);
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("grant_type", "authorization_code");
         formParams.add("code", "InvalidGrantCode");
         formParams.add("scope", "root");
         formParams.add("client_id", clientId);
         formParams.add("client_secret", appAuthToken.toTokenString());
-    	
+
         try {
             tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
             fail("Should throw exception");
         } catch (PersoniumCoreAuthnException e) {
-        	e.log(log);
+            e.log(log);
             assertEquals(PersoniumCoreAuthnException.INVALID_GRANT_CODE.getCode(), e.getCode());
         }
     }
+
     @Test
     public void token_GrantCode_When_Valid_Succeeds() throws Exception {
-    	String clientId = this.mockCell.getUnitUrl() + "appcell/";
-    	TransCellAccessToken appAuthToken = new TransCellAccessToken(
-    			clientId, clientId + "#app", this.mockCell.getUrl(), new ArrayList<Role>(), "", new String[0]);
-    	GrantCode gc = new GrantCode(new Date().getTime(), 3600, this.mockCell.getUrl(), this.mockCell.getUrl() + "#me", 
-    			null, clientId, new String[] {"root"});
-    	
+        String clientId = this.mockCell.getUnitUrl() + "appcell/";
+        TransCellAccessToken appAuthToken = new TransCellAccessToken(clientId, clientId + "#app",
+                this.mockCell.getUrl(), new ArrayList<Role>(), "", new String[0]);
+        GrantCode gc = new GrantCode(new Date().getTime(), 3600, this.mockCell.getUrl(), this.mockCell.getUrl() + "#me",
+                null, clientId, new String[] {"root" });
+
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("grant_type", "authorization_code");
         formParams.add("code", gc.toTokenString());
         formParams.add("client_id", clientId);
         formParams.add("client_secret", appAuthToken.toTokenString());
         formParams.add("scope", "root");
-    	
+
         Response res = tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
         assertEquals(200, res.getStatus());
     }
+
     @Test
     public void token_GrantCode_WithConfidentialMark_When_Valid_Succeeds() throws Exception {
-    	// Prepare App Auth Token
-    	String clientId = this.mockCell.getUnitUrl() + "appcell/";
-    	List<Role> roleList = new ArrayList<Role>();
-    	roleList.add(new Role("confidentialClient"));
-    	TransCellAccessToken appAuthToken = new TransCellAccessToken(
-    			clientId, clientId + "#app", this.mockCell.getUrl(), roleList, "", new String[0]);
-    	GrantCode gc = new GrantCode(new Date().getTime(), 3600, this.mockCell.getUrl(), this.mockCell.getUrl() + "#me", 
-    			null, clientId, new String[] {"root"});
-    	
+        // Prepare App Auth Token
+        String clientId = this.mockCell.getUnitUrl() + "appcell/";
+        List<Role> roleList = new ArrayList<Role>();
+        roleList.add(new Role("confidentialClient"));
+        TransCellAccessToken appAuthToken = new TransCellAccessToken(clientId, clientId + "#app",
+                this.mockCell.getUrl(), roleList, "", new String[0]);
+        GrantCode gc = new GrantCode(new Date().getTime(), 3600, this.mockCell.getUrl(), this.mockCell.getUrl() + "#me",
+                null, clientId, new String[] {"root" });
+
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("grant_type", "authorization_code");
         formParams.add("code", gc.toTokenString());
         formParams.add("client_id", clientId);
         formParams.add("client_secret", appAuthToken.toTokenString());
         formParams.add("scope", "root");
-    	
+
         Response res = tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
         assertEquals(200, res.getStatus());
-        JsonObject json = Json.createReader(new ByteArrayInputStream(((String)res.getEntity()).getBytes())).readObject();
+        JsonObject json = Json.createReader(new ByteArrayInputStream(((String) res.getEntity()).getBytes()))
+                .readObject();
         String atStr = json.getString("access_token");
-        IAccessToken at = (IAccessToken)AbstractOAuth2Token.parse(atStr, this.mockCell.getUrl(),  this.mockCell.getUnitUrl());
+        IAccessToken at = (IAccessToken) AbstractOAuth2Token.parse(atStr, this.mockCell.getUrl(),
+                this.mockCell.getUnitUrl());
         assertEquals(clientId + "#c", at.getSchema());
     }
 }
