@@ -47,6 +47,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -77,6 +79,7 @@ public class BarFileExporterTest {
     public static List<ZipEntry> barZipEntryList;
     public static Map<String, ZipEntry> barZipEntryMap;
     public static Map<String, byte[]> barZipContentMap;
+    static Logger log = LoggerFactory.getLogger(BarFileExporterTest.class);
 
     /**
      * Set Personium Unit configuration for the testing.
@@ -175,7 +178,7 @@ public class BarFileExporterTest {
             int bufferSize = 1024;
             while((ent = zis.getNextEntry()) != null) {
                 String entName = ent.getName();
-                System.out.println(entName);
+                log.info(entName);
 
                 barZipEntryList.add(ent);
                 barZipEntryMap.put(entName, ent);
@@ -259,7 +262,7 @@ public class BarFileExporterTest {
     public void export_RootpropsXml_ShouldHave_ValidContents() throws Exception {
         byte[] b = barZipContentMap.get("00_meta/90_rootprops.xml");
         String rootpropsXml = new String(b);
-        System.out.println(rootpropsXml);
+        log.info("00_meta/90_rootprops.xml\n----\n" + rootpropsXml + "\n----");
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -269,15 +272,13 @@ public class BarFileExporterTest {
 
         // ACL base Url should be the base url of Role Class Url
         String base = xpath.evaluate("//acl[position()=1]/@base", doc);
-        System.out.println(base);
+        log.info("//acl[position()=1]/@base = " + base);
         assertEquals(BOX_SCHEMA_URL + "__role/__/", base);
 
         // href url should use personium-localbox: scheme
         String href = xpath.evaluate("//href[position()=1]/text()", doc);
-        System.out.println(href);
+        log.info("//href[position()=1]/text() = " + href);
         assertEquals("personium-localbox:/", href);
-
-        // TODO should probably add more checks
     }
 
     /**
@@ -288,7 +289,7 @@ public class BarFileExporterTest {
     public void export_ManifestJson_ShouldHave_ValidContents() throws Exception {
         byte[] b = barZipContentMap.get("00_meta/00_manifest.json");
         String manifestJson = new String(b);
-        System.out.println(manifestJson);
+        log.info("00_meta/00_manifest.json\n----\n" + manifestJson + "\n----");
 
         JsonObject json = Json.createReader(new StringReader(manifestJson)).readObject();
 
