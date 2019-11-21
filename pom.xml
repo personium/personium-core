@@ -32,7 +32,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-common</artifactId>
-            <version>1.5.2</version>
+            <version>1.5.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
@@ -522,7 +522,6 @@
                     </reportSet>
                 </reportSets>
             </plugin>
-            <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
@@ -535,7 +534,6 @@
                     <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
                 </configuration>
             </plugin>
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
