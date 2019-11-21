@@ -18,7 +18,6 @@ package io.personium.test.utils;
 
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ExtRole;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * Links setting utils.

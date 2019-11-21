@@ -33,7 +33,6 @@ import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.box.odatacol.schema.complextypeproperty.ComplexTypePropertyUtils;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * Odata関連のHttpリクエストドキュメントを利用するユーティリティ.

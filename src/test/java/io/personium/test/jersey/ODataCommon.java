@@ -47,8 +47,8 @@ import org.w3c.dom.NodeList;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * ODataリソース関連の共通テスト処理.

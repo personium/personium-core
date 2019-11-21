@@ -59,7 +59,7 @@ import io.personium.core.model.Cell;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Unit;
-import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * Unit test class for AccessContext.

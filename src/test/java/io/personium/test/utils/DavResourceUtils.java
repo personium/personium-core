@@ -42,7 +42,6 @@ import io.personium.test.jersey.box.acl.jaxb.Grant;
 import io.personium.test.jersey.box.acl.jaxb.Principal;
 import io.personium.test.jersey.box.acl.jaxb.Privilege;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * WebDAV Httpリクエストドキュメントを利用するユーティリティ.

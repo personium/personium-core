@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2018 FUJITSU LIMITED
+ * Personium
+ * Copyright 2018-2019 Personium Project Authors
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +17,18 @@
  */
 package io.personium.core;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static io.personium.core.PersoniumUnitConfig.UNIT_PORT;
+import static io.personium.core.PersoniumUnitConfig.UNIT_SCHEME;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -32,12 +42,23 @@ import io.personium.test.categories.Unit;
 /**
  * Test for PersoniumUnitConfig.
  */
-
-@Category({ Unit.class })
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ CommonUtils.class, PersoniumUnitConfig.class })
+@PrepareForTest(CommonUtils.class)
+@Category({ Unit.class })
 public class PersoniumUnitConfigTest {
-
+    public static String scheme;
+    public static int port;
+    
+    @BeforeClass
+    public static void beforeClass() {
+        scheme = PersoniumUnitConfig.getUnitScheme();
+        port = PersoniumUnitConfig.getUnitPort();
+    }
+    @AfterClass
+    public static void afterClass() {
+        PersoniumUnitConfig.set(UNIT_SCHEME, scheme);
+        PersoniumUnitConfig.set(UNIT_PORT, String.valueOf(port));
+    }
     /**
      * Test getBaseUrl().
      * normal.
@@ -45,33 +66,64 @@ public class PersoniumUnitConfigTest {
      */
     @Test
     public void getBaseUrl_Noraml() throws Exception {
-        PowerMockito.spy(CommonUtils.class);
-        PowerMockito.spy(PersoniumUnitConfig.class);
+        String testFqdn = "host.domain";
+        PowerMockito.mockStatic(CommonUtils.class);
+        PowerMockito.when(CommonUtils.getFQDN()).thenReturn(testFqdn);
+        PersoniumUnitConfig.set(UNIT_SCHEME, "https");
+        PersoniumUnitConfig.set(UNIT_PORT, "9998");
+        assertEquals("https://host.domain:9998/", PersoniumUnitConfig.getBaseUrl());
 
-        PowerMockito.doReturn("host.domain").when(CommonUtils.class, "getFQDN");
-        PowerMockito.doReturn("https").when(PersoniumUnitConfig.class, "getUnitScheme");
-        PowerMockito.doReturn(9998).when(PersoniumUnitConfig.class, "getUnitPort");
-        assertThat(PersoniumUnitConfig.getBaseUrl(), is("https://host.domain:9998/"));
+        PersoniumUnitConfig.set(UNIT_SCHEME, "http");
+        PersoniumUnitConfig.set(UNIT_PORT, "-1");
+        assertEquals("http://host.domain/", PersoniumUnitConfig.getBaseUrl());
 
-        PowerMockito.doReturn("host.domain").when(CommonUtils.class, "getFQDN");
-        PowerMockito.doReturn("http").when(PersoniumUnitConfig.class, "getUnitScheme");
-        PowerMockito.doReturn(-1).when(PersoniumUnitConfig.class, "getUnitPort");
-        assertThat(PersoniumUnitConfig.getBaseUrl(), is("http://host.domain/"));
+        PersoniumUnitConfig.set(UNIT_SCHEME, "https");
+        PersoniumUnitConfig.set(UNIT_PORT, "443");
+        assertEquals("https://host.domain:443/", PersoniumUnitConfig.getBaseUrl());
 
-        PowerMockito.doReturn("host.domain").when(CommonUtils.class, "getFQDN");
-        PowerMockito.doReturn("https").when(PersoniumUnitConfig.class, "getUnitScheme");
-        PowerMockito.doReturn(443).when(PersoniumUnitConfig.class, "getUnitPort");
-        assertThat(PersoniumUnitConfig.getBaseUrl(), is("https://host.domain:443/"));
+        PowerMockito.when(CommonUtils.getFQDN()).thenReturn("localhost");
+        PersoniumUnitConfig.set(UNIT_SCHEME, "https");
+        PersoniumUnitConfig.set(UNIT_PORT, "-1");
+        assertEquals("https://localhost/", PersoniumUnitConfig.getBaseUrl());
 
-        PowerMockito.doReturn("localhost").when(CommonUtils.class, "getFQDN");
-        PowerMockito.doReturn("https").when(PersoniumUnitConfig.class, "getUnitScheme");
-        PowerMockito.doReturn(-1).when(PersoniumUnitConfig.class, "getUnitPort");
-        assertThat(PersoniumUnitConfig.getBaseUrl(), is("https://localhost/"));
+        PowerMockito.when(CommonUtils.getFQDN()).thenReturn("192.168.1.10");
+        PersoniumUnitConfig.set(UNIT_SCHEME, "https");
+        PersoniumUnitConfig.set(UNIT_PORT, "-1");
+        assertEquals("https://192.168.1.10/", PersoniumUnitConfig.getBaseUrl());
+    }
 
-        PowerMockito.doReturn("192.168.1.10").when(CommonUtils.class, "getFQDN");
-        PowerMockito.doReturn("https").when(PersoniumUnitConfig.class, "getUnitScheme");
-        PowerMockito.doReturn(-1).when(PersoniumUnitConfig.class, "getUnitPort");
-        assertThat(PersoniumUnitConfig.getBaseUrl(), is("https://192.168.1.10/"));
 
+    /**
+     * getConfigFileInputStream should, when existing file path is specified, then return its InputStream.
+     */
+    @Test
+    public void getConfigFileInputStream_Should_When_ExistingFileSpecified_Then_Return_ItsInputStream() {
+        PersoniumUnitConfig pUnitConfig = new PersoniumUnitConfig();
+        Properties properties = new Properties();
+        // This file exists in test/resources/
+        String configFilePath = ClassLoader.getSystemResource("personium-unit-config.properties.unit").getPath();
+        try {
+            properties.load(pUnitConfig.getConfigFileInputStream(configFilePath));
+        } catch (IOException e) {
+            fail("properties load failure");
+        }
+        assertEquals("unitTest", properties.getProperty("io.personium.core.testkey"));
+    }
+
+    /**
+     * getConfigFileInputStream should, when non-existent path is specified, then still return default config InputStream.
+     */
+    @Test
+    public void getConfigFileInputStream_Should_WhenSpecified_NonExistentPath_ThenStillReturn_DefaultConfigInputStream()  {
+        PersoniumUnitConfig pUnitConfig = new PersoniumUnitConfig();
+        Properties properties = new Properties();
+        try {
+            // This file does not exist
+            InputStream is =pUnitConfig.getConfigFileInputStream("some-non-exisiting/path/unit.properties"); 
+            properties.load(is);
+        } catch (IOException e) {
+            fail("properties load failure");
+        }
+        assertNotNull(properties.getProperty("io.personium.core.masterToken"));
     }
 }

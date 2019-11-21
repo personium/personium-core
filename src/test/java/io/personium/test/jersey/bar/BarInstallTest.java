@@ -66,7 +66,6 @@ import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.cell.ctl.CellCtlUtils;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.AssociationEndUtils;
 import io.personium.test.utils.BoxUtils;
@@ -80,6 +79,7 @@ import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
+import io.personium.test.utils.UrlUtils;
 import io.personium.test.utils.UserDataUtils;
 
 /**

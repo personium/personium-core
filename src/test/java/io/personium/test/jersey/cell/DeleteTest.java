@@ -46,7 +46,6 @@ import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.ExtCellUtils;
@@ -55,6 +54,7 @@ import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.SentMessageUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * JerseyTestFrameworkを利用したユニットテスト.
