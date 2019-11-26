@@ -95,7 +95,7 @@ public class DavCmpFsImplTest {
     /** Class name. */
     private static final String CLASS_NAME = "DavCmpFsImplTest";
     /** Test dir path. */
-    private static final String TEST_DIR_PATH = "/personium_nfs/personium-core/unitTest/" + CLASS_NAME + "/";
+    private static final String TEST_DIR_PATH = "/tmp/personium-core/unitTest/" + CLASS_NAME + "/";
     /** Content file name for update. */
     private static final String CONTENT_FILE = "content";
     /** Temp content file name for update. */
