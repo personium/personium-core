@@ -22,7 +22,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -35,7 +37,18 @@ import io.personium.test.categories.Unit;
  */
 @Category({Unit.class })
 public class LockManagerTest {
+    static LockManager lm;
 
+
+    @BeforeClass
+    public static void beforeClass() {
+        lm = LockManager.singleton;
+        LockManager.singleton = new InProcessLockManager();
+    }
+    @AfterClass
+    public static void afterClass() {
+        LockManager.singleton = lm;
+    }
     /**
      * 前処理.
      */
