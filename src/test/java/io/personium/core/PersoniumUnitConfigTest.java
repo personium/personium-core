@@ -20,11 +20,10 @@ package io.personium.core;
 import static io.personium.core.PersoniumUnitConfig.UNIT_PORT;
 import static io.personium.core.PersoniumUnitConfig.UNIT_SCHEME;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import org.junit.AfterClass;
@@ -48,7 +47,7 @@ import io.personium.test.categories.Unit;
 public class PersoniumUnitConfigTest {
     public static String scheme;
     public static int port;
-    
+
     @BeforeClass
     public static void beforeClass() {
         scheme = PersoniumUnitConfig.getUnitScheme();
@@ -111,19 +110,15 @@ public class PersoniumUnitConfigTest {
     }
 
     /**
-     * getConfigFileInputStream should, when non-existent path is specified, then still return default config InputStream.
+     * getPersoniumConfigProperties_ShouldReturnEmptyProperty_IfNoValidConfigFileSpecified.
      */
     @Test
-    public void getConfigFileInputStream_Should_WhenSpecified_NonExistentPath_ThenStillReturn_DefaultConfigInputStream()  {
+    public void getPersoniumConfigProperties_ShouldReturnEmptyProperty_IfNoValidConfigFileSpecified()  {
+        System.setProperty(PersoniumUnitConfig.KEY_CONFIG_FILE, "some-non-exisiting/path/unit.properties");
         PersoniumUnitConfig pUnitConfig = new PersoniumUnitConfig();
-        Properties properties = new Properties();
-        try {
-            // This file does not exist
-            InputStream is =pUnitConfig.getConfigFileInputStream("some-non-exisiting/path/unit.properties"); 
-            properties.load(is);
-        } catch (IOException e) {
-            fail("properties load failure");
+        Properties properties = pUnitConfig.getPersoniumConfigProperties();
+        if (pUnitConfig.status == PersoniumUnitConfig.STATUS_DEFAULT) {
+            assertTrue(properties.isEmpty());
         }
-        assertNotNull(properties.getProperty("io.personium.core.masterToken"));
     }
 }

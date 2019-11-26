@@ -43,6 +43,7 @@ import io.personium.core.utils.UriUtils;
  * A class that holds configuration information, from which you can access the contents of personium-unit-config.properties on the classpath.
  */
 public class PersoniumUnitConfig {
+
     private static final int DEFAULT_BATCH_TIMEOUT = 270000;
     private static final int DEFAULT_BATCH_SLEEP_INTERVAL = 1000;
     private static final int DEFAULT_BATCH_SLEEP = 50;
@@ -496,13 +497,21 @@ public class PersoniumUnitConfig {
     /** singleton. */
     private static PersoniumUnitConfig singleton = new PersoniumUnitConfig();
 
-    // static Logger log = LoggerFactory.getLogger(PersoniumCoreConfig.class);
+    static Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
 
     /** Property entity that stores the setting value.*/
     private final Properties props = new Properties();
 
     /** Property entity that stores setting values to be overridden.*/
     private final Properties propsOverride = new Properties();
+
+    /** status */
+    public static final int STATUS_NOT_READ_YET = 0;
+    public static final int STATUS_DEFAULT = 1;
+    public static final int STATUS_READ_FROM_FILE_ON_CLASSPATH = 2;
+    public static final int STATUS_READ_FROM_SPECIFIED_FILE = 3;
+    public int status = STATUS_NOT_READ_YET;
+
 
     /**
      * A protected constructor.
@@ -587,8 +596,10 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Read the personium-unit-config.properties file.
-     * @return personium-unit-config.properties
+     * Read the user's configuration.
+     * Uer configuration may either be from the file specified with System Property
+     * or from personium-unit-config.properties in the class path.
+     * @return configured Properties
      */
     protected Properties getPersoniumConfigProperties() {
         Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
@@ -600,6 +611,7 @@ public class PersoniumUnitConfig {
                 propertiesOverride.load(is);
             } else {
                 log.debug("[personium-unit-config.properties] file not found on the classpath. using default config.");
+                this.status = STATUS_DEFAULT;
             }
         } catch (IOException e) {
             log.debug("IO Exception when loading [personium-unit-config.properties] file.");
@@ -621,8 +633,8 @@ public class PersoniumUnitConfig {
      * @return personium-unit-config.properties
      */
     protected InputStream getConfigFileInputStream(String configFilePath) {
-        Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
         InputStream configFileInputStream = null;
+        this.status = STATUS_READ_FROM_FILE_ON_CLASSPATH;
         if (configFilePath == null) {
             configFileInputStream = PersoniumUnitConfig.class.getClassLoader().getResourceAsStream(
                     "personium-unit-config.properties");
@@ -634,6 +646,7 @@ public class PersoniumUnitConfig {
             File configFile = new File(configFilePath);
             configFileInputStream = new FileInputStream(configFile);
             log.info("personium-unit-config.properties from system properties.");
+            this.status = STATUS_READ_FROM_SPECIFIED_FILE;
         } catch (FileNotFoundException e) {
             //If there is no file in the specified path, read the file on the class path
             configFileInputStream = PersoniumUnitConfig.class.getClassLoader().getResourceAsStream(
