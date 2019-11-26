@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.core.auth;
+package io.personium.test.io.auth;
 
 import static java.lang.ClassLoader.getSystemResourceAsStream;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -50,6 +50,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.test.categories.Unit;
 
 /**
