@@ -25,16 +25,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * AccountLockManager unit test class.
  */
-@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class AccountLockManagerTest {
 
