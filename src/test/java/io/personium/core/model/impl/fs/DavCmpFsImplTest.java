@@ -80,6 +80,7 @@ import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.lock.Lock;
+import io.personium.core.model.lock.LockManager;
 import io.personium.test.categories.Unit;
 
 /**
@@ -116,6 +117,8 @@ public class DavCmpFsImplTest {
     /** UnitTest path. */
     private static String unitTestPath;
 
+    private static String lockTypeBefore;
+
     /**
      * BeforeClass.
      */
@@ -130,6 +133,8 @@ public class DavCmpFsImplTest {
         testDir = new File(unitTestPath);
         testDir.mkdirs();
         testDir.setWritable(true);
+        lockTypeBefore = LockManager.getLockType();
+        LockManager.setLockType(LockManager.TYPE_IN_PROCESS);
     }
 
     /**
@@ -138,6 +143,7 @@ public class DavCmpFsImplTest {
     @AfterClass
     public static void afterClass() {
         testDir.delete();
+        LockManager.setLockType(lockTypeBefore);
     }
 
     /**
