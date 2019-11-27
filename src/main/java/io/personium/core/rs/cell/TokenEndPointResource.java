@@ -623,7 +623,7 @@ public class TokenEndPointResource {
                 tcToken.getId(), //Save ID of received SAML
                 issuedAt, rTokenExpiresIn, getIssuerUrl(), tcToken.getSubject(),
                 tcToken.getIssuer(), //Save receipt of SAML's
-                tcToken.getRoles(), //Save receipt of SAML's
+                tcToken.getRoleList(), //Save receipt of SAML's
                 schema, scopes);
 
         //Ask CELL to decide the role of you from the role of TC issuer.
