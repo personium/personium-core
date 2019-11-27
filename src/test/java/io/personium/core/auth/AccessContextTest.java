@@ -57,6 +57,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.utils.UriUtils;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Unit;
 import io.personium.test.utils.UrlUtils;
@@ -97,61 +98,9 @@ public class AccessContextTest {
                 PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
     }
 
-    /**
-     * testGetCellのテスト.
-     */
-    @Test
-    @Ignore
-    public void testGetCell() {
-        fail("Not yet implemented");
-    }
 
     /**
-     * testGetTypeのテスト.
-     */
-    @Test
-    @Ignore
-    public void testGetType() {
-        fail("Not yet implemented");
-    }
-
-    /**
-     * testGetSubjectのテスト.
-     */
-    @Test
-    @Ignore
-    public void testGetSubject() {
-        fail("Not yet implemented");
-    }
-
-    /**
-     * testGetSchemaのテスト.
-     */
-    @Test
-    @Ignore
-    public void testGetSchema() {
-        fail("Not yet implemented");
-    }
-
-    /**
-     * testAddRoleのテスト.
-     */
-    @Test
-    @Ignore
-    public void testAddRole() {
-        fail("Not yet implemented");
-    }
-
-    /**
-     * testGetRoleListのテスト.
-     */
-    @Test
-    @Ignore
-    public void testGetRoleList() {
-        fail("Not yet implemented");
-    }
-
-    /**
+     * testing create method.
      */
     @Test
     public void create_NoAuthzHeader_ShouldReturn_TypeAnonymous() {
@@ -161,8 +110,9 @@ public class AccessContextTest {
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(null, null, null, null,
                 cell, BASE_URL, UrlUtils.getHost(), OWNER);
-        assertEquals(accessContext.getType(), AccessContext.TYPE_ANONYMOUS);
+        assertEquals(AccessContext.TYPE_ANONYMOUS, accessContext.getType());
     }
+
 
     @Test
     public void create_Basic_Valid_ShouldReturn_TypeBasic() {
@@ -200,7 +150,6 @@ public class AccessContextTest {
         AccessContext accessContext = AccessContext.create(auth,
                 null, null, null, cell, BASE_URL, UrlUtils.getHost(), OWNER);
         assertEquals(accessContext.getType(), AccessContext.TYPE_INVALID);
-
     }
 
     /**
@@ -399,6 +348,28 @@ public class AccessContextTest {
         AccessContext ac = AccessContext.create(authzHeaderValue, new TestUriInfo(), null, null, cell, BASE_URL, UrlUtils.getHost(), null);
         ac.checkSchemaMatches(box);
     }
+
+    /**
+     * When X-Personium-UnitUser is a URL with personium-localunit scheme, then subject should be normalized to http scheme.
+     */
+    @Test
+    public void When_XPersoniumUnitUserHeader_localunitScheme_Then_Subject_ShouldBe_NormalizedToHttpSchema() {
+        Cell cell = (Cell) mock(Cell.class);
+        when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
+        when(cell.getOwnerNormalized()).thenReturn("cellowner");
+
+        UriInfo uriInfo =  new TestUriInfo();
+        String masterTokenAuth = "Bearer " + MASTER_TOKEN;
+        String unitUser = "personium-localunit:supercell:#unituser";
+        String subjectShouldBe = UriUtils.resolveLocalUnit(unitUser);;
+
+        AccessContext accessContext = AccessContext.create(masterTokenAuth, uriInfo, null, null,
+                cell, BASE_URL, UrlUtils.getHost(), unitUser);
+        assertEquals(AccessContext.TYPE_UNIT_USER, accessContext.getType());
+        assertEquals(subjectShouldBe, accessContext.getSubject());
+    }
+
+
 
     /**
      * ダミーの UriInfo実装.
