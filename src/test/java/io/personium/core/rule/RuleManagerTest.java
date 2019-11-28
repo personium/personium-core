@@ -1141,7 +1141,7 @@ public class RuleManagerTest {
         // --------------------
         // Confirm result
         // --------------------
-        PowerMockito.verifyStatic(Logger.class, Mockito.times(2));
+        PowerMockito.verifyStatic(EventPublisher.class, Mockito.times(2));
         publisher.publish(event);
     }
 
@@ -1189,7 +1189,7 @@ public class RuleManagerTest {
         // --------------------
         // Confirm result
         // --------------------
-        PowerMockito.verifyStatic(Logger.class, Mockito.times(1));
+        PowerMockito.verifyStatic(EventPublisher.class, Mockito.times(1));
         publisher.publish(event);
     }
 
@@ -1238,7 +1238,7 @@ public class RuleManagerTest {
         // --------------------
         // Confirm result
         // --------------------
-        PowerMockito.verifyStatic(Logger.class, Mockito.times(1));
+        PowerMockito.verifyStatic(EventPublisher.class, Mockito.times(1));
         publisher.publish(event);
     }
 
