@@ -121,4 +121,12 @@ public class PersoniumUnitConfigTest {
             assertTrue(properties.isEmpty());
         }
     }
+    @Test
+    public void reload_ShouldInclude_SystemProperies() {
+        String testKey = "io.personium.test.key";
+        String testVal = "testValue";
+        System.setProperty(testKey, testVal);
+        PersoniumUnitConfig.reload();
+        assertEquals(testVal, PersoniumUnitConfig.get(testKey));
+    }
 }

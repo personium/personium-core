@@ -528,6 +528,7 @@ public class PersoniumUnitConfig {
         Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
         Properties properties = getUnitConfigDefaultProperties();
         Properties propertiesOverride = getPersoniumConfigProperties();
+        Properties sysProps = System.getProperties();
         //When reading succeeds, replace with member variable
         if (!properties.isEmpty()) {
             this.props.clear();
@@ -554,6 +555,15 @@ public class PersoniumUnitConfig {
                 continue;
             }
             log.debug("Overriding Config " + key + "=" + value);
+            this.props.setProperty(key, value);
+        }
+        for (Object keyObj : sysProps.keySet()) {
+            String key = (String) keyObj;
+            String value = sysProps.getProperty(key);
+            if (value == null) {
+                continue;
+            }
+            log.debug("From System Properties, overriding Config " + key + "=" + value);
             this.props.setProperty(key, value);
         }
     }
