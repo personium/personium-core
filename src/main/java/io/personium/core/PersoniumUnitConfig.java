@@ -548,22 +548,38 @@ public class PersoniumUnitConfig {
                 this.propsOverride.setProperty((String) entry.getKey(), (String) entry.getValue());
             }
         }
+        Map<String, String> env = System.getenv();
+        for (String key : env.keySet()) {
+            if (!key.startsWith("io.personium.")) {
+                continue;
+            }
+            String value = env.get(key);
+            if (value == null) {
+                continue;
+            }
+            log.info("From Env Vars, overriding config : " + key + "=" + value);
+            this.props.setProperty(key, value);
+        }
+
         for (Object keyObj : propsOverride.keySet()) {
             String key = (String) keyObj;
             String value = this.propsOverride.getProperty(key);
             if (value == null) {
                 continue;
             }
-            log.debug("Overriding Config " + key + "=" + value);
+            log.info("From config file, overriding config : " + key + "=" + value);
             this.props.setProperty(key, value);
         }
         for (Object keyObj : sysProps.keySet()) {
             String key = (String) keyObj;
+            if (!key.startsWith("io.personium.")) {
+                continue;
+            }
             String value = sysProps.getProperty(key);
             if (value == null) {
                 continue;
             }
-            log.debug("From System Properties, overriding Config " + key + "=" + value);
+            log.info("From system props, overriding config : " + key + "=" + value);
             this.props.setProperty(key, value);
         }
     }
