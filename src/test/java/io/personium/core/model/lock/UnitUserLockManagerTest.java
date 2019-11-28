@@ -19,12 +19,11 @@ package io.personium.core.model.lock;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.test.categories.Unit;
 
 /**
@@ -32,23 +31,6 @@ import io.personium.test.categories.Unit;
  */
 @Category({ Unit.class })
 public class UnitUserLockManagerTest {
-    static LockManager lm;
-    /**
-     * before class.
-     */
-    @BeforeClass
-    public static void beforeClass() {
-        lm = LockManager.singleton;
-        LockManager.singleton = new InProcessLockManager();
-    }
-    /**
-     * after class.
-     */
-    @AfterClass
-    public static void afterClass() {
-        LockManager.singleton = lm;
-    }
-
 
 
 

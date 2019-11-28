@@ -21,9 +21,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -35,24 +33,6 @@ import io.personium.test.categories.Unit;
  */
 @Category({ Unit.class })
 public class CellLockManagerTest {
-    static LockManager lm;
-    /**
-     * before class.
-     */
-    @BeforeClass
-    public static void beforeClass() {
-        lm = LockManager.singleton;
-        LockManager.singleton = new InProcessLockManager();
-    }
-    /**
-     * after class.
-     */
-    @AfterClass
-    public static void afterClass() {
-        LockManager.singleton = lm;
-    }
-
-
     /**
      * 前処理.
      */
