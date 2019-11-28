@@ -19,9 +19,7 @@ package io.personium.core.model.lock;
 import static org.junit.Assert.fail;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -33,22 +31,6 @@ import io.personium.test.categories.Unit;
  */
 @Category({ Unit.class })
 public class AccountValidAuthnIntervalLockManagerTest {
-    static LockManager lm;
-    /**
-     * before class.
-     */
-    @BeforeClass
-    public static void beforeClass() {
-        lm = LockManager.singleton;
-        LockManager.singleton = new InProcessLockManager();
-    }
-    /**
-     * after class.
-     */
-    @AfterClass
-    public static void afterClass() {
-        LockManager.singleton = lm;
-    }
 
     /**
      * before.
