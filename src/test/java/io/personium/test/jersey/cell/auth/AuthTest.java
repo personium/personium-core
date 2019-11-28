@@ -37,10 +37,10 @@ import org.junit.runner.RunWith;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
-import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.auth.OAuth2Helper;
@@ -1163,7 +1163,7 @@ public class AuthTest extends PersoniumTest {
             assertTrue(!rToken.getId().equals(rToken2.getId()));
             // トークンの内容が更新されていないこと
             assertEquals(rToken.getIssuer(), rToken2.getIssuer());
-            assertEquals(rToken.getRoles().get(0).createUrl(), rToken2.getRoles().get(0).createUrl());
+            assertEquals(rToken.getRoleList().get(0).createUrl(), rToken2.getRoleList().get(0).createUrl());
             assertEquals(rToken.getSchema(), rToken2.getSchema());
             assertEquals(rToken.getSubject(), rToken2.getSubject());
         } catch (TokenParseException e) {
@@ -1246,7 +1246,7 @@ public class AuthTest extends PersoniumTest {
             assertTrue(!rToken.getId().equals(rToken2.getId()));
             // トークンの内容が更新されていないこと
             assertEquals(rToken.getIssuer(), rToken2.getIssuer());
-            assertEquals(rToken.getRoles().get(0).createUrl(), rToken2.getRoles().get(0).createUrl());
+            assertEquals(rToken.getRoleList().get(0).createUrl(), rToken2.getRoleList().get(0).createUrl());
             assertEquals(rToken.getSchema(), rToken2.getSchema());
             assertEquals(rToken.getSubject(), rToken2.getSubject());
         } catch (TokenParseException e) {
@@ -1326,7 +1326,7 @@ public class AuthTest extends PersoniumTest {
             assertTrue(!rToken1.getId().equals(rToken2.getId()));
             // トークンの内容が更新されていないこと
             assertEquals(rToken1.getIssuer(), rToken2.getIssuer());
-            assertEquals(rToken1.getRoles().get(0).createUrl(), rToken2.getRoles().get(0).createUrl());
+            assertEquals(rToken1.getRoleList().get(0).createUrl(), rToken2.getRoleList().get(0).createUrl());
             assertEquals(rToken1.getSchema(), rToken2.getSchema());
             assertEquals(rToken1.getSubject(), rToken2.getSubject());
 
@@ -1406,7 +1406,7 @@ public class AuthTest extends PersoniumTest {
             assertTrue(!rToken1.getId().equals(rToken2.getId()));
             // トークンの内容が更新されていないこと
             assertEquals(rToken1.getIssuer(), rToken2.getIssuer());
-            assertEquals(rToken1.getRoles().get(0).createUrl(), rToken2.getRoles().get(0).createUrl());
+            assertEquals(rToken1.getRoleList().get(0).createUrl(), rToken2.getRoleList().get(0).createUrl());
             assertEquals(rToken1.getSchema(), rToken2.getSchema());
             assertEquals(rToken1.getSubject(), rToken2.getSubject());
 

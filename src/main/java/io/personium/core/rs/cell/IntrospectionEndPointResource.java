@@ -156,7 +156,7 @@ public class IntrospectionEndPointResource {
                         map.put(RESP_SUBJECT, issuer + "#" + tk.getSubject());
                         map.put(RESP_ISSUER, issuer);
                         map.put(RESP_EXT_ROLES,
-                                tk.getRoles().stream().map(role -> role.createUrl()).collect(Collectors.toList()));
+                                tk.getRoleList().stream().map(role -> role.createUrl()).collect(Collectors.toList()));
                     }
                 } else if (tk instanceof VisitorLocalAccessToken
                            || tk instanceof VisitorRefreshToken
@@ -173,7 +173,7 @@ public class IntrospectionEndPointResource {
                         map.put(RESP_AUDIENCE, audience);
                         map.put(RESP_ISSUER, issuer);
                         map.put(RESP_EXT_ROLES,
-                                tk.getRoles().stream().map(role -> role.createUrl()).collect(Collectors.toList()));
+                                tk.getRoleList().stream().map(role -> role.createUrl()).collect(Collectors.toList()));
                     }
                 }
             }
