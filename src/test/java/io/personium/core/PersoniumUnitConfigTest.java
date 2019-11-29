@@ -20,12 +20,6 @@ package io.personium.core;
 import static io.personium.core.PersoniumUnitConfig.UNIT_PORT;
 import static io.personium.core.PersoniumUnitConfig.UNIT_SCHEME;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -40,24 +34,19 @@ import io.personium.common.utils.CommonUtils;
 import io.personium.test.categories.Unit;
 
 /**
- * Test for PersoniumUnitConfig.
+ * Unit Test for PersoniumUnitConfig.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CommonUtils.class)
 @Category({ Unit.class })
 public class PersoniumUnitConfigTest {
-    public static String scheme;
-    public static int port;
-    
+
     @BeforeClass
     public static void beforeClass() {
-        scheme = PersoniumUnitConfig.getUnitScheme();
-        port = PersoniumUnitConfig.getUnitPort();
     }
     @AfterClass
     public static void afterClass() {
-        PersoniumUnitConfig.set(UNIT_SCHEME, scheme);
-        PersoniumUnitConfig.set(UNIT_PORT, String.valueOf(port));
+        PersoniumUnitConfig.reload();
     }
     /**
      * Test getBaseUrl().
@@ -92,38 +81,12 @@ public class PersoniumUnitConfigTest {
         assertEquals("https://192.168.1.10/", PersoniumUnitConfig.getBaseUrl());
     }
 
-
-    /**
-     * getConfigFileInputStream should, when existing file path is specified, then return its InputStream.
-     */
     @Test
-    public void getConfigFileInputStream_Should_When_ExistingFileSpecified_Then_Return_ItsInputStream() {
-        PersoniumUnitConfig pUnitConfig = new PersoniumUnitConfig();
-        Properties properties = new Properties();
-        // This file exists in test/resources/
-        String configFilePath = ClassLoader.getSystemResource("personium-unit-config.properties.unit").getPath();
-        try {
-            properties.load(pUnitConfig.getConfigFileInputStream(configFilePath));
-        } catch (IOException e) {
-            fail("properties load failure");
-        }
-        assertEquals("unitTest", properties.getProperty("io.personium.core.testkey"));
-    }
-
-    /**
-     * getConfigFileInputStream should, when non-existent path is specified, then still return default config InputStream.
-     */
-    @Test
-    public void getConfigFileInputStream_Should_WhenSpecified_NonExistentPath_ThenStillReturn_DefaultConfigInputStream()  {
-        PersoniumUnitConfig pUnitConfig = new PersoniumUnitConfig();
-        Properties properties = new Properties();
-        try {
-            // This file does not exist
-            InputStream is =pUnitConfig.getConfigFileInputStream("some-non-exisiting/path/unit.properties"); 
-            properties.load(is);
-        } catch (IOException e) {
-            fail("properties load failure");
-        }
-        assertNotNull(properties.getProperty("io.personium.core.masterToken"));
+    public void reload_ShouldInclude_SystemProperies() {
+        String testKey = "io.personium.test.key";
+        String testVal = "testValue";
+        System.setProperty(testKey, testVal);
+        PersoniumUnitConfig.reload();
+        assertEquals(testVal, PersoniumUnitConfig.get(testKey));
     }
 }

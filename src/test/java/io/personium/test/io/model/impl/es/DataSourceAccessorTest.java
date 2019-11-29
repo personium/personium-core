@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.core.model.impl.es.accessor;
+package io.personium.test.io.model.impl.es;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -39,6 +39,7 @@ import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.QueryMapFactory;
+import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 

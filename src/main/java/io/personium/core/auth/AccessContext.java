@@ -796,7 +796,7 @@ public class AccessContext {
             VisitorLocalAccessToken clat = (VisitorLocalAccessToken) tk;
             ret.accessType = TYPE_VISITOR;
             //Acquire roll information and pack it.
-            ret.roles = clat.getRoles();
+            ret.roles = clat.getRoleList();
             ret.subject = tk.getSubject();
             ret.issuer = tk.getIssuer();
         } else if (tk instanceof UnitLocalUnitUserToken) {
@@ -942,7 +942,7 @@ public class AccessContext {
             ret.issuer = tca.getIssuer();
 
             //Take role information and if you have unit admin roll, promote to unit admin.
-            List<Role> roles = tca.getRoles();
+            List<Role> roles = tca.getRoleList();
             Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.MAIN_BOX_NAME, null, tca.getIssuer());
             String unitAdminRoleUrl = unitAdminRole.createUrl();
             Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.MAIN_BOX_NAME,

@@ -160,6 +160,11 @@ public abstract class LockManager {
      */
     public static final void setLockType(String lockType) {
         LockManager.lockType = lockType;
+        if (TYPE_MEMCACHED.equals(lockType)) {
+            singleton = new MemcachedLockManager();
+        } else if (TYPE_IN_PROCESS.equals(lockType)) {
+            singleton = new InProcessLockManager();
+        }
     }
 
     /**

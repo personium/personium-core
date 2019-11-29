@@ -64,7 +64,7 @@ public class DataSourceAccessor {
      * @param name Type name
      * @param routingId routingID
      */
-    protected DataSourceAccessor(EsIndex index, String name, String routingId) {
+    public DataSourceAccessor(EsIndex index, String name, String routingId) {
         this.index = index;
         int times = Integer.valueOf(PersoniumUnitConfig.getESRetryTimes());
         int interval = Integer.valueOf(PersoniumUnitConfig.getESRetryInterval());
