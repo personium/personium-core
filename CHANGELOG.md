@@ -1,9 +1,11 @@
 ## 1.7.21
 BREAKING CHANGES:
 * Exported bar file now does not use a "personium-localunit:" URL ([#512](https://github.com/personium/personium-core/issues/512))
+* Role Url in TranceCellAccessToken/VisitorRefreshToken are now Role Class URL ([See](https://github.com/personium/personium-lib-common/pull/71))
 
 BUG FIXES:
 * When Unit FQDN is less than 14 letters long, Token parsing may possibly fail. ([#518](https://github.com/personium/personium-core/issues/518))
+* Refreshed Visitor Access Token cannot access target Cell's box. ([#516](https://github.com/personium/personium-core/issues/516))
 
 IMPROVEMENTS:
 * upgraded personium-lib-common to 1.5.3
