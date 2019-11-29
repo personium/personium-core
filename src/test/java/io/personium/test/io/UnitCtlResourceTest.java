@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.core.rs.unit;
+package io.personium.test.io;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -48,6 +48,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.Privilege;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.rs.unit.UnitCtlResource;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Unit;
 

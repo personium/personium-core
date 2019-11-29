@@ -25,11 +25,9 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
@@ -41,7 +39,6 @@ import org.json.simple.JSONObject;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.mockito.Mockito;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -49,14 +46,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.PersoniumUnitConfig.BinaryData;
-import io.personium.core.bar.BarFileInstaller;
-import io.personium.core.bar.BarFileReadRunner;
 import io.personium.core.bar.jackson.IJSONMappedObject;
 import io.personium.core.bar.jackson.JSONManifest;
 import io.personium.core.model.DavCmp;
-import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.test.categories.Unit;
 
 /**
@@ -1729,54 +1721,6 @@ public class BarFileValidateTest {
             assertEquals(code, dce.getCode());
         } catch (Exception ex) {
             fail("Unexpected exception");
-        }
-    }
-
-    /**
-     * fsync ON.
-     * FileDescriptor#sync() should be called.
-     * @throws Exception .
-     */
-    @Test
-    public void testStoreTemporaryBarFile() throws Exception {
-        boolean fsyncEnabled = PersoniumUnitConfig.getFsyncEnabled();
-        PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, "true");
-        try {
-            CellEsImpl cell = new CellEsImpl();
-            cell.setId("hogeCell");
-            BarFileInstaller bfi = Mockito.spy(new BarFileInstaller(cell, "hogeBox", null));
-            Method method = BarFileInstaller.class.getDeclaredMethod(
-                    "storeTemporaryBarFile", new Class<?>[] {InputStream.class});
-            method.setAccessible(true);
-            //any file
-            method.invoke(bfi, new FileInputStream("pom.xml"));
-            Mockito.verify(bfi, Mockito.atLeast(1)).sync((FileDescriptor) Mockito.anyObject());
-        } finally {
-            PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, String.valueOf(fsyncEnabled));
-        }
-    }
-
-    /**
-     * fsync OFF.
-     * FileDescriptor#sync() should never be called.
-     * @throws Exception .
-     */
-    @Test
-    public void testStoreTemporaryBarFile2() throws Exception {
-        boolean fsyncEnabled = PersoniumUnitConfig.getFsyncEnabled();
-        PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, "false");
-        try {
-            CellEsImpl cell = new CellEsImpl();
-            cell.setId("hogeCell");
-            BarFileInstaller bfi = Mockito.spy(new BarFileInstaller(cell, "hogeBox", null));
-            Method method = BarFileInstaller.class.getDeclaredMethod(
-                    "storeTemporaryBarFile", new Class<?>[] {InputStream.class});
-            method.setAccessible(true);
-            //any file
-            method.invoke(bfi, new FileInputStream("pom.xml"));
-            Mockito.verify(bfi, Mockito.never()).sync((FileDescriptor) Mockito.anyObject());
-        } finally {
-            PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, String.valueOf(fsyncEnabled));
         }
     }
 }

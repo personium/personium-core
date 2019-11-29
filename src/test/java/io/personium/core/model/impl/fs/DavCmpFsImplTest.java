@@ -25,9 +25,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -88,6 +88,7 @@ import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.jaxb.Acl;
 import io.personium.core.model.lock.Lock;
+import io.personium.core.model.lock.LockManager;
 import io.personium.core.utils.TestUtils;
 import io.personium.test.categories.Unit;
 
@@ -104,7 +105,7 @@ public class DavCmpFsImplTest {
     /** Class name. */
     private static final String CLASS_NAME = "DavCmpFsImplTest";
     /** Test dir path. */
-    private static final String TEST_DIR_PATH = "/personium_nfs/personium-core/unitTest/" + CLASS_NAME + "/";
+    private static final String TEST_DIR_PATH = "/tmp/personium-core/unitTest/" + CLASS_NAME + "/";
     /** Content file name for update. */
     private static final String CONTENT_FILE = "content";
     /** Temp content file name for update. */
@@ -125,11 +126,21 @@ public class DavCmpFsImplTest {
     /** UnitTest path. */
     private static String unitTestPath;
 
+    private static String lockTypeBefore;
+
     /**
      * BeforeClass.
      */
     @BeforeClass
     public static void beforeClass() {
+        // In order for this test to run without any configuration,
+        //   use inProcess lock
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Lock.TYPE, LockManager.TYPE_IN_PROCESS);
+        //   do not use cache
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cache.CELL_CACHE_ENABLED, "false");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cache.BOX_CACHE_ENABLED, "false");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cache.SCHEMA_CACHE_ENABLED, "false");
+
         unitTestPath = PersoniumUnitConfig.get("io.personium.core.test.unitTest.root");
         if (unitTestPath != null) {
             unitTestPath += "/" + CLASS_NAME + "/";
@@ -147,6 +158,7 @@ public class DavCmpFsImplTest {
     @AfterClass
     public static void afterClass() {
         testDir.delete();
+        PersoniumUnitConfig.reload();
     }
 
     /**

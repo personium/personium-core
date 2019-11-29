@@ -184,8 +184,8 @@ public class AccountTest extends ODataCommon {
         assertNotNull(accessToken);
         TransCellAccessToken tcat = TransCellAccessToken.parse(accessToken);
         String url = UrlUtils.cellRoot(cellName);
-        assertEquals(testRoleName, tcat.getRoles().get(0).getName());
-        assertEquals(url + "__role/__/" + testRoleName, tcat.getRoles().get(0).schemeCreateUrl(url));
+        assertEquals(testRoleName, tcat.getRoleList().get(0).getName());
+        assertEquals(url + "__role/__/" + testRoleName, tcat.getRoleList().get(0).schemeCreateUrl(url));
         assertEquals(url, tcat.getIssuer());
         assertEquals(url + "#" + testAccountName, tcat.getSubject());
 

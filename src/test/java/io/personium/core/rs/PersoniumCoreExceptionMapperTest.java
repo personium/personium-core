@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014 - 2019 Personium Project Authors
+ *  - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,22 +24,19 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
- * 本アプリケーションの例外マッパー. ログ出力と適切な形でのエラー応答出力を行う。
+ * Unit test for PersoniumCoreExceptionMapper.
+ * Testing log output and error response.
  */
-@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public final class PersoniumCoreExceptionMapperTest {
     static Logger log = LoggerFactory.getLogger(PersoniumCoreExceptionMapper.class);
-    // ロガー差し替えをするので、ここに避難させておく.
     static Logger shelterdLogger;
     /**
      * BeforeClass.
@@ -56,23 +54,23 @@ public final class PersoniumCoreExceptionMapperTest {
     }
 
     /**
-     * toResponseTestのテスト.
+     * Test for toResponse method.
      */
     @Test
-    public void toResponseメソッドが() {
+    public void toResponse() {
         PersoniumCoreExceptionMapper mapper = new PersoniumCoreExceptionMapper();
         PersoniumCoreExceptionMapper.log = new TestLogger() {
             @Override
             public void error(String msg, Throwable t) {
                 log.debug(msg);
                 StackTraceElement[] ste = t.getStackTrace();
-                // メッセージがthrowableのgetMessage()の内容を含む
+                // Message should include the getMessage() content of the throwable
                 assertTrue(msg.indexOf(t.getMessage()) > 0);
-                // メッセージがthrowableのStackTrace第１要素のクラス名を含む
+                // Message should include the Class Name of the throwable's StackTrace 1st Element.
                 assertTrue(msg.indexOf(ste[0].getClassName()) > 0);
-                // メッセージがthrowableのStackTrace第１要素のメソッド名を含む
+                // Message should include the Method Name of the throwable's StackTrace 1st Element.
                 assertTrue(msg.indexOf(ste[0].getMethodName()) > 0);
-                // メッセージがthrowableのStackTrace第１要素の行数を含む
+                // Message should include the Line Number of the throwable's StackTrace 1st Element.
                 log.debug(String.valueOf(ste[0].getLineNumber()));
                 assertTrue(msg.indexOf(String.valueOf(ste[0].getLineNumber())) > 0);
             }
@@ -80,7 +78,7 @@ public final class PersoniumCoreExceptionMapperTest {
         };
 
         try {
-            Inner i = new Inner();
+            ExceptionGeneratorForTest i = new ExceptionGeneratorForTest();
             i.process();
         } catch (Exception exception) {
             Response res = mapper.toResponse(exception);
@@ -91,9 +89,9 @@ public final class PersoniumCoreExceptionMapperTest {
 
 
     /**
-     * テスト用InnerClass.
+     * Exception generator for testing.
      */
-    private static class Inner {
+    private static class ExceptionGeneratorForTest {
         public String process() {
             int a = 0;
             return "" + 1 / a;
@@ -101,7 +99,7 @@ public final class PersoniumCoreExceptionMapperTest {
     }
 
     /**
-     * Mockロガー.
+     * Mock Logger.
      */
     static class TestLogger implements Logger {
         @Override

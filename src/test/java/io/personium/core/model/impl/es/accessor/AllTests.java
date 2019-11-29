@@ -1,5 +1,5 @@
 /**
- * personium.io
+ * Personium
  * Copyright 2014 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,12 +21,11 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * パッケージ配下のテストケースを全て実行するためのテストスイート.
+ * Test suite for executing all test cases under this package.
  */
 @RunWith(Suite.class)
 @SuiteClasses({
     CellDataAccessorTest.class,
-    DataSourceAccessorTest.class,
     ODataEntityAccessorTest.class
     })
 public class AllTests {

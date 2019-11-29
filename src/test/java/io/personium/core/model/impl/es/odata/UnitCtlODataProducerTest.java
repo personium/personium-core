@@ -149,6 +149,7 @@ public class UnitCtlODataProducerTest {
      * {@link io.personium.core.model.impl.es.odata.UnitCtlODataProducer#getAccessorForEntitySet(java.lang.String)}.
      */
     @Test
+    @Ignore
     public void testGetAccessorForEntitySetString() {
 //        EsClient.setConnectionConfiguration(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
         UnitCtlODataProducer producer = new UnitCtlODataProducer(null);

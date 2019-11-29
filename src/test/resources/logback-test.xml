@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE logback:configuration>
+<configuration>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{0} %msg%n</pattern>
+       </encoder>
+    </appender>
+    <logger  name="io.personium">
+        <level value="INFO" />
+        <appender-ref ref="stdout" />
+    </logger>
+    <logger  name="org.elasticsearch">
+        <level value="DEBUG" />
+        <appender-ref ref="stdout" />
+    </logger>
+    <logger  name="netty">
+       <level value="DEBUG" />
+       <appender-ref ref="stdout" />
+    </logger>
+    <logger name="io.personium.core.rule.action.LogAction" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="stdout" />
+    </logger>
+    <logger name="io.personium.logging" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="stdout" />
+    </logger>
+</configuration>
