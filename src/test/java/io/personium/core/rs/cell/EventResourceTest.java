@@ -17,21 +17,20 @@
 package io.personium.core.rs.cell;
 
 import static org.junit.Assert.assertEquals;
-
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
@@ -45,6 +44,7 @@ import io.personium.test.categories.Unit;
 @Category({Unit.class })
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ EventResource.class, AccessContext.class })
+@SuppressWarnings("unchecked")
 public class EventResourceTest {
 
     private JSONObject createEventBody() {
