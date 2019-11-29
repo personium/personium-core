@@ -304,6 +304,7 @@ public class TokenEndPointResourceTest {
         List<Role> roleList = new ArrayList<Role>();
         VisitorRefreshToken refreshToken = new VisitorRefreshToken(UUID.randomUUID().toString(),
                 new Date().getTime(),
+                AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
                 this.mockCell.getUrl(),
                 this.mockCell.getUrl() + "#me",
                 this.mockCell.getUrl(),
@@ -538,7 +539,7 @@ public class TokenEndPointResourceTest {
     public void token_TransCellAccessToken_ShouldHave_RolesInRoleClassUrl() throws Exception {
         // Role r1 = new Role("MyBoardViewer", "box1", this.mockCell.getUnitUrl() + "appcell/", this.mockCell.getUnitUrl());
         // System.out.println(r1.schemeCreateUrlForTranceCellToken(this.mockCell.getUrl()));
-        
+
         // Prepare form contents
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("grant_type", OAuth2Helper.GrantType.PASSWORD);
@@ -555,10 +556,9 @@ public class TokenEndPointResourceTest {
         TransCellAccessToken tcat = TransCellAccessToken.parse(atStr);
         // System.out.println(tcat.toSamlString());
         for (Role role : tcat.getRoleList()) {
-            System.out.println(role.schemeCreateUrlForTranceCellToken(this.mockCell.getUrl()));
+            System.out.println(role.toRoleClassURL());
         }
-        assertEquals(this.role1.schemeCreateUrlForTranceCellToken(this.mockCell.getUrl()),
-                tcat.getRoleList().get(0).schemeCreateUrlForTranceCellToken(this.mockCell.getUrl()));
+        assertEquals(this.role1.toRoleClassURL(), tcat.getRoleList().get(0).toRoleClassURL());
     }
     @Test
     public void token_When_SAMLReceived_Then_VisitorRefreshToken_ShouldHave_SameRoles() throws Exception {
@@ -579,7 +579,7 @@ public class TokenEndPointResourceTest {
         TransCellAccessToken transCellAccessToken = new TransCellAccessToken(issuerCellUrl, issuerCellUrl + "#me",
                 this.mockCell.getUrl(), roleList, "", new String[0]);
         System.out.println(transCellAccessToken.toSamlString());
-        
+
         // Prepare form contents
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("grant_type", OAuth2Helper.GrantType.SAML2_BEARER);
@@ -597,14 +597,14 @@ public class TokenEndPointResourceTest {
         VisitorRefreshToken vrt = (VisitorRefreshToken) AbstractOAuth2Token.parse(atStr, this.mockCell.getUrl(),
                 this.mockCell.getUnitUrl());
         for (Role role : vrt.getRoleList()) {
-            System.out.println(role.schemeCreateUrlForTranceCellToken(issuerCellUrl));
+            System.out.println(role.toRoleClassURL());
         }
-        assertEquals(role1.schemeCreateUrlForTranceCellToken(issuerCellUrl),
-                vrt.getRoleList().get(0).schemeCreateUrlForTranceCellToken(issuerCellUrl));
-        assertEquals(role2.schemeCreateUrlForTranceCellToken(issuerCellUrl),
-                vrt.getRoleList().get(1).schemeCreateUrlForTranceCellToken(issuerCellUrl));
+        assertEquals(role1.toRoleClassURL(),
+                vrt.getRoleList().get(0).toRoleClassURL());
+        assertEquals(role2.toRoleClassURL(),
+                vrt.getRoleList().get(1).toRoleClassURL());
 
-        
+
         // Prepare form contents
         formParams = new MultivaluedHashMap<String, String>();
         formParams.add("grant_type", OAuth2Helper.GrantType.REFRESH_TOKEN);
@@ -622,9 +622,9 @@ public class TokenEndPointResourceTest {
         for (Role role : vrt.getRoleList()) {
             System.out.println(role.getName());
         }
-        for (Role role : vrt.getRoles()) {
+        for (Role role : vrt.getRoleList()) {
             System.out.println(role.getName());
         }
-        
+
     }
 }
