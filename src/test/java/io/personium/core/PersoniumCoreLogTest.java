@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014 - 2019 Personium Project Authors
+ *  - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +19,25 @@ package io.personium.core;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import io.personium.plugin.base.PluginMessageUtils.Severity;
-import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 
+import io.personium.plugin.base.PluginMessageUtils.Severity;
+import io.personium.test.categories.Unit;
+
 /**
- * PersoniumCoreLogの単体テストケース.
+ * Unit test for PersoniumCoreLog class.
  */
 
-@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class PersoniumCoreLogTest {
     static Logger log = LoggerFactory.getLogger(PersoniumCoreLog.class);
-    // ロガー差し替えをするので、ここに避難させておく.
     static Logger shelterdLogger;
     /**
      * BeforeClass.
@@ -56,10 +54,10 @@ public class PersoniumCoreLogTest {
         PersoniumCoreLog.log = shelterdLogger;
     }
     /**
-     * ログ出力正常系のテスト.
+     * Normal case testing using params, writeLog methods.
      */
     @Test
-    public void ログ出力正常系のテスト() {
+    public void normal_check_params_and_writeLog() {
         final String replaceValue = "AAAAABBBBBCCCCCDDDDDD";
         PersoniumCoreLog coreLog = PersoniumCoreLog.Dav.ROLE_NOT_FOUND;
         PersoniumCoreLog.log = new TestLogger() {
@@ -77,7 +75,7 @@ public class PersoniumCoreLogTest {
             }
             private void doLog(String msg) {
                 log.debug(msg);
-                // 置き換え文字列が置き換えられてメッセージがフォーマット通り出力されていることの確認
+                // the messege should include the given replacement text with the params method, .
                 assertTrue(msg.indexOf(replaceValue) > 0);
 
                 // テストの呼び出し元からの階層
@@ -98,15 +96,15 @@ public class PersoniumCoreLogTest {
     }
 
     /**
-     * ログレベル設定を省略するとWARNレベルでログが出力されることを確認.
+     * Default Log Level should be WARN when log level configuration is omitted.
      */
     @Test
-    public void ログレベル設定を省略するとWARNレベルでログが出力されることを確認() {
+    public void writeLog_DefaultLogLevel_ShouldBe_WARN_WhenConfigIsOmitted() {
         PersoniumCoreLog coreLog = PersoniumCoreLog.Misc.UNREACHABLE_CODE_ERROR;
         PersoniumCoreLog.log = new TestLogger() {
             @Override
             public void info(String msg) {
-                fail("WARNレベル以外でログが出力.");
+                fail("Default leve should be WARN.");
             }
             @Override
             public void warn(String msg) {
@@ -114,7 +112,7 @@ public class PersoniumCoreLogTest {
             }
             @Override
             public void error(String msg) {
-                fail("WARNレベル以外でログが出力.");
+                fail("Default leve should be WARN.");
             }
             private void doLog(String msg) {
                 log.debug(msg);
@@ -138,11 +136,11 @@ public class PersoniumCoreLogTest {
     }
 
     /**
-     * 存在しないメッセージIDを指定すると実行時例外が発生すること.
+     * Should throw an RuntimeException if unkonwn key is given.
      * @throws RuntimeException RuntimeException
      */
     @Test(expected = RuntimeException.class)
-    public void 存在しないメッセージIDを指定すると実行時例外が発生すること() throws RuntimeException {
+    public void create_ShouldThrow_RutimeException_When_UnknownKey_IsGiven() throws RuntimeException {
         PersoniumCoreLog.create("UNKNOWN");
     }
 
@@ -177,7 +175,7 @@ public class PersoniumCoreLogTest {
     }
 
     /**
-     * Mockロガー.
+     * Mock Logger.
      */
     static class TestLogger implements Logger {
         @Override

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.core.model.progress;
+package io.personium.test.io.memcached;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

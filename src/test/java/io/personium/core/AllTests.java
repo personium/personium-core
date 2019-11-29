@@ -27,7 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
     PersoniumCoreExceptionTest.class,
     PersoniumCoreLogTest.class,
-    PersoniumReadDeleteModeManagerTest.class,
     PersoniumUnitConfigTest.class
     })
 public class AllTests {

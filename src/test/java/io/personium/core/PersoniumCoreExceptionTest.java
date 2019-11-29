@@ -1,6 +1,8 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2019 Personium Project Authors
+ *  - FUJITSU LIMITED
+ *  - Akio Shimono
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +18,25 @@
  */
 package io.personium.core;
 
-import io.personium.plugin.base.PluginMessageUtils.Severity;
-import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
+
+import io.personium.plugin.base.PluginMessageUtils.Severity;
+import io.personium.test.categories.Unit;
 
 
 /**
- * URLの作成の組立を行う関数群.
+ * Unit test for PersoniumCoreException class.
  */
-@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public final class PersoniumCoreExceptionTest {
 
     /**
-     * 例外発生時のメッセージ生成のテスト.
+     * test for getMessage method.
      */
     @Test
-    public void 例外発生時のメッセージ生成のテスト() {
+    public void getMessage() {
         try {
             throw PersoniumCoreException.OData.JSON_PARSE_ERROR;
         } catch (PersoniumCoreException e) {
@@ -46,25 +45,25 @@ public final class PersoniumCoreExceptionTest {
     }
 
     /**
-     * レスポンスコードからログレベル判定処理.
+     * Test for decideSeverity method.
      */
     @Test
-    public void レスポンスコードからログレベル判定処理() {
-        // 400系はINFO
+    public void decideSeverity() {
+        // 400 series should return INFO
         Assert.assertEquals(Severity.INFO, PersoniumCoreException.decideSeverity(400));
         Assert.assertEquals(Severity.INFO, PersoniumCoreException.decideSeverity(401));
         Assert.assertEquals(Severity.INFO, PersoniumCoreException.decideSeverity(405));
         Assert.assertEquals(Severity.INFO, PersoniumCoreException.decideSeverity(412));
         Assert.assertEquals(Severity.INFO, PersoniumCoreException.decideSeverity(499));
 
-        // 500系はWARN
+        // 500 series should return WARN
         Assert.assertEquals(Severity.WARN, PersoniumCoreException.decideSeverity(500));
         Assert.assertEquals(Severity.WARN, PersoniumCoreException.decideSeverity(502));
         Assert.assertEquals(Severity.WARN, PersoniumCoreException.decideSeverity(505));
         Assert.assertEquals(Severity.WARN, PersoniumCoreException.decideSeverity(512));
         Assert.assertEquals(Severity.WARN, PersoniumCoreException.decideSeverity(599));
 
-        // 400以下はWARN
+        // Under 400 should return WARN
         Assert.assertEquals(Severity.WARN, PersoniumCoreException.decideSeverity(399));
         Assert.assertEquals(Severity.WARN, PersoniumCoreException.decideSeverity(302));
         Assert.assertEquals(Severity.WARN, PersoniumCoreException.decideSeverity(300));
@@ -73,10 +72,10 @@ public final class PersoniumCoreExceptionTest {
     }
 
     /**
-     * メッセージコードのフォーマット異常.
+     * create method should throw IllegalArgumentException if invalid key is given.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void メッセージコードのフォーマット異常時に実行時例外が発生すること() {
+    public void create_ShouldThrow_IllegalArgumentException_When_InvalidKey_Given() {
         PersoniumCoreException.create("UNKNOWN");
     }
 }
