@@ -45,18 +45,13 @@ import io.personium.test.categories.Unit;
 @PrepareForTest(CommonUtils.class)
 @Category({ Unit.class })
 public class PersoniumUnitConfigTest {
-    public static String scheme;
-    public static int port;
 
     @BeforeClass
     public static void beforeClass() {
-        scheme = PersoniumUnitConfig.getUnitScheme();
-        port = PersoniumUnitConfig.getUnitPort();
     }
     @AfterClass
     public static void afterClass() {
-        PersoniumUnitConfig.set(UNIT_SCHEME, scheme);
-        PersoniumUnitConfig.set(UNIT_PORT, String.valueOf(port));
+        PersoniumUnitConfig.reload();
     }
     /**
      * Test getBaseUrl().
