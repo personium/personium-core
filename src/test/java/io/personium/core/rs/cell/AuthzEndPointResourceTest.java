@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014 - 2019 Personium Project Authors
+ *  - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,40 +31,16 @@ import javax.ws.rs.core.Response.Status;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 
 import io.personium.core.auth.OAuth2Helper;
-import io.personium.core.auth.OAuth2Helper.Key;
-import io.personium.core.auth.OAuth2Helper.Scheme;
-import io.personium.core.model.Cell;
-import io.personium.core.model.DavRsCmp;
-import io.personium.core.rs.cell.AuthzEndPointResource;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.utils.UrlUtils;
 
 /**
- * AccessContext ユニットテストクラス.
+ * Unit Test class for AuthzEndPointResource.
  */
-@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
-public class AuthzTest {
-
-    /**
-     * テスト用クラス.
-     */
-    class AuthzEndPointResourceMock extends AuthzEndPointResource {
-
-        AuthzEndPointResourceMock(Cell cell, DavRsCmp davRsCmp) {
-            super(null, null);
-        }
-
-        @Override
-        protected boolean isSuccessAuthorization(Response response) {
-            return super.isSuccessAuthorization(response);
-        }
-    }
-
+public class AuthzEndPointResourceTest {
 
     /**
      * 認証に成功している場合チェックがtrueを返すこと.
@@ -79,7 +56,7 @@ public class AuthzTest {
                 + "&" + OAuth2Helper.Key.EXPIRES_IN + "=9999&"
                 + OAuth2Helper.Key.STATE + "=State");
         Response res = rb.entity("").build();
-        AuthzEndPointResourceMock authz = new AuthzEndPointResourceMock(null, null);
+        AuthzEndPointResource authz = new AuthzEndPointResource(null, null);
         assertTrue(authz.isSuccessAuthorization(res));
     }
 
@@ -91,7 +68,7 @@ public class AuthzTest {
         ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
         rb.header("Content-Type", "text/html; charset=UTF-8").build();
         Response res = rb.entity("").build();
-        AuthzEndPointResourceMock authz = new AuthzEndPointResourceMock(null, null);
+        AuthzEndPointResource authz = new AuthzEndPointResource(null, null);
         assertFalse(authz.isSuccessAuthorization(res));
     }
 
@@ -103,7 +80,7 @@ public class AuthzTest {
         ResponseBuilder rb = Response.noContent().type(MediaType.TEXT_HTML);
         rb.header("Content-Type", "text/html; charset=UTF-8").build();
         Response res = rb.entity("").build();
-        AuthzEndPointResourceMock authz = new AuthzEndPointResourceMock(null, null);
+        AuthzEndPointResource authz = new AuthzEndPointResource(null, null);
         assertFalse(authz.isSuccessAuthorization(res));
     }
 
@@ -125,7 +102,7 @@ public class AuthzTest {
         rb.header(HttpHeaders.LOCATION, sbuf.toString());
 
         Response res = rb.entity("").build();
-        AuthzEndPointResourceMock authz = new AuthzEndPointResourceMock(null, null);
+        AuthzEndPointResource authz = new AuthzEndPointResource(null, null);
         assertFalse(authz.isSuccessAuthorization(res));
     }
 
@@ -146,7 +123,7 @@ public class AuthzTest {
         rb.header(HttpHeaders.LOCATION, sbuf.toString());
 
         Response res = rb.entity("").build();
-        AuthzEndPointResourceMock authz = new AuthzEndPointResourceMock(null, null);
+        AuthzEndPointResource authz = new AuthzEndPointResource(null, null);
         assertTrue(authz.isSuccessAuthorization(res));
     }
 
@@ -166,7 +143,7 @@ public class AuthzTest {
         rb.header(HttpHeaders.LOCATION, sbuf.toString());
 
         Response res = rb.entity("").build();
-        AuthzEndPointResourceMock authz = new AuthzEndPointResourceMock(null, null);
+        AuthzEndPointResource authz = new AuthzEndPointResource(null, null);
         assertTrue(authz.isSuccessAuthorization(res));
     }
 
@@ -186,7 +163,7 @@ public class AuthzTest {
         rb.header(HttpHeaders.LOCATION, sbuf.toString());
 
         Response res = rb.entity("").build();
-        AuthzEndPointResourceMock authz = new AuthzEndPointResourceMock(null, null);
+        AuthzEndPointResource authz = new AuthzEndPointResource(null, null);
         assertTrue(authz.isSuccessAuthorization(res));
     }
 
@@ -206,7 +183,7 @@ public class AuthzTest {
         rb.header(HttpHeaders.LOCATION, sbuf.toString());
 
         Response res = rb.entity("").build();
-        AuthzEndPointResourceMock authz = new AuthzEndPointResourceMock(null, null);
+        AuthzEndPointResource authz = new AuthzEndPointResource(null, null);
         assertTrue(authz.isSuccessAuthorization(res));
     }
 
@@ -228,7 +205,7 @@ public class AuthzTest {
         rb.header(HttpHeaders.LOCATION, sbuf.toString());
 
         Response res = rb.entity("").build();
-        AuthzEndPointResourceMock authz = new AuthzEndPointResourceMock(null, null);
+        AuthzEndPointResource authz = new AuthzEndPointResource(null, null);
         assertFalse(authz.isSuccessAuthorization(res));
     }
 }

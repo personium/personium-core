@@ -25,17 +25,14 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import io.personium.common.file.FileDataAccessor;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * BinaryDataAccessorユニットテストクラス.
  */
-@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 public class BinaryDataAccessorTest {
 

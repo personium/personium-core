@@ -464,8 +464,8 @@ public class TokenEndPointResource {
         String confidentialRoleUrl = String.format(
                 OAuth2Helper.Key.CONFIDENTIAL_ROLE_URL_FORMAT,
                 tcToken.getIssuer(), Box.MAIN_BOX_NAME);
-        for (Role role : tcToken.getRoles()) {
-            if (confidentialRoleUrl.equals(role.createUrl())) {
+        for (Role role : tcToken.getRoleList()) {
+            if (confidentialRoleUrl.equals(role.toRoleInstanceURL())) {
                 //Successful authentication.
                 return targetClientId + OAuth2Helper.Key.CONFIDENTIAL_MARKER;
             }
@@ -623,7 +623,7 @@ public class TokenEndPointResource {
                 tcToken.getId(), //Save ID of received SAML
                 issuedAt, rTokenExpiresIn, getIssuerUrl(), tcToken.getSubject(),
                 tcToken.getIssuer(), //Save receipt of SAML's
-                tcToken.getRoles(), //Save receipt of SAML's
+                tcToken.getRoleList(), //Save receipt of SAML's
                 schema, scopes);
 
         //Ask CELL to decide the role of you from the role of TC issuer.

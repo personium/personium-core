@@ -25,24 +25,24 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * AccountLockManager unit test class.
  */
-@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class AccountLockManagerTest {
+    static LockManager lm;
 
     /**
      * before class.
      */
     @BeforeClass
     public static void beforeClass() {
+        lm = LockManager.singleton;
+        LockManager.singleton = new InProcessLockManager();
         AccountLockManager.accountLockCount = 5;
         AccountLockManager.accountLockTime = 2;
     }
@@ -54,6 +54,7 @@ public class AccountLockManagerTest {
     public static void afterClass() {
         AccountLockManager.accountLockCount = PersoniumUnitConfig.getAccountLockCount();
         AccountLockManager.accountLockTime = PersoniumUnitConfig.getAccountLockTime();
+        LockManager.singleton = lm;
     }
 
     /**

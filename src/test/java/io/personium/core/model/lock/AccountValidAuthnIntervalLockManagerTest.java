@@ -22,16 +22,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * AccountValidAuthnIntervalLockManager unit test class.
  */
-@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class AccountValidAuthnIntervalLockManagerTest {
 
