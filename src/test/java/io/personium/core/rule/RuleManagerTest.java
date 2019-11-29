@@ -19,6 +19,8 @@ package io.personium.core.rule;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -1141,8 +1143,9 @@ public class RuleManagerTest {
         // --------------------
         // Confirm result
         // --------------------
-        PowerMockito.verifyStatic(Logger.class, Mockito.times(2));
-        publisher.publish(event);
+        //verifyStatic(EventPublisher.class, times(2));
+        verify(publisher, times(1)).publish(event);
+        //publisher.publish(event);
     }
 
     /**
@@ -1189,8 +1192,9 @@ public class RuleManagerTest {
         // --------------------
         // Confirm result
         // --------------------
-        PowerMockito.verifyStatic(Logger.class, Mockito.times(1));
-        publisher.publish(event);
+        verify(publisher, times(0)).publish(event);
+        // verifyStatic(EventPublisher.class, times(1));
+        // publisher.publish(event);
     }
 
     /**
@@ -1238,8 +1242,9 @@ public class RuleManagerTest {
         // --------------------
         // Confirm result
         // --------------------
-        PowerMockito.verifyStatic(Logger.class, Mockito.times(1));
-        publisher.publish(event);
+        verify(publisher, times(0)).publish(event);
+        // verifyStatic(EventPublisher.class, times(1));
+        // publisher.publish(event);
     }
 
 }
