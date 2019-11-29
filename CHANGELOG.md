@@ -1,3 +1,16 @@
+## 1.7.21
+BREAKING CHANGES:
+* Exported bar file now does not use a "personium-localunit:" URL ([#512](https://github.com/personium/personium-core/issues/512))
+
+BUG FIXES:
+* When Unit FQDN is less than 14 letters long, Token parsing may possibly fail. ([#518](https://github.com/personium/personium-core/issues/518))
+
+IMPROVEMENTS:
+* upgraded personium-lib-common to 1.5.3
+
+NOTES:
+* Use personium-engine 1.5.27 for this version of personium-core
+
 ## 1.7.20
 BUG FIXES:
 * When grant code is used at token end point to issue an access token, the token subject does not have the association with the roles that should be allocated to it. ([#501](https://github.com/personium/personium-core/issues/501))
