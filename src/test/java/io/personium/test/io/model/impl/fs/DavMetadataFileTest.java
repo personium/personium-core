@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.io.model.imple.fs;
+package io.personium.test.io.model.impl.fs;
 
 import static java.lang.ClassLoader.getSystemResourceAsStream;
 import static org.hamcrest.CoreMatchers.instanceOf;
