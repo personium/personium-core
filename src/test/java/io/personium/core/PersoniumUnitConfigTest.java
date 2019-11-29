@@ -20,11 +20,6 @@ package io.personium.core;
 import static io.personium.core.PersoniumUnitConfig.UNIT_PORT;
 import static io.personium.core.PersoniumUnitConfig.UNIT_SCHEME;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.util.Properties;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -39,7 +34,7 @@ import io.personium.common.utils.CommonUtils;
 import io.personium.test.categories.Unit;
 
 /**
- * Test for PersoniumUnitConfig.
+ * Unit Test for PersoniumUnitConfig.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CommonUtils.class)
@@ -86,36 +81,6 @@ public class PersoniumUnitConfigTest {
         assertEquals("https://192.168.1.10/", PersoniumUnitConfig.getBaseUrl());
     }
 
-
-    /**
-     * getConfigFileInputStream should, when existing file path is specified, then return its InputStream.
-     */
-    @Test
-    public void getConfigFileInputStream_Should_When_ExistingFileSpecified_Then_Return_ItsInputStream() {
-        PersoniumUnitConfig pUnitConfig = new PersoniumUnitConfig();
-        Properties properties = new Properties();
-        // This file exists in test/resources/
-        String configFilePath = ClassLoader.getSystemResource("personium-unit-config.properties.unit").getPath();
-        try {
-            properties.load(pUnitConfig.getConfigFileInputStream(configFilePath));
-        } catch (IOException e) {
-            fail("properties load failure");
-        }
-        assertEquals("unitTest", properties.getProperty("io.personium.core.testkey"));
-    }
-
-    /**
-     * getPersoniumConfigProperties_ShouldReturnEmptyProperty_IfNoValidConfigFileSpecified.
-     */
-    @Test
-    public void getPersoniumConfigProperties_ShouldReturnEmptyProperty_IfNoValidConfigFileSpecified()  {
-        System.setProperty(PersoniumUnitConfig.KEY_CONFIG_FILE, "some-non-exisiting/path/unit.properties");
-        PersoniumUnitConfig pUnitConfig = new PersoniumUnitConfig();
-        Properties properties = pUnitConfig.getPersoniumConfigProperties();
-        if (pUnitConfig.status == PersoniumUnitConfig.STATUS_DEFAULT) {
-            assertTrue(properties.isEmpty());
-        }
-    }
     @Test
     public void reload_ShouldInclude_SystemProperies() {
         String testKey = "io.personium.test.key";

@@ -49,7 +49,7 @@ public class PersoniumUnitConfig {
     private static final int DEFAULT_BATCH_SLEEP = 50;
 
     /** personium-unit-config.properties setting file passkey.*/
-    static final String KEY_CONFIG_FILE = "io.personium.configurationFile";
+    public static final String KEY_CONFIG_FILE = "io.personium.configurationFile";
 
     /** Prefix of the property key used in this application.*/
     static final String KEY_ROOT = "io.personium.core.";
@@ -511,6 +511,9 @@ public class PersoniumUnitConfig {
     public static final int STATUS_READ_FROM_FILE_ON_CLASSPATH = 2;
     public static final int STATUS_READ_FROM_SPECIFIED_FILE = 3;
     public int status = STATUS_NOT_READ_YET;
+    public static int getStatus() {
+        return singleton.status;
+    }
 
 
     /**
