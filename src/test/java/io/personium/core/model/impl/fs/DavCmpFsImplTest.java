@@ -25,9 +25,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -124,6 +124,14 @@ public class DavCmpFsImplTest {
      */
     @BeforeClass
     public static void beforeClass() {
+        // In order for this test to run without any configuration,
+        //   use inProcess lock
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Lock.TYPE, LockManager.TYPE_IN_PROCESS);
+        //   do not use cache
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cache.CELL_CACHE_ENABLED, "false");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cache.BOX_CACHE_ENABLED, "false");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cache.SCHEMA_CACHE_ENABLED, "false");
+
         unitTestPath = PersoniumUnitConfig.get("io.personium.core.test.unitTest.root");
         if (unitTestPath != null) {
             unitTestPath += "/" + CLASS_NAME + "/";
@@ -133,8 +141,6 @@ public class DavCmpFsImplTest {
         testDir = new File(unitTestPath);
         testDir.mkdirs();
         testDir.setWritable(true);
-        lockTypeBefore = LockManager.getLockType();
-        LockManager.setLockType(LockManager.TYPE_IN_PROCESS);
     }
 
     /**
@@ -143,7 +149,7 @@ public class DavCmpFsImplTest {
     @AfterClass
     public static void afterClass() {
         testDir.delete();
-        LockManager.setLockType(lockTypeBefore);
+        PersoniumUnitConfig.reload();
     }
 
     /**
