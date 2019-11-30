@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.anyString;
+
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
@@ -69,6 +71,7 @@ import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.core.PersoniumCoreAuthnException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ctl.Account;
@@ -125,10 +128,13 @@ public class TokenEndPointResourceTest {
         this.mockCell = Mockito.spy(Cell.class);
         doReturn(unitUrl).when(this.mockCell).getUnitUrl();
         doReturn(cellUrl).when(this.mockCell).getUrl();
+        Box mockBox = new Box(this.mockCell, "box1", this.mockCell.getUnitUrl() + "appcell/", "dummyboxid", new Date().getTime());
+
         List<Role> roleList = new ArrayList<>();
-        this.role1 = new Role("MyBoardViewer", "box1", this.mockCell.getUnitUrl() + "appcell/", this.mockCell.getUnitUrl());
+        this.role1 = new Role("MyBoardViewer", mockBox.getName(), mockBox.getSchema(), this.mockCell.getUrl());
         roleList.add(this.role1);
         doReturn(roleList).when(this.mockCell).getRoleListForAccount(username);
+        doReturn(mockBox).when(this.mockCell).getBoxForSchema(anyString());
         Map<String, String> o = new HashMap<>();
         o.put(Account.P_IP_ADDRESS_RANGE.getName(), null);
         o.put(Account.P_TYPE.getName(), Account.P_TYPE.getDefaultValue());
@@ -565,7 +571,7 @@ public class TokenEndPointResourceTest {
         // prepare App Auth Token
         String clientId = this.mockCell.getUnitUrl() + "appcell/";
         List<Role> roleList = new ArrayList<Role>();
-        roleList.add(new Role("confidentialClient"));
+        roleList.add(new Role("confidentialClient", null, null, clientId));
         TransCellAccessToken appAuthToken = new TransCellAccessToken(clientId, clientId + "#app",
                 this.mockCell.getUrl(), roleList, "", new String[0]);
 
