@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,12 +49,19 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.odata4j.edm.EdmEntitySet;
+import org.odata4j.producer.EntitiesResponse;
+import org.odata4j.producer.Responses;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Box;
@@ -60,7 +69,9 @@ import io.personium.core.model.BoxRsCmp;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.DavCmp;
+import io.personium.core.model.ModelFactory;
 import io.personium.core.model.impl.es.CellEsImpl;
+import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
 import io.personium.core.model.impl.fs.DavCmpFsImplTest.MockDavCmpFsImpl;
 import io.personium.core.model.jaxb.Ace;
 import io.personium.core.model.jaxb.Acl;
@@ -70,6 +81,8 @@ import io.personium.core.utils.UriUtils;
 /**
  * Unit tests for BarFileExporter class.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ModelFactory.ODataCtl.class)
 public class BarFileExporterTest {
     public static String CELL_URL;
     public static String BOX_SCHEMA_URL;
@@ -89,12 +102,19 @@ public class BarFileExporterTest {
     @BeforeClass
     public static void beforeClass() {
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
-        CommonUtils.setFQDN("unit.example");
+        // CommonUtils.setFQDN("unit.example");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_SCHEME, "https");
         CELL_URL = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:user1:/");
         BOX_SCHEMA_URL = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:app1:/");
-
+        PersoniumUnitConfig.set(PersoniumUnitConfig.BAR.BAR_TMP_DIR, "/tmp/");
+        
+        PowerMockito.mockStatic(ModelFactory.ODataCtl.class);
+        CellCtlODataProducer mCellCtlProducer = Mockito.mock(CellCtlODataProducer.class);
+        PowerMockito.when(ModelFactory.ODataCtl.cellCtl(any())).thenReturn(mCellCtlProducer);
+        EntitiesResponse res = Responses.entities(new ArrayList<>(), EdmEntitySet.newBuilder().build(), 0, "");
+        PowerMockito.when(mCellCtlProducer.getNavProperty(anyString(), any(), anyString(), any())).thenReturn(res);
+        
         prepareBarFile();
     }
     /**
