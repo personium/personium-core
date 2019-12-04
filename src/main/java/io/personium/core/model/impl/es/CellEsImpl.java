@@ -402,7 +402,7 @@ public class CellEsImpl extends Cell {
         }
         String roleName = (String) oe.getProperty("Name").getValue();
         Role roleObj = new Role(roleName, boxName, schema, this.getUrl());
-        return roleObj.createUrl();
+        return roleObj.toRoleInstanceURL();
     }
 
     @Override
