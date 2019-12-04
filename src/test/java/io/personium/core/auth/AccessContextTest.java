@@ -22,22 +22,19 @@ import static org.junit.Assert.fail;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.naming.InvalidNameException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -70,7 +67,7 @@ public class AccessContextTest {
     /**
      * Master Token.
      */
-    public static final String MASTER_TOKEN = PersoniumUnitConfig.getMasterToken();
+    public static final String MASTER_TOKEN = "MasterTokenForThisTest";
 
     /**
      * baseUrl.
@@ -82,19 +79,21 @@ public class AccessContextTest {
      */
     public static final String OWNER = null;
 
-    /**
-     * トークン処理ライブラリの初期設定.
-     * @throws IOException 
-     * @throws InvalidNameException 
-     * @throws CertificateException 
-     * @throws InvalidKeySpecException 
-     * @throws Exception 
-     */
     @BeforeClass
     public static void beforeClass() throws Exception {
+        // In order for this test to run without any configuration,
+        //   set secrte16
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Security.TOKEN_SECRET_KEY, "0123456789abcdef");
+        //   set master token
+        PersoniumUnitConfig.set(PersoniumUnitConfig.MASTER_TOKEN, MASTER_TOKEN);
         PersoniumCoreApplication.loadConfig();
         TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                 PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        PersoniumUnitConfig.reload();
     }
 
     /**
@@ -171,13 +170,13 @@ public class AccessContextTest {
         Cell cell = (Cell) mock(Cell.class);
         List<OProperty<?>> props = new ArrayList<>();
         OEntityWrapper oew = new OEntityWrapper(
-    		UUID.randomUUID().toString(), 
-    		OEntities.create(
-    				EdmEntitySet.newBuilder().build(),
-    				OEntityKey.create("k","dum"), props,
-    				null
-    		),
-    		null
+            UUID.randomUUID().toString(),
+            OEntities.create(
+                    EdmEntitySet.newBuilder().build(),
+                    OEntityKey.create("k","dum"), props,
+                    null
+            ),
+            null
         );
         when(cell.getAccount(Matchers.anyString())).thenReturn(oew);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
@@ -200,7 +199,6 @@ public class AccessContextTest {
         AccessContext accessContext = AccessContext.create(auth,
                 null, null, null, cell, BASE_URL, UrlUtils.getHost(), OWNER);
         assertEquals(accessContext.getType(), AccessContext.TYPE_INVALID);
-
     }
 
     /**
@@ -352,7 +350,6 @@ public class AccessContextTest {
         assertEquals(AccessContext.TYPE_INVALID, accessContext.getType());
     }
 
-
     /**
      * マスタトークン認証AuthorizationHeaderとcookie認証情報が同時に指定された場合のAccessContext生成の正常系テスト.
      */
@@ -382,14 +379,14 @@ public class AccessContextTest {
                 cell, BASE_URL, UrlUtils.getHost(), OWNER);
         assertEquals(AccessContext.TYPE_UNIT_MASTER, accessContext.getType());
     }
-    
-    
+
+
     @Test
     public void create_Bearer_VisitorLocalAccessToken_WithSchemaWithConfidentialMarker_When_Valid_Succeeds() {
     	String schema = "https://app1.unit.example/";
         Cell cell = (Cell) mock(Cell.class);
         when(cell.getUrl()).thenReturn("https://cell1.unit.example/");
-        
+
         Box box = new Box(cell, "box", schema, "abcde", new Date().getTime()-1000000);
 
         List<Role> roleList = new ArrayList<>();
@@ -401,17 +398,17 @@ public class AccessContextTest {
     }
 
     /**
-     * ダミーの UriInfo実装.
+     * Mock UriInfo Implementation.
      */
     class TestUriInfo implements UriInfo {
         @Override
         public String getPath() {
-            return "/dc1-core";
+            return "/personium-core";
         }
 
         @Override
         public String getPath(boolean decode) {
-            return "/dc1-core";
+            return "/personium-core";
         }
 
         @Override

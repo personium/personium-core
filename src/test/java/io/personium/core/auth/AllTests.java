@@ -27,7 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
         AccessContextTest.class,
-        AuthHistoryLastFileTest.class,
         ScopeArbitratorTest.class
     })
 public class AllTests {

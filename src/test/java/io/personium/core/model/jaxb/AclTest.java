@@ -41,7 +41,7 @@ public class AclTest {
     public void testGetSetBase_localUnitURL_shouldBeStoredUsing_localUnitScheme() throws Exception {
         Acl acl = new Acl();
         String unitUrl = PersoniumUnitConfig.getBaseUrl();
-        String mbUrl = unitUrl + "foo/__/";
+        String mbUrl = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:foo:/__/");
         log.info("Configured Unit Url: " + unitUrl);
         // ---------------
         acl.setBase(mbUrl);

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.core;
+package io.personium.test;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
@@ -33,6 +33,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.common.utils.CommonUtils;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumReadDeleteModeManager;
 import io.personium.core.model.lock.ReadDeleteModeLockManager;
 
 /**
