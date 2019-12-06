@@ -372,7 +372,7 @@ public class AccessContext {
                 }
 
                 //Detect setting corresponding to role
-                if (role.localCreateUrl(this.cell.getUrl()).equals(principalHref)) {
+                if (role.toRoleInstanceURL().equals(principalHref)) {
                     //Confirm whether Root is set
                     if (ace.getGrantedPrivilegeList().contains(CellPrivilege.ROOT.getName())) {
                         return true;
