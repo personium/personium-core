@@ -40,6 +40,7 @@ import org.json.simple.parser.ParseException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -167,6 +168,7 @@ public class AuthHistoryLastFileTest {
      * @throws Exception Unintended exception in test
      */
     @Test
+    @Ignore
     public void load_Normal_retry_ok() throws Exception {
         // --------------------
         // Test method args
@@ -208,6 +210,7 @@ public class AuthHistoryLastFileTest {
      * @throws Exception Unintended exception in test
      */
     @Test
+    @Ignore
     public void load_Error_retry_ng() throws Exception {
         // --------------------
         // Test method args
