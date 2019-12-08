@@ -502,7 +502,7 @@ public class AuthCheckTest extends PersoniumTest {
             assertEquals(1, tokenRoles1.size());
             // 取得トークン内のロール確認
             assertEquals(UrlUtils.roleResource(CELL_NAME1, Box.MAIN_BOX_NAME, ROLE_NAME),
-                    tokenRoles1.get(0).createUrl());
+                    tokenRoles1.get(0).toRoleInstanceURL());
 
             // テスト２（user2でのアクセス時にTCAT内にdoctorが入っていること）
             List<Role> tokenRoles2 = this.checkTransCellAccessToken(CELL_NAME1,
@@ -511,7 +511,7 @@ public class AuthCheckTest extends PersoniumTest {
             assertEquals(1, tokenRoles2.size());
             // 取得トークン内のロール確認
             assertEquals(UrlUtils.roleResource(CELL_NAME1, Box.MAIN_BOX_NAME, ROLE_NAME),
-                    tokenRoles2.get(0).createUrl());
+                    tokenRoles2.get(0).toRoleInstanceURL());
 
             // テスト３（user3でのアクセス時にTCAT内にdoctorが入っていないこと）
             List<Role> tokenRoles3 = this.checkTransCellAccessToken(CELL_NAME1,

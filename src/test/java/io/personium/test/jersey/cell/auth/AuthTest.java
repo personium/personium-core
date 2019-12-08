@@ -1163,7 +1163,7 @@ public class AuthTest extends PersoniumTest {
             assertTrue(!rToken.getId().equals(rToken2.getId()));
             // トークンの内容が更新されていないこと
             assertEquals(rToken.getIssuer(), rToken2.getIssuer());
-            assertEquals(rToken.getRoleList().get(0).createUrl(), rToken2.getRoleList().get(0).createUrl());
+            assertEquals(rToken.getRoleList().get(0).toRoleInstanceURL(), rToken2.getRoleList().get(0).toRoleInstanceURL());
             assertEquals(rToken.getSchema(), rToken2.getSchema());
             assertEquals(rToken.getSubject(), rToken2.getSubject());
         } catch (TokenParseException e) {
@@ -1246,7 +1246,7 @@ public class AuthTest extends PersoniumTest {
             assertTrue(!rToken.getId().equals(rToken2.getId()));
             // トークンの内容が更新されていないこと
             assertEquals(rToken.getIssuer(), rToken2.getIssuer());
-            assertEquals(rToken.getRoleList().get(0).createUrl(), rToken2.getRoleList().get(0).createUrl());
+            assertEquals(rToken.getRoleList().get(0).toRoleInstanceURL(), rToken2.getRoleList().get(0).toRoleInstanceURL());
             assertEquals(rToken.getSchema(), rToken2.getSchema());
             assertEquals(rToken.getSubject(), rToken2.getSubject());
         } catch (TokenParseException e) {
@@ -1326,7 +1326,7 @@ public class AuthTest extends PersoniumTest {
             assertTrue(!rToken1.getId().equals(rToken2.getId()));
             // トークンの内容が更新されていないこと
             assertEquals(rToken1.getIssuer(), rToken2.getIssuer());
-            assertEquals(rToken1.getRoleList().get(0).createUrl(), rToken2.getRoleList().get(0).createUrl());
+            assertEquals(rToken1.getRoleList().get(0).toRoleInstanceURL(), rToken2.getRoleList().get(0).toRoleInstanceURL());
             assertEquals(rToken1.getSchema(), rToken2.getSchema());
             assertEquals(rToken1.getSubject(), rToken2.getSubject());
 
@@ -1406,7 +1406,7 @@ public class AuthTest extends PersoniumTest {
             assertTrue(!rToken1.getId().equals(rToken2.getId()));
             // トークンの内容が更新されていないこと
             assertEquals(rToken1.getIssuer(), rToken2.getIssuer());
-            assertEquals(rToken1.getRoleList().get(0).createUrl(), rToken2.getRoleList().get(0).createUrl());
+            assertEquals(rToken1.getRoleList().get(0).toRoleInstanceURL(), rToken2.getRoleList().get(0).toRoleInstanceURL());
             assertEquals(rToken1.getSchema(), rToken2.getSchema());
             assertEquals(rToken1.getSubject(), rToken2.getSubject());
 
