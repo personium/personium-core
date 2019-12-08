@@ -76,10 +76,6 @@ public class AuthCheckTest extends PersoniumTest {
 
     static final String TEST_CELL1 = Setup.TEST_CELL1;
     static final String ACL_AUTH_TEST_SETTING_FILE = "box/acl-authtest.txt";
-    /**
-     * デフォルトボックス名.
-     */
-    static final String DEFAULT_BOX_NAME = "__";
 
     static final String CELL_NAME1 = "cell11";
     static final String CELL_NAME2 = "cell21";
@@ -159,7 +155,7 @@ public class AuthCheckTest extends PersoniumTest {
 
             // 取得トークン内のロール確認
             assertEquals(UrlUtils.roleResource(testCellName, Box.MAIN_BOX_NAME, roleNameNoneBox),
-                    aToken.getRoleList().get(0).createUrl());
+                    aToken.getRoleList().get(0).toRoleInstanceURL());
         } finally {
 
             // １．ボックスと結びつかないロールのトランスセル確認
@@ -230,8 +226,8 @@ public class AuthCheckTest extends PersoniumTest {
             TransCellAccessToken aToken = TransCellAccessToken.parse(transCellAccessToken);
 
             // 取得トークン内のロール確認
-            assertEquals(UrlUtils.roleResource(schemeCellName, DEFAULT_BOX_NAME, roleNameWithBox2),
-                    aToken.getRoleList().get(0).createUrl());
+            assertEquals(UrlUtils.roleResource(schemeCellName, Box.MAIN_BOX_NAME, roleNameWithBox2),
+                    aToken.getRoleList().get(0).toRoleInstanceURL());
         } finally {
 
             // ２．スキーマありのボックスと結びつくロールのトランスセル確認
@@ -300,8 +296,8 @@ public class AuthCheckTest extends PersoniumTest {
             TransCellAccessToken aToken = TransCellAccessToken.parse(transCellAccessToken);
 
             // 取得トークン内のロール確認
-            assertEquals(UrlUtils.roleResource(testCellName, DEFAULT_BOX_NAME, roleNameWithBox1),
-                    aToken.getRoleList().get(0).createUrl());
+            assertEquals(UrlUtils.roleResource(testCellName, Box.MAIN_BOX_NAME, roleNameWithBox1),
+                    aToken.getRoleList().get(0).toRoleInstanceURL());
         } finally {
 
             // ３．スキーマなしのボックスと結びつくロールのトランスセルの確認
@@ -378,7 +374,7 @@ public class AuthCheckTest extends PersoniumTest {
                     testCellName2, userName2, pass, roleName);
             // テスト環境がロール１つのため、１以外はテスト失敗
             assertEquals(1, tokenRoles1.size());
-            String token1RoleUrl = tokenRoles1.get(0).createUrl();
+            String token1RoleUrl = tokenRoles1.get(0).toRoleInstanceURL();
 
             // 取得トークン内のロール確認
             assertEquals(UrlUtils.roleResource(testCellName1, Box.MAIN_BOX_NAME, roleName), token1RoleUrl);
@@ -782,8 +778,8 @@ public class AuthCheckTest extends PersoniumTest {
             JSONObject json2 = res2.bodyAsJson();
             String transCellAccessToken2 = (String) json2.get(OAuth2Helper.Key.ACCESS_TOKEN);
             TransCellAccessToken aToken2 = TransCellAccessToken.parse(transCellAccessToken2);
-            assertEquals(UrlUtils.roleResource(testCellName2, DEFAULT_BOX_NAME, roleNameWithBox1),
-                    aToken2.getRoleList().get(0).createUrl());
+            assertEquals(UrlUtils.roleResource(testCellName2, Box.MAIN_BOX_NAME, roleNameWithBox1),
+                    aToken2.getRoleList().get(0).toRoleInstanceURL());
         } finally {
             // ロール結びつけ削除（スキーマなしBOXに結びつくロールとアカウント結びつけ）
             LinksUtils.deleteLinks(testCellName, Account.EDM_TYPE_NAME, userName, null,
