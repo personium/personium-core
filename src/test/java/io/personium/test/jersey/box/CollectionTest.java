@@ -2018,16 +2018,17 @@ public class CollectionTest extends PersoniumTest {
      */
     @Test
     public final void BOX_ACL異常系_大文字やハイフンを含むRole名をACL登録できることの確認() {
-        String boxName = "box1";
         String testcell = Setup.TEST_CELL1;
         String token = AbstractCase.MASTER_TOKEN_NAME;
+        String boxName = Setup.TEST_BOX1;
 
         String[] roles = {"RoleName", "role-name" };
         try {
             for (String role : roles) {
                 try {
-                    // 前準備
+                    // Preparation
                     // 名前に大文字を含むロール登録
+                    // Box bount but the box does not have the schema
                     RoleUtils.create(testcell, token, role, boxName, HttpStatus.SC_CREATED);
 
                     // ACLの設定
