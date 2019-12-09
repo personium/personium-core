@@ -29,8 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
     StatusTest.class,
     OptionsMethodTest.class,
     ResourcePathTest.class,
-    ReadDeleteOnlyModeTest.class,
-    AcceptEncodingTest.class
+    ReadDeleteOnlyModeTest.class
     })
 public class AllTests {
 }
