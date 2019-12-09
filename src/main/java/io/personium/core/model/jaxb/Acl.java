@@ -177,7 +177,7 @@ public final class Acl {
         List<String> ret = new ArrayList<String>();
         for (Role role : roles) {
             for (Ace ace : this.aces) {
-                if (ace.getPrincipalHref().equals(role.createUrl())) {
+                if (ace.getPrincipalHref().equals(role.toRoleInstanceURL())) {
                     List<String> privList = ace.getGrantedPrivilegeList();
                     for (String priv : privList) {
                         ret.add(priv);
