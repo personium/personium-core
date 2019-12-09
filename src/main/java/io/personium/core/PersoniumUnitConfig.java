@@ -495,7 +495,7 @@ public class PersoniumUnitConfig {
     }
 
     /** singleton. */
-    private static PersoniumUnitConfig singleton = new PersoniumUnitConfig();
+    private final static PersoniumUnitConfig SINGLETON = new PersoniumUnitConfig();
 
     static Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
 
@@ -512,7 +512,7 @@ public class PersoniumUnitConfig {
     public static final int STATUS_READ_FROM_SPECIFIED_FILE = 3;
     public int status = STATUS_NOT_READ_YET;
     public static int getStatus() {
-        return singleton.status;
+        return SINGLETON.status;
     }
 
 
@@ -813,7 +813,7 @@ public class PersoniumUnitConfig {
      * @return property list object
      */
     public static Properties getProperties() {
-        return singleton.props;
+        return SINGLETON.props;
     }
 
     /**
@@ -822,7 +822,7 @@ public class PersoniumUnitConfig {
      * @return setting value
      */
     public static String get(final String key) {
-        return singleton.doGet(key);
+        return SINGLETON.doGet(key);
     }
 
     /**
@@ -831,7 +831,7 @@ public class PersoniumUnitConfig {
      * @param value value
      */
     public static void set(final String key, final String value) {
-        singleton.doSet(key, value);
+        SINGLETON.doSet(key, value);
     }
 
     /**
@@ -1673,7 +1673,7 @@ public class PersoniumUnitConfig {
      * Reload the configuration information.
      */
     public static void reload() {
-        singleton.doReload();
+        SINGLETON.doReload();
     }
 
     /**

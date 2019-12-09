@@ -94,7 +94,9 @@ public class DavMetadataFileTest {
      */
     @AfterClass
     public static void afterClass() {
-        testDir.delete();
+        if (testDir != null && testDir.exists()) {
+            testDir.delete();
+        }
     }
 
     /**
