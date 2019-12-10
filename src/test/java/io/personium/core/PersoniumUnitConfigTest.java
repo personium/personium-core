@@ -194,25 +194,16 @@ public class PersoniumUnitConfigTest {
         assertEquals(testVal1, PersoniumUnitConfig.get(TEST_KEY));
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     private static void setEnv(String key, String value) throws Exception {
-        Map<String, String> newEnv = new HashMap<>();
-        if (value == null) {
-            newEnv.remove(key);
-        } else {
-            newEnv.put(key, value);
-        }
-        Class[] classes = Collections.class.getDeclaredClasses();
         Map<String, String> env = System.getenv();
-        for (Class cl : classes) {
-            if ("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
-                Field field = cl.getDeclaredField("m");
-                field.setAccessible(true);
-                Object obj = field.get(env);
-                Map<String, String> map = (Map<String, String>) obj;
-                map.clear();
-                map.putAll(newEnv);
-            }
+        Field field = env.getClass().getDeclaredField("m");
+        field.setAccessible(true);
+        Map<String, String> sysEnv = (Map<String, String>) field.get(env);
+        if (value == null) {
+            sysEnv.remove(key);
+        } else {
+            sysEnv.put(key, value);
         }
     }
 }
