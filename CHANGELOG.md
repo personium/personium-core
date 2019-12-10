@@ -1,6 +1,22 @@
 ## 1.7.21
 BREAKING CHANGES:
 * Exported bar file now does not use a "personium-localunit:" URL ([#512](https://github.com/personium/personium-core/issues/512))
+  - Base Url in 00_meta/90_rootprops.xml
+    - 1.7.17 and before  
+          https://{cellName}.{domain}/__role/{boxName}
+    - 1.7.18-20:  
+          personium-localunit:{cellName}:/__role/{boxName}
+    - 1.7.21 and later:  
+          https://{cellName}.{domain}/__role/__/
+  - Bar file export / import compatibility    
+    - Bar file exported from 1.7.18-20  
+        Not importable to any version
+    - Bar file exporeted from 1.7.17 and earlier  
+        Importable to any versions (after 1.6.10)
+    - Bar file exporeted from 1.7.21 and later  
+        Importable to any versions (after 1.6.10)
+
+
 * Role Url in TranceCellAccessToken/VisitorRefreshToken are now Role Class URL ([See](https://github.com/personium/personium-lib-common/pull/71))
 
 BUG FIXES:
