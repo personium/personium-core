@@ -512,10 +512,6 @@ public class PersoniumUnitConfig {
         READ_FROM_FILE_ON_CLASSPATH,
         READ_FROM_SPECIFIED_FILE
     }
-    public static final int STATUS_NOT_READ_YET = 0;
-    public static final int STATUS_DEFAULT = 1;
-    public static final int STATUS_READ_FROM_FILE_ON_CLASSPATH = 2;
-    public static final int STATUS_READ_FROM_SPECIFIED_FILE = 3;
 
     public Status status = Status.NOT_READ_YET;
     public static Status getStatus() {
