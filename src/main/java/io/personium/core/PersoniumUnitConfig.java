@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -502,11 +503,8 @@ public class PersoniumUnitConfig {
     /** Property entity that stores the setting value.*/
     private final Properties props = new Properties();
 
-    /** Property entity that stores setting values to be overridden.*/
-    private final Properties propsOverride = new Properties();
-
-    /** status */
-    public static enum Status {
+    /** status. */
+    public enum Status {
         NOT_READ_YET,
         DEFAULT,
         READ_FROM_FILE_ON_CLASSPATH,
@@ -533,60 +531,29 @@ public class PersoniumUnitConfig {
     private synchronized void doReload() {
         Properties properties = getUnitConfigDefaultProperties();
         Properties propertiesOverride = getPersoniumConfigProperties();
-        Properties sysProps = System.getProperties();
-        //When reading succeeds, replace with member variable
-        if (!properties.isEmpty()) {
-            this.props.clear();
-            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                if (!(entry.getKey() instanceof String)) {
-                    continue;
-                }
-                this.props.setProperty((String) entry.getKey(), (String) entry.getValue());
-            }
-        }
-        if (!propertiesOverride.isEmpty()) {
-            this.propsOverride.clear();
-            for (Map.Entry<Object, Object> entry : propertiesOverride.entrySet()) {
-                if (!(entry.getKey() instanceof String)) {
-                    continue;
-                }
-                this.propsOverride.setProperty((String) entry.getKey(), (String) entry.getValue());
-            }
-        }
         Map<String, String> env = System.getenv();
-        for (String key : env.keySet()) {
-            if (!key.startsWith("io.personium.")) {
-                continue;
-            }
-            String value = env.get(key);
-            if (value == null) {
-                continue;
-            }
-            log.info("From Env Vars, overriding config : " + key + "=" + value);
-            this.props.setProperty(key, value);
-        }
+        Properties sysProps = System.getProperties();
 
-        for (Object keyObj : propsOverride.keySet()) {
-            String key = (String) keyObj;
-            String value = this.propsOverride.getProperty(key);
-            if (value == null) {
-                continue;
+        this.props.clear();
+        overrideConf(properties, "default");
+        overrideConf(propertiesOverride, "config file");
+        overrideConf(env, "env vars");
+        overrideConf(sysProps, "system props");
+    }
+
+    private void overrideConf(Map<?, ?> propsOverride, String from) {
+        Map<String, String> override = propsOverride.entrySet().stream()
+            .filter(e -> e.getKey() instanceof String && e.getValue() instanceof String)
+            .filter(e -> ((String) e.getKey()).startsWith("io.personium."))
+            .filter(e -> e.getValue() != null)
+            .collect(Collectors.toMap(e -> (String) e.getKey(), e -> (String) e.getValue()));
+
+        override.forEach((key, value) -> {
+            if (!from.equals("default")) {
+                log.debug("From " + from + ", overriding config : " + key + "=" + value);
             }
-            log.info("From config file, overriding config : " + key + "=" + value);
             this.props.setProperty(key, value);
-        }
-        for (Object keyObj : sysProps.keySet()) {
-            String key = (String) keyObj;
-            if (!key.startsWith("io.personium.")) {
-                continue;
-            }
-            String value = sysProps.getProperty(key);
-            if (value == null) {
-                continue;
-            }
-            log.info("From system props, overriding config : " + key + "=" + value);
-            this.props.setProperty(key, value);
-        }
+        });
     }
 
     private static boolean isSpaceSeparatedValueIncluded(String spaceSeparatedValue, String testValue) {
