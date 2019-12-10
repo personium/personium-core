@@ -550,7 +550,7 @@ public class PersoniumUnitConfig {
 
         override.forEach((key, value) -> {
             if (!from.equals("default")) {
-                log.info("From " + from + ", overriding config : " + key + "=" + value);
+                log.debug("From " + from + ", overriding config : " + key + "=" + value);
             }
             this.props.setProperty(key, value);
         });
