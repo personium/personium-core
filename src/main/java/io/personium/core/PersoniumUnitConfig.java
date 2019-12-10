@@ -503,8 +503,8 @@ public class PersoniumUnitConfig {
     /** Property entity that stores the setting value.*/
     private final Properties props = new Properties();
 
-    /** status */
-    public static enum Status {
+    /** status. */
+    public enum Status {
         NOT_READ_YET,
         DEFAULT,
         READ_FROM_FILE_ON_CLASSPATH,
