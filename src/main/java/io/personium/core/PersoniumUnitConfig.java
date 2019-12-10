@@ -495,7 +495,7 @@ public class PersoniumUnitConfig {
     }
 
     /** singleton. */
-    private final static PersoniumUnitConfig SINGLETON = new PersoniumUnitConfig();
+    private static final PersoniumUnitConfig SINGLETON = new PersoniumUnitConfig();
 
     static Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
 
