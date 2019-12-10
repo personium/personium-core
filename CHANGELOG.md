@@ -20,11 +20,17 @@ BREAKING CHANGES:
 * Role Url in TranceCellAccessToken/VisitorRefreshToken are now Role Class URL ([See](https://github.com/personium/personium-lib-common/pull/71))
 
 BUG FIXES:
-* When Unit FQDN is less than 14 letters long, Token parsing may possibly fail. ([#518](https://github.com/personium/personium-core/issues/518))
+* When Unit FQDN is less than 14 letters long, token parsing may possibly fail. ([#518](https://github.com/personium/personium-core/issues/518))
 * Refreshed Visitor Access Token cannot access target Cell's box. ([#516](https://github.com/personium/personium-core/issues/516))
 
 IMPROVEMENTS:
-* upgraded personium-lib-common to 1.5.3
+* Upgraded personium-lib-common to 1.5.3
+* Now Personium unit can also be configured with OS environment variables and system properties.
+  - Configuration priority
+     1. Java system properties
+     1. OS environment variables
+     1. Unit config file (personium-unit-config.properties in class path or any file whose location specified with java system propety "io.personium.configurationFile")
+     1. Default configuration (personium-unit-config-default.properties bundled in personium-core.war file)
 
 NOTES:
 * Use personium-engine 1.5.27 for this version of personium-core
@@ -745,4 +751,3 @@ BUG FIXES:
 
   - core *[AccessContext.java, DcCoreAuthzException.java, etc.]*:
     Authentication and authorization behavior is corrected to comply with HTTP RFC.
-
