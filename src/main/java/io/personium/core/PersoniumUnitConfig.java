@@ -494,10 +494,10 @@ public class PersoniumUnitConfig {
         PersoniumCoreAuthnException.loadConfig();
     }
 
+    private static final Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
     /** singleton. */
     private static final PersoniumUnitConfig SINGLETON = new PersoniumUnitConfig();
 
-    static Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
 
     /** Property entity that stores the setting value.*/
     private final Properties props = new Properties();
@@ -506,12 +506,19 @@ public class PersoniumUnitConfig {
     private final Properties propsOverride = new Properties();
 
     /** status */
+    public static enum Status {
+        NOT_READ_YET,
+        DEFAULT,
+        READ_FROM_FILE_ON_CLASSPATH,
+        READ_FROM_SPECIFIED_FILE
+    }
     public static final int STATUS_NOT_READ_YET = 0;
     public static final int STATUS_DEFAULT = 1;
     public static final int STATUS_READ_FROM_FILE_ON_CLASSPATH = 2;
     public static final int STATUS_READ_FROM_SPECIFIED_FILE = 3;
-    public int status = STATUS_NOT_READ_YET;
-    public static int getStatus() {
+
+    public Status status = Status.NOT_READ_YET;
+    public static Status getStatus() {
         return SINGLETON.status;
     }
 
@@ -528,7 +535,6 @@ public class PersoniumUnitConfig {
      * Reload the settings.
      */
     private synchronized void doReload() {
-        Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
         Properties properties = getUnitConfigDefaultProperties();
         Properties propertiesOverride = getPersoniumConfigProperties();
         Properties sysProps = System.getProperties();
@@ -631,7 +637,6 @@ public class PersoniumUnitConfig {
      * @return configured Properties
      */
     protected Properties getPersoniumConfigProperties() {
-        Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
         Properties propertiesOverride = new Properties();
         String configFilePath = System.getProperty(KEY_CONFIG_FILE);
         InputStream is = getConfigFileInputStream(configFilePath);
@@ -640,7 +645,7 @@ public class PersoniumUnitConfig {
                 propertiesOverride.load(is);
             } else {
                 log.debug("[personium-unit-config.properties] file not found on the classpath. using default config.");
-                this.status = STATUS_DEFAULT;
+                this.status = Status.DEFAULT;
             }
         } catch (IOException e) {
             log.debug("IO Exception when loading [personium-unit-config.properties] file.");
@@ -663,7 +668,7 @@ public class PersoniumUnitConfig {
      */
     protected InputStream getConfigFileInputStream(String configFilePath) {
         InputStream configFileInputStream = null;
-        this.status = STATUS_READ_FROM_FILE_ON_CLASSPATH;
+        this.status = Status.READ_FROM_FILE_ON_CLASSPATH;
         if (configFilePath == null) {
             configFileInputStream = PersoniumUnitConfig.class.getClassLoader().getResourceAsStream(
                     "personium-unit-config.properties");
@@ -675,7 +680,7 @@ public class PersoniumUnitConfig {
             File configFile = new File(configFilePath);
             configFileInputStream = new FileInputStream(configFile);
             log.info("personium-unit-config.properties from system properties.");
-            this.status = STATUS_READ_FROM_SPECIFIED_FILE;
+            this.status = Status.READ_FROM_SPECIFIED_FILE;
         } catch (FileNotFoundException e) {
             //If there is no file in the specified path, read the file on the class path
             configFileInputStream = PersoniumUnitConfig.class.getClassLoader().getResourceAsStream(
