@@ -502,9 +502,6 @@ public class PersoniumUnitConfig {
     /** Property entity that stores the setting value.*/
     private final Properties props = new Properties();
 
-    /** Property entity that stores setting values to be overridden.*/
-    private final Properties propsOverride = new Properties();
-
     /** status */
     public static enum Status {
         NOT_READ_YET,
@@ -544,14 +541,14 @@ public class PersoniumUnitConfig {
                 this.props.setProperty((String) entry.getKey(), (String) entry.getValue());
             }
         }
-        if (!propertiesOverride.isEmpty()) {
-            this.propsOverride.clear();
-            for (Map.Entry<Object, Object> entry : propertiesOverride.entrySet()) {
-                if (!(entry.getKey() instanceof String)) {
-                    continue;
-                }
-                this.propsOverride.setProperty((String) entry.getKey(), (String) entry.getValue());
+        for (Object keyObj : propertiesOverride.keySet()) {
+            String key = (String) keyObj;
+            String value = propertiesOverride.getProperty(key);
+            if (value == null) {
+                continue;
             }
+            log.info("From config file, overriding config : " + key + "=" + value);
+            this.props.setProperty(key, value);
         }
         Map<String, String> env = System.getenv();
         for (String key : env.keySet()) {
@@ -563,16 +560,6 @@ public class PersoniumUnitConfig {
                 continue;
             }
             log.info("From Env Vars, overriding config : " + key + "=" + value);
-            this.props.setProperty(key, value);
-        }
-
-        for (Object keyObj : propsOverride.keySet()) {
-            String key = (String) keyObj;
-            String value = this.propsOverride.getProperty(key);
-            if (value == null) {
-                continue;
-            }
-            log.info("From config file, overriding config : " + key + "=" + value);
             this.props.setProperty(key, value);
         }
         for (Object keyObj : sysProps.keySet()) {
