@@ -24,27 +24,26 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 
 /**
  * Test for PersoniumUnitConfig.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(CommonUtils.class)
 @Category({ Unit.class })
 public class PersoniumUnitConfigIoTest extends PersoniumUnitConfig {
+    private static final Logger log = LoggerFactory.getLogger(PersoniumUnitConfigIoTest.class);
 
     @BeforeClass
     public static void beforeClass() {
     }
     @AfterClass
     public static void afterClass() {
+        log.info("---AfterClass------");
+        System.clearProperty(PersoniumUnitConfig.KEY_CONFIG_FILE);
         PersoniumUnitConfig.reload();
     }
 
@@ -53,6 +52,7 @@ public class PersoniumUnitConfigIoTest extends PersoniumUnitConfig {
      */
     @Test
     public void getConfigFileInputStream_Should_When_ExistingFileSpecified_Then_Return_ItsInputStream() {
+        log.info("---getConfigFileInputStream_Should_When_ExistingFileSpecified_Then_Return_ItsInputStream------");
         // This file exists in test/resources/
         String configFilePath = ClassLoader.getSystemResource("personium-unit-config.properties.unit").getPath();
 
@@ -66,8 +66,9 @@ public class PersoniumUnitConfigIoTest extends PersoniumUnitConfig {
      */
     @Test
     public void getPersoniumConfigProperties_ShouldReturnEmptyProperty_IfNoValidConfigFileSpecified()  {
+        log.info("---getPersoniumConfigProperties_ShouldReturnEmptyProperty_IfNoValidConfigFileSpecified------");
         System.setProperty(PersoniumUnitConfig.KEY_CONFIG_FILE, "some-non-exisiting/path/unit.properties");
         PersoniumUnitConfig.reload();
-        assertNotEquals(PersoniumUnitConfig.STATUS_READ_FROM_SPECIFIED_FILE, PersoniumUnitConfig.getStatus());
+        assertNotEquals(PersoniumUnitConfig.Status.READ_FROM_SPECIFIED_FILE, PersoniumUnitConfig.getStatus());
     }
 }

@@ -371,8 +371,8 @@
                 <configuration>
                     <argLine>${jacocoArgs} -Xms512m -Xmx1024m</argLine>
                     <excludes>
-                        <exclude>**/jersey/box/ServiceRelayTest.java</exclude>
-                        <exclude>**/jersey/AcceptEncodingTest.java</exclude>
+                        <exclude>**/engine/ServiceRelayTest.java</exclude>
+                        <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
                         <exclude>**/performance/**/*Test.java</exclude>
                     </excludes>
                 </configuration>
@@ -392,8 +392,8 @@
                             <excludes>
                                 <!-- Tests that fail when running tests from outside for various reasons. -->
                                 <!-- TODO Should be fixed so that all tests are successful. -->
-                                <exclude>**/jersey/box/ServiceRelayTest.java</exclude>
-                                <exclude>**/jersey/AcceptEncodingTest.java</exclude>
+                                <exclude>**/engine/ServiceRelayTest.java</exclude>
+                                <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
                                 <exclude>**/jersey/StatusTest.java</exclude>
                                 <exclude>**/jersey/cell/CellBulkDeletionTest.java</exclude>
                                 <exclude>**/jersey/cell/UnitUserCellCRUDTest.java</exclude>
