@@ -22,6 +22,11 @@ import static io.personium.core.PersoniumUnitConfig.UNIT_SCHEME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -67,6 +72,11 @@ public class PersoniumUnitConfigTest {
     private static void clear() {
         System.clearProperty(TEST_KEY);
         System.clearProperty(PersoniumUnitConfig.KEY_CONFIG_FILE);
+        try {
+            setEnv(TEST_KEY, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -126,6 +136,18 @@ public class PersoniumUnitConfigTest {
     }
 
     /**
+     * reload_ShouldInclude_EnvironmentVariables.
+     * @throws Exception exception
+     */
+    @Test
+    public void reload_ShouldInclude_EnvironmentVariables() throws Exception {
+        String testVal = "envValue";
+        setEnv(TEST_KEY, testVal);
+        PersoniumUnitConfig.reload();
+        assertEquals(testVal, PersoniumUnitConfig.get(TEST_KEY));
+    }
+
+    /**
      * reload_ShouldInclude_SystemProperies.
      */
     @Test
@@ -134,5 +156,63 @@ public class PersoniumUnitConfigTest {
         System.setProperty(TEST_KEY, testVal);
         PersoniumUnitConfig.reload();
         assertEquals(testVal, PersoniumUnitConfig.get(TEST_KEY));
+    }
+
+    /**
+     * Loading configuration priority is:
+     *   1. System property
+     *   2. Environment variable
+     *   3. Configuration file
+     *   4. Default configuration file
+     */
+
+    /**
+     * reload_ShouldInclude_EnvValue_whenConfFileAndEnvironmentVariables.
+     * @throws Exception exception
+     */
+    @Test
+    public void reload_ShouldInclude_EnvValue_whenConfFileAndEnvironmentVariables() throws Exception {
+        String configFilePath = ClassLoader.getSystemResource("personium-unit-config.properties.unit").getPath();
+        System.setProperty(PersoniumUnitConfig.KEY_CONFIG_FILE, configFilePath);
+        String testVal = "envValue";
+        setEnv(TEST_KEY, testVal);
+        PersoniumUnitConfig.reload();
+        assertEquals(testVal, PersoniumUnitConfig.get(TEST_KEY));
+    }
+
+    /**
+     * reload_ShouldInclude_SystemProperies_whenSystemProperiesAndEnvironmentVariables.
+     * @throws Exception exception
+     */
+    @Test
+    public void reload_ShouldInclude_SystemProperies_whenSystemProperiesAndEnvironmentVariables() throws Exception {
+        String testVal1 = "SystemPropertyValue";
+        String testVal2 = "envValue";
+        System.setProperty(TEST_KEY, testVal1);
+        setEnv(TEST_KEY, testVal2);
+        PersoniumUnitConfig.reload();
+        assertEquals(testVal1, PersoniumUnitConfig.get(TEST_KEY));
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static void setEnv(String key, String value) throws Exception {
+        Map<String, String> newEnv = new HashMap<>();
+        if (value == null) {
+            newEnv.remove(key);
+        } else {
+            newEnv.put(key, value);
+        }
+        Class[] classes = Collections.class.getDeclaredClasses();
+        Map<String, String> env = System.getenv();
+        for (Class cl : classes) {
+            if ("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
+                Field field = cl.getDeclaredField("m");
+                field.setAccessible(true);
+                Object obj = field.get(env);
+                Map<String, String> map = (Map<String, String>) obj;
+                map.clear();
+                map.putAll(newEnv);
+            }
+        }
     }
 }
