@@ -35,9 +35,7 @@ import java.nio.file.Files;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -70,16 +68,16 @@ public class DavMetadataFileTest {
     private DavMetadataFile davMetadataFile;
 
     /** Test dir. */
-    private File testDir;
+    private static File testDir;
 
     /** UnitTest path. */
-    private String unitTestPath;
+    private static String unitTestPath;
 
     /**
-     * Before.
+     * BeforeClass.
      */
-    @Before
-    public void before() {
+    @BeforeClass
+    public static void beforeClass() {
         unitTestPath = PersoniumUnitConfig.get("io.personium.core.test.unitTest.root");
         if (unitTestPath != null) {
             unitTestPath += "/" + CLASS_NAME + "/";
@@ -94,8 +92,8 @@ public class DavMetadataFileTest {
     /**
      * AfterClass.
      */
-    @After
-    public void afterClass() {
+    @AfterClass
+    public static void afterClass() {
         if (testDir != null && testDir.exists()) {
             testDir.delete();
         }
