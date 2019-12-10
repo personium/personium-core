@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.jersey;
+package io.personium.test.revproxy;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,6 +30,10 @@ import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
+import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.utils.UrlUtils;
 
 /**

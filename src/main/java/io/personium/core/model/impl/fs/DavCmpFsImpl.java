@@ -1181,12 +1181,12 @@ public class DavCmpFsImpl implements DavCmp {
         if (this.box != null) {
             //For ACLs below the Box level, the URL of the Box resource
             //Since cell URLs are attached with slashes in concatenation, erase the URL if it ends with a slash.
-            result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl().replaceFirst("/$", ""),
+            result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl(),
                     this.box.getName(), "");
         } else {
             //In case of Cell level ACL, the resource URL of default box
             //Since cell URLs are attached with slashes in concatenation, erase the URL if it ends with a slash.
-            result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl().replaceFirst("/$", ""),
+            result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl(),
                     Box.MAIN_BOX_NAME, "");
         }
         return result;
