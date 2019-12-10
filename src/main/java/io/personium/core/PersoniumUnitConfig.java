@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -494,25 +495,25 @@ public class PersoniumUnitConfig {
         PersoniumCoreAuthnException.loadConfig();
     }
 
+    private static final Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
     /** singleton. */
-    private static PersoniumUnitConfig singleton = new PersoniumUnitConfig();
+    private static final PersoniumUnitConfig SINGLETON = new PersoniumUnitConfig();
 
-    static Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
 
     /** Property entity that stores the setting value.*/
     private final Properties props = new Properties();
 
-    /** Property entity that stores setting values to be overridden.*/
-    private final Properties propsOverride = new Properties();
+    /** status. */
+    public enum Status {
+        NOT_READ_YET,
+        DEFAULT,
+        READ_FROM_FILE_ON_CLASSPATH,
+        READ_FROM_SPECIFIED_FILE
+    }
 
-    /** status */
-    public static final int STATUS_NOT_READ_YET = 0;
-    public static final int STATUS_DEFAULT = 1;
-    public static final int STATUS_READ_FROM_FILE_ON_CLASSPATH = 2;
-    public static final int STATUS_READ_FROM_SPECIFIED_FILE = 3;
-    public int status = STATUS_NOT_READ_YET;
-    public static int getStatus() {
-        return singleton.status;
+    public Status status = Status.NOT_READ_YET;
+    public static Status getStatus() {
+        return SINGLETON.status;
     }
 
 
@@ -528,63 +529,31 @@ public class PersoniumUnitConfig {
      * Reload the settings.
      */
     private synchronized void doReload() {
-        Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
         Properties properties = getUnitConfigDefaultProperties();
         Properties propertiesOverride = getPersoniumConfigProperties();
-        Properties sysProps = System.getProperties();
-        //When reading succeeds, replace with member variable
-        if (!properties.isEmpty()) {
-            this.props.clear();
-            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                if (!(entry.getKey() instanceof String)) {
-                    continue;
-                }
-                this.props.setProperty((String) entry.getKey(), (String) entry.getValue());
-            }
-        }
-        if (!propertiesOverride.isEmpty()) {
-            this.propsOverride.clear();
-            for (Map.Entry<Object, Object> entry : propertiesOverride.entrySet()) {
-                if (!(entry.getKey() instanceof String)) {
-                    continue;
-                }
-                this.propsOverride.setProperty((String) entry.getKey(), (String) entry.getValue());
-            }
-        }
         Map<String, String> env = System.getenv();
-        for (String key : env.keySet()) {
-            if (!key.startsWith("io.personium.")) {
-                continue;
-            }
-            String value = env.get(key);
-            if (value == null) {
-                continue;
-            }
-            log.info("From Env Vars, overriding config : " + key + "=" + value);
-            this.props.setProperty(key, value);
-        }
+        Properties sysProps = System.getProperties();
 
-        for (Object keyObj : propsOverride.keySet()) {
-            String key = (String) keyObj;
-            String value = this.propsOverride.getProperty(key);
-            if (value == null) {
-                continue;
+        this.props.clear();
+        overrideConf(properties, "default");
+        overrideConf(propertiesOverride, "config file");
+        overrideConf(env, "env vars");
+        overrideConf(sysProps, "system props");
+    }
+
+    private void overrideConf(Map<?, ?> propsOverride, String from) {
+        Map<String, String> override = propsOverride.entrySet().stream()
+            .filter(e -> e.getKey() instanceof String && e.getValue() instanceof String)
+            .filter(e -> ((String) e.getKey()).startsWith("io.personium."))
+            .filter(e -> e.getValue() != null)
+            .collect(Collectors.toMap(e -> (String) e.getKey(), e -> (String) e.getValue()));
+
+        override.forEach((key, value) -> {
+            if (!from.equals("default")) {
+                log.debug("From " + from + ", overriding config : " + key + "=" + value);
             }
-            log.info("From config file, overriding config : " + key + "=" + value);
             this.props.setProperty(key, value);
-        }
-        for (Object keyObj : sysProps.keySet()) {
-            String key = (String) keyObj;
-            if (!key.startsWith("io.personium.")) {
-                continue;
-            }
-            String value = sysProps.getProperty(key);
-            if (value == null) {
-                continue;
-            }
-            log.info("From system props, overriding config : " + key + "=" + value);
-            this.props.setProperty(key, value);
-        }
+        });
     }
 
     private static boolean isSpaceSeparatedValueIncluded(String spaceSeparatedValue, String testValue) {
@@ -631,7 +600,6 @@ public class PersoniumUnitConfig {
      * @return configured Properties
      */
     protected Properties getPersoniumConfigProperties() {
-        Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
         Properties propertiesOverride = new Properties();
         String configFilePath = System.getProperty(KEY_CONFIG_FILE);
         InputStream is = getConfigFileInputStream(configFilePath);
@@ -640,7 +608,7 @@ public class PersoniumUnitConfig {
                 propertiesOverride.load(is);
             } else {
                 log.debug("[personium-unit-config.properties] file not found on the classpath. using default config.");
-                this.status = STATUS_DEFAULT;
+                this.status = Status.DEFAULT;
             }
         } catch (IOException e) {
             log.debug("IO Exception when loading [personium-unit-config.properties] file.");
@@ -663,7 +631,7 @@ public class PersoniumUnitConfig {
      */
     protected InputStream getConfigFileInputStream(String configFilePath) {
         InputStream configFileInputStream = null;
-        this.status = STATUS_READ_FROM_FILE_ON_CLASSPATH;
+        this.status = Status.READ_FROM_FILE_ON_CLASSPATH;
         if (configFilePath == null) {
             configFileInputStream = PersoniumUnitConfig.class.getClassLoader().getResourceAsStream(
                     "personium-unit-config.properties");
@@ -675,7 +643,7 @@ public class PersoniumUnitConfig {
             File configFile = new File(configFilePath);
             configFileInputStream = new FileInputStream(configFile);
             log.info("personium-unit-config.properties from system properties.");
-            this.status = STATUS_READ_FROM_SPECIFIED_FILE;
+            this.status = Status.READ_FROM_SPECIFIED_FILE;
         } catch (FileNotFoundException e) {
             //If there is no file in the specified path, read the file on the class path
             configFileInputStream = PersoniumUnitConfig.class.getClassLoader().getResourceAsStream(
@@ -813,7 +781,7 @@ public class PersoniumUnitConfig {
      * @return property list object
      */
     public static Properties getProperties() {
-        return singleton.props;
+        return SINGLETON.props;
     }
 
     /**
@@ -822,7 +790,7 @@ public class PersoniumUnitConfig {
      * @return setting value
      */
     public static String get(final String key) {
-        return singleton.doGet(key);
+        return SINGLETON.doGet(key);
     }
 
     /**
@@ -831,7 +799,7 @@ public class PersoniumUnitConfig {
      * @param value value
      */
     public static void set(final String key, final String value) {
-        singleton.doSet(key, value);
+        SINGLETON.doSet(key, value);
     }
 
     /**
@@ -1673,7 +1641,7 @@ public class PersoniumUnitConfig {
      * Reload the configuration information.
      */
     public static void reload() {
-        singleton.doReload();
+        SINGLETON.doReload();
     }
 
     /**

@@ -527,7 +527,7 @@ public class PersoniumEvent implements Serializable {
             }
             if (this.roles == null) {
                 List<Role> roleList = builder.davRsCmp.getAccessContext().getRoleList();
-                List<String> list = roleList.stream().map(role -> role.createUrl()).collect(Collectors.toList());
+                List<String> list = roleList.stream().map(role -> role.toRoleInstanceURL()).collect(Collectors.toList());
                 this.roles = String.join(",", list);
             }
         }

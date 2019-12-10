@@ -402,7 +402,7 @@ public class CellEsImpl extends Cell {
         }
         String roleName = (String) oe.getProperty("Name").getValue();
         Role roleObj = new Role(roleName, boxName, schema, this.getUrl());
-        return roleObj.createUrl();
+        return roleObj.toRoleInstanceURL();
     }
 
     @Override
@@ -669,7 +669,7 @@ public class CellEsImpl extends Cell {
 
                 //Match with the rolls in the token
                 for (Role tokenRole : token.getRoleList()) {
-                    if (!tokenRole.createUrl().equals(esExtRole)) {
+                    if (!tokenRole.toRoleInstanceURL().equals(esExtRole)) {
                         continue;
                     }
                     //Look at all link information of ExtCell-Role and wash out the roll for cell which has accessed this time.

@@ -36,6 +36,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -70,13 +72,15 @@ import io.personium.test.utils.TestMethodUtils;
 import io.personium.test.utils.UrlUtils;
 
 /**
- * MKCOLのテスト.
+ * Test for MKCOL.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class CollectionTest extends PersoniumTest {
+    static Logger log = LoggerFactory.getLogger(CollectionTest.class);
+
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public CollectionTest() {
         super(new PersoniumCoreApplication());
@@ -2014,28 +2018,29 @@ public class CollectionTest extends PersoniumTest {
      */
     @Test
     public final void BOX_ACL異常系_大文字やハイフンを含むRole名をACL登録できることの確認() {
-        String path = "box1";
-        String testcell = "testcell1";
+        String testcell = Setup.TEST_CELL1;
         String token = AbstractCase.MASTER_TOKEN_NAME;
+        String boxName = Setup.TEST_BOX1;
 
         String[] roles = {"RoleName", "role-name" };
         try {
             for (String role : roles) {
                 try {
-                    // 前準備
+                    // Preparation
                     // 名前に大文字を含むロール登録
-                    RoleUtils.create(testcell, token, role, path, HttpStatus.SC_CREATED);
+                    // Box bount but the box does not have the schema
+                    RoleUtils.create(testcell, token, role, boxName, HttpStatus.SC_CREATED);
 
                     // ACLの設定
                     DavResourceUtils.setACLwithBox(testcell, token, HttpStatus.SC_OK,
-                            path, "", "box/acl-setting.txt", role, path, "<D:write/>", "none");
+                            boxName, "", "box/acl-setting.txt", role, boxName, "<D:write/>", "none");
 
                     // ACLの確認
-                    TResponse tresponseWebDav = CellUtils.propfind(testcell + "/" + path,
+                    TResponse tresponseWebDav = CellUtils.propfind(testcell + "/" + boxName,
                             TOKEN, "0", HttpStatus.SC_MULTI_STATUS);
 
                     // PROPFOINDレスポンスボディの確認
-                    String resorce = UrlUtils.boxRoot(testcell, path);
+                    String boxUrl = UrlUtils.boxRoot(testcell, boxName);
                     Element root = tresponseWebDav.bodyAsXml().getDocumentElement();
                     List<Map<String, List<String>>> list = new ArrayList<Map<String, List<String>>>();
                     Map<String, List<String>> map = new HashMap<String, List<String>>();
@@ -2043,13 +2048,14 @@ public class CollectionTest extends PersoniumTest {
                     rolList.add("write");
                     map.put(role, rolList);
                     list.add(map);
+                    log.info(CommonUtils.nodeToString(root));
 
-                    TestMethodUtils.aclResponseTest(root, resorce, list, 1,
-                            UrlUtils.roleResource(testcell, path, ""), null);
+                    TestMethodUtils.aclResponseTest(root, boxUrl, list, 1,
+                            UrlUtils.roleResource(testcell, boxName, ""), null);
 
                 } finally {
                     // Role削除
-                    RoleUtils.delete(testcell, token, role, path);
+                    RoleUtils.delete(testcell, token, role, boxName);
                 }
             }
         } finally {

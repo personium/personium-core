@@ -20,8 +20,14 @@ package io.personium.core;
 import static io.personium.core.PersoniumUnitConfig.UNIT_PORT;
 import static io.personium.core.PersoniumUnitConfig.UNIT_SCHEME;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -40,14 +46,37 @@ import io.personium.test.categories.Unit;
 @PrepareForTest(CommonUtils.class)
 @Category({ Unit.class })
 public class PersoniumUnitConfigTest {
+    private static final String TEST_KEY = "io.personium.test.key";
 
     @BeforeClass
     public static void beforeClass() {
     }
+
+    @Before
+    public void before() {
+        clear();
+    }
+
+    @After
+    public void after() {
+    }
+
     @AfterClass
     public static void afterClass() {
+        clear();
         PersoniumUnitConfig.reload();
     }
+
+    private static void clear() {
+        System.clearProperty(TEST_KEY);
+        System.clearProperty(PersoniumUnitConfig.KEY_CONFIG_FILE);
+        try {
+            setEnv(TEST_KEY, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Test getBaseUrl().
      * normal.
@@ -81,12 +110,98 @@ public class PersoniumUnitConfigTest {
         assertEquals("https://192.168.1.10/", PersoniumUnitConfig.getBaseUrl());
     }
 
+    /**
+     * getConfigFileInputStream should, when existing file path is specified, then return its InputStream.
+     */
+    @Test
+    public void getConfigFileInputStream_Should_When_ExistingFileSpecified_Then_Return_ItsInputStream() {
+        // This file exists in test/resources/
+        String configFilePath = ClassLoader.getSystemResource("personium-unit-config.properties.unit").getPath();
+
+        System.setProperty(PersoniumUnitConfig.KEY_CONFIG_FILE, configFilePath);
+        PersoniumUnitConfig.reload();
+        assertEquals("confValue", PersoniumUnitConfig.get(TEST_KEY));
+    }
+
+    /**
+     * getPersoniumConfigProperties_ShouldReturnEmptyProperty_IfNoValidConfigFileSpecified.
+     */
+    @Test
+    public void getPersoniumConfigProperties_ShouldReturnEmptyProperty_IfNoValidConfigFileSpecified()  {
+        System.setProperty(PersoniumUnitConfig.KEY_CONFIG_FILE, "some-non-exisiting/path/unit.properties");
+        PersoniumUnitConfig.reload();
+        assertNotEquals(PersoniumUnitConfig.Status.READ_FROM_SPECIFIED_FILE, PersoniumUnitConfig.getStatus());
+    }
+
+    /**
+     * reload_ShouldInclude_EnvironmentVariables.
+     * @throws Exception exception
+     */
+    @Test
+    public void reload_ShouldInclude_EnvironmentVariables() throws Exception {
+        String testVal = "envValue";
+        setEnv(TEST_KEY, testVal);
+        PersoniumUnitConfig.reload();
+        assertEquals(testVal, PersoniumUnitConfig.get(TEST_KEY));
+    }
+
+    /**
+     * reload_ShouldInclude_SystemProperies.
+     */
     @Test
     public void reload_ShouldInclude_SystemProperies() {
-        String testKey = "io.personium.test.key";
-        String testVal = "testValue";
-        System.setProperty(testKey, testVal);
+        String testVal = "SystemPropertyValue";
+        System.setProperty(TEST_KEY, testVal);
         PersoniumUnitConfig.reload();
-        assertEquals(testVal, PersoniumUnitConfig.get(testKey));
+        assertEquals(testVal, PersoniumUnitConfig.get(TEST_KEY));
+    }
+
+    /**
+     * Loading configuration priority is:
+     *   1. System property
+     *   2. Environment variable
+     *   3. Configuration file
+     *   4. Default configuration file
+     */
+
+    /**
+     * reload_ShouldInclude_EnvValue_whenConfFileAndEnvironmentVariables.
+     * @throws Exception exception
+     */
+    @Test
+    public void reload_ShouldInclude_EnvValue_whenConfFileAndEnvironmentVariables() throws Exception {
+        String configFilePath = ClassLoader.getSystemResource("personium-unit-config.properties.unit").getPath();
+        System.setProperty(PersoniumUnitConfig.KEY_CONFIG_FILE, configFilePath);
+        String testVal = "envValue";
+        setEnv(TEST_KEY, testVal);
+        PersoniumUnitConfig.reload();
+        assertEquals(testVal, PersoniumUnitConfig.get(TEST_KEY));
+    }
+
+    /**
+     * reload_ShouldInclude_SystemProperies_whenSystemProperiesAndEnvironmentVariables.
+     * @throws Exception exception
+     */
+    @Test
+    public void reload_ShouldInclude_SystemProperies_whenSystemProperiesAndEnvironmentVariables() throws Exception {
+        String testVal1 = "SystemPropertyValue";
+        String testVal2 = "envValue";
+        System.setProperty(TEST_KEY, testVal1);
+        setEnv(TEST_KEY, testVal2);
+        PersoniumUnitConfig.reload();
+        assertEquals(testVal1, PersoniumUnitConfig.get(TEST_KEY));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    private static void setEnv(String key, String value) throws Exception {
+        Map<String, String> env = System.getenv();
+        Field field = env.getClass().getDeclaredField("m");
+        field.setAccessible(true);
+        Map<String, String> sysEnv = (Map<String, String>) field.get(env);
+        if (value == null) {
+            sysEnv.remove(key);
+        } else {
+            sysEnv.put(key, value);
+        }
     }
 }
