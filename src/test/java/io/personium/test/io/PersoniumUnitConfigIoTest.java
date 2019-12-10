@@ -24,19 +24,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 
 /**
  * Test for PersoniumUnitConfig.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(CommonUtils.class)
 @Category({ Unit.class })
 public class PersoniumUnitConfigIoTest extends PersoniumUnitConfig {
 
@@ -46,6 +40,7 @@ public class PersoniumUnitConfigIoTest extends PersoniumUnitConfig {
     @AfterClass
     public static void afterClass() {
         PersoniumUnitConfig.reload();
+        System.clearProperty(PersoniumUnitConfig.KEY_CONFIG_FILE);
     }
 
     /**
