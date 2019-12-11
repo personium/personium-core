@@ -390,13 +390,14 @@
                         <configuration>
                             <skip>false</skip>
                             <includes>
-                                <include>**/test/jersey/**/*Test.java</include>
+                                <include>io/personium/test/**/*Test.java</include>
                             </includes>
                             <excludes>
+                                <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
                                 <!-- Tests that fail when running tests from outside for various reasons. -->
                                 <!-- TODO Should be fixed so that all tests are successful. -->
+                                <!--
                                 <exclude>**/engine/ServiceRelayTest.java</exclude>
-                                <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
                                 <exclude>**/performance/**/*Test.java</exclude>
                                 <exclude>**/jersey/StatusTest.java</exclude>
                                 <exclude>**/jersey/cell/CellBulkDeletionTest.java</exclude>
@@ -410,7 +411,19 @@
                                 <exclude>**/jersey/cell/auth/ImplicitFlowTest.java</exclude>
                                 <exclude>**/jersey/cell/auth/X509AuthTest.java</exclude>
                                 <exclude>**/jersey/cell/ctl/ExtCellReadTest.java</exclude>
+                                -->
                             </excludes>
+                            <systemPropertyVariables>
+                                <jersey.test.port>9998</jersey.test.port>
+                                <pcs.distribution>standard</pcs.distribution>
+                                <io.personium.core.lock.type>memcached</io.personium.core.lock.type>
+                                <io.personium.core.cache.type>memcached</io.personium.core.cache.type>
+                                <io.personium.core.cache.cell.enabled>true</io.personium.core.cache.cell.enabled>
+                                <io.personium.core.cache.box.enabled>true</io.personium.core.cache.box.enabled>
+                                <io.personium.core.cache.schema.enabled>true</io.personium.core.cache.schema.enabled>
+                                <io.personium.core.binaryData.fsync.enabled>false</io.personium.core.binaryData.fsync.enabled>
+                                <io.personium.core.security.secret16>gv7hpmmf5siwj5by</io.personium.core.security.secret16>
+                            </systemPropertyVariables>
                         </configuration>
                     </execution>
                 </executions>
