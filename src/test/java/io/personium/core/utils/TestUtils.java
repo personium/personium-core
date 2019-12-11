@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.auth.token.Role;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
-import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.core.model.jaxb.Ace;
 import io.personium.core.model.jaxb.Acl;
 
@@ -24,14 +23,7 @@ public class TestUtils {
     static Logger log = LoggerFactory.getLogger(TestUtils.class);
     public static final Date DATE_PUBLISHED = DateTime.parse("2014-12-10T00:00:00.000+0900").toDate();
     public static final Date DATE_UPDATED = DateTime.parse("2019-11-09T15:26:00.000+0900").toDate();
-    public static Cell mockCell(String cellUrl) {
-        return new CellEsImpl() {
-            @Override
-            public String getUrl() {
-                return cellUrl;
-            };
-        };
-    }
+
     public static Box mockBox(Cell cell, String boxName, String boxSchemaUrl) {
         return new Box(cell, boxName, boxSchemaUrl, UUID.randomUUID().toString() , TestUtils.DATE_PUBLISHED.getTime());
     }

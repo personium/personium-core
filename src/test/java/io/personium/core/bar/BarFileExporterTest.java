@@ -71,6 +71,7 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.ModelFactory;
+import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
 import io.personium.core.model.impl.fs.DavCmpFsImplTest.MockDavCmpFsImpl;
 import io.personium.core.model.jaxb.Acl;
@@ -120,6 +121,14 @@ public class BarFileExporterTest {
     public static void afterClass() throws Exception {
         PersoniumUnitConfig.reload();
     }
+    public static Cell mockCell(String cellUrl) {
+        return new CellEsImpl() {
+            @Override
+            public String getUrl() {
+                return cellUrl;
+            };
+        };
+    }
     public static BoxRsCmp mockBoxRsComp(Box box) {
         // Test Settings
 
@@ -146,7 +155,7 @@ public class BarFileExporterTest {
 
     public static BarFileExporter prepareBarFileExporter(String cellUrl, String boxName, String boxSchemaUrl) {
         // prepare mocks for testing
-        Cell cell = TestUtils.mockCell(cellUrl);
+        Cell cell = mockCell(cellUrl);
         Box box = TestUtils.mockBox(cell, boxName, boxSchemaUrl);
         BoxRsCmp boxRsCmpMock = mockBoxRsComp(box);
 
