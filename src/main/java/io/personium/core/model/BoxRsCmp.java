@@ -139,7 +139,7 @@ public class BoxRsCmp extends DavRsCmp {
     }
 
     /**
-     * Get rootprops xml object.
+     * Get rootprops xml object for bar file.
      * @return Multistatus xml object
      */
     public Multistatus getRootProps() {

@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -62,6 +61,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import io.personium.common.auth.token.Role;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Box;
@@ -70,10 +71,8 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.ModelFactory;
-import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
 import io.personium.core.model.impl.fs.DavCmpFsImplTest.MockDavCmpFsImpl;
-import io.personium.core.model.jaxb.Ace;
 import io.personium.core.model.jaxb.Acl;
 import io.personium.core.utils.TestUtils;
 import io.personium.core.utils.UriUtils;
@@ -88,10 +87,9 @@ public class BarFileExporterTest {
     public static String BOX_SCHEMA_URL;
     public static final String BOX_NAME = "box";
 
-    public static byte[] barFileBytes;
-    public static List<ZipEntry> barZipEntryList;
-    public static Map<String, ZipEntry> barZipEntryMap;
-    public static Map<String, byte[]> barZipContentMap;
+    public List<ZipEntry> barZipEntryList;
+    public Map<String, ZipEntry> barZipEntryMap;
+    public Map<String, byte[]> barZipContentMap;
     static Logger log = LoggerFactory.getLogger(BarFileExporterTest.class);
 
     /**
@@ -102,20 +100,18 @@ public class BarFileExporterTest {
     @BeforeClass
     public static void beforeClass() {
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
-        // CommonUtils.setFQDN("unit.example");
+        CommonUtils.setFQDN("unit.example");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_SCHEME, "https");
         CELL_URL = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:user1:/");
         BOX_SCHEMA_URL = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:app1:/");
         PersoniumUnitConfig.set(PersoniumUnitConfig.BAR.BAR_TMP_DIR, "/tmp/");
-        
+
         PowerMockito.mockStatic(ModelFactory.ODataCtl.class);
         CellCtlODataProducer mCellCtlProducer = Mockito.mock(CellCtlODataProducer.class);
         PowerMockito.when(ModelFactory.ODataCtl.cellCtl(any())).thenReturn(mCellCtlProducer);
         EntitiesResponse res = Responses.entities(new ArrayList<>(), EdmEntitySet.newBuilder().build(), 0, "");
         PowerMockito.when(mCellCtlProducer.getNavProperty(anyString(), any(), anyString(), any())).thenReturn(res);
-        
-        prepareBarFile();
     }
     /**
      * Reset Personium Unit configuration.
@@ -124,43 +120,15 @@ public class BarFileExporterTest {
     public static void afterClass() throws Exception {
         PersoniumUnitConfig.reload();
     }
-
-
-    public static Cell mockCell(String cellUrl) {
-        return new CellEsImpl() {
-            @Override
-            public String getUrl() {
-                return cellUrl;
-            };
-        };
-    }
-    public static Box mockBox(Cell cell, String boxName, String boxSchemaUrl) {
-        return new Box(cell, boxName, boxSchemaUrl, UUID.randomUUID().toString() , TestUtils.DATE_PUBLISHED.getTime());
-    }
-    public static Acl mockAcl(Box box, Map<String, List<String>> aclSettings) {
-        Acl acl =  new Acl();
-        acl.setBase(box.getCell().getUrl() + box.getName() + "/");
-
-        for (String href : aclSettings.keySet()) {
-            List<String> privilegeList = aclSettings.get(href);
-            Ace ace = new Ace();
-            ace.setPrincipalHref(href);
-            for (String priv : privilegeList) {
-                ace.addGrantedPrivilege(priv);
-            }
-            acl.getAceList().add(ace);
-        }
-        return acl;
-    }
     public static BoxRsCmp mockBoxRsComp(Box box) {
         // Test Settings
 
         // prepare ACL
-        Map<String, List<String>> aclSettings = new HashMap<>();
+        Map<Role, List<String>> aclSettings = new HashMap<>();
         List<String> grantList = new ArrayList<>();
         grantList.add("read");
-        aclSettings.put("role1", grantList);
-        Acl acl1 = mockAcl(box, aclSettings);
+        aclSettings.put(new Role("role1", null, null, box.getCell().getUrl()), grantList);
+        Acl acl1 = TestUtils.mockAcl(box, aclSettings);
 
         // Prepare DavCmp structure
         MockDavCmpFsImpl dcCell = new MockDavCmpFsImpl(box.getCell(), null);
@@ -176,17 +144,17 @@ public class BarFileExporterTest {
         return new BoxRsCmp(cellCmp, dcBox, ac, box);
     }
 
-    public static byte[] responseToBytes(StreamingOutput so) {
-        byte [] byteArray = null;
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
-            so.write(baos);
-            byteArray = baos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return byteArray;
+    public static BarFileExporter prepareBarFileExporter(String cellUrl, String boxName, String boxSchemaUrl) {
+        // prepare mocks for testing
+        Cell cell = TestUtils.mockCell(cellUrl);
+        Box box = TestUtils.mockBox(cell, boxName, boxSchemaUrl);
+        BoxRsCmp boxRsCmpMock = mockBoxRsComp(box);
+
+        // create bar file response
+        return new BarFileExporter(boxRsCmpMock);
     }
-    public static void readExportedBarFile(byte[] barBytes) {
+
+    public void readExportedBarFile(byte[] barBytes) {
         barZipEntryList = new ArrayList<>();
         barZipEntryMap = new HashMap<>();
         barZipContentMap = new HashMap<>();
@@ -218,22 +186,6 @@ public class BarFileExporterTest {
         }
     }
 
-    public static void prepareBarFile() {
-        // prepare mocks for testing
-        Cell cell = mockCell(CELL_URL);
-        Box box = mockBox(cell, BOX_NAME, BOX_SCHEMA_URL);
-        BoxRsCmp boxRsCmpMock = mockBoxRsComp(box);
-
-        // create bar file response
-        BarFileExporter exporter =  new BarFileExporter(boxRsCmpMock);
-        //  ... this part is the core of this unit test ...
-        Response res = exporter.export();
-
-        // parse the response bar file contents
-        StreamingOutput so = (StreamingOutput)res.getEntity();
-        byte[] barFileBytes = responseToBytes(so);
-        readExportedBarFile(barFileBytes);
-    }
 
     @Before
     public void before() throws Exception {
@@ -244,6 +196,14 @@ public class BarFileExporterTest {
      */
     @Test
     public void export_BarFile_ShouldInclude_NecessaryZipEntries() {
+        BarFileExporter exporter = prepareBarFileExporter(CELL_URL, BOX_NAME, BOX_SCHEMA_URL);
+        Response res = exporter.export();
+
+        // parse the response bar file contents
+        StreamingOutput so = (StreamingOutput)res.getEntity();
+        byte[] barFileBytes = TestUtils.responseToBytes(so);
+        readExportedBarFile(barFileBytes);
+
         ZipEntry meta = barZipEntryMap.get("00_meta/");
         assertNotNull(meta);
         assertTrue(meta.isDirectory());
@@ -280,6 +240,14 @@ public class BarFileExporterTest {
      */
     @Test
     public void export_RootpropsXml_ShouldHave_ValidContents() throws Exception {
+        BarFileExporter exporter = prepareBarFileExporter(CELL_URL, BOX_NAME, BOX_SCHEMA_URL);
+        Response res = exporter.export();
+        // parse the response bar file contents
+        StreamingOutput so = (StreamingOutput)res.getEntity();
+        byte[] barFileBytes = TestUtils.responseToBytes(so);
+        readExportedBarFile(barFileBytes);
+
+        // Check the bar file contents
         byte[] b = barZipContentMap.get("00_meta/90_rootprops.xml");
         String rootpropsXml = new String(b);
         log.info("00_meta/90_rootprops.xml\n----\n" + rootpropsXml + "\n----");
@@ -299,6 +267,11 @@ public class BarFileExporterTest {
         String href = xpath.evaluate("//href[position()=1]/text()", doc);
         log.info("//href[position()=1]/text() = " + href);
         assertEquals("personium-localbox:/", href);
+
+        // should not include inherited ace (count of inherited tag should be 0)
+        String countInherited = xpath.evaluate("count(//inherited)", doc);
+        log.info("count(//inherited) = " + countInherited);
+        assertEquals("0", countInherited);
     }
 
     /**
@@ -307,6 +280,14 @@ public class BarFileExporterTest {
      */
     @Test
     public void export_ManifestJson_ShouldHave_ValidContents() throws Exception {
+        BarFileExporter exporter = prepareBarFileExporter(CELL_URL, BOX_NAME, BOX_SCHEMA_URL);
+        Response res = exporter.export();
+        // parse the response bar file contents
+        StreamingOutput so = (StreamingOutput)res.getEntity();
+        byte[] barFileBytes = TestUtils.responseToBytes(so);
+        readExportedBarFile(barFileBytes);
+
+        // Check the bar file contents
         byte[] b = barZipContentMap.get("00_meta/00_manifest.json");
         String manifestJson = new String(b);
         log.info("00_meta/00_manifest.json\n----\n" + manifestJson + "\n----");
