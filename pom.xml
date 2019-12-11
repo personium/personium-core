@@ -370,11 +370,14 @@
                 <version>2.19.1</version>
                 <configuration>
                     <argLine>${jacocoArgs} -Xms512m -Xmx1024m</argLine>
-                    <excludes>
-                        <exclude>**/engine/ServiceRelayTest.java</exclude>
-                        <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
-                        <exclude>**/performance/**/*Test.java</exclude>
-                    </excludes>
+                    <includes>
+                        <include>io/personium/core/**/*Test.java</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <io.personium.core.lock.type>inProcess</io.personium.core.lock.type>
+                        <io.personium.core.cache.type>inProcess</io.personium.core.cache.type>
+                        <io.personium.core.security.secret16>gv7hpmmf5siwj5by</io.personium.core.security.secret16>
+                    </systemPropertyVariables>
                 </configuration>
                 <executions>
                     <execution>
@@ -394,6 +397,7 @@
                                 <!-- TODO Should be fixed so that all tests are successful. -->
                                 <exclude>**/engine/ServiceRelayTest.java</exclude>
                                 <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
+                                <exclude>**/performance/**/*Test.java</exclude>
                                 <exclude>**/jersey/StatusTest.java</exclude>
                                 <exclude>**/jersey/cell/CellBulkDeletionTest.java</exclude>
                                 <exclude>**/jersey/cell/UnitUserCellCRUDTest.java</exclude>
