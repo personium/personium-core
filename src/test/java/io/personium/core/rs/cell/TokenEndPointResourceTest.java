@@ -19,10 +19,9 @@ package io.personium.core.rs.cell;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.anyString;
-
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
@@ -544,7 +543,6 @@ public class TokenEndPointResourceTest {
     @Test
     public void token_TransCellAccessToken_ShouldHave_RolesInRoleClassUrl() throws Exception {
         // Role r1 = new Role("MyBoardViewer", "box1", this.mockCell.getUnitUrl() + "appcell/", this.mockCell.getUnitUrl());
-        // System.out.println(r1.schemeCreateUrlForTranceCellToken(this.mockCell.getUrl()));
 
         // Prepare form contents
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
@@ -560,9 +558,8 @@ public class TokenEndPointResourceTest {
                 .readObject();
         String atStr = json.getString("access_token");
         TransCellAccessToken tcat = TransCellAccessToken.parse(atStr);
-        // System.out.println(tcat.toSamlString());
         for (Role role : tcat.getRoleList()) {
-            System.out.println(role.toRoleClassURL());
+            log.info(role.toRoleClassURL());
         }
         assertEquals(this.role1.toRoleClassURL(), tcat.getRoleList().get(0).toRoleClassURL());
     }
@@ -584,7 +581,7 @@ public class TokenEndPointResourceTest {
         roleList.add(role2);
         TransCellAccessToken transCellAccessToken = new TransCellAccessToken(issuerCellUrl, issuerCellUrl + "#me",
                 this.mockCell.getUrl(), roleList, "", new String[0]);
-        System.out.println(transCellAccessToken.toSamlString());
+        log.info(transCellAccessToken.toSamlString());
 
         // Prepare form contents
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
@@ -603,7 +600,7 @@ public class TokenEndPointResourceTest {
         VisitorRefreshToken vrt = (VisitorRefreshToken) AbstractOAuth2Token.parse(atStr, this.mockCell.getUrl(),
                 this.mockCell.getUnitUrl());
         for (Role role : vrt.getRoleList()) {
-            System.out.println(role.toRoleClassURL());
+            log.info(role.toRoleClassURL());
         }
         assertEquals(role1.toRoleClassURL(),
                 vrt.getRoleList().get(0).toRoleClassURL());
@@ -626,11 +623,12 @@ public class TokenEndPointResourceTest {
         vrt = (VisitorRefreshToken) AbstractOAuth2Token.parse(tokenStr, this.mockCell.getUrl(),
                 this.mockCell.getUnitUrl());
         for (Role role : vrt.getRoleList()) {
-            System.out.println(role.getName());
+            log.info(role.toRoleClassURL());
         }
-        for (Role role : vrt.getRoleList()) {
-            System.out.println(role.getName());
-        }
+        assertEquals(role1.toRoleClassURL(),
+                vrt.getRoleList().get(0).toRoleClassURL());
+        assertEquals(role2.toRoleClassURL(),
+                vrt.getRoleList().get(1).toRoleClassURL());
 
     }
 }
