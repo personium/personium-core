@@ -448,6 +448,7 @@
                             <test>Setup#reset</test>
                         </configuration>
                     </execution>
+                    <!-- reset-eventlog is necessary to run after reset. -->
                     <execution>
                         <id>reset-eventlog</id>
                         <phase>pre-integration-test</phase>
