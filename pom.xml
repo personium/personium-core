@@ -380,6 +380,13 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+            <!--
+                Prerequisite to run integration-test:
+                  - Following middlewares are setup in localhost.
+                    - ElasticSearch
+                    - ActiveMQ
+                    - Memcached
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
