@@ -93,6 +93,9 @@ public class BarFileExporterTest {
     public Map<String, byte[]> barZipContentMap;
     static Logger log = LoggerFactory.getLogger(BarFileExporterTest.class);
 
+    private BoxRsCmp boxRsCmpMock;
+
+    
     /**
      * Set Personium Unit configuration for the testing.
      *   Unit url = https://unit.example/
@@ -107,12 +110,6 @@ public class BarFileExporterTest {
         CELL_URL = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:user1:/");
         BOX_SCHEMA_URL = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:app1:/");
         PersoniumUnitConfig.set(PersoniumUnitConfig.BAR.BAR_TMP_DIR, "/tmp/");
-
-        PowerMockito.mockStatic(ModelFactory.ODataCtl.class);
-        CellCtlODataProducer mCellCtlProducer = Mockito.mock(CellCtlODataProducer.class);
-        PowerMockito.when(ModelFactory.ODataCtl.cellCtl(any())).thenReturn(mCellCtlProducer);
-        EntitiesResponse res = Responses.entities(new ArrayList<>(), EdmEntitySet.newBuilder().build(), 0, "");
-        PowerMockito.when(mCellCtlProducer.getNavProperty(anyString(), any(), anyString(), any())).thenReturn(res);
     }
     /**
      * Reset Personium Unit configuration.
@@ -153,15 +150,6 @@ public class BarFileExporterTest {
         return new BoxRsCmp(cellCmp, dcBox, ac, box);
     }
 
-    public static BarFileExporter prepareBarFileExporter(String cellUrl, String boxName, String boxSchemaUrl) {
-        // prepare mocks for testing
-        Cell cell = mockCell(cellUrl);
-        Box box = TestUtils.mockBox(cell, boxName, boxSchemaUrl);
-        BoxRsCmp boxRsCmpMock = mockBoxRsComp(box);
-
-        // create bar file response
-        return new BarFileExporter(boxRsCmpMock);
-    }
 
     public void readExportedBarFile(byte[] barBytes) {
         barZipEntryList = new ArrayList<>();
@@ -198,6 +186,14 @@ public class BarFileExporterTest {
 
     @Before
     public void before() throws Exception {
+        PowerMockito.mockStatic(ModelFactory.ODataCtl.class);
+        CellCtlODataProducer mCellCtlProducer = Mockito.mock(CellCtlODataProducer.class);
+        PowerMockito.when(ModelFactory.ODataCtl.cellCtl(any())).thenReturn(mCellCtlProducer);
+        EntitiesResponse res = Responses.entities(new ArrayList<>(), EdmEntitySet.newBuilder().build(), 0, "");
+        Mockito.when(mCellCtlProducer.getNavProperty(anyString(), any(), anyString(), any())).thenReturn(res);
+        Cell cell = mockCell(CELL_URL);
+        Box box = TestUtils.mockBox(cell, BOX_NAME, BOX_SCHEMA_URL);
+        this.boxRsCmpMock = mockBoxRsComp(box);
     }
 
     /**
@@ -205,7 +201,10 @@ public class BarFileExporterTest {
      */
     @Test
     public void export_BarFile_ShouldInclude_NecessaryZipEntries() {
-        BarFileExporter exporter = prepareBarFileExporter(CELL_URL, BOX_NAME, BOX_SCHEMA_URL);
+        log.info("------------");
+        log.info("export_BarFile_ShouldInclude_NecessaryZipEntries");
+        log.info("------------");
+        BarFileExporter exporter = new BarFileExporter(this.boxRsCmpMock);
         Response res = exporter.export();
 
         // parse the response bar file contents
@@ -249,7 +248,10 @@ public class BarFileExporterTest {
      */
     @Test
     public void export_RootpropsXml_ShouldHave_ValidContents() throws Exception {
-        BarFileExporter exporter = prepareBarFileExporter(CELL_URL, BOX_NAME, BOX_SCHEMA_URL);
+        log.info("------------");
+        log.info("export_RootpropsXml_ShouldHave_ValidContents");
+        log.info("------------\n");
+        BarFileExporter exporter = new BarFileExporter(this.boxRsCmpMock);
         Response res = exporter.export();
         // parse the response bar file contents
         StreamingOutput so = (StreamingOutput)res.getEntity();
@@ -289,7 +291,10 @@ public class BarFileExporterTest {
      */
     @Test
     public void export_ManifestJson_ShouldHave_ValidContents() throws Exception {
-        BarFileExporter exporter = prepareBarFileExporter(CELL_URL, BOX_NAME, BOX_SCHEMA_URL);
+        log.info("----");
+        log.info("export_ManifestJson_ShouldHave_ValidContents");
+        log.info("----\n");
+        BarFileExporter exporter = new BarFileExporter(this.boxRsCmpMock);
         Response res = exporter.export();
         // parse the response bar file contents
         StreamingOutput so = (StreamingOutput)res.getEntity();
