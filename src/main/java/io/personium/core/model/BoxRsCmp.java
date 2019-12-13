@@ -139,7 +139,7 @@ public class BoxRsCmp extends DavRsCmp {
     }
 
     /**
-     * Get rootprops xml object.
+     * Get rootprops xml object for bar file.
      * @return Multistatus xml object
      */
     public Multistatus getRootProps() {
@@ -164,7 +164,7 @@ public class BoxRsCmp extends DavRsCmp {
     private List<org.apache.wink.webdav.model.Response> createPropfindResponseList(
             String pathName, String href, DavCmp dCmp) {
         List<org.apache.wink.webdav.model.Response> resList = new ArrayList<org.apache.wink.webdav.model.Response>();
-        resList.add(createDavResponse(pathName, href, dCmp, null, true));
+        resList.add(createDavResponse(pathName, href, dCmp, null, true, true));
         Map<String, DavCmp> childrenMap = dCmp.getChildren();
         for (String childName : childrenMap.keySet()) {
             DavCmp child = childrenMap.get(childName);

@@ -289,7 +289,7 @@
         <repository>
             <id>personium.io</id>
             <name>personium.io</name>
-            <url>http://personium.io/mvnrepo</url>
+            <url>https://personium.io/mvnrepo</url>
         </repository>
         <repository>
             <id>spy</id>
@@ -367,7 +367,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>2.22.2</version>
                 <configuration>
                     <argLine>${jacocoArgs} -Xms512m -Xmx1024m</argLine>
                     <excludes>
@@ -469,7 +469,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.1</version>
+                <version>0.8.3</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -551,7 +551,13 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.1</version>
+                <reportSets>
+	                <reportSet>
+	                    <reports>
+	                        <report>report</report>
+	                    </reports>
+	                </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>

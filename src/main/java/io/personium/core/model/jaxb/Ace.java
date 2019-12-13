@@ -23,6 +23,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
 
 /**
  * D: JAXB object corresponding to ace tag.
@@ -59,10 +63,11 @@ public final class Ace {
      * @param href href value to set
      */
     public void setPrincipalHref(String href) {
-        if (this.principal == null || this.principal.href == null) {
-        throw new IllegalStateException("This principal does not have href");
+        if (this.principal == null) {
+            this.principal = new Principal();
         }
         this.principal.href = href;
+        this.principal.all = null;
     }
 
     /**
@@ -89,6 +94,28 @@ public final class Ace {
             }
         }
         return ret;
+    }
+    /**
+     * Add a granted privilege.
+     * @param privilege
+     */
+    public void addGrantedPrivilege(String privilege) {
+        if (this.grant == null) {
+            this.grant = new Grant();
+            this.grant.privileges = new ArrayList<>();
+        }
+        // TODO After quit using JAXB , this part will be much simpler.
+        // (Privilege body should just be text rather than element)
+        Privilege p = new Privilege();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        Document doc;
+        try {
+            doc = dbf.newDocumentBuilder().newDocument();
+            p.body = doc.createElementNS("DAV:", privilege);
+            this.grant.privileges.add(p);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
