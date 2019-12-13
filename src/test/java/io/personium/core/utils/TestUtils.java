@@ -25,7 +25,7 @@ public class TestUtils {
     public static final Date DATE_UPDATED = DateTime.parse("2019-11-09T15:26:00.000+0900").toDate();
 
     public static Box mockBox(Cell cell, String boxName, String boxSchemaUrl) {
-        return new Box(cell, boxName, boxSchemaUrl, UUID.randomUUID().toString() , TestUtils.DATE_PUBLISHED.getTime());
+        return new Box(cell, boxName, boxSchemaUrl, UUID.randomUUID().toString(), TestUtils.DATE_PUBLISHED.getTime());
     }
     public static Acl mockAcl(Box box, Map<Role, List<String>> aclSettings) {
         Acl acl =  new Acl();
@@ -52,6 +52,4 @@ public class TestUtils {
         }
         return byteArray;
     }
-
-
 }
