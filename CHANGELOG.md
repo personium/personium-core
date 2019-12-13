@@ -1,3 +1,40 @@
+## 1.7.21
+BREAKING CHANGES:
+* Exported bar file now does not use a "personium-localunit:" URL ([#512](https://github.com/personium/personium-core/issues/512))
+  - Base Url in 00_meta/90_rootprops.xml
+    - 1.7.17 and before  
+          https://{cellName}.{domain}/__role/{boxName}
+    - 1.7.18-20:  
+          personium-localunit:{cellName}:/__role/{boxName}
+    - 1.7.21 and later:  
+          https://{cellName}.{domain}/__role/__/
+  - Bar file export / import compatibility    
+    - Bar file exported from 1.7.18-20  
+        Not importable to any version
+    - Bar file exporeted from 1.7.17 and earlier  
+        Importable to any versions (after 1.6.10)
+    - Bar file exporeted from 1.7.21 and later  
+        Importable to any versions (after 1.6.10)
+
+
+* Role Url in TranceCellAccessToken/VisitorRefreshToken are now Role Class URL ([See](https://github.com/personium/personium-lib-common/pull/71))
+
+BUG FIXES:
+* When Unit FQDN is less than 14 letters long, token parsing may possibly fail. ([#518](https://github.com/personium/personium-core/issues/518))
+* Refreshed Visitor Access Token cannot access target Cell's box. ([#516](https://github.com/personium/personium-core/issues/516))
+
+IMPROVEMENTS:
+* Upgraded personium-lib-common to 1.5.3
+* Now Personium unit can also be configured with OS environment variables and system properties.
+  - Configuration priority
+     1. Java system properties
+     1. OS environment variables
+     1. Unit config file (personium-unit-config.properties in class path or any file whose location specified with java system propety "io.personium.configurationFile")
+     1. Default configuration (personium-unit-config-default.properties bundled in personium-core.war file)
+
+NOTES:
+* Use personium-engine 1.5.27 for this version of personium-core
+
 ## 1.7.20
 BUG FIXES:
 * When grant code is used at token end point to issue an access token, the token subject does not have the association with the roles that should be allocated to it. ([#501](https://github.com/personium/personium-core/issues/501))
@@ -714,4 +751,3 @@ BUG FIXES:
 
   - core *[AccessContext.java, DcCoreAuthzException.java, etc.]*:
     Authentication and authorization behavior is corrected to comply with HTTP RFC.
-
