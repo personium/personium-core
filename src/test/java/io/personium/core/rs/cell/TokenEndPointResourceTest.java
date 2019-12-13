@@ -56,7 +56,6 @@ import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmType;
-import org.powermock.api.mockito.PowerMockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +65,7 @@ import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
 import io.personium.core.PersoniumCoreAuthnException;
 import io.personium.core.PersoniumUnitConfig;
@@ -92,7 +92,6 @@ public class TokenEndPointResourceTest {
     private UriInfo mockUriInfo;
     private String xForwadedFor = "1.2.3.4";
     private Role role1 ;
-
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -133,6 +132,7 @@ public class TokenEndPointResourceTest {
         this.role1 = new Role("MyBoardViewer", mockBox.getName(), mockBox.getSchema(), this.mockCell.getUrl());
         roleList.add(this.role1);
         doReturn(roleList).when(this.mockCell).getRoleListForAccount(username);
+        doReturn(roleList).when(this.mockCell).getRoleListHere(Mockito.any());
         doReturn(mockBox).when(this.mockCell).getBoxForSchema(anyString());
         Map<String, String> o = new HashMap<>();
         o.put(Account.P_IP_ADDRESS_RANGE.getName(), null);
@@ -202,7 +202,7 @@ public class TokenEndPointResourceTest {
         doReturn(oew).when(this.mockCell).getAccount("username");
         doReturn(true).when(this.mockCell).authenticateAccount(oew, "password");
 
-        this.tokenEndPointResource = PowerMockito.spy(new TokenEndPointResource(mockCell, this.mockCellRsCmp));
+        this.tokenEndPointResource = new TokenEndPointResource(mockCell, this.mockCellRsCmp);
         this.mockUriInfo = mock(UriInfo.class);
         doReturn(new URI(cellUrl)).when(this.mockUriInfo).getBaseUri();
     }
@@ -564,7 +564,7 @@ public class TokenEndPointResourceTest {
         assertEquals(this.role1.toRoleClassURL(), tcat.getRoleList().get(0).toRoleClassURL());
     }
     @Test
-    public void token_When_SAMLReceived_Then_VisitorRefreshToken_ShouldHave_SameRoles() throws Exception {
+    public void token_TransCellAccessToken_VisitorRefreshToken_ShouldHave_SameRoles_And_VisitorAccessToken_ShouldHave_ProperRoles() throws Exception {
         // prepare App Auth Token
         String clientId = this.mockCell.getUnitUrl() + "appcell/";
         List<Role> roleList = new ArrayList<Role>();
@@ -575,10 +575,10 @@ public class TokenEndPointResourceTest {
         // prepare TCAT
         String issuerCellUrl = this.mockCell.getUnitUrl() + "issuerCell/";
         roleList = new ArrayList<Role>();
-        Role role1 = new Role("MyBoardEditor", "mb", this.mockCell.getUnitUrl() + "appcell/", issuerCellUrl);
-        Role role2 = new Role("MyBoardViewer", "mb", this.mockCell.getUnitUrl() + "appcell/", issuerCellUrl);
-        roleList.add(role1);
+        Role role2 = new Role("MyBoardEditor", "mb", clientId, issuerCellUrl);
+        Role role3 = new Role("MyBoardOwner", "mb", clientId, issuerCellUrl);
         roleList.add(role2);
+        roleList.add(role3);
         TransCellAccessToken transCellAccessToken = new TransCellAccessToken(issuerCellUrl, issuerCellUrl + "#me",
                 this.mockCell.getUrl(), roleList, "", new String[0]);
         log.info(transCellAccessToken.toSamlString());
@@ -591,24 +591,58 @@ public class TokenEndPointResourceTest {
         formParams.add("client_secret", appAuthToken.toTokenString());
         formParams.add("scope", "root");
 
+        // Should Succeed and issue tokens
         Response res = tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
         assertEquals(200, res.getStatus());
-
         JsonObject json = Json.createReader(new ByteArrayInputStream(((String) res.getEntity()).getBytes()))
                 .readObject();
-        String atStr = json.getString("refresh_token");
-        VisitorRefreshToken vrt = (VisitorRefreshToken) AbstractOAuth2Token.parse(atStr, this.mockCell.getUrl(),
+
+        // VisitorLocalAccessToken should have role1 in the form of RoleInstance URL
+        String accTokenStr = json.getString("access_token");
+        VisitorLocalAccessToken vlat = (VisitorLocalAccessToken) AbstractOAuth2Token.parse(accTokenStr, this.mockCell.getUrl(),
+                this.mockCell.getUnitUrl());
+        for (Role role : vlat.getRoleList()) {
+            log.info(role.toRoleInstanceURL());
+        }
+        assertEquals(this.role1.toRoleInstanceURL(),
+                vlat.getRoleList().get(0).toRoleInstanceURL());
+
+        // VisitorRefreshToken should have the same roles (role2,3) in the forms of Role class URL
+        String refTokenStr = json.getString("refresh_token");
+        VisitorRefreshToken vrt  = (VisitorRefreshToken) AbstractOAuth2Token.parse(refTokenStr, this.mockCell.getUrl(),
                 this.mockCell.getUnitUrl());
         for (Role role : vrt.getRoleList()) {
             log.info(role.toRoleClassURL());
         }
-        assertEquals(role1.toRoleClassURL(),
-                vrt.getRoleList().get(0).toRoleClassURL());
         assertEquals(role2.toRoleClassURL(),
+                vrt.getRoleList().get(0).toRoleClassURL());
+        assertEquals(role3.toRoleClassURL(),
                 vrt.getRoleList().get(1).toRoleClassURL());
+    }    
+    @Test
+    public void token_VisitorRefreshToken_VisitorRefreshToken_ShouldHave_SameRoles_And_VisitorAccessToken_ShouldHave_ProperRoles() throws Exception {
+        // prepare App Auth Token
+        String clientId = this.mockCell.getUnitUrl() + "appcell/";
+        List<Role> roleList = new ArrayList<Role>();
+        roleList.add(new Role("confidentialClient", null, null, clientId));
+        TransCellAccessToken appAuthToken = new TransCellAccessToken(clientId, clientId + "#app",
+                this.mockCell.getUrl(), roleList, "", new String[0]);
 
+        // prepare VisitorRefreshToken
+        String issuerCellUrl = this.mockCell.getUnitUrl() + "issuerCell/";
+        roleList = new ArrayList<Role>();
+        Role role2 = new Role("MyBoardEditor", "mb", clientId, issuerCellUrl);
+        Role role3 = new Role("MyBoardOwner", "mb", clientId, issuerCellUrl);
+        roleList.add(role2);
+        roleList.add(role3);
+        VisitorRefreshToken vrt = new VisitorRefreshToken(
+                UUID.randomUUID().toString(), new Date().getTime(),
+                AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
+                this.mockCell.getUrl(), issuerCellUrl + "#me",
+                issuerCellUrl, roleList, clientId + "#c", new String[]{"root"});
 
         // Prepare form contents
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams = new MultivaluedHashMap<String, String>();
         formParams.add("grant_type", OAuth2Helper.GrantType.REFRESH_TOKEN);
         formParams.add("refresh_token", vrt.toTokenString());
@@ -616,19 +650,32 @@ public class TokenEndPointResourceTest {
         formParams.add("client_secret", appAuthToken.toTokenString());
         formParams.add("scope", "root");
 
-        res = tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
+        // Should Succeed and issue tokens
+        Response res = tokenEndPointResource.token(this.mockUriInfo, null, formParams, xForwadedFor);
         assertEquals(200, res.getStatus());
+        JsonObject json = Json.createReader(new ByteArrayInputStream(((String) res.getEntity()).getBytes()))
+                .readObject();
 
-        String tokenStr = json.getString("refresh_token");
-        vrt = (VisitorRefreshToken) AbstractOAuth2Token.parse(tokenStr, this.mockCell.getUrl(),
+        // VisitorLocalAccessToken should have role1 in the form of RoleInstance URL
+        String accTokenStr = json.getString("access_token");
+        VisitorLocalAccessToken vlat = (VisitorLocalAccessToken) AbstractOAuth2Token.parse(accTokenStr, this.mockCell.getUrl(),
+                this.mockCell.getUnitUrl());
+        for (Role role : vlat.getRoleList()) {
+            log.info(role.toRoleInstanceURL());
+        }
+        assertEquals(this.role1.toRoleInstanceURL(),
+                vlat.getRoleList().get(0).toRoleInstanceURL());
+
+        // VisitorRefreshToken should have the same roles (role2,3) in the forms of Role class URL
+        String refTokenStr = json.getString("refresh_token");
+        vrt = (VisitorRefreshToken) AbstractOAuth2Token.parse(refTokenStr, this.mockCell.getUrl(),
                 this.mockCell.getUnitUrl());
         for (Role role : vrt.getRoleList()) {
             log.info(role.toRoleClassURL());
         }
-        assertEquals(role1.toRoleClassURL(),
-                vrt.getRoleList().get(0).toRoleClassURL());
         assertEquals(role2.toRoleClassURL(),
+                vrt.getRoleList().get(0).toRoleClassURL());
+        assertEquals(role3.toRoleClassURL(),
                 vrt.getRoleList().get(1).toRoleClassURL());
-
     }
 }
