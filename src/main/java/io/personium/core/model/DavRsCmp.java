@@ -658,7 +658,7 @@ public class DavRsCmp {
             outputAcl.setRequireSchemaAuthz(acl.getRequireSchemaAuthz());
 
             // Get ace list
-            //   for propfine use, include inherited ace.
+            //   for propfind use, include inherited ace.
             //   for bar file use, do not include inherited ace.
             List<Ace> aces = getAces(dCmp, !forBarFileUse);
             outputAcl.getAceList().addAll(aces);
