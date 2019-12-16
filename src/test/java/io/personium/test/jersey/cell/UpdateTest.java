@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import io.personium.core.PersoniumCoreException;
@@ -178,12 +179,14 @@ public class UpdateTest extends AbstractCase {
                 .with("token", Setup.MASTER_TOKEN_NAME)
                 .returns();
         tresponse.statusCode(HttpStatus.SC_MULTI_STATUS);
+        tresponse.debug();
 
         // principalにallが設定されていることの確認
         NodeList nodeListPrincipal = tresponse.bodyAsXml().getElementsByTagName("principal").item(0).getChildNodes();
         boolean existsPrincipalAll = false;
         for (int i = 0; i < nodeListPrincipal.getLength(); i++) {
-            String nodename = nodeListPrincipal.item(i).getNodeName();
+            Node node = nodeListPrincipal.item(i);
+            String nodename = node.getLocalName();
             if ("all".equals(nodename)) {
                 existsPrincipalAll = true;
             }
@@ -194,7 +197,7 @@ public class UpdateTest extends AbstractCase {
         NodeList nodeListPrivilege = tresponse.bodyAsXml().getElementsByTagName("privilege").item(0).getChildNodes();
         boolean existsPrivilegeAll = false;
         for (int i = 0; i < nodeListPrivilege.getLength(); i++) {
-            String nodename = nodeListPrivilege.item(i).getNodeName();
+            String nodename = nodeListPrivilege.item(i).getLocalName();
             // all -> root への対応が必要
             if ("root".equals(nodename)) {
                 existsPrivilegeAll = true;
@@ -230,14 +233,15 @@ public class UpdateTest extends AbstractCase {
         TResponse tresponsePut = Http.request("cell/propfind-cell-allprop.txt").with("url", updateCellName)
                 .with("depth", "0")
                 .with("token", Setup.MASTER_TOKEN_NAME).returns();
-        tresponse.statusCode(HttpStatus.SC_MULTI_STATUS);
+        tresponsePut.statusCode(HttpStatus.SC_MULTI_STATUS);
+        tresponsePut.debug();
 
         // principalにallが設定されていることの確認
         assertNotNull(tresponsePut.bodyAsXml().getElementsByTagName("principal").item(0));
         nodeListPrincipal = tresponsePut.bodyAsXml().getElementsByTagName("principal").item(0).getChildNodes();
         existsPrincipalAll = false;
         for (int i = 0; i < nodeListPrincipal.getLength(); i++) {
-            String nodename = nodeListPrincipal.item(i).getNodeName();
+            String nodename = nodeListPrincipal.item(i).getLocalName();
             if ("all".equals(nodename)) {
                 existsPrincipalAll = true;
             }
@@ -249,7 +253,7 @@ public class UpdateTest extends AbstractCase {
         nodeListPrivilege = tresponsePut.bodyAsXml().getElementsByTagName("privilege").item(0).getChildNodes();
         existsPrivilegeAll = false;
         for (int i = 0; i < nodeListPrivilege.getLength(); i++) {
-            String nodename = nodeListPrivilege.item(i).getNodeName();
+            String nodename = nodeListPrivilege.item(i).getLocalName();
             // all -> root への対応が必要
             if ("root".equals(nodename)) {
                 existsPrivilegeAll = true;
