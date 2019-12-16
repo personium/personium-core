@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.utils.CommonUtils;
 import io.personium.common.utils.CommonUtils.HttpHeaders;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumReadDeleteModeManager;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.lock.CellLockManager;
@@ -65,10 +66,24 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     @Context
     private HttpServletRequest httpServletRequest;
 
+    String requestKey = null;
+
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String method = requestContext.getMethod();
         MultivaluedMap<String, String> headers = requestContext.getHeaders();
+
+        // Request Key
+        String headerPersoniumRequestKey = headers.getFirst(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY);
+        this.requestKey = ResourceUtils.validateXPersoniumRequestKey(headerPersoniumRequestKey);
+
+        if (headerPersoniumRequestKey == null) {
+            PersoniumCoreLog.Server.REQUEST_KEY.params("generated", requestKey).writeLog();
+        } else {
+            PersoniumCoreLog.Server.REQUEST_KEY.params("received", headerPersoniumRequestKey).writeLog();
+        }
+        // remember it
+        httpServletRequest.setAttribute(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, this.requestKey);
 
         // Info log.
         requestLog(method, requestContext.getUriInfo().getRequestUri().toString());
@@ -284,14 +299,17 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
      */
     private void requestLog(String method, String requestUri) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[" + PersoniumUnitConfig.getCoreVersion() + "] " + "Started. ");
+        sb.append("[" + PersoniumUnitConfig.getCoreVersion() + "] [" + this.requestKey+ "] Started. ");
         sb.append(method);
         sb.append(" ");
         sb.append(requestUri);
         sb.append(" ");
         if (httpServletRequest != null) {
             String xForwardedFor = httpServletRequest.getHeader("X-Forwarded-For");
-            sb.append(xForwardedFor);
+            if (xForwardedFor == null) {
+                xForwardedFor = "addr n/a";
+            }
+            sb.append("[" +xForwardedFor + "] ");
         }
         log.info(sb.toString());
     }
@@ -302,7 +320,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
      */
     private void responseLog(Long requestTime, int responseStatus) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[" + PersoniumUnitConfig.getCoreVersion() + "] " + "Completed. ");
+        sb.append("[" + PersoniumUnitConfig.getCoreVersion() + "] [" + this.requestKey+ "] Completed. ");
         sb.append(responseStatus);
         sb.append(" ");
 
