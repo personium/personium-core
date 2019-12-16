@@ -63,7 +63,7 @@ public final class ObjectIo {
             jsonContext = JAXBContextFactory.createContext(ObjectIo.class.getPackage().getName(),
                     ObjectIo.class.getClassLoader());
             nameSpaceToJsonMap.put("DAV:", "D");
-            nameSpaceToJsonMap.put("p:", "p");
+            nameSpaceToJsonMap.put("urn:x-personium:xmlns", "p");
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
