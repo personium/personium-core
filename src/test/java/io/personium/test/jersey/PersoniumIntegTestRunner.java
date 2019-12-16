@@ -1,6 +1,6 @@
 /**
- * personium.io
- * Copyright 2014-2018 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2019 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,16 +27,16 @@ import io.personium.core.event.EventBus;
 import io.personium.core.rs.PersoniumCoreApplication;
 
 /**
- * IT用テストランナークラス.
+ * Test Runner class for integration tests.
  */
 public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
     /**
-     * ログ用オブジェクト.
+     * logger.
      */
     private static Logger log = LoggerFactory.getLogger(PersoniumIntegTestRunner.class);
 
     /**
-     * コンストラクタ.
+     * Constructor.
      * @param klass klass
      * @throws InitializationError InitializationError
      */
@@ -71,13 +71,13 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
             // stop
             stop();
         } catch (Exception e) {
-            log.debug("exeption occurred: ", e);
+            log.info("exeption occurred: ", e);
         }
     }
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        log.debug("■■■■ " + method.getName() + " ■■■■");
+        log.info("######## " + method.getName() + " ########");
         super.runChild(method, notifier);
     }
 
