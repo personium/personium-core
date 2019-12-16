@@ -300,13 +300,13 @@ public final class TResponse {
      * @return TResponse
      */
     public TResponse debug() {
-        log.debug("SC=" + this.statusCode);
-        log.debug("response headers-----");
+        log.info("SC=" + this.statusCode);
+        log.info("response headers-----");
         for (String k : this.headers.keySet()) {
-            log.debug("   " + k + " : " + this.headers.getFirst(k));
+            log.info("   " + k + " : " + this.headers.getFirst(k));
         }
-        log.debug("response body-----");
-        log.debug(this.getBody());
+        log.info("response body-----");
+        log.info(this.getBody());
         return this;
     }
 
