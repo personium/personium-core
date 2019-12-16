@@ -16,6 +16,9 @@
  */
 package io.personium.test.jersey;
 
+import java.text.DecimalFormat;
+import java.util.Date;
+
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -77,8 +80,24 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        log.info("######## " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " ########");
+        Date start = new Date();
+        String testClassName = method.getDeclaringClass().getSimpleName();
+        String separator = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+        String firstLine = ">>>> TEST [" + testClassName + "] ";
+        log.info(firstLine + separator.substring(firstLine.length()));
+        log.info(" " + method.getName());
+        log.info(separator);
         super.runChild(method, notifier);
+        Date end = new Date();
+        Double time = Double.valueOf(end.getTime() - start.getTime()) / 1000;
+        DecimalFormat df = new DecimalFormat("#,###.##");
+        log.info("<<<< Test Ended in " + df.format(time) + "s <<<< ");
+        log.info("   100ms pause");
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }
