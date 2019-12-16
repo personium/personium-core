@@ -1018,6 +1018,7 @@ public class DavResourceUtils {
      * @param path リクエストパス（Box以下）
      * @param code ステータスコード
      * @return リクエストオブジェクト
+     * @deprecated use createWebDavFile(String token, String cell,String path,String fileBody,String contentType, int code) instead.
      */
     @Deprecated
     public static TResponse createWebDavFile(String cell,
