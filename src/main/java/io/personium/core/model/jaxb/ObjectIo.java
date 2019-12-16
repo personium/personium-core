@@ -40,6 +40,8 @@ import org.eclipse.persistence.jaxb.UnmarshallerProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import io.personium.common.utils.CommonUtils;
+
 /**
  * Utility class for easy use of JAXB.
  */
@@ -63,7 +65,8 @@ public final class ObjectIo {
             jsonContext = JAXBContextFactory.createContext(ObjectIo.class.getPackage().getName(),
                     ObjectIo.class.getClassLoader());
             nameSpaceToJsonMap.put("DAV:", "D");
-            nameSpaceToJsonMap.put("urn:x-personium:xmlns", "p");
+            //nameSpaceToJsonMap.put("p:", "p");
+            nameSpaceToJsonMap.put(CommonUtils.XmlConst.NS_PERSONIUM, CommonUtils.XmlConst.NS_PREFIX_PERSONIUM);
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
@@ -191,7 +194,6 @@ public final class ObjectIo {
         unmarshaller.setProperty(UnmarshallerProperties.JSON_INCLUDE_ROOT, false);
         unmarshaller.setProperty(UnmarshallerProperties.JSON_ATTRIBUTE_PREFIX, "@");
         unmarshaller.setProperty(UnmarshallerProperties.JSON_NAMESPACE_PREFIX_MAPPER, nameSpaceToJsonMap);
-
         JAXBElement<T> object = unmarshaller.unmarshal(new StreamSource(reader), elementClass);
         return object.getValue();
     }
