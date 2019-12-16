@@ -77,7 +77,7 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        log.info("######## " + method.getName() + " ########");
+        log.info("######## " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " ########");
         super.runChild(method, notifier);
     }
 
