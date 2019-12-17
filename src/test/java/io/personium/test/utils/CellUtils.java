@@ -303,6 +303,13 @@ public class CellUtils {
                 .with("cellName", cellName)
                 .returns()
                 .statusCode(code);
+
+    }
+    public static TResponse deleteRecursive(String celllName) {
+        return Http.request("cell/cell-bulk-delete.txt")
+                .with("cell", celllName)
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .returns();
     }
 
     /**
