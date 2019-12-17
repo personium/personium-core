@@ -46,6 +46,7 @@ import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumReadDeleteModeManager;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.lock.CellLockManager;
+import io.personium.core.rs.PersoniumCoreExceptionMapper;
 import io.personium.core.utils.ResourceUtils;
 
 /**
@@ -75,7 +76,12 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
 
         // Request Key
         String headerPersoniumRequestKey = headers.getFirst(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY);
-        this.requestKey = ResourceUtils.validateXPersoniumRequestKey(headerPersoniumRequestKey);
+        try {
+            this.requestKey = ResourceUtils.validateXPersoniumRequestKey(headerPersoniumRequestKey);
+        } catch (PersoniumCoreException e) {
+            PersoniumCoreExceptionMapper pcem = new PersoniumCoreExceptionMapper();
+            requestContext.abortWith(pcem.toResponse(e));
+        }
 
         if (headerPersoniumRequestKey == null) {
             PersoniumCoreLog.Server.REQUEST_KEY.params("generated", requestKey).writeLog();
