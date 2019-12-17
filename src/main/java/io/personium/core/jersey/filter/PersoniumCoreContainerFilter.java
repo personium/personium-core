@@ -89,7 +89,9 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
             PersoniumCoreLog.Server.REQUEST_KEY.params("received", headerPersoniumRequestKey).writeLog();
         }
         // remember it
-        httpServletRequest.setAttribute(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, this.requestKey);
+        if (this.requestKey != null) {
+            requestContext.setProperty(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, this.requestKey);
+        }
 
         // Info log.
         requestLog(method, requestContext.getUriInfo().getRequestUri().toString());
