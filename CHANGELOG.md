@@ -16,8 +16,9 @@ BREAKING CHANGES:
     - Bar file exporeted from 1.7.21 and later  
         Importable to any versions (after 1.6.10)
 
-
 * Role Url in TranceCellAccessToken/VisitorRefreshToken are now Role Class URL ([See](https://github.com/personium/personium-lib-common/pull/71))
+* personium-core.log (Java Web Application log) format changed
+* Default request key (Unique identifier of each request in log files) format changed 
 
 BUG FIXES:
 * When Unit FQDN is less than 14 letters long, token parsing may possibly fail. ([#518](https://github.com/personium/personium-core/issues/518))
