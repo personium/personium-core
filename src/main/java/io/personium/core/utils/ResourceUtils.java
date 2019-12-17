@@ -21,7 +21,6 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -29,16 +28,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.common.UUIDs;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.commons.lang.StringUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import io.personium.common.utils.CommonUtils.HttpHeaders;
 import io.personium.core.PersoniumCoreException;
@@ -162,7 +162,7 @@ public class ResourceUtils {
     }
 
     static final int MAXREQUEST_KEY_LENGTH = 128;
-    static final String REQEUST_KEY_DEFAULT_FORMAT = "PCS-%s";
+    static final String REQEUST_KEY_DEFAULT_FORMAT = "%s_%s";
     static final Pattern REQUEST_KEY_PATTERN = Pattern.compile("[\\p{Alpha}\\p{Digit}_-]*");
 
     /**
@@ -174,7 +174,8 @@ public class ResourceUtils {
      */
     public static String validateXPersoniumRequestKey(String requestKey) {
         if (null == requestKey) {
-            requestKey = String.format(REQEUST_KEY_DEFAULT_FORMAT, UUID.randomUUID().toString());
+            String uuid64 = UUIDs.randomBase64UUID();
+            requestKey = String.format(REQEUST_KEY_DEFAULT_FORMAT, uuid64.substring(0, 4), uuid64.substring(4));
         }
         if (MAXREQUEST_KEY_LENGTH < requestKey.length()) {
             throw PersoniumCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID;
@@ -227,5 +228,4 @@ public class ResourceUtils {
             return Response.serverError();
         }
     }
-
 }

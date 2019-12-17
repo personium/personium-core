@@ -28,6 +28,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 
+import io.personium.common.utils.CommonUtils;
+import io.personium.core.auth.CellPrivilege;
+
 /**
  * D: JAXB object corresponding to ace tag.
  */
@@ -110,8 +113,12 @@ public final class Ace {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         Document doc;
         try {
+            String ns = "DAV:";
+            if (CellPrivilege.ROOT.getName().equals(privilege)) {
+                ns = CommonUtils.XmlConst.NS_PERSONIUM;
+            }
             doc = dbf.newDocumentBuilder().newDocument();
-            p.body = doc.createElementNS("DAV:", privilege);
+            p.body = doc.createElementNS(ns, privilege);
             this.grant.privileges.add(p);
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);

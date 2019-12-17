@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.apache.http.HttpStatus;
+import org.apache.http.entity.ContentType;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -29,9 +30,9 @@ import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
 import io.personium.common.auth.token.ResidentLocalAccessToken;
-import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.ResidentRefreshToken;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -538,8 +539,8 @@ public class SchemaAuthTest extends PersoniumTest {
      */
     @Test
     public final void C14_AppAuth_Check_BoxSchemaMatch() throws TokenParseException {
-        String userCell = "cell20161221";
-        String schemaCell = "cell20161221schema";
+        String userCell = "user20161221";
+        String schemaCell = "schema20161221";
         String user = "user";
         String pass = "password";
         String boxWithHttpSchemaUrl = "testschemabox1";
@@ -630,22 +631,9 @@ public class SchemaAuthTest extends PersoniumTest {
                     .statusCode(HttpStatus.SC_OK);
             aTokenStr = (String) refreshRes.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
         } finally {
-            // delete Collections
-            DavResourceUtils.deleteCollection(userCell, boxWithHttpSchemaUrl, colName, MASTER_TOKEN, -1);
-            DavResourceUtils.deleteCollection(userCell, boxWithLocalUnitSchemaUrl, colName, MASTER_TOKEN, -1);
-
-            // delete Boxes
-            BoxUtils.delete(userCell, MASTER_TOKEN, boxWithHttpSchemaUrl);
-            BoxUtils.delete(userCell, MASTER_TOKEN, boxWithNonSchemaCellSchemaUrl);
-            BoxUtils.delete(userCell, MASTER_TOKEN, boxWithLocalUnitSchemaUrl);
-
-            // delete Accounts
-            AccountUtils.delete(schemaCell, MASTER_TOKEN, user, -1);
-            AccountUtils.delete(userCell, MASTER_TOKEN, user, -1);
-
             // delete Cells
-            CellUtils.delete(MASTER_TOKEN, schemaCell, -1);
-            CellUtils.delete(MASTER_TOKEN, userCell, -1);
+            CellUtils.deleteRecursive(schemaCell);
+            CellUtils.deleteRecursive(userCell);
         }
     }
 
@@ -663,8 +651,8 @@ public class SchemaAuthTest extends PersoniumTest {
         // 自分セルローカルトークン
         try {
             // テスト用のファイルをPUT
-            DavResourceUtils.createWebDavFile(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "box/dav-put.txt",
-                    "hoge", Box.MAIN_BOX_NAME, DAV_RESOURCE, -1);
+            DavResourceUtils.createWebDavFile(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1,
+                     Box.MAIN_BOX_NAME + "/" + DAV_RESOURCE, "hoge", ContentType.TEXT_PLAIN.getMimeType(), -1);
             // ACL設定
             DavResourceUtils.setACL(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, DAV_RESOURCE,
                     "box/acl-all-none-schema-level.txt", Box.MAIN_BOX_NAME, "");

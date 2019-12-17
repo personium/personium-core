@@ -59,7 +59,7 @@ import io.personium.core.utils.UriUtils;
 @XmlRootElement(namespace = "DAV:", name = "acl")
 public final class Acl {
 
-    static final String KEY_REQUIRE_SCHEMA_AUTHZ = "@requireSchemaAuthz";
+    static final String KEY_LEGACY_REQUIRE_SCHEMA_AUTHZ = "@requireSchemaAuthz";
 
     /** xml:base. */
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace")
@@ -156,7 +156,12 @@ public final class Acl {
             //  attr somehow not unmarshalled so manually fix the object
             JSONParser parser = new JSONParser();
             JSONObject j = (JSONObject) parser.parse(jsonString);
-            ret.setRequireSchemaAuthz((String) j.get(KEY_REQUIRE_SCHEMA_AUTHZ));
+            // -- TODO Delete this block after 1.8.x
+            // backward compatibility for json data before 1.7.20
+            if (ret.requireSchemaAuthz == null) {
+                ret.setRequireSchemaAuthz((String) j.get(KEY_LEGACY_REQUIRE_SCHEMA_AUTHZ));
+            }
+            // -- backward compatibility
             return ret;
         } catch (IOException e) {
             throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);

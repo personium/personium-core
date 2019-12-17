@@ -38,7 +38,6 @@ import io.personium.core.model.ModelFactory;
 import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.rs.cell.CellResource;
 import io.personium.core.rs.unit.UnitResource;
-import io.personium.core.utils.ResourceUtils;
 
 /**
  * Jax - RS Resource which will be the entrance of all requests.
@@ -96,7 +95,7 @@ public class FacadeResource {
             log.debug("    X-Personium-Via: " + headerPersoniumVia);
         }
 
-        String requestKey = ResourceUtils.validateXPersoniumRequestKey(headerPersoniumRequestKey);
+        String requestKey = (String) httpServletRequest.getAttribute(CommonUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY);
         if (headerPersoniumRequestKey == null) {
             PersoniumCoreLog.Server.REQUEST_KEY.params("generated", requestKey).writeLog();
         } else {

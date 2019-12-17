@@ -21,8 +21,8 @@
 <configuration>
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{0} %msg%n</pattern>
-               </encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %msg - %logger{0}%n</pattern>
+        </encoder>
     </appender>
     <!-- EventAPIの出力先を別ファイルに分けるための暫定対応 -->
     <appender name="FILE_USER" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -32,7 +32,7 @@
         <fileNamePattern>personium-core-user.log.%d{yyyy-MM-dd}</fileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{0} %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %msg - %logger{0}%n</pattern>
         </encoder>
     </appender>
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -42,7 +42,7 @@
         <fileNamePattern>personium-core.log.%d{yyyy-MM-dd}</fileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{0} %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %msg - %logger{0}%n</pattern>
         </encoder>
     </appender>
     <appender name="socket" class="ch.qos.logback.classic.net.SocketAppender">
@@ -81,7 +81,7 @@
     <fileNamePattern>/personium/logback/log/logback.log.%d{yyyyMMdd}.gz</fileNamePattern>
     </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level]  %logger{0} %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %msg - %logger{0}%n</pattern>
         </encoder>
     </appender>
 
