@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import javax.ws.rs.core.StreamingOutput;
 
+import org.elasticsearch.common.UUIDs;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,10 @@ public class TestUtils {
     static Logger log = LoggerFactory.getLogger(TestUtils.class);
     public static final Date DATE_PUBLISHED = DateTime.parse("2014-12-10T00:00:00.000+0900").toDate();
     public static final Date DATE_UPDATED = DateTime.parse("2019-11-09T15:26:00.000+0900").toDate();
+    public static final String X_FORWARDED_FOR = "10.2.3.4";
+    public static final String URL_TEST_CELL = "https://user1.unit.example/";
+    public static final String URL_TEST_SCHEMA = "https://app1.unit.example/";
+    public static final String TEST_UUID64 = UUIDs.randomBase64UUID();
 
     public static Box mockBox(Cell cell, String boxName, String boxSchemaUrl) {
         return new Box(cell, boxName, boxSchemaUrl, UUID.randomUUID().toString(), TestUtils.DATE_PUBLISHED.getTime());

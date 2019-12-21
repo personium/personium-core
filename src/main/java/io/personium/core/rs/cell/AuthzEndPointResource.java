@@ -39,14 +39,12 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
@@ -116,7 +114,6 @@ public class AuthzEndPointResource {
     private final Cell cell;
     private final CellRsCmp cellRsCmp;
     private String ipaddress;
-    private UriInfo requestURIInfo;
     private boolean isRecordingAuthHistory = false;
 
     /** Login form _ Javascript source file. */
@@ -179,11 +176,10 @@ public class AuthzEndPointResource {
             @QueryParam(Key.EXPIRES_IN) final String expiresInStr,
             @QueryParam(Key.ACCESS_TOKEN) final String accessTokenStr,
             @QueryParam(Key.PASSWORD_CHANGE_REQUIRED) final String passwordChangeRequiredStr,
-            @Context final UriInfo uriInfo,
             @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
         String[] scope = AbstractOAuth2Token.Scope.parse(scopeStr);
         return auth(false, responseType, clientId, redirectUri, null, null, pCookie, state, scope, keepLogin, isCancel,
-                expiresInStr, uriInfo, xForwardedFor, accessTokenStr, passwordChangeRequiredStr);
+                expiresInStr, xForwardedFor, accessTokenStr, passwordChangeRequiredStr);
     }
 
     /**
@@ -198,7 +194,6 @@ public class AuthzEndPointResource {
     public final Response authPost(
             @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
             MultivaluedMap<String, String> formParams,
-            @Context final UriInfo uriInfo,
             @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
         // Using @FormParam will cause a closed error on the library side in case of an incorrect body.
         // Since we can not catch Exception, retrieve the value after receiving it with MultivaluedMap.
@@ -217,7 +212,7 @@ public class AuthzEndPointResource {
 
         return auth(true, responseType, clientId, redirectUri, username, password, pCookie, state,
                 AbstractOAuth2Token.Scope.parse(scope), keepLogin,
-                isCancel, expiresInStr, uriInfo, xForwardedFor, accessTokenStr, passwordChangeRequiredStr);
+                isCancel, expiresInStr, xForwardedFor, accessTokenStr, passwordChangeRequiredStr);
     }
 
     /**
@@ -241,7 +236,7 @@ public class AuthzEndPointResource {
      * @param scope scope
      * @param keepLogin keep_login
      * @param isCancel is_cancel
-     * @param expiresInStr accress token expires in time(s).
+     * @param expiresInStr accress token expires-in time (s).
      * @param accessTokenStr access token
      * @param passwordChangeRequiredStr password change required
      * @param uriInfo uri_info
@@ -260,12 +255,10 @@ public class AuthzEndPointResource {
             final String keepLogin,
             final String isCancel,
             final String expiresInStr,
-            final UriInfo uriInfo,
             final String xForwardedFor,
             final String accessTokenStr,
             final String passwordChangeRequiredStr) {
 
-        this.requestURIInfo = uriInfo;
         this.ipaddress = xForwardedFor;
 
          //clientId and redirectUri parameter check
@@ -330,7 +323,7 @@ public class AuthzEndPointResource {
                 return response;
             } else if (pCookie != null) {
                 return handlePCookie(isPost, responseType, clientId, redirectUri,
-                        pCookie, state, assignedScopes, keepLogin, expiresIn, uriInfo);
+                        pCookie, state, assignedScopes, keepLogin, expiresIn);
             } else {
                 //If user ID, password, cookie are not specified,
                 return returnFormRedirect(responseType, clientId, redirectUri,
@@ -342,7 +335,7 @@ public class AuthzEndPointResource {
             } else if (pCookie != null) {
 
                 return handlePCookie(isPost, responseType, clientId, redirectUri,
-                        pCookie, state, assignedScopes, keepLogin, expiresIn, uriInfo);
+                        pCookie, state, assignedScopes, keepLogin, expiresIn);
             } else {
                 return returnHtmlForm(clientId);
             }
@@ -428,6 +421,9 @@ public class AuthzEndPointResource {
         return handlePassword(responseType, clientId, redirectUri,
                 username, newPassword, state, scope, keepLogin, expiresIn);
     }
+    private String getUrl() {
+        return this.cell.getUrl() + "__authz";
+    }
 
     /**
      * Authorization username / password.
@@ -481,7 +477,7 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Authn.FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
-                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                        this.getUrl(), this.ipaddress, username).writeLog();
                 if (isRecordingAuthHistory) {
                     AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 }
@@ -495,7 +491,7 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_LOCKED.params(
-                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                        this.getUrl(), this.ipaddress, username).writeLog();
                 if (isRecordingAuthHistory) {
                     AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 }
@@ -509,7 +505,7 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Authn.FAILED_OUTSIDE_IP_ADDRESS_RANGE.params(
-                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                        this.getUrl(), this.ipaddress, username).writeLog();
                 if (isRecordingAuthHistory) {
                     AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 }
@@ -524,7 +520,7 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Authn.FAILED_INCORRECT_PASSWORD.params(
-                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                        this.getUrl(), this.ipaddress, username).writeLog();
                 if (isRecordingAuthHistory) {
                     AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 }
@@ -537,7 +533,7 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_DEACTIVATED.params(
-                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                        this.getUrl(), this.ipaddress, username).writeLog();
                 if (isRecordingAuthHistory) {
                     AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 }
@@ -636,14 +632,14 @@ public class AuthzEndPointResource {
      * @return JAX-RS Response
      */
     private Response handlePCookie(boolean isPost, String responseType, String clientId, String redirectUri,
-            String pCookie, String state, String[] scope, String keepLogin, long expiresIn, UriInfo uriInfo) {
+            String pCookie, String state, String[] scope, String keepLogin, long expiresIn) {
         //Cookie authentication
         //Get decrypted value of cookie value
         AbstractOAuth2Token token;
         String authToken;
         try {
             authToken = AbstractLocalToken.parseCookie(pCookie, null,
-                    AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()), false);
+                    AccessContext.getCookieCryptKey(this.cell.getId()), false);
 
             token = AbstractOAuth2Token.parse(authToken, getIssuerUrl(), cell.getUnitUrl());
 

@@ -19,6 +19,12 @@ package io.personium.core.rs.cell;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -33,6 +39,10 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.auth.ScopeArbitrator;
+import io.personium.core.model.Cell;
+import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.utils.TestUtils;
 import io.personium.test.categories.Unit;
 import io.personium.test.utils.UrlUtils;
 
@@ -42,11 +52,34 @@ import io.personium.test.utils.UrlUtils;
 @Category({ Unit.class })
 public class AuthzEndPointResourceTest {
 
+    
+    @Test
+    public void authGet_normal() {
+        String clientId = TestUtils.URL_TEST_SCHEMA;
+        String redirectUri = clientId + "__/redirect.html";
+        String state = "123";
+        String scopeStr = "root";
+        Cell cell = (Cell) mock(Cell.class);
+        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
+        when(cell.getOwnerNormalized()).thenReturn("cellowner");
+        when(cell.getUrl()).thenReturn(TestUtils.URL_TEST_CELL);
+        when(cell.getUnitUrl()).thenReturn(UrlUtils.getBaseUrl());
+        when(cell.getId()).thenReturn(TestUtils.TEST_UUID64);
+        when(cell.getScopeArbitrator(anyString(), anyString())).thenReturn(new ScopeArbitrator(cell, null, OAuth2Helper.GrantType.AUTHORIZATION_CODE));
+        
+        AuthzEndPointResource authz = new AuthzEndPointResource(cell, null);
+        Response res = authz.authGet(OAuth2Helper.ResponseType.CODE, clientId, redirectUri,
+                null, state, scopeStr, "false",
+                "false", "3600", null, 
+                null, TestUtils.X_FORWARDED_FOR);
+        assertEquals(303, res.getStatus());
+        assertEquals(clientId, res.getHeaderString("Location"));
+    }
     /**
      * 認証に成功している場合チェックがtrueを返すこと.
      */
     @Test
-    public void 認証に成功している場合チェックがtrueを返すこと() {
+    public void 認証に成功している場合チェックがtrueを返すこと()  {
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
         rb.header(HttpHeaders.LOCATION, UrlUtils.cellRoot("authz") + "#"

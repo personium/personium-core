@@ -197,13 +197,12 @@ public class AccessContext {
             if (pCookiePeer == null || 0 == pCookiePeer.length()) {
                 return new AccessContext(TYPE_ANONYMOUS, cell, baseUri, requestURIInfo);
             }
-            String nonPortHost = headerHost.split(":")[0];
 
             // Cookie related processing requires no port number.
             String authToken = null;
             try {
                 authToken = AbstractLocalAccessToken.parseCookie(pCookieAuthValue, pCookiePeer,
-                        AccessContext.getCookieCryptKey(nonPortHost), true);
+                        AccessContext.getCookieCryptKey(cell.getId()), true);
                 return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
                         requestURIInfo, null, null, cell, baseUri, headerHost, xPersoniumUnitUser);
             } catch (TokenParseException e) {

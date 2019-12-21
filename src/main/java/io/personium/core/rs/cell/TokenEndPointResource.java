@@ -781,7 +781,7 @@ public class TokenEndPointResource {
             String pCookiePeer = UUID.randomUUID().toString();
             //The p_cookie value to return to the header is encrypted
             String encodedCookieValue = accessToken.getCookieString(pCookiePeer,
-                    AccessContext.getCookieCryptKey(requestURIInfo.getBaseUri().getHost()));
+                    AccessContext.getCookieCryptKey(this.cell.getId()));
             //Specify cookie version (0)
             int version = 0;
             String path = getCookiePath();

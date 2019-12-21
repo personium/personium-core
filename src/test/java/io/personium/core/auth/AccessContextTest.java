@@ -19,6 +19,8 @@ package io.personium.core.auth;
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -39,7 +41,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.mockito.Matchers;
 import org.odata4j.core.OEntities;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.core.OProperty;
@@ -55,6 +56,7 @@ import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.PersoniumCoreApplication;
+import io.personium.core.utils.TestUtils;
 import io.personium.test.categories.Unit;
 import io.personium.test.utils.UrlUtils;
 
@@ -155,7 +157,7 @@ public class AccessContextTest {
     @Test
     public void create_NoAuthzHeader_ShouldReturn_TypeAnonymous() {
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
+        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(null, null, null, null,
@@ -178,8 +180,8 @@ public class AccessContextTest {
             ),
             null
         );
-        when(cell.getAccount(Matchers.anyString())).thenReturn(oew);
-        when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
+        when(cell.getAccount(anyString())).thenReturn(oew);
+        when(cell.authenticateAccount((OEntityWrapper) any(),anyString())).thenReturn(true);
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(auth,
                 null, null, null, cell, BASE_URL, UrlUtils.getHost(), OWNER);
@@ -194,7 +196,7 @@ public class AccessContextTest {
         String auth = "Basic "
                 + CommonUtils.encodeBase64Url("user:pass".getBytes());
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(false);
+        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(false);
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(auth,
                 null, null, null, cell, BASE_URL, UrlUtils.getHost(), OWNER);
@@ -260,10 +262,11 @@ public class AccessContextTest {
     @Test
     public void AuthorizationHeaderなしでのULUUTのcookie認証によるAccessContext生成の正常系テスト() {
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
+        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
         when(cell.getOwnerNormalized()).thenReturn("cellowner");
         when(cell.getUrl()).thenReturn(UrlUtils.getBaseUrl() + "/cellowner");
         when(cell.getUnitUrl()).thenReturn(UrlUtils.getBaseUrl());
+        when(cell.getId()).thenReturn(TestUtils.TEST_UUID64);
 
         UriInfo uriInfo =  new TestUriInfo();
 
@@ -276,7 +279,7 @@ public class AccessContextTest {
         String dcCookiePeer = UUID.randomUUID().toString();
         // ヘッダに返却するdc-cookie値は、暗号化する
         String encodedCookieValue = uluut.getCookieString(dcCookiePeer,
-                AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()));
+                AccessContext.getCookieCryptKey(cell.getId()));
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(null, uriInfo, dcCookiePeer, encodedCookieValue,
@@ -292,10 +295,11 @@ public class AccessContextTest {
         UriInfo uriInfo =  new TestUriInfo();
 
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
+        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
         when(cell.getOwnerNormalized()).thenReturn("cellowner");
         when(cell.getUrl()).thenReturn(UrlUtils.getBaseUrl() + "/cellowner");
         when(cell.getUnitUrl()).thenReturn(UrlUtils.getBaseUrl());
+        when(cell.getId()).thenReturn(TestUtils.TEST_UUID64);
 
         // Token発行処理
         VisitorLocalAccessToken token = new VisitorLocalAccessToken(
@@ -311,7 +315,7 @@ public class AccessContextTest {
         String dcCookiePeer = UUID.randomUUID().toString();
         // ヘッダに返却するdc-cookie値は、暗号化する
         String encodedCookieValue = token.getCookieString(dcCookiePeer,
-                AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()));
+                AccessContext.getCookieCryptKey(cell.getId()));
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(null, uriInfo, dcCookiePeer, encodedCookieValue,
@@ -325,8 +329,10 @@ public class AccessContextTest {
     @Test
     public void BASIC認証AuthorizationHeaderとcookie認証情報が同時に指定された場合のAccessContext生成の正常系テスト() {
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
+        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
         when(cell.getOwnerNormalized()).thenReturn("cellowner");
+        when(cell.getUrl()).thenReturn(TestUtils.URL_TEST_CELL);
+        when(cell.getId()).thenReturn(TestUtils.TEST_UUID64);
 
         UriInfo uriInfo =  new TestUriInfo();
 
@@ -339,7 +345,7 @@ public class AccessContextTest {
         String pCookiePeer = UUID.randomUUID().toString();
         // ヘッダに返却するdc-cookie値は、暗号化する
         String encodedCookieValue = uluut.getCookieString(pCookiePeer,
-                AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()));
+                AccessContext.getCookieCryptKey(cell.getId()));
 
         String basicAuth = "Basic "
                 + CommonUtils.encodeBase64Url("user:pass".getBytes());
@@ -356,8 +362,10 @@ public class AccessContextTest {
     @Test
     public void マスタトークン認証AuthorizationHeaderとcookie認証情報が同時に指定された場合のAccessContext生成の正常系テスト() {
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
+        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
         when(cell.getOwnerNormalized()).thenReturn("cellowner");
+        when(cell.getUrl()).thenReturn(TestUtils.URL_TEST_CELL);
+        when(cell.getId()).thenReturn(TestUtils.TEST_UUID64);
 
         UriInfo uriInfo =  new TestUriInfo();
 
@@ -370,7 +378,7 @@ public class AccessContextTest {
         String pCookiePeer = UUID.randomUUID().toString();
         // ヘッダに返却するp-cookie値は、暗号化する
         String encodedCookieValue = uluut.getCookieString(pCookiePeer,
-                AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost()));
+                AccessContext.getCookieCryptKey(cell.getId()));
 
         String masterTokenAuth = "Bearer " + MASTER_TOKEN;
 
