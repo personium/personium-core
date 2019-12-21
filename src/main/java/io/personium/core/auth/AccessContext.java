@@ -53,9 +53,9 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.model.jaxb.Ace;
 import io.personium.core.model.jaxb.Acl;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.cell.AuthResourceUtils;
 import io.personium.core.utils.UriUtils;
 
@@ -664,13 +664,13 @@ public class AccessContext {
         String username = idpw[0];
         String password = idpw[1];
 
-        OEntityWrapper oew = cell.getAccount(username);
-        if (oew == null) {
+        Account account = cell.getAccount(username);
+        if (account == null) {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthError);
         }
 
         //Check valid authentication interval
-        String accountId = oew.getUuid();
+        String accountId = account.id;
         Boolean isLock = AuthResourceUtils.isLockedAccount(accountId);
         if (isLock) {
             //Update lock time of memcached
@@ -678,7 +678,7 @@ public class AccessContext {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthErrorInAccountLock);
         }
 
-        boolean authnSuccess = cell.authenticateAccount(oew, password);
+        boolean authnSuccess = AuthUtils.isMatchePassword(account, password);
         if (!authnSuccess) {
             //Make lock on memcached
             AuthResourceUtils.registIntervalLock(accountId);

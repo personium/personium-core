@@ -54,6 +54,7 @@ import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.TestUtils;
@@ -157,7 +158,7 @@ public class AccessContextTest {
     @Test
     public void create_NoAuthzHeader_ShouldReturn_TypeAnonymous() {
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
+        when(cell.authenticateAccount((Account)any(), anyString())).thenReturn(true);
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(null, null, null, null,
@@ -180,8 +181,9 @@ public class AccessContextTest {
             ),
             null
         );
-        when(cell.getAccount(anyString())).thenReturn(oew);
-        when(cell.authenticateAccount((OEntityWrapper) any(),anyString())).thenReturn(true);
+        Account acc = new Account(oew);
+        when(cell.getAccount(anyString())).thenReturn(acc);
+        when(cell.authenticateAccount((Account) any(),anyString())).thenReturn(true);
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(auth,
                 null, null, null, cell, BASE_URL, UrlUtils.getHost(), OWNER);
@@ -196,7 +198,7 @@ public class AccessContextTest {
         String auth = "Basic "
                 + CommonUtils.encodeBase64Url("user:pass".getBytes());
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(false);
+        when(cell.authenticateAccount((Account) any(), anyString())).thenReturn(false);
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(auth,
                 null, null, null, cell, BASE_URL, UrlUtils.getHost(), OWNER);
@@ -262,7 +264,7 @@ public class AccessContextTest {
     @Test
     public void AuthorizationHeaderなしでのULUUTのcookie認証によるAccessContext生成の正常系テスト() {
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
+        when(cell.authenticateAccount((Account) any(), anyString())).thenReturn(true);
         when(cell.getOwnerNormalized()).thenReturn("cellowner");
         when(cell.getUrl()).thenReturn(UrlUtils.getBaseUrl() + "/cellowner");
         when(cell.getUnitUrl()).thenReturn(UrlUtils.getBaseUrl());
@@ -295,7 +297,7 @@ public class AccessContextTest {
         UriInfo uriInfo =  new TestUriInfo();
 
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
+        when(cell.authenticateAccount((Account)any(), anyString())).thenReturn(true);
         when(cell.getOwnerNormalized()).thenReturn("cellowner");
         when(cell.getUrl()).thenReturn(UrlUtils.getBaseUrl() + "/cellowner");
         when(cell.getUnitUrl()).thenReturn(UrlUtils.getBaseUrl());
@@ -329,7 +331,7 @@ public class AccessContextTest {
     @Test
     public void BASIC認証AuthorizationHeaderとcookie認証情報が同時に指定された場合のAccessContext生成の正常系テスト() {
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
+        when(cell.authenticateAccount((Account)any(), anyString())).thenReturn(true);
         when(cell.getOwnerNormalized()).thenReturn("cellowner");
         when(cell.getUrl()).thenReturn(TestUtils.URL_TEST_CELL);
         when(cell.getId()).thenReturn(TestUtils.TEST_UUID64);
@@ -362,7 +364,7 @@ public class AccessContextTest {
     @Test
     public void マスタトークン認証AuthorizationHeaderとcookie認証情報が同時に指定された場合のAccessContext生成の正常系テスト() {
         Cell cell = (Cell) mock(Cell.class);
-        when(cell.authenticateAccount((OEntityWrapper) any(), anyString())).thenReturn(true);
+        when(cell.authenticateAccount((Account)any(), anyString())).thenReturn(true);
         when(cell.getOwnerNormalized()).thenReturn("cellowner");
         when(cell.getUrl()).thenReturn(TestUtils.URL_TEST_CELL);
         when(cell.getId()).thenReturn(TestUtils.TEST_UUID64);

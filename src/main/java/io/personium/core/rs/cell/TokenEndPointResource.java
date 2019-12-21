@@ -82,7 +82,6 @@ import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.impl.fs.CellKeysFile;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.plugin.PluginInfo;
 import io.personium.core.plugin.PluginManager;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -98,6 +97,7 @@ import io.personium.plugin.base.auth.AuthenticatedIdentity;
  */
 public class TokenEndPointResource {
     static Logger log = LoggerFactory.getLogger(TokenEndPointResource.class);
+    public static final String PATH = "__token";
 
     private final Cell cell;
     private final CellRsCmp davRsCmp;
@@ -116,6 +116,9 @@ public class TokenEndPointResource {
     public TokenEndPointResource(final Cell cell, final CellRsCmp davRsCmp) {
         this.cell = cell;
         this.davRsCmp = davRsCmp;
+    }
+    public String getUrl() {
+        return this.cell.getUrl() + PATH;
     }
 
     /**
@@ -297,15 +300,16 @@ public class TokenEndPointResource {
         }
 
         // If the Account shown in IdToken does not exist in cell.
-        OEntityWrapper idTokenUserOew = cell.getAccount(accountName);
-        if (idTokenUserOew == null) {
+        //OEntityWrapper idTokenUserOew = cell.getAccount(accountName);
+        Account account = cell.getAccount(accountName);
+        if (account == null) {
             //In order not to be abused in checking the existence of the account, an error response only for failure
             PersoniumCoreLog.OIDC.NO_SUCH_ACCOUNT.params(accountName).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED;
         }
 
         // Confirm if OidC is included in Type when there is Account.
-        if (!AuthUtils.getAccountType(idTokenUserOew).contains(accountType)) {
+        if (!account.typeList.contains(accountType)) {
             //In order not to be abused in checking the existence of the account, an error response only for failure
             PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(accountType,
                     accountName).writeLog();
@@ -315,10 +319,8 @@ public class TokenEndPointResource {
         String[] scopes = this.cell.getScopeArbitrator(schema, grantType).request(requestScopes).getResults();
 
         // Check account is active.
-        boolean accountActive = AuthUtils.isActive(idTokenUserOew);
-        boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(idTokenUserOew);
-        if (!accountActive) {
-            if (passwordChangeRequired) {
+        if (!account.isActive()) {
+            if (Account.STATUS_PASSWORD_CHANGE_REQUIRED.equals(account.status)) {
                 // Issue password change.
                 issuePasswordChange(schema, accountName, rTokenExpiresIn, scopes);
             } else {
@@ -826,6 +828,7 @@ public class TokenEndPointResource {
         }
     }
 
+
     private Response handlePassword(final String target, final String owner,
             final String schema, final String username,
             final String password, long expiresIn, long rTokenExpiresIn, String[] scope) {
@@ -839,26 +842,27 @@ public class TokenEndPointResource {
                     this.cell.getUrl()).params(Key.PASSWORD);
         }
 
-        // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
-        OEntityWrapper oew = cell.getAccount(username);
-        if (oew != null) {
-            accountId = (String) oew.getUuid();
+        // In order to cope with the time exploiting attack,
+        // even if the account is not found, processing is done uselessly.
+        Account account = cell.getAccount(username);
+        if (account != null) {
+            accountId = account.id;
         }
         Boolean isLockedInterval = AuthResourceUtils.isLockedInterval(accountId);
         Boolean isLockedAccount = AuthResourceUtils.isLockedAccount(accountId);
-        Boolean validIPAddress = AuthUtils.isValidIPAddress(oew, this.ipaddress);
-        boolean accountActive = AuthUtils.isActive(oew);
-        boolean passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
-        boolean passCheck = cell.authenticateAccount(oew, password);
+        boolean passCheck = AuthUtils.isMatchePassword(account, password);
 
-        if (oew == null) {
+        if (account == null) {
             PersoniumCoreLog.Authn.FAILED_NO_SUCH_ACCOUNT.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
+        Boolean validIPAddress = account.acceptsIpAddress(this.ipaddress);
+        boolean accountActive = account.isActive();
+        boolean passwordChangeRequired = account.isPasswordChangeRequired();
 
         //Confirmation of Type value
-        if (!AuthUtils.isAccountTypeBasic(oew)) {
+        if (!account.isTypeBasic()) {
             //In order not to be abused in checking the existence of the account, an error response only for failure
             PersoniumCoreLog.Auth.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(
                     Account.TYPE_VALUE_BASIC, username).writeLog();
@@ -914,7 +918,7 @@ public class TokenEndPointResource {
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             }
             PersoniumCoreLog.Authn.FAILED_INCORRECT_PASSWORD.params(
-                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                    this.getUrl(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 

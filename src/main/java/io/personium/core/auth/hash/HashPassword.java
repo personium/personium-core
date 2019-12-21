@@ -16,7 +16,7 @@
  */
 package io.personium.core.auth.hash;
 
-import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.model.ctl.Account;
 
 /**
  * A utility hash password interface.
@@ -48,5 +48,5 @@ public interface HashPassword {
      * @param rawPasswd raw password string
      * @return true if matches password.
      */
-    boolean matches(OEntityWrapper oew, String rawPasswd);
+    boolean matches(Account account, String rawPasswd);
 }

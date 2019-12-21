@@ -87,7 +87,6 @@ import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.fs.CellKeysFile;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.FacadeResource;
 import io.personium.core.utils.ResourceUtils;
@@ -393,8 +392,8 @@ public class AuthzEndPointResource {
 
         // Get account.
         String username = token.getSubject();
-        OEntityWrapper oew = cell.getAccount(username);
-        if (oew == null) {
+        Account account = cell.getAccount(username);
+        if (account == null) {
             // It transits when mainly deleted.
             return returnFormRedirect(responseType, clientId, redirectUri,
                     OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope);
@@ -451,22 +450,23 @@ public class AuthzEndPointResource {
         boolean passwordChangeRequired = false;
         try {
             // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
-            OEntityWrapper oew = cell.getAccount(username);
-            if (oew != null) {
-                accountId = (String) oew.getUuid();
+            Account account = cell.getAccount(username);
+            if (account != null) {
+                accountId = account.id;
             }
             Boolean isLockedInterval = AuthResourceUtils.isLockedInterval(accountId);
             Boolean isLockedAccount = AuthResourceUtils.isLockedAccount(accountId);
-            Boolean isValidIPAddress = AuthUtils.isValidIPAddress(oew, this.ipaddress);
-            boolean accountActive = AuthUtils.isActive(oew);
-            passwordChangeRequired = AuthUtils.isPasswordChangeReuired(oew);
-            passCheck = cell.authenticateAccount(oew, password);
+            //
+            passCheck = AuthUtils.isMatchePassword(account, password);
 
-            if (oew == null) {
+            if (account == null) {
                 log.info("responseCode : " + CODE_INCORRECT_ID_PASS);
                 return returnFormRedirect(responseType, clientId, redirectUri,
                         OAuth2Helper.Error.INVALID_GRANT, state, CODE_INCORRECT_ID_PASS, scope);
             }
+            Boolean isValidIPAddress = account.acceptsIpAddress(this.ipaddress);
+            boolean accountActive = account.isActive();
+            passwordChangeRequired = account.isPasswordChangeRequired();
 
             // Check if the target account records authentication history.
             isRecordingAuthHistory = cellRsCmp.isRecordingAuthHistory(accountId, username);
@@ -985,7 +985,7 @@ public class AuthzEndPointResource {
      * @param pOwner pOwner
      * @return HTML
      */
-    private String createForm(String clientId) {
+    String createForm(String clientId) {
 
         try {
             HttpResponse response = cellRsCmp.requestGetAuthorizationHtml();

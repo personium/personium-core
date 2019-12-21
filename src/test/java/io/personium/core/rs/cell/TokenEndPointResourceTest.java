@@ -199,8 +199,9 @@ public class TokenEndPointResourceTest {
 
         };
         OEntityWrapper oew = new OEntityWrapper(null, oe, "5678etag");
-        doReturn(oew).when(this.mockCell).getAccount("username");
-        doReturn(true).when(this.mockCell).authenticateAccount(oew, "password");
+        Account acc = new Account(oew);
+        doReturn(acc).when(this.mockCell).getAccount("username");
+        doReturn(true).when(this.mockCell).authenticateAccount(acc, "password");
 
         this.tokenEndPointResource = new TokenEndPointResource(mockCell, this.mockCellRsCmp);
         this.mockUriInfo = mock(UriInfo.class);
@@ -618,7 +619,7 @@ public class TokenEndPointResourceTest {
                 vrt.getRoleList().get(0).toRoleClassURL());
         assertEquals(role3.toRoleClassURL(),
                 vrt.getRoleList().get(1).toRoleClassURL());
-    }    
+    }
     @Test
     public void token_VisitorRefreshToken_VisitorRefreshToken_ShouldHave_SameRoles_And_VisitorAccessToken_ShouldHave_ProperRoles() throws Exception {
         // prepare App Auth Token

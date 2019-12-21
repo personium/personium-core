@@ -17,8 +17,13 @@
 package io.personium.core.model.ctl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.net.util.SubnetUtils;
 import org.core4j.Enumerable;
 import org.odata4j.edm.EdmAnnotation;
 import org.odata4j.edm.EdmAnnotationAttribute;
@@ -26,11 +31,105 @@ import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.auth.hash.HashPassword;
+import io.personium.core.auth.hash.SCryptHashPasswordImpl;
+import io.personium.core.auth.hash.Sha256HashPasswordImpl;
+import io.personium.core.odata.OEntityWrapper;
+
 /**
  * Edm definition of Account.
  */
 public class Account {
-    private Account() {
+    public String id;
+    public String name;
+    public String type;
+    public List<String> typeList;
+    public String status;
+    public String ipAddrRange;
+    public Date created;
+    public Date updated;
+
+    public String hashAlgorithmName;
+    public String credential;
+    public HashPassword passwordHash;
+    public String hashAttributes;
+    public Account(OEntityWrapper oew) {
+        this.id = oew.getUuid();
+        this.name = (String) oew.getProperty(Account.P_NAME.getName()).getValue();
+        this.type = (String) oew.getProperty(Account.P_TYPE.getName()).getValue();
+        String[] typeAry = this.type.split(" ");
+        this.typeList = Arrays.asList(typeAry);
+
+        this.status = (String) oew.getProperty(Account.P_STATUS.getName()).getValue();
+        this.ipAddrRange = (String) oew.getProperty(Account.P_IP_ADDRESS_RANGE.getName()).getValue();
+        this.hashAlgorithmName = (String) oew.get(Account.HASH_ALGORITHM);
+        this.hashAttributes = (String) oew.get(Account.HASH_ATTRIBUTES);
+        if (this.hashAlgorithmName == null) {
+            this.hashAlgorithmName = PersoniumUnitConfig.getAuthPasswordHashAlgorithm();
+        }
+
+        this.passwordHash = this.getHashPasswordInstance();
+        this.credential = (String) oew.get(Account.HASHED_CREDENTIAL);
+    }
+    public boolean isActive() {
+        return (Account.STATUS_ACTIVE.equals(status));
+    }
+    public boolean isPasswordChangeRequired() {
+        return (Account.STATUS_PASSWORD_CHANGE_REQUIRED.equals(status));
+    }
+    public boolean acceptsIpAddress(String ipAddress) {
+        if (this.ipAddrRange == null || this.ipAddrRange.isEmpty()) {
+            return true;
+        }
+        String[] addrAry = this.ipAddrRange.split(",");
+
+        // If the IP address of the client is unknown, do not accept.
+        if (ipAddress == null || ipAddress.isEmpty()) {
+            return false;
+        }
+        // If the IP address of the client is an illegal format, it is an error
+        String clientIPAddress = ipAddress.split(",")[0].trim();
+        Pattern pattern = Pattern.compile(Common.PATTERN_SINGLE_IP_ADDRESS);
+        Matcher matcher = pattern.matcher(clientIPAddress);
+        if (!matcher.matches()) {
+            return false;
+        }
+
+        // Check if the IP address of the client is included in "IPAddressRange".
+        for (String ipAddressRange : addrAry) {
+            if (ipAddressRange.contains("/")) {
+                SubnetUtils subnet = new SubnetUtils(ipAddressRange);
+                SubnetUtils.SubnetInfo subnetInfo = subnet.getInfo();
+                int address = subnetInfo.asInteger(clientIPAddress);
+                int low = subnetInfo.asInteger(subnetInfo.getLowAddress());
+                int high = subnetInfo.asInteger(subnetInfo.getHighAddress());
+                if (low <= address && address <= high) {
+                    return true;
+                }
+            } else {
+                if (ipAddressRange.equals(clientIPAddress)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean isTypeBasic() {
+        return this.typeList.contains(Account.TYPE_VALUE_BASIC);
+    }
+    private HashPassword getHashPasswordInstance() {
+        if (SCryptHashPasswordImpl.HASH_ALGORITHM_NAME.equals(this.hashAlgorithmName)) {
+            return new SCryptHashPasswordImpl();
+        }
+        if (Sha256HashPasswordImpl.HASH_ALGORITHM_NAME.equals(this.hashAlgorithmName)) {
+            return new Sha256HashPasswordImpl();
+        }
+        if (this.hashAlgorithmName == null || this.hashAlgorithmName.isEmpty()) {
+            // If the hash algorithm is not set, it is determined as a legacy hash algorithm.
+            return new Sha256HashPasswordImpl();
+        }
+        throw new RuntimeException("Unsupported Password Hash Algorithm [" + this.hashAlgorithmName + "]");
     }
 
     /** Pattern IP address range. */

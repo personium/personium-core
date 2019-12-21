@@ -348,7 +348,7 @@ public abstract class Cell {
      * @param username Account name
      * @return Account
      */
-    public OEntityWrapper getAccount(final String username) {
+    public Account getAccount(final String username) {
         ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
         OEntityKey key = OEntityKey.create(username);
         OEntityWrapper oew = null;
@@ -358,15 +358,18 @@ public abstract class Cell {
         } catch (PersoniumCoreException dce) {
             log.debug(dce.getMessage());
         }
-        return oew;
+        if (oew == null) {
+            return null;
+        }
+        return new Account(oew);
     }
     /**
      * @param oew account
      * @param password password
      * @return true if authentication is successful.
      */
-    public boolean authenticateAccount(final OEntityWrapper oew, final String password) {
-        return AuthUtils.isMatchePassword(oew, password);
+    public boolean authenticateAccount(final Account acc, final String password) {
+        return AuthUtils.isMatchePassword(acc, password);
     }
     /**
      * @param username access account id

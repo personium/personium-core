@@ -25,7 +25,6 @@ import org.apache.commons.lang.CharEncoding;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Account;
-import io.personium.core.odata.OEntityWrapper;
 
 /**
  * A utility SHA-256 hash password.
@@ -79,17 +78,16 @@ public class Sha256HashPasswordImpl implements HashPassword {
      * {@inheritDoc}
      */
     @Override
-    public boolean matches(OEntityWrapper oew, String rawPasswd) {
+    public boolean matches(Account account, String rawPasswd) {
         // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
         String cred = null;
-        if (oew != null) {
-            cred = (String) oew.get(Account.HASHED_CREDENTIAL);
+        if (account != null) {
+            cred = account.credential;
         }
         String hCred = this.createHashPassword(rawPasswd);
         if (hCred.equals(cred)) {
             return true;
         }
-
         return false;
     }
 }
