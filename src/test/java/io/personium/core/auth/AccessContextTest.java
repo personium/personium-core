@@ -41,10 +41,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.odata4j.core.OEntities;
-import org.odata4j.core.OEntityKey;
-import org.odata4j.core.OProperty;
-import org.odata4j.edm.EdmEntitySet;
 
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
@@ -55,7 +51,6 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ctl.Account;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.TestUtils;
 import io.personium.test.categories.Unit;
@@ -171,17 +166,18 @@ public class AccessContextTest {
         String auth = "Basic "
                 + CommonUtils.encodeBase64Url("username:password".getBytes());
         Cell cell = (Cell) mock(Cell.class);
-        List<OProperty<?>> props = new ArrayList<>();
-        OEntityWrapper oew = new OEntityWrapper(
-            UUID.randomUUID().toString(),
-            OEntities.create(
-                    EdmEntitySet.newBuilder().build(),
-                    OEntityKey.create("k","dum"), props,
-                    null
-            ),
-            null
-        );
-        Account acc = new Account(oew);
+//        List<OProperty<?>> props = new ArrayList<>();
+//        OEntityWrapper oew = new OEntityWrapper(
+//            ,
+//            OEntities.create(
+//                    EdmEntitySet.newBuilder().build(),
+//                    OEntityKey.create("k","dum"), props,
+//                    null
+//            ),
+//            null
+//        );
+        Account acc = new Account();
+        acc.id = UUID.randomUUID().toString();
         when(cell.getAccount(anyString())).thenReturn(acc);
         when(cell.authenticateAccount((Account) any(),anyString())).thenReturn(true);
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報

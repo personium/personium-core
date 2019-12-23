@@ -678,7 +678,7 @@ public class AccessContext {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthErrorInAccountLock);
         }
 
-        boolean authnSuccess = AuthUtils.isMatchePassword(account, password);
+        boolean authnSuccess = cell.authenticateAccount(account, password);
         if (!authnSuccess) {
             //Make lock on memcached
             AuthResourceUtils.registIntervalLock(accountId);

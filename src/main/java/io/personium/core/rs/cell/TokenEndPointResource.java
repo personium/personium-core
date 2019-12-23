@@ -32,7 +32,6 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -40,7 +39,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwa.AlgorithmUtils;
@@ -72,7 +70,6 @@ import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthHistoryLastFile;
-import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.auth.ScopeArbitrator;
@@ -102,7 +99,6 @@ public class TokenEndPointResource {
     private final Cell cell;
     private final CellRsCmp davRsCmp;
     private boolean issueCookie = false;
-    private UriInfo requestURIInfo;
     //The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
     private String accountId;
     private String ipaddress;
@@ -135,7 +131,7 @@ public class TokenEndPointResource {
      * @return JAX-RS Response Object
      */
     @POST
-    public final Response token(@Context final UriInfo uriInfo,
+    public final Response token(
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
             MultivaluedMap<String, String> formParams,
             @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
@@ -181,7 +177,6 @@ public class TokenEndPointResource {
             issueCookie = Boolean.parseBoolean(pCookie);
         }
 
-        this.requestURIInfo = uriInfo;
         this.ipaddress = xForwardedFor;
 
         String schema = null;
@@ -325,7 +320,7 @@ public class TokenEndPointResource {
                 issuePasswordChange(schema, accountName, rTokenExpiresIn, scopes);
             } else {
                 PersoniumCoreLog.OIDC.ACCOUNT_IS_DEACTIVATED.params(
-                        requestURIInfo.getRequestUri().toString(), this.ipaddress, accountName).writeLog();
+                        this.getUrl(), this.ipaddress, accountName).writeLog();
                 throw PersoniumCoreAuthnException.AUTHN_FAILED;
             }
         }
@@ -617,7 +612,8 @@ public class TokenEndPointResource {
         //Authentication is successful -------------------------------
 
         // Scope arbitration
-        String[] scopes = this.cell.getScopeArbitrator(schema, OAuth2Helper.GrantType.SAML2_BEARER).request(tcToken.getScope()).getResults();
+        ScopeArbitrator sa = this.cell.getScopeArbitrator(schema, OAuth2Helper.GrantType.SAML2_BEARER);
+        String[] scopes = sa.request(tcToken.getScope()).getResults();
 
         // Create a refresh token based on the authentication information
         long issuedAt = new Date().getTime();
@@ -788,9 +784,15 @@ public class TokenEndPointResource {
             int version = 0;
             String path = getCookiePath();
 
+            String host = null;
+            try {
+                host = new URL(this.getUrl()).getHost();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
             //Create a cookie and return it to the response header
             Cookie cookie = new Cookie("p_cookie", encodedCookieValue, path,
-                    requestURIInfo.getBaseUri().getHost(), version);
+                   host , version);
             rb.cookie(new NewCookie(cookie, "", -1, PersoniumUnitConfig.isHttps()));
             //Return "p_cookie_peer" of the response body
             resp.put("p_cookie_peer", pCookiePeer);
@@ -850,11 +852,11 @@ public class TokenEndPointResource {
         }
         Boolean isLockedInterval = AuthResourceUtils.isLockedInterval(accountId);
         Boolean isLockedAccount = AuthResourceUtils.isLockedAccount(accountId);
-        boolean passCheck = AuthUtils.isMatchePassword(account, password);
+        boolean passCheck = this.cell.authenticateAccount(account, password);
 
         if (account == null) {
             PersoniumCoreLog.Authn.FAILED_NO_SUCH_ACCOUNT.params(
-                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                this.getUrl(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
         Boolean validIPAddress = account.acceptsIpAddress(this.ipaddress);
@@ -881,7 +883,7 @@ public class TokenEndPointResource {
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             }
             PersoniumCoreLog.Authn.FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
-                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                    this.getUrl(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
@@ -894,7 +896,7 @@ public class TokenEndPointResource {
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             }
             PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_LOCKED.params(
-                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                    this.getUrl(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
@@ -906,7 +908,7 @@ public class TokenEndPointResource {
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             }
             PersoniumCoreLog.Authn.FAILED_OUTSIDE_IP_ADDRESS_RANGE.params(
-                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                    this.getUrl(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
@@ -934,7 +936,7 @@ public class TokenEndPointResource {
                     AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
                 }
                 PersoniumCoreLog.Authn.FAILED_ACCOUNT_IS_DEACTIVATED.params(
-                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                        this.getUrl(), this.ipaddress, username).writeLog();
                 throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
             }
         }

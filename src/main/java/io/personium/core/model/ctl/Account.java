@@ -54,6 +54,16 @@ public class Account {
     public String credential;
     public HashPassword passwordHash;
     public String hashAttributes;
+    /**
+     * Default constructor.
+     */
+    public Account() {
+        this.typeList = new ArrayList<>();
+        typeList.add(Account.TYPE_VALUE_BASIC);
+    }
+    /**
+     * constructor from OEntityWrapper.
+     */
     public Account(OEntityWrapper oew) {
         this.id = oew.getUuid();
         this.name = (String) oew.getProperty(Account.P_NAME.getName()).getValue();
