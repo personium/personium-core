@@ -370,43 +370,96 @@
                 <version>2.22.2</version>
                 <configuration>
                     <argLine>${jacocoArgs} -Xms512m -Xmx1024m</argLine>
+                    <includes>
+                        <include>io/personium/core/**/*Test.java</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <io.personium.core.lock.type>inProcess</io.personium.core.lock.type>
+                        <io.personium.core.cache.type>inProcess</io.personium.core.cache.type>
+                        <io.personium.core.security.secret16>gv7hpmmf5siwj5by</io.personium.core.security.secret16>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <!--
+                Prerequisite to run integration-test:
+                  - Following middlewares are setup in localhost.
+                    - ElasticSearch
+                    - ActiveMQ
+                    - Memcached
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <includes>
+                        <include>io/personium/test/**/*Test.java</include>
+                    </includes>
                     <excludes>
-                        <exclude>**/engine/ServiceRelayTest.java</exclude>
                         <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
+                        <exclude>**/engine/ServiceRelayTest.java</exclude>
                         <exclude>**/performance/**/*Test.java</exclude>
+                        <!-- Tests that fail when running tests from outside for various reasons. -->
+                        <!-- TODO Should be fixed so that all tests are successful. -->
+                        <!--
+                        <exclude>**/jersey/StatusTest.java</exclude>
+                        <exclude>**/jersey/cell/CellBulkDeletionTest.java</exclude>
+                        <exclude>**/jersey/cell/UnitUserCellCRUDTest.java</exclude>
+                        <exclude>**/jersey/cell/EventTest.java</exclude>
+                        <exclude>**/jersey/cell/CellRootGetTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/AuthCheckTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/AuthCookieTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/AuthTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/AuthzGetTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/ImplicitFlowTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/X509AuthTest.java</exclude>
+                        <exclude>**/jersey/cell/ctl/ExtCellReadTest.java</exclude>
+                        -->
                     </excludes>
+                    <systemPropertyVariables>
+                        <jersey.test.port>9998</jersey.test.port>
+                        <pcs.distribution>standard</pcs.distribution>
+                        <io.personium.core.lock.type>memcached</io.personium.core.lock.type>
+                        <io.personium.core.cache.type>memcached</io.personium.core.cache.type>
+                        <io.personium.core.cache.cell.enabled>true</io.personium.core.cache.cell.enabled>
+                        <io.personium.core.cache.box.enabled>true</io.personium.core.cache.box.enabled>
+                        <io.personium.core.cache.schema.enabled>true</io.personium.core.cache.schema.enabled>
+                        <io.personium.core.binaryData.fsync.enabled>false</io.personium.core.binaryData.fsync.enabled>
+                        <io.personium.core.security.secret16>gv7hpmmf5siwj5by</io.personium.core.security.secret16>
+                    </systemPropertyVariables>
                 </configuration>
                 <executions>
                     <execution>
-                        <!-- Test group assuming execution from environment outside Personium server. -->
-                        <id>integration-tests</id>
-                        <phase>integration-test</phase>
                         <goals>
-                            <goal>test</goal>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>reset-data</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
                         </goals>
                         <configuration>
-                            <skip>false</skip>
                             <includes>
-                                <include>**/test/jersey/**/*Test.java</include>
+                                <include>**/setup/Setup.java</include>
                             </includes>
-                            <excludes>
-                                <!-- Tests that fail when running tests from outside for various reasons. -->
-                                <!-- TODO Should be fixed so that all tests are successful. -->
-                                <exclude>**/engine/ServiceRelayTest.java</exclude>
-                                <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
-                                <exclude>**/jersey/StatusTest.java</exclude>
-                                <exclude>**/jersey/cell/CellBulkDeletionTest.java</exclude>
-                                <exclude>**/jersey/cell/UnitUserCellCRUDTest.java</exclude>
-                                <exclude>**/jersey/cell/EventTest.java</exclude>
-                                <exclude>**/jersey/cell/CellRootGetTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/AuthCheckTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/AuthCookieTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/AuthTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/AuthzGetTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/ImplicitFlowTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/X509AuthTest.java</exclude>
-                                <exclude>**/jersey/cell/ctl/ExtCellReadTest.java</exclude>
-                            </excludes>
+                            <test>Setup#reset</test>
+                        </configuration>
+                    </execution>
+                    <!-- reset-eventlog is necessary to run after reset. -->
+                    <execution>
+                        <id>reset-eventlog</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/setup/Setup.java</include>
+                            </includes>
+                            <test>Setup#resetEventLog</test>
                         </configuration>
                     </execution>
                 </executions>
