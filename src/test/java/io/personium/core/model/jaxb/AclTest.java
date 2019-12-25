@@ -1,14 +1,18 @@
 package io.personium.core.model.jaxb;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.xml.bind.JAXBException;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.BeforeClass;
@@ -58,7 +62,7 @@ public class AclTest {
      * @throws Exception
      */
     @Test
-    public void toJSON_requiredSchemaAuthz_ShouldBe_MappedToKeyWithNamespacePrefix() throws Exception {
+    public void toJSON_requiredSchemaAuthz_ShouldBeMappedTo_KeyWithNamespacePrefix() throws Exception {
         // prepare Acl object
         Acl acl = new Acl();
         String mbUrl = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:foo:/__/");
@@ -80,7 +84,7 @@ public class AclTest {
     }
     
     @Test
-    public void fromJSON_requiredSchemaAuthz_ShouldBe_MappedToKey_EitherWithOrWithoutNamespacePrefix() throws Exception {
+    public void fromJSON_requiredSchemaAuthz_ShouldBeMappedTo_KeyEitherWithOrWithoutNamespacePrefix() throws Exception {
         // prepare Json expression with @p.requireSchemaAuthz key (with namespace prefix  p)
         //   new format starting from 1.7.21
         String jsonStrWithPrefix = "{\"@p.requireSchemaAuthz\":\"public\",\"@xml.base\":\"personium-localunit:foo:\\/__\\/\",\"D.ace\":[]}";
@@ -94,14 +98,90 @@ public class AclTest {
         Acl acl2 = Acl.fromJson(jsonStrWithoutPrefix);
         assertEquals("public", acl2.getRequireSchemaAuthz());
     }
+    
+    /**
+     * test toJSON method and check that requiredSchemaAuthz should be mapped to key with a name space prefix.
+     * @throws Exception
+     */
+    @Test
+    public void toJSON_ace_ShouldBe_MappedTo_properKeys() throws Exception {
+        // prepare Acl object
+        Acl acl = new Acl();
+        String mbUrl = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:foo:/__/");
+        acl.setBase(mbUrl);
+
+        // setRequireSchemaAuthz()
+        String requiredSchemaAuthz = "public";
+        acl.setRequireSchemaAuthz(requiredSchemaAuthz);
+        
+        Ace ace0 = new Ace();
+        ace0.setPrincipalHref("role1");
+        ace0.addGrantedPrivilege("read");
+        ace0.addGrantedPrivilege("write-properties");
+        acl.getAceList().add(ace0);
+
+        Ace ace1 = new Ace();
+        ace1.principal = new Principal();
+        ace1.principal.all = "";
+        ace1.addGrantedPrivilege("root");
+        acl.getAceList().add(ace1);
+
+        StringWriter sw = new StringWriter();
+        ObjectIo.marshal(acl, sw);
+        log.info(sw.toString());
+        
+        // call toJSON
+        JSONObject j = (JSONObject) new JSONParser().parse(acl.toJSON());
+        log.info(j.toJSONString());
+
+        // requireSchemaAuthz should be mapped to the following key.
+        JSONArray aces = (JSONArray)j.get("D.ace");
+        assertEquals(2, aces.size());
+        
+        // check 1st ace
+        JSONObject a0 = (JSONObject)aces.get(0);
+        //    principal should be href = role1
+        JSONObject a0principal = (JSONObject)a0.get("D.principal");
+        assertEquals("role1", (String)a0principal.get("D.href"));
+        assertNull(a0principal.get("D.all"));
+        
+        //    privilege .
+        JSONArray a0priv = (JSONArray) ((JSONObject)a0.get("D.grant")).get("D.privilege");
+        assertEquals(2, a0priv.size());
+        JSONObject a0priv0 = (JSONObject) a0priv.get(0);
+        //    D.read should be populated .
+        assertNotNull((JSONObject)a0priv0.get("D.read"));
+        assertNull((JSONObject)a0priv0.get("D.write"));
+        
+        JSONObject a0priv1 = (JSONObject) a0priv.get(1);
+        //    D.write-properties should be populated .
+        assertNotNull((JSONObject)a0priv1.get("D.write-properties"));
+        assertNull((JSONObject)a0priv1.get("D.write"));
+        
+        // check 2nd ace
+        JSONObject a1 = (JSONObject)aces.get(1);
+        //    principal should be D.all
+        JSONObject a1principal = (JSONObject)a1.get("D.principal");
+        assertNotNull(a1principal.get("D.all"));
+        assertNull(a1principal.get("D.href"));
+
+        //    privilege .
+        JSONArray a1priv = (JSONArray) ((JSONObject)a1.get("D.grant")).get("D.privilege");
+        assertEquals(1, a1priv.size());
+        JSONObject a1priv0 = (JSONObject) a1priv.get(0);
+        //    p.root should be populated .
+        assertNotNull((JSONObject)a1priv0.get("p.root"));
+        assertNull((JSONObject)a1priv0.get("D.root"));
+    }
 
     /**
-     * ACLのバリデートで全ての設定が正しく設定されている場合.
+     * Test ObjectIo#unmarshal() and check if proper object structure will be formed when valid xml is given.
      * @throws IOException IOException
      * @throws JAXBException JAXBException
      */
     @Test
-    public void ACLのバリデートで全ての設定が正しく設定されている場合() throws IOException, JAXBException {
+    public void ObjectIo_unmarshal_When_ValidXml_Given_Then_ProperObjectStructure_Formed() throws IOException, JAXBException {
+        // prepare ACL XML
         String aclString = "<D:acl xmlns:D='DAV:' xml:base='https://fqdn/aclTest/__role/__/' "
                 + "xmlns:p='urn:x-personium:xmlns' p:requireSchemaAuthz='public'>"
                 + "<D:ace>"
@@ -115,11 +195,29 @@ public class AclTest {
                 + "</D:grant>"
                 + "</D:ace>"
                 + "</D:acl>";
+        // call ObjectIo#unmarshal()
         Acl aclToSet = null;
         Reader reader = new StringReader(aclString);
-
         aclToSet = ObjectIo.unmarshal(reader, Acl.class);
+
+        // .validateAcl() should not throw any exception since the given xml is valid
         aclToSet.validateAcl(true);
+
+        // requiredSchemaAuthz should be properly populated
+        assertEquals("public", aclToSet.getRequireSchemaAuthz());
+
+        // size of ace = 1
+        assertEquals(1, aclToSet.aces.size());
+
+        // The ace principal should be "all"
+        Ace ace = aclToSet.aces.get(0);
+        assertEquals("", ace.getPrincipalAll());
+        assertNull(ace.getPrincipalHref());
+        
+        // The ace granted privilege should be just "all"
+        assertEquals(1, ace.getGrantedPrivilegeList().size());
+        String priv = ace.getGrantedPrivilegeList().get(0);
+        assertEquals("all", priv);
     }
 
     /**
@@ -129,7 +227,7 @@ public class AclTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void validateAcl_Error_requireSchemaAuthz_not_match() throws Exception {
+    public void validateAcl_ShouldThrowException_WhenGiven_Invalid_RequireSchemaAuthz() throws Exception {
         String aclString = "<D:acl xmlns:D='DAV:' xml:base='https://fqdn/aclTest/__role/__/' "
                 + "xmlns:p='urn:x-personium:xmlns' p:requireSchemaAuthz='test'>"
                 + "<D:ace>"
