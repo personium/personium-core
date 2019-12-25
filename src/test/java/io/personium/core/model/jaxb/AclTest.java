@@ -1,7 +1,5 @@
 package io.personium.core.model.jaxb;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -26,19 +24,15 @@ import io.personium.core.utils.UriUtils;
 public class AclTest {
     private static Logger log = LoggerFactory.getLogger(AclTest.class);
 
-    private static String unitUrl;
-
-
     @BeforeClass
     public static void beforeClass() throws Exception {
         // Configure PersoniumUnitConfig's BaseUrl
         TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                 PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
-        unitUrl = PersoniumUnitConfig.getBaseUrl();
     }
 
     @Test
-    public void testGetSetBase_localUnitURL_shouldBeStoredUsing_localUnitScheme() throws Exception {
+    public void setBase_localUnitURL_shouldBeStoredUsing_localUnitScheme() throws Exception {
         Acl acl = new Acl();
         String unitUrl = PersoniumUnitConfig.getBaseUrl();
         String mbUrl = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:foo:/__/");
@@ -57,6 +51,48 @@ public class AclTest {
         String retrievedUrl = acl.getBase();
         // ---------------
         assertEquals(mbUrl, retrievedUrl);
+    }
+
+    /**
+     * toJSON_requiredSchemaAuthz_ShouldBe_MappedToKeyWithNamespacePrefix
+     * @throws Exception
+     */
+    @Test
+    public void toJSON_requiredSchemaAuthz_ShouldBe_MappedToKeyWithNamespacePrefix() throws Exception {
+        // prepare Acl object
+        Acl acl = new Acl();
+        String mbUrl = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:foo:/__/");
+        acl.setBase(mbUrl);
+
+        // setRequireSchemaAuthz()
+        String requiredSchemaAuthz = "public";
+        acl.setRequireSchemaAuthz(requiredSchemaAuthz);
+
+        // call toJSON
+        JSONObject j = (JSONObject) new JSONParser().parse(acl.toJSON());
+ 
+        // requireSchemaAuthz should be mapped to the following key.
+        String prsa = (String) j.get("@p.requireSchemaAuthz");
+        log.info(j.toJSONString());
+        log.info("prsa: " + prsa);
+        // should be equal to the previously set value.
+        assertEquals(requiredSchemaAuthz, prsa);
+    }
+    
+    @Test
+    public void fromJSON_requiredSchemaAuthz_ShouldBe_MappedToKey_EitherWithOrWithoutNamespacePrefix() throws Exception {
+        // prepare Json expression with @p.requireSchemaAuthz key (with namespace prefix  p)
+        //   new format starting from 1.7.21
+        String jsonStrWithPrefix = "{\"@p.requireSchemaAuthz\":\"public\",\"@xml.base\":\"personium-localunit:foo:\\/__\\/\",\"D.ace\":[]}";
+        // call  fromJson() 
+        Acl acl = Acl.fromJson(jsonStrWithPrefix);
+        assertEquals("public", acl.getRequireSchemaAuthz());
+ 
+        // prepare Json expression with @requireSchemaAuthz key (without namespace prefix  p)
+        //   old format upto 1.7.20
+        String jsonStrWithoutPrefix = "{\"@requireSchemaAuthz\":\"public\",\"@xml.base\":\"personium-localunit:foo:\\/__\\/\",\"D.ace\":[]}";
+        Acl acl2 = Acl.fromJson(jsonStrWithoutPrefix);
+        assertEquals("public", acl2.getRequireSchemaAuthz());
     }
 
     /**
@@ -115,8 +151,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "Value [test] for requireSchemaAuthz is invalid");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -141,8 +177,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "Can not read grant");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -170,8 +206,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "Can not read grant");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -201,8 +237,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "Can not read principal");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -263,8 +299,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "Principal is neither href nor all");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -298,8 +334,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "Principal is neither href nor all");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -393,8 +429,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "href in principal is empty");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -431,8 +467,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "href in principal is empty");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -464,8 +500,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "Privilege is empty");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -498,8 +534,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "[test] that can not be set in privilege");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -558,8 +594,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "[test] that can not be set in privilege");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -589,8 +625,8 @@ public class AclTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
                     "Can not read privilege");
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
         }
     }
 
@@ -621,6 +657,4 @@ public class AclTest {
         aclToSet = ObjectIo.unmarshal(reader, Acl.class);
         aclToSet.validateAcl(true);
     }
-
-
 }
