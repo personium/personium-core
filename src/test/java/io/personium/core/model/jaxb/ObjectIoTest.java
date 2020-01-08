@@ -96,7 +96,7 @@ public class ObjectIoTest {
         Acl acl = this.prepareAcl();
         String jsonStr = acl.toJSON();
 
-        //        log.info(jsonStr.replaceAll(",", ",\n"));
+        log.info(jsonStr.replaceAll(",", ",\n"));
         //        log.info("-----------");
 
         Acl acl2 = Acl.fromJson(jsonStr);
