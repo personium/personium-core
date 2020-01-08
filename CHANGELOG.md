@@ -3,11 +3,11 @@ BREAKING CHANGES:
 * Exported bar file now does not use a "personium-localunit:" URL ([#512](https://github.com/personium/personium-core/issues/512))
   - Base Url in 00_meta/90_rootprops.xml
     - 1.7.17 and before  
-          https://{cellName}.{domain}/__role/{boxName}
+          `https://{cellName}.{domain}/__role/{boxName}`
     - 1.7.18-20:  
-          personium-localunit:{cellName}:/__role/{boxName}
+          `personium-localunit:{cellName}:/__role/{boxName}`
     - 1.7.21 and later:  
-          https://{cellName}.{domain}/__role/__/
+          `https://{cellName}.{domain}/__role/__/`
   - Bar file export / import compatibility    
     - Bar file exported from 1.7.18-20  
         Not importable to any version
@@ -34,7 +34,7 @@ IMPROVEMENTS:
      1. Default configuration (personium-unit-config-default.properties bundled in personium-core.war file)
 
 NOTES:
-* Use personium-engine 1.5.27 for this version of personium-core
+* Use personium-engine 1.5.26 for this version of personium-core
 
 ## 1.7.20
 BUG FIXES:
