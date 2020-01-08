@@ -26,15 +26,11 @@ import io.personium.core.utils.UriUtils;
 public class AclTest {
     private static Logger log = LoggerFactory.getLogger(AclTest.class);
 
-    private static String unitUrl;
-
-
     @BeforeClass
     public static void beforeClass() throws Exception {
         // Configure PersoniumUnitConfig's BaseUrl
         TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                 PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
-        unitUrl = PersoniumUnitConfig.getBaseUrl();
     }
 
     @Test
