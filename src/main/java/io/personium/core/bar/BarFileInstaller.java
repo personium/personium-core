@@ -524,27 +524,10 @@ public class BarFileInstaller {
     }
 
     /**
-     * Get cell name.
-     * @return cell name
-     */
-    public String getCellName() {
-        return cell.getName();
-    }
-
-    /**
-     * Acquisition of ODataProducer.
-     * @return ODataProducer
-     */
-    public PersoniumODataProducer getOdataProducer() {
-        return oDataEntityResource.getOdataProducer();
-    }
-
-    /**
      * Acquisition of ODataEntityResource.
      * @return ODataEntityResource
      */
     public ODataEntityResource getODataEntityResource() {
         return oDataEntityResource;
     }
-
 }
