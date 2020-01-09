@@ -99,8 +99,8 @@ public class TokenEndPointResourceTest {
     public static void beforeClass() throws Exception {
         PersoniumUnitConfig.set(PersoniumUnitConfig.Security.TOKEN_SECRET_KEY, "0123456789abcdef");
         // This test class can run both in path-based and subdomain-based cell Url.
-        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
-        //PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
+        //PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         PersoniumCoreApplication.loadConfig();
         TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                 PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
@@ -716,5 +716,4 @@ public class TokenEndPointResourceTest {
         assertEquals(role3.toRoleClassURL(),
                 vrt.getRoleList().get(1).toRoleClassURL());
     }
-
 }
