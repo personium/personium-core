@@ -18,6 +18,7 @@
 package io.personium.core.rs.cell;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -92,14 +93,15 @@ public class TokenEndPointResourceTest {
     private CellRsCmp mockCellRsCmp;
     private UriInfo mockUriInfo;
     private String xForwadedFor = "1.2.3.4";
-    private Role role1 ;
+    public static final String ACCOUNT_NAME = "username";
+    private Role role1;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         PersoniumUnitConfig.set(PersoniumUnitConfig.Security.TOKEN_SECRET_KEY, "0123456789abcdef");
         // This test class can run both in path-based and subdomain-based cell Url.
-        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
-        //PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
+        //PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         PersoniumCoreApplication.loadConfig();
         TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                 PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
@@ -121,20 +123,24 @@ public class TokenEndPointResourceTest {
         String cellUrl = "personium-localunit:testcell:/";
         cellUrl = UriUtils.convertSchemeFromLocalUnitToHttp(cellUrl);
 
-        String username = "username";
+        String appCellUrl = "personium-localunit:appcell:/";
+        appCellUrl = UriUtils.convertSchemeFromLocalUnitToHttp(appCellUrl);
+
+        // prepare a mock CellRsCmp
         this.mockCellRsCmp = mock(CellRsCmp.class);
         doReturn(null).when(this.mockCellRsCmp).getAccountsNotRecordingAuthHistory();
-        doReturn(false).when(this.mockCellRsCmp).isRecordingAuthHistory(null, username);
+        doReturn(false).when(this.mockCellRsCmp).isRecordingAuthHistory(null, ACCOUNT_NAME);
 
+        // prepare a mock Cell
         this.mockCell = Mockito.spy(Cell.class);
         doReturn(unitUrl).when(this.mockCell).getUnitUrl();
         doReturn(cellUrl).when(this.mockCell).getUrl();
-        Box mockBox = new Box(this.mockCell, "box1", this.mockCell.getUnitUrl() + "appcell/", "dummyboxid", new Date().getTime());
+        Box mockBox = new Box(this.mockCell, "box1", appCellUrl, "dummyboxid", new Date().getTime());
 
         List<Role> roleList = new ArrayList<>();
         this.role1 = new Role("MyBoardViewer", mockBox.getName(), mockBox.getSchema(), this.mockCell.getUrl());
         roleList.add(this.role1);
-        doReturn(roleList).when(this.mockCell).getRoleListForAccount(username);
+        doReturn(roleList).when(this.mockCell).getRoleListForAccount(ACCOUNT_NAME);
         doReturn(roleList).when(this.mockCell).getRoleListHere(Mockito.any());
         doReturn(mockBox).when(this.mockCell).getBoxForSchema(anyString());
         Map<String, String> o = new HashMap<>();
@@ -150,7 +156,7 @@ public class TokenEndPointResourceTest {
 
             @Override
             public OEntityKey getEntityKey() {
-                return OEntityKey.create(Account.P_NAME.getName(), "username");
+                return OEntityKey.create(Account.P_NAME.getName(), ACCOUNT_NAME);
             }
 
             @Override
@@ -202,7 +208,7 @@ public class TokenEndPointResourceTest {
 
         };
         OEntityWrapper oew = new OEntityWrapper(null, oe, "5678etag");
-        doReturn(oew).when(this.mockCell).getAccount("username");
+        doReturn(oew).when(this.mockCell).getAccount(ACCOUNT_NAME);
         doReturn(true).when(this.mockCell).authenticateAccount(oew, "password");
 
         this.tokenEndPointResource = new TokenEndPointResource(mockCell, this.mockCellRsCmp);
@@ -228,7 +234,7 @@ public class TokenEndPointResourceTest {
         // Vaild ResidentRefreshToken
         // --------------------
         ResidentRefreshToken refreshToken = new ResidentRefreshToken(this.mockCell.getUrl(),
-                this.mockCell.getUrl() + "#me", schema, scopes);
+                ACCOUNT_NAME, schema, scopes);
 
         // --------------------
         // Run method
@@ -244,7 +250,27 @@ public class TokenEndPointResourceTest {
         // --------------------
         // Confirm result
         // --------------------
+        // Status Code should be 200
         assertEquals(Response.ok().build().getStatus(), actual.getStatus());
+        JsonObject json = Json.createReader(new ByteArrayInputStream(((String) actual.getEntity()).getBytes()))
+        .readObject();
+        String atStr = json.getString(OAuth2Helper.Key.ACCESS_TOKEN);
+        String rtStr = json.getString(OAuth2Helper.Key.REFRESH_TOKEN);
+
+        AbstractOAuth2Token at = AbstractOAuth2Token.parse(atStr,  this.mockCell.getUrl(),  this.mockCell.getUnitUrl());
+        AbstractOAuth2Token rt = AbstractOAuth2Token.parse(rtStr,  this.mockCell.getUrl(),  this.mockCell.getUnitUrl());
+        assertTrue(at instanceof TransCellAccessToken);
+        assertTrue(rt instanceof ResidentRefreshToken);
+
+        TransCellAccessToken tcat = (TransCellAccessToken)at;
+        assertEquals(this.mockCell.getUrl(), tcat.getIssuer());
+        assertEquals(schema, tcat.getSchema());
+        assertEquals(target, tcat.getTarget());
+        assertEquals(this.mockCell.getUrl() + "#" + ACCOUNT_NAME, tcat.getSubject());
+
+        for (Role r : tcat.getRoleList()) {
+            log.info(r.toRoleClassURL());
+        }
     }
 
     /**
@@ -267,7 +293,7 @@ public class TokenEndPointResourceTest {
         ResidentRefreshToken refreshToken = new ResidentRefreshToken(
                 new Date().getTime() - 2 * AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
                 1000,
-                this.mockCell.getUrl(), this.mockCell.getUrl() + "#me", schema, scopes);
+                this.mockCell.getUrl(), ACCOUNT_NAME, schema, scopes);
 
         // --------------------
         // Run method
@@ -310,11 +336,13 @@ public class TokenEndPointResourceTest {
         // Valid VisitorRefreshToken
         // --------------------
         List<Role> roleList = new ArrayList<Role>();
+        roleList.add(this.role1);
+
         VisitorRefreshToken refreshToken = new VisitorRefreshToken(UUID.randomUUID().toString(),
                 new Date().getTime(),
                 AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
                 this.mockCell.getUrl(),
-                this.mockCell.getUrl() + "#me",
+                this.mockCell.getUrl() + "#" + ACCOUNT_NAME,
                 this.mockCell.getUrl(),
                 roleList,
                 schema, scopes);
@@ -334,7 +362,29 @@ public class TokenEndPointResourceTest {
         // --------------------
         // Confirm result
         // --------------------
+        // Status Code should be 200
         assertEquals(Response.ok().build().getStatus(), actual.getStatus());
+
+        // parse the response
+        JsonObject json = Json.createReader(new ByteArrayInputStream(((String) actual.getEntity()).getBytes()))
+        .readObject();
+        String atStr = json.getString(OAuth2Helper.Key.ACCESS_TOKEN);
+        String rtStr = json.getString(OAuth2Helper.Key.REFRESH_TOKEN);
+
+        AbstractOAuth2Token at = AbstractOAuth2Token.parse(atStr,  this.mockCell.getUrl(),  this.mockCell.getUnitUrl());
+        AbstractOAuth2Token rt = AbstractOAuth2Token.parse(rtStr,  this.mockCell.getUrl(),  this.mockCell.getUnitUrl());
+        assertTrue(at instanceof TransCellAccessToken);
+        assertTrue(rt instanceof VisitorRefreshToken);
+
+        TransCellAccessToken tcat = (TransCellAccessToken)at;
+        assertEquals(this.mockCell.getUrl(), tcat.getIssuer());
+        assertEquals(schema, tcat.getSchema());
+        assertEquals(target, tcat.getTarget());
+        assertEquals(this.mockCell.getUrl() + "#" + ACCOUNT_NAME, tcat.getSubject());
+
+        for (Role r : tcat.getRoleList()) {
+            log.info(r.toRoleClassURL());
+        }
     }
 
     /**
@@ -689,4 +739,5 @@ public class TokenEndPointResourceTest {
         assertEquals(role3.toRoleClassURL(),
                 vrt.getRoleList().get(1).toRoleClassURL());
     }
+
 }
