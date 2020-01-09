@@ -76,6 +76,7 @@ import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.PersoniumCoreApplication;
+import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Unit;
 
 /**
@@ -96,8 +97,9 @@ public class TokenEndPointResourceTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         PersoniumUnitConfig.set(PersoniumUnitConfig.Security.TOKEN_SECRET_KEY, "0123456789abcdef");
-        // This test class assumes path based cell Url.
+        // This test class can run both in path-based and subdomain-based cell Url.
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
+        //PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         PersoniumCoreApplication.loadConfig();
         TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                 PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
@@ -116,7 +118,8 @@ public class TokenEndPointResourceTest {
     @Before
     public void before() throws Exception {
         String unitUrl = PersoniumUnitConfig.getBaseUrl();
-        String cellUrl = unitUrl + "testcell/";
+        String cellUrl = "personium-localunit:testcell:/";
+        cellUrl = UriUtils.convertSchemeFromLocalUnitToHttp(cellUrl);
 
         String username = "username";
         this.mockCellRsCmp = mock(CellRsCmp.class);
@@ -473,7 +476,9 @@ public class TokenEndPointResourceTest {
 
     @Test
     public void token_GrantCode_When_Invalid_Fails() throws Exception {
-        String clientId = this.mockCell.getUnitUrl() + "appcell/";
+        String clientId = "personium-localunit:appcell:/";
+        clientId = UriUtils.convertSchemeFromLocalUnitToHttp(clientId);
+
         TransCellAccessToken appAuthToken = new TransCellAccessToken(clientId, clientId + "#app",
                 this.mockCell.getUrl(), new ArrayList<Role>(), "", new String[0]);
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
@@ -494,7 +499,8 @@ public class TokenEndPointResourceTest {
 
     @Test
     public void token_GrantCode_When_Valid_Succeeds() throws Exception {
-        String clientId = this.mockCell.getUnitUrl() + "appcell/";
+        String clientId = "personium-localunit:appcell:/";
+        clientId = UriUtils.convertSchemeFromLocalUnitToHttp(clientId);
 
         TransCellAccessToken appAuthToken = new TransCellAccessToken(
             clientId, clientId + "#app", this.mockCell.getUrl(), new ArrayList<Role>(), "", new String[0]);
@@ -515,7 +521,9 @@ public class TokenEndPointResourceTest {
     @Test
     public void token_GrantCode_WithConfidentialMark_When_Valid_Succeeds() throws Exception {
         // Prepare App Auth Token
-        String clientId = this.mockCell.getUnitUrl() + "appcell/";
+        String clientId = "personium-localunit:appcell:/";
+        clientId = UriUtils.convertSchemeFromLocalUnitToHttp(clientId);
+
         List<Role> roleList = new ArrayList<Role>();
         roleList.add(new Role("confidentialClient", null, null, clientId));
         TransCellAccessToken appAuthToken = new TransCellAccessToken(
@@ -566,7 +574,9 @@ public class TokenEndPointResourceTest {
     @Test
     public void token_TransCellAccessToken_VisitorRefreshToken_ShouldHave_SameRoles_And_VisitorAccessToken_ShouldHave_ProperRoles() throws Exception {
         // prepare App Auth Token
-        String clientId = this.mockCell.getUnitUrl() + "appcell/";
+        String clientId = "personium-localunit:appcell:/";
+        clientId = UriUtils.convertSchemeFromLocalUnitToHttp(clientId);
+
         List<Role> roleList = new ArrayList<Role>();
         roleList.add(new Role("confidentialClient", null, null, clientId));
         TransCellAccessToken appAuthToken = new TransCellAccessToken(clientId, clientId + "#app",
@@ -618,11 +628,12 @@ public class TokenEndPointResourceTest {
                 vrt.getRoleList().get(0).toRoleClassURL());
         assertEquals(role3.toRoleClassURL(),
                 vrt.getRoleList().get(1).toRoleClassURL());
-    }    
+    }
     @Test
     public void token_VisitorRefreshToken_VisitorRefreshToken_ShouldHave_SameRoles_And_VisitorAccessToken_ShouldHave_ProperRoles() throws Exception {
         // prepare App Auth Token
-        String clientId = this.mockCell.getUnitUrl() + "appcell/";
+        String clientId = "personium-localunit:appcell:/";
+        clientId = UriUtils.convertSchemeFromLocalUnitToHttp(clientId);
         List<Role> roleList = new ArrayList<Role>();
         roleList.add(new Role("confidentialClient", null, null, clientId));
         TransCellAccessToken appAuthToken = new TransCellAccessToken(clientId, clientId + "#app",
