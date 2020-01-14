@@ -16,12 +16,13 @@
  */
 package io.personium.core.model;
 
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.ws.rs.core.UriBuilder;
 
 import org.core4j.Enumerable;
 import org.odata4j.core.OEntity;
@@ -41,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.Role;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AuthUtils;
@@ -99,7 +101,6 @@ public abstract class Cell {
 
     protected String id;
     protected String name;
-    protected String url; // Note: path base
     protected String owner;
     protected Long published;
 
@@ -127,7 +128,7 @@ public abstract class Cell {
      */
     public String getUrl() {
         if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
-            return this.url;
+            return getPathBaseUrl();
         } else {
             return getFqdnBaseUrl();
         }
@@ -139,15 +140,15 @@ public abstract class Cell {
      * @return Cell base URL string
      */
     public String getFqdnBaseUrl() {
-        try {
-            return UriUtils.convertPathBaseToFqdnBase(url);
-        } catch (URISyntaxException e) {
-            // Usually it does not occur.
-            throw PersoniumCoreException.Server.UNKNOWN_ERROR.reason(e);
-        }
+        StringBuilder hostSb = new StringBuilder(this.name);
+        hostSb.append(".").append(CommonUtils.getFQDN());
+        return UriBuilder.fromPath("/")
+            .scheme(PersoniumUnitConfig.getUnitScheme())
+            .host(hostSb.toString())
+            .port(PersoniumUnitConfig.getUnitPort())
+            .build()
+            .toString();
     }
-
-
 
     /**
      * returns Cell base URL string for this cell.
@@ -155,7 +156,8 @@ public abstract class Cell {
      * @return Cell base URL string
      */
     public String getPathBaseUrl() {
-        return url;
+        StringBuilder sb = new StringBuilder(this.getUnitUrl());
+        return sb.append(this.name).append("/").toString() ;
     }
 
     /**
@@ -293,6 +295,7 @@ public abstract class Cell {
             }
         }
     }
+
     /**
      * Check the value of property item with regular expression.
      * @param propValue
@@ -338,7 +341,11 @@ public abstract class Cell {
         return null;
     }
 
-
+    /**
+     * @param clientId
+     * @param grantType
+     * @return
+     */
     public ScopeArbitrator getScopeArbitrator(String clientId, String grantType) {
         Box box = this.getBoxForSchema(clientId);
         return new ScopeArbitrator(this, box, grantType);
