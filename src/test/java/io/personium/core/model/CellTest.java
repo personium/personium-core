@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.utils.UriUtils;
 
@@ -22,11 +23,16 @@ public class CellTest {
     static final String CELL_ID = "12345";
     static final String CELL_OWNER = "somebody";
     static Logger log = LoggerFactory.getLogger(CellTest.class);
+    static volatile String fqdnShelter;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+        fqdnShelter = CommonUtils.getFQDN();
         TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                 PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
+
+        CommonUtils.setFQDN("testunit.example");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "");
 
         testCell = new Cell() {
             @Override
@@ -75,6 +81,7 @@ public class CellTest {
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         PersoniumUnitConfig.reload();
+        CommonUtils.setFQDN(fqdnShelter);
     }
 
     @Test
@@ -82,19 +89,19 @@ public class CellTest {
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
         String result = testCell.getUrl();
         log.info(result);
-        assertEquals("http://localhost:9998/testcell/", result);
+        assertEquals("http://testunit.example/testcell/", result);
 
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         result = testCell.getUrl();
         log.info(result);
-        assertEquals("http://testcell.localhost:9998/", result);
+        assertEquals("http://testcell.testunit.example/", result);
     }
 
     @Test
     public void getUnitUrl_Returns_UnitUrl_RegardlessOfCellUrlModes() {
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
         String result = testCell.getUnitUrl();
-        assertEquals("http://localhost:9998/", result);
+        assertEquals("http://testunit.example/", result);
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         String result2 = testCell.getUnitUrl();
         assertEquals(result, result2);
