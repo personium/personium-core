@@ -33,6 +33,7 @@ public class CellTest {
 
         CommonUtils.setFQDN("testunit.example");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_SCHEME, "https");
 
         testCell = new Cell() {
             @Override
@@ -89,19 +90,19 @@ public class CellTest {
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
         String result = testCell.getUrl();
         log.info(result);
-        assertEquals("http://testunit.example/testcell/", result);
+        assertEquals("https://testunit.example/testcell/", result);
 
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         result = testCell.getUrl();
         log.info(result);
-        assertEquals("http://testcell.testunit.example/", result);
+        assertEquals("https://testcell.testunit.example/", result);
     }
 
     @Test
     public void getUnitUrl_Returns_UnitUrl_RegardlessOfCellUrlModes() {
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
         String result = testCell.getUnitUrl();
-        assertEquals("http://testunit.example/", result);
+        assertEquals("https://testunit.example/", result);
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         String result2 = testCell.getUnitUrl();
         assertEquals(result, result2);
