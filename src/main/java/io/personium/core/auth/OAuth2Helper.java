@@ -308,6 +308,27 @@ public final class OAuth2Helper {
          * p_owner value.
          */
         public static final String TRUE_STR = "true";
+        
+        /**
+         * "code_challenge" defined in PKCE (RFC 7636).
+         * https://tools.ietf.org/html/rfc7636
+         */
+        public static final String CODE_CHALLENGE = "code_challenge";
+        /**
+         * "code_challenge_method" defined in PKCE (RFC 7636).
+         * https://tools.ietf.org/html/rfc7636
+         */
+        public static final String CODE_CHALLENGE_METHOD = "code_challenge_method";
+        /**
+         * "code_verifier" defined in PKCE (RFC 7636).
+         * https://tools.ietf.org/html/rfc7636
+         */
+        public static final String CODE_VERIFIER = "code_verifier";
+        /**
+         * "S256" .
+         * https://tools.ietf.org/html/rfc7636
+         */
+        public static final String S256 = "S256";
 
         /**
          * refresh_token_expires_in.

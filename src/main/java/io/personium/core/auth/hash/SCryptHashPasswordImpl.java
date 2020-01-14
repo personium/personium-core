@@ -26,7 +26,6 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Account;
-import io.personium.core.odata.OEntityWrapper;
 
 /**
  * A utility SCrypt hash password.
@@ -88,7 +87,7 @@ public class SCryptHashPasswordImpl implements HashPassword {
      * {@inheritDoc}
      */
     @Override
-    public boolean matches(OEntityWrapper oew, String rawPasswd) {
+    public boolean matches(Account account, String rawPasswd) {
 
         // Parameters other than keyLength are required to generate Instanse but are not actually used.
         // (Obtained from hash at verification)
@@ -99,12 +98,12 @@ public class SCryptHashPasswordImpl implements HashPassword {
 
         // get hashed credential.
         String cred = null;
-        if (oew != null && (String) oew.get(Account.HASHED_CREDENTIAL) != null) {
-            cred = (String) oew.get(Account.HASHED_CREDENTIAL);
+        if (account != null) {
+            cred = account.credential;
         }
 
         // get key length.
-        Integer keyLength = getKeyLenghtFromOEntityWrapper(oew);
+        Integer keyLength = getKeyLenghtFromOEntityWrapper(account);
         if (keyLength == null) {
             keyLength = PersoniumUnitConfig.getSCryptKeyLength();
         }
@@ -129,22 +128,21 @@ public class SCryptHashPasswordImpl implements HashPassword {
      * @param oew OEntityWrapper
      * @return keyLength
      */
-    private Integer getKeyLenghtFromOEntityWrapper(OEntityWrapper oew) {
-        if (oew == null || oew.get(Account.HASH_ATTRIBUTES) == null) {
+    private Integer getKeyLenghtFromOEntityWrapper(Account account) {
+        if (account == null || account.hashAttributes == null) {
             return null;
         }
 
         Integer keyLength = null;
-        String attributesStr = (String) oew.get(Account.HASH_ATTRIBUTES);
         try {
             JSONParser parser = new JSONParser();
             JSONObject attributes;
-            attributes = (JSONObject) parser.parse(attributesStr);
+            attributes = (JSONObject) parser.parse(account.hashAttributes);
             if (attributes.containsKey(HASH_ATTRIBUTE_KEYLENGTH)) {
                 keyLength = new Integer(attributes.get(HASH_ATTRIBUTE_KEYLENGTH).toString());
             }
         } catch (Exception e) {
-            throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(attributesStr);
+            throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(account.hashAttributes);
         }
         return keyLength;
     }

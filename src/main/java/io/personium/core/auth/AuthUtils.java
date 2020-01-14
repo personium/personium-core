@@ -98,19 +98,20 @@ public final class AuthUtils {
      * @param rawPasswd raw password string
      * @return true if matches password.
      */
-    public static boolean isMatchePassword(OEntityWrapper oew, String rawPasswd) {
-        // In order to cope with the todo time exploiting attack, even if an ID is not found, processing is done uselessly.
+    public static boolean isMatchePassword(Account account, String rawPasswd) {
+        // In order to cope with the time exploiting attack,
+        // even if an ID is not found, processing is done uselessly.
         String hashAlgorithmName = null;
-        if (oew != null) {
-            hashAlgorithmName = (String) oew.get(Account.HASH_ALGORITHM);
+        HashPassword hpi = null;
+        if (account != null) {
+            hpi = account.passwordHash;
         } else {
-            hashAlgorithmName = PersoniumUnitConfig.getAuthPasswordHashAlgorithm();
+            hpi = new SCryptHashPasswordImpl();
         }
-        HashPassword hpi = getHashPasswordInstance(hashAlgorithmName);
         if (hpi == null) {
             return false;
         }
-        return hpi.matches(oew, rawPasswd);
+        return hpi.matches(account, rawPasswd);
     }
 
     /**
@@ -283,32 +284,6 @@ public final class AuthUtils {
     }
 
     /**
-     * Check is account status active.
-     * @param oew oew
-     * @return boolean Returns false if authentication failure.
-     */
-    public static boolean isActive(OEntityWrapper oew) {
-        String status = getStatus(oew);
-        if (status == null || status.isEmpty() || Account.STATUS_ACTIVE.equals(status)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Check is password change required.
-     * @param oew oew
-     * @return boolean Returns false if authentication failure.
-     */
-    public static boolean isPasswordChangeReuired(OEntityWrapper oew) {
-        String status = getStatus(oew);
-        if (Account.STATUS_PASSWORD_CHANGE_REQUIRED.equals(status)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * get ip address renge list .
      * @param oew oew
      * @return List<String>
@@ -325,16 +300,5 @@ public final class AuthUtils {
         return Arrays.asList(addrAry);
     }
 
-    /**
-     * get status.
-     * @param oew oew
-     * @return status
-     */
-    public static String getStatus(OEntityWrapper oew) {
-        if (oew == null) {
-            return null;
-        }
-        String status = (String) oew.getProperty(Account.P_STATUS.getName()).getValue();
-        return status;
-    }
+
 }

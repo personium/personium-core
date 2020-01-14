@@ -53,9 +53,9 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.model.jaxb.Ace;
 import io.personium.core.model.jaxb.Acl;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.cell.AuthResourceUtils;
 import io.personium.core.utils.UriUtils;
 
@@ -197,13 +197,12 @@ public class AccessContext {
             if (pCookiePeer == null || 0 == pCookiePeer.length()) {
                 return new AccessContext(TYPE_ANONYMOUS, cell, baseUri, requestURIInfo);
             }
-            String nonPortHost = headerHost.split(":")[0];
 
             // Cookie related processing requires no port number.
             String authToken = null;
             try {
                 authToken = AbstractLocalAccessToken.parseCookie(pCookieAuthValue, pCookiePeer,
-                        AccessContext.getCookieCryptKey(nonPortHost), true);
+                        AccessContext.getCookieCryptKey(cell.getId()), true);
                 return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
                         requestURIInfo, null, null, cell, baseUri, headerHost, xPersoniumUnitUser);
             } catch (TokenParseException e) {
@@ -665,13 +664,13 @@ public class AccessContext {
         String username = idpw[0];
         String password = idpw[1];
 
-        OEntityWrapper oew = cell.getAccount(username);
-        if (oew == null) {
+        Account account = cell.getAccount(username);
+        if (account == null) {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthError);
         }
 
         //Check valid authentication interval
-        String accountId = oew.getUuid();
+        String accountId = account.id;
         Boolean isLock = AuthResourceUtils.isLockedAccount(accountId);
         if (isLock) {
             //Update lock time of memcached
@@ -679,7 +678,7 @@ public class AccessContext {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthErrorInAccountLock);
         }
 
-        boolean authnSuccess = cell.authenticateAccount(oew, password);
+        boolean authnSuccess = cell.authenticateAccount(account, password);
         if (!authnSuccess) {
             //Make lock on memcached
             AuthResourceUtils.registIntervalLock(accountId);
