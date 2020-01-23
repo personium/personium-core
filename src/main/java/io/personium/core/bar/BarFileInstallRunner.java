@@ -97,7 +97,7 @@ public class BarFileInstallRunner implements Runnable {
     /** Contents directory in bar file. */
     private static final String CONTENTS_DIR = BarFile.CONTENTS_DIR + "/";
     /** personium-localbox:/ non slush. */
-    private static final String LOCALBOX_NO_SLUSH = UriUtils.SCHEME_LOCALBOX + ":";
+    private static final String LOCALBOX_NO_SLASH = UriUtils.SCHEME_LOCALBOX + ":";
 
     /** Install target box. */
     private Box box;
@@ -501,7 +501,7 @@ public class BarFileInstallRunner implements Runnable {
 
                 List<String> hrefs = response.getHref();
                 String href = hrefs.get(0);
-                if (href.equals(LOCALBOX_NO_SLUSH)) {
+                if (href.equals(LOCALBOX_NO_SLASH)) {
                     href = UriUtils.SCHEME_BOX_URI;
                 }
                 if (href.equals(UriUtils.SCHEME_BOX_URI)) {
@@ -606,9 +606,9 @@ public class BarFileInstallRunner implements Runnable {
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
             }
             //If it does not start with localbox as href attribute value, it is regarded as definition error.
-            if (!href.startsWith(LOCALBOX_NO_SLUSH)) {
+            if (!href.startsWith(LOCALBOX_NO_SLASH)) {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail(
-                        "PL-BI-2010", LOCALBOX_NO_SLUSH, href);
+                        "PL-BI-2010", LOCALBOX_NO_SLASH, href);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
             }
             //Select the type of the defined path. Abnormal termination (log output is unnecessary) when an incorrect path type is specified.
