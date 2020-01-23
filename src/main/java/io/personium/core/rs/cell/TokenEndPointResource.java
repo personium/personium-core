@@ -484,7 +484,7 @@ public class TokenEndPointResource {
      * @param rTokenExpiresIn refresh token expires in time(ms).
      * @return API response
      */
-    private Response receiveCode(final String target, String owner, String schema,
+    Response receiveCode(final String target, String owner, String schema,
             final String code, long expiresIn, long rTokenExpiresIn) {
         if (code == null) {
             //If code is not set, it is regarded as a parse error
@@ -562,7 +562,7 @@ public class TokenEndPointResource {
         return this.responseAuthSuccess(aToken, rToken, idToken, issuedAt);
     }
 
-    private Response receiveSaml2(final String target, final String owner,
+    Response receiveSaml2(final String target, final String owner,
             final String schema, final String assertion, long expiresIn, long rTokenExpiresIn) {
         if (Key.TRUE_STR.equals(owner)) {
             //Do not promote unit user in token authentication
@@ -660,7 +660,7 @@ public class TokenEndPointResource {
      * @param rTokenExpiresIn refresh token expires in time(ms).
      * @return
      */
-    private Response receiveRefresh(final String target, String owner, String schema,
+    Response receiveRefresh(final String target, String owner, String schema,
             final String refreshToken, long expiresIn, long rTokenExpiresIn) {
         if (refreshToken == null) {
             //If refreshToken is not set, it is regarded as a parse error
@@ -826,7 +826,7 @@ public class TokenEndPointResource {
         }
     }
 
-    private Response handlePassword(final String target, final String owner,
+    Response handlePassword(final String target, final String owner,
             final String schema, final String username,
             final String password, long expiresIn, long rTokenExpiresIn, String[] scope) {
 
