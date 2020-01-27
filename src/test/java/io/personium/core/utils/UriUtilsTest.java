@@ -16,19 +16,27 @@
  */
 package io.personium.core.utils;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.cell.TokenEndPointResourceTest;
 import io.personium.test.categories.Unit;
 
 /**
@@ -38,6 +46,13 @@ import io.personium.test.categories.Unit;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ PersoniumUnitConfig.class, UriUtils.class })
 public class UriUtilsTest {
+    static Logger log = LoggerFactory.getLogger(TokenEndPointResourceTest.class);
+
+    @AfterClass
+    public static void tearDown() {
+        PersoniumUnitConfig.reload();
+    }
+
 
     /**
      * Test convertSchemeFromLocalUnitToHttp().
@@ -57,33 +72,33 @@ public class UriUtilsTest {
         // Single Colon
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp(
             "personium-localunit:/cell/"),
-            is("https://host.domain/cell/"));
+            equalTo("https://host.domain/cell/"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp(
             "personium-localunit:/cell/"),
-            is("https://host.domain/cell/"));
+                equalTo("https://host.domain/cell/"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp(
             "personium-localunit:/cell/#account"),
-            is("https://host.domain/cell/#account"));
+                equalTo("https://host.domain/cell/#account"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp(
             "personium-localunit:/cell/box"),
-            is("https://host.domain/cell/box"));
+                equalTo("https://host.domain/cell/box"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp(
             "personium-localunit:/cell/box/col/ent?$inlinecount=allpages"),
-            is("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
+                equalTo("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
 
         // Double Colons
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:"),
-            is("https://host.domain/cell/"));
+            equalTo("https://host.domain/cell/"));
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:"),
-            is("https://host.domain/cell/"));
+            equalTo("https://host.domain/cell/"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:#account"),
-            is("https://host.domain/cell/#account"));
+                equalTo("https://host.domain/cell/#account"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:/box"),
-            is("https://host.domain/cell/box"));
+                equalTo("https://host.domain/cell/box"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:/box/col/ent?$inlinecount=allpages"),
-            is("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
+                equalTo("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
     }
 
     /**
@@ -103,27 +118,27 @@ public class UriUtilsTest {
         // Single Colon
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:/cell/"),
-            is("https://cell.host.domain/"));
+            equalTo("https://cell.host.domain/"));
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:/cell/"),
-            is("https://cell.host.domain/"));
+            equalTo("https://cell.host.domain/"));
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:/cell/#account"),
-            is("https://cell.host.domain/#account"));
+            equalTo("https://cell.host.domain/#account"));
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:/cell/box"),
-            is("https://cell.host.domain/box"));
+            equalTo("https://cell.host.domain/box"));
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:/cell/box/col/ent?$inlinecount=allpages"),
-            is("https://cell.host.domain/box/col/ent?$inlinecount=allpages"));
+            equalTo("https://cell.host.domain/box/col/ent?$inlinecount=allpages"));
 
         // Double Colons
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:"),
-        	is("https://cell.host.domain/"));
+                equalTo("https://cell.host.domain/"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:"),
-        	is("https://cell.host.domain/"));
+                equalTo("https://cell.host.domain/"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:#account"),
-        		is("https://cell.host.domain/#account"));
+                equalTo("https://cell.host.domain/#account"));
 
     }
 
@@ -142,10 +157,10 @@ public class UriUtilsTest {
             .when(PersoniumUnitConfig.class, "getBaseUrl");
         assertThat(
             UriUtils.convertSchemeFromHttpToLocalUnit("https://unit.example/cell/"),
-            is("personium-localunit:/cell/"));
+            equalTo("personium-localunit:/cell/"));
         assertThat(
                 UriUtils.convertSchemeFromHttpToLocalUnit("https://unit.example/cell/#acct"),
-                is("personium-localunit:/cell/#acct"));
+                equalTo("personium-localunit:/cell/#acct"));
     }
 
     /**
@@ -163,19 +178,19 @@ public class UriUtilsTest {
             .when(PersoniumUnitConfig.class, "getBaseUrl");
         assertThat(
             UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/"),
-            is("personium-localunit:cell:/"));
+            equalTo("personium-localunit:cell:/"));
         assertThat(
                 UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/#account"),
-                is("personium-localunit:cell:/#account"));
+                equalTo("personium-localunit:cell:/#account"));
         assertThat(
                 UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/ab/?query=23"),
-                is("personium-localunit:cell:/ab/?query=23"));
+                equalTo("personium-localunit:cell:/ab/?query=23"));
         assertThat(
                 UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/ab/?query=23#frag"),
-                is("personium-localunit:cell:/ab/?query=23#frag"));
+                equalTo("personium-localunit:cell:/ab/?query=23#frag"));
         assertThat(
                 UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/ab/#frag?query"),
-                is("personium-localunit:cell:/ab/#frag?query"));
+                equalTo("personium-localunit:cell:/ab/#frag?query"));
     }
     /**
      * Test convertSchemeFromHttpToLocalUnit().
@@ -192,7 +207,7 @@ public class UriUtilsTest {
             .when(PersoniumUnitConfig.class, "getBaseUrl");
         assertThat(
             UriUtils.convertSchemeFromHttpToLocalUnit("http://unit.example/cell/"),
-            is("personium-localunit:cell:/"));
+            equalTo("personium-localunit:cell:/"));
     }
 
     /**
@@ -209,7 +224,7 @@ public class UriUtilsTest {
 
         assertThat(
                 UriUtils.convertSchemeFromHttpToLocalUnit("http://otherhost.otherdomain/cell/"),
-                is("http://otherhost.otherdomain/cell/"));
+                equalTo("http://otherhost.otherdomain/cell/"));
     }
 
     /**
@@ -220,11 +235,10 @@ public class UriUtilsTest {
      */
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_is_null() throws Exception {
-    	try {
+        try {
             UriUtils.convertSchemeFromHttpToLocalUnit(null);
-    	} catch(PersoniumCoreException e) {
+        } catch(PersoniumCoreException e) {
             assertEquals(e.getCode(), "PR500-CM-0003");
-
         }
     }
 
@@ -236,7 +250,7 @@ public class UriUtilsTest {
      */
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_is_invalid() throws Exception {
-        assertThat(UriUtils.convertSchemeFromHttpToLocalUnit("hoge"), is("hoge"));
+        assertThat(UriUtils.convertSchemeFromHttpToLocalUnit("foo"), equalTo("foo"));
     }
 
     /**
@@ -247,7 +261,7 @@ public class UriUtilsTest {
     @Test
     public void convertSchemeFromLocalBoxToLocalCell_Noraml_url_starts_with_localbox() {
         String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localbox:/col", "box");
-        assertThat(actual, is("personium-localcell:/box/col"));
+        assertThat(actual, equalTo("personium-localcell:/box/col"));
     }
 
     /**
@@ -258,7 +272,7 @@ public class UriUtilsTest {
     @Test
     public void convertSchemeFromLocalBoxToLocalCell_Noraml_boxName_is_null() {
         String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localbox:/col", null);
-        assertThat(actual, is("personium-localbox:/col"));
+        assertThat(actual, equalTo("personium-localbox:/col"));
     }
 
     /**
@@ -269,7 +283,7 @@ public class UriUtilsTest {
     @Test
     public void convertSchemeFromLocalBoxToLocalCell_Noraml_url_not_starts_with_localbox() {
         String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localunit:/cell", "box");
-        assertThat(actual, is("personium-localunit:/cell"));
+        assertThat(actual, equalTo("personium-localunit:/cell"));
     }
 
     /**
@@ -280,7 +294,7 @@ public class UriUtilsTest {
     @Test
     public void convertSchemeFromLocalBoxToLocalCell_Noraml_url_starts_with_localcell() {
         String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localcell:/cell/box", "box");
-        assertThat(actual, is("personium-localcell:/cell/box"));
+        assertThat(actual, equalTo("personium-localcell:/cell/box"));
     }
 
     /**
@@ -291,21 +305,21 @@ public class UriUtilsTest {
     @Test
     public void convertFqdnBaseToPathBase_Noraml() throws Exception {
         assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/"),
-                   is("https://host.domain/cell/"));
+                equalTo("https://host.domain/cell/"));
         assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/box/col"),
-                   is("https://host.domain/cell/box/col"));
+                equalTo("https://host.domain/cell/box/col"));
         assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/box/col/"),
-                   is("https://host.domain/cell/box/col/"));
+                equalTo("https://host.domain/cell/box/col/"));
         assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/#account"),
-                   is("https://host.domain/cell/#account"));
+                equalTo("https://host.domain/cell/#account"));
         assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/box/col/ent?$inlinecount=allpages"),
-                   is("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
+                equalTo("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
         assertThat(UriUtils.convertFqdnBaseToPathBase("https://host.domain/cell/"),
-                   is("https://domain/host/cell/"));
+                equalTo("https://domain/host/cell/"));
         assertThat(UriUtils.convertFqdnBaseToPathBase("https://host/cell/"),
-                   is("https://host/host/cell/"));
+                equalTo("https://host/host/cell/"));
         assertThat(UriUtils.convertFqdnBaseToPathBase("hoge"),
-                   is("hoge"));
+                equalTo("hoge"));
     }
 
     /**
@@ -326,20 +340,20 @@ public class UriUtilsTest {
     @Test
     public void convertPathBaseToFqdnBase_Noraml() throws Exception {
         assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/"),
-                   is("https://cell.host.domain/"));
+                equalTo("https://cell.host.domain/"));
         assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/box/col"),
-                   is("https://cell.host.domain/box/col"));
+                equalTo("https://cell.host.domain/box/col"));
         assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/box/col/"),
-                   is("https://cell.host.domain/box/col/"));
+                equalTo("https://cell.host.domain/box/col/"));
         assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/#account"),
-                   is("https://cell.host.domain/#account"));
+                equalTo("https://cell.host.domain/#account"));
         assertThat(UriUtils.convertPathBaseToFqdnBase("https://cell.host.domain/box"),
-                   is("https://box.cell.host.domain"));
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host/cell/"), is("https://cell.host/"));
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/"), is("https://host.domain/"));
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/__ctl/"), is("https://host.domain/__ctl/"));
+                equalTo("https://box.cell.host.domain"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host/cell/"), equalTo("https://cell.host/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/"), equalTo("https://host.domain/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/__ctl/"), equalTo("https://host.domain/__ctl/"));
         assertThat(UriUtils.convertPathBaseToFqdnBase("hoge"),
-                   is("hoge"));
+                equalTo("hoge"));
     }
 
     /**
@@ -350,6 +364,48 @@ public class UriUtilsTest {
     @Test(expected = NullPointerException.class)
     public void convertPathBaseToFqdnBase_Error_null() throws Exception {
         UriUtils.convertPathBaseToFqdnBase(null);
+    }
+
+    @Test
+    public void getUrlVariations() {
+        // Subdomain based
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "222");
+        CommonUtils.setFQDN("unit.example");;
+
+        String urlSingleColon = "personium-localunit:/cell1/";
+        String urlDoubleColon = "personium-localunit:cell1:/";
+        String urlHttp = "http://cell1.unit.example/";
+        //
+        List<String> result =UriUtils.getUrlVariations(urlDoubleColon);
+        assertEquals(3, result.size());
+        assertTrue(result.contains(urlDoubleColon));
+        assertTrue(result.contains(urlHttp));
+        assertTrue(result.contains(urlSingleColon));
+        for (String v : result) {
+            log.info(v);
+        }
+
+        result =UriUtils.getUrlVariations(urlSingleColon);
+        assertEquals(3, result.size());
+        assertTrue(result.contains(urlDoubleColon));
+        assertTrue(result.contains(urlHttp));
+        assertTrue(result.contains(urlSingleColon));
+        for (String v : result) {
+            log.info(v);
+        }
+        result =UriUtils.getUrlVariations(urlHttp);
+        assertEquals(3, result.size());
+        assertTrue(result.contains(urlDoubleColon));
+        assertTrue(result.contains(urlHttp));
+        assertTrue(result.contains(urlSingleColon));
+        for (String v : result) {
+            log.info(v);
+        }
+
+        // Path based
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
+
     }
 
 }
