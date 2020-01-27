@@ -16,6 +16,10 @@
  */
 package io.personium.core.utils;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALBOX;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -49,12 +53,6 @@ public class UriUtils {
     public static final String SCHEME_HTTPS = "https";
     /** Scheme string, "urn". */
     public static final String SCHEME_URN = "urn";
-    /** Scheme string, "personium-localunit". */
-    public static final String SCHEME_LOCALUNIT = "personium-localunit";
-    /** Scheme string, "personium-localcell". */
-    public static final String SCHEME_LOCALCELL = "personium-localcell";
-    /** Scheme string, "personium-localbox". */
-    public static final String SCHEME_LOCALBOX = "personium-localbox";
 
     /** LOCAL_CELL ADDITION. */
     public static final String SCHEME_CELL_URI = SCHEME_LOCALCELL + ":/";

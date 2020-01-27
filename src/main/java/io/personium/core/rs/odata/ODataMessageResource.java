@@ -16,6 +16,8 @@
  */
 package io.personium.core.rs.odata;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,7 +99,7 @@ public class ODataMessageResource extends AbstractODataResource {
         Response response = rb.build();
 
         // personium-localcell:/__ctl/SentMessage('key')
-        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+        String object = new StringBuilder(SCHEME_LOCALCELL)
                 .append(":/__ctl/")
                 .append(getEntitySetName())
                 .append(key)

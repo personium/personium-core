@@ -16,6 +16,8 @@
  */
 package io.personium.test.utils;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -502,7 +504,7 @@ public final class UrlUtils {
      * @return unit local RelationClassURL
      */
     public static String unitLocalRelationClassUrl(final String cellName, final String relationName) {
-        return String.format("%s%s/__relation/__/%s", UriUtils.SCHEME_LOCALUNIT + ":/", cellName, relationName);
+        return String.format("%s%s/__relation/__/%s", SCHEME_LOCALUNIT + ":/", cellName, relationName);
     }
 
     /**
@@ -522,7 +524,7 @@ public final class UrlUtils {
      * @return unit local RoleClassURL
      */
     public static String unitLocalRoleClassUrl(final String cellName, final String roleName) {
-        return String.format("%s%s/__role/__/%s", UriUtils.SCHEME_LOCALUNIT + ":/", cellName, roleName);
+        return String.format("%s%s/__role/__/%s", SCHEME_LOCALUNIT + ":/", cellName, roleName);
     }
 
     /**

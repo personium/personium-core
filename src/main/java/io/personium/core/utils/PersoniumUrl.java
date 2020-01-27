@@ -70,7 +70,7 @@ public class PersoniumUrl {
     /** Scheme string, "personium-localbox". */
     public static final String SCHEME_LOCALBOX = "personium-localbox";
 
-    /** Regular expression for matching Cell URL */
+    /** Regular expression for extracting scheme part and the rest in a URL */
     public static final Pattern REGEX_SCHEME = Pattern.compile("^([a-z|\\-]+?):(.*)$");
     public static final String REGEX_HTTP_SUBDOMAIN = "^(https?|wss?):\\/\\/(.+?)\\.(.*?)(\\/.*$|$)";
     public static final String REGEX_HTTP_PATH_BASE = "^(https?|wss?):\\/\\/(.+?)\\/(.+?)(\\/.*$|$)";
@@ -127,7 +127,7 @@ public class PersoniumUrl {
         case "wss":
             this.schemeType = SchemeType.WS;
             break;
-        case UriUtils.SCHEME_LOCALUNIT:
+        case SCHEME_LOCALUNIT:
             Matcher localUnitSingleColon = Pattern.compile(REGEX_LOCALUNIT_SINGLE_COLON).matcher(this.givenUrl);
             Matcher localUnitDoubleColon = Pattern.compile(REGEX_LOCALUNIT_DOUBLE_COLONS).matcher(this.givenUrl);
             if (localUnitDoubleColon.matches()) {
@@ -146,10 +146,10 @@ public class PersoniumUrl {
                 }
             }
             break;
-        case UriUtils.SCHEME_LOCALCELL:
+        case SCHEME_LOCALCELL:
             this.schemeType = SchemeType.LOCAL_CELL;
             break;
-        case UriUtils.SCHEME_LOCALBOX:
+        case SCHEME_LOCALBOX:
             this.schemeType = SchemeType.LOCAL_BOX;
             break;
         default:
@@ -280,12 +280,6 @@ public class PersoniumUrl {
         }
         this.parsePathUnderCell();
 
-//        log.info("-------------");
-//        log.info("cell: " + this.cellName);
-//        log.info("unit: " + this.unitDomain);
-//        log.info("pathUnderCell: " + this.pathUnderCell);
-//        log.info("box: " + this.boxName);
-//        log.info("pathUnderBox: " + this.pathUnderBox);
         // Step2. Determine ResourceType
         if (this.cellName == null) {
             this.resourceType = ResourceType.UNIT_LEVEL;
@@ -303,7 +297,7 @@ public class PersoniumUrl {
         }
     }
     void handleLocalcell() {
-        this.pathUnderCell = this.givenUrl.replaceFirst(UriUtils.SCHEME_LOCALCELL + ":", "");
+        this.pathUnderCell = this.givenUrl.replaceFirst(SCHEME_LOCALCELL + ":", "");
         if (!this.pathUnderCell.startsWith("/")) {
             this.pathUnderCell = "/" + this.pathUnderCell;
         }
@@ -344,7 +338,7 @@ public class PersoniumUrl {
     }
 
     public String getLocalUnitSingleColonUrl() {
-        StringBuilder sb = new StringBuilder(UriUtils.SCHEME_LOCALUNIT);
+        StringBuilder sb = new StringBuilder(SCHEME_LOCALUNIT);
         sb.append(":/");
         sb.append(this.cellName);
         if (StringUtils.isEmpty(this.pathUnderCell)) {
@@ -358,7 +352,7 @@ public class PersoniumUrl {
         if (this.resourceType == ResourceType.EXTERNAL_UNIT) {
             return this.givenUrl;
         }
-        StringBuilder sb = new StringBuilder(UriUtils.SCHEME_LOCALUNIT);
+        StringBuilder sb = new StringBuilder(SCHEME_LOCALUNIT);
         sb.append(":");
         if (this.cellName == null) {
             throw new UnsupportedOperationException("Double colon syntax is not applicable for unit level url.");
@@ -376,7 +370,7 @@ public class PersoniumUrl {
         if (this.resourceType == ResourceType.EXTERNAL_UNIT) {
             return this.givenUrl;
         }
-        StringBuilder sb = new StringBuilder(UriUtils.SCHEME_LOCALCELL);
+        StringBuilder sb = new StringBuilder(SCHEME_LOCALCELL);
         sb.append(":");
         if (this.pathUnderBox != null) {
             sb.append(this.pathUnderBox);

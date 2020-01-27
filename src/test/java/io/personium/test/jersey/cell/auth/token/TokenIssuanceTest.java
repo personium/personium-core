@@ -19,6 +19,7 @@ package io.personium.test.jersey.cell.auth.token;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,15 +85,15 @@ public class TokenIssuanceTest extends PersoniumTest {
      */
     @Test
     public final void When_PTargetLocalunitSchemeURL_Then_TCATShouldHaveAudienceHttpSchemeURL () throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
-        String cellUrl = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
-        String targetUrl = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL2 + ":/";
+        String cellUrl = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String targetUrl = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL2 + ":/";
         cellUrl = UriUtils.resolveLocalUnit(cellUrl);
         String at = this.callROPC(cellUrl, "account1", "password1", targetUrl).getString("access_token");
         TransCellAccessToken tcat = TransCellAccessToken.parse(at);
         String aud = tcat.getTarget();
         log.info(aud);
 
-        assertFalse(aud.startsWith(UriUtils.SCHEME_LOCALUNIT));
+        assertFalse(aud.startsWith(SCHEME_LOCALUNIT));
         assertTrue(aud.startsWith("http"));
     }
 
@@ -107,7 +108,7 @@ public class TokenIssuanceTest extends PersoniumTest {
     @Test
     public final void When_RequestWithNoHeadersEmptyBody_Then_Return400BadRequest()
             throws IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
-        String cellUrl = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String cellUrl = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
         cellUrl = UriUtils.resolveLocalUnit(cellUrl);
         HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_DEFAULT);
 
@@ -136,8 +137,8 @@ public class TokenIssuanceTest extends PersoniumTest {
      */
     @Test
     public final void When_ClientIdLocalunitSchemeURL_Then_StillTheAppAuthShouldWork () throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
-        String appCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
-        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String appCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String usrCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
         String appCellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit);
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
