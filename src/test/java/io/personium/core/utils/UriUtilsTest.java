@@ -374,7 +374,7 @@ public class UriUtilsTest {
 
         String urlSingleColon = "personium-localunit:/cell1/";
         String urlDoubleColon = "personium-localunit:cell1:/";
-        String urlHttp = "http://cell1.unit.example:222/";
+        String urlHttp = "https://cell1.unit.example:222/";
         //
         List<String> result =UriUtils.getUrlVariations(urlDoubleColon);
         for (String r: result) {
