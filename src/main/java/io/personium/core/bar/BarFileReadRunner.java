@@ -130,7 +130,6 @@ import io.personium.core.rs.odata.BulkRequest;
 import io.personium.core.rs.odata.ODataEntitiesResource;
 import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.rs.odata.ODataResource;
-import io.personium.core.utils.UriUtils;
 
 /**
  * Http Class for reading bar files from the request body.
