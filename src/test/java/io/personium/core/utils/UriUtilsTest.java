@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.rs.cell.TokenEndPointResourceTest;
 import io.personium.test.categories.Unit;
 
 /**
@@ -46,7 +45,7 @@ import io.personium.test.categories.Unit;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ PersoniumUnitConfig.class, UriUtils.class })
 public class UriUtilsTest {
-    static Logger log = LoggerFactory.getLogger(TokenEndPointResourceTest.class);
+    static Logger log = LoggerFactory.getLogger(UriUtilsTest.class);
 
     @AfterClass
     public static void tearDown() {
