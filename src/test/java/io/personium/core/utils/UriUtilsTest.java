@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.rs.cell.TokenEndPointResourceTest;
 import io.personium.test.categories.Unit;
 
 /**
@@ -46,7 +45,7 @@ import io.personium.test.categories.Unit;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ PersoniumUnitConfig.class, UriUtils.class })
 public class UriUtilsTest {
-    static Logger log = LoggerFactory.getLogger(TokenEndPointResourceTest.class);
+    static Logger log = LoggerFactory.getLogger(UriUtilsTest.class);
 
     @AfterClass
     public static void tearDown() {
@@ -375,7 +374,7 @@ public class UriUtilsTest {
 
         String urlSingleColon = "personium-localunit:/cell1/";
         String urlDoubleColon = "personium-localunit:cell1:/";
-        String urlHttp = "http://cell1.unit.example:222/";
+        String urlHttp = "https://cell1.unit.example:222/";
         //
         List<String> result =UriUtils.getUrlVariations(urlDoubleColon);
         for (String r: result) {

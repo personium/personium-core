@@ -16,6 +16,8 @@
  */
 package io.personium.core.rs.cell;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+
 import java.util.List;
 import java.util.Map;
 
@@ -68,7 +70,7 @@ public final class CellCtlResource extends ODataResource {
      * @param cellRsCmp davRsCmp
      */
     public CellCtlResource(final AccessContext accessContext, final String pCredHeader, CellRsCmp cellRsCmp) {
-        super(accessContext, UriUtils.SCHEME_LOCALCELL + ":/__ctl/", ModelFactory.ODataCtl.cellCtl(accessContext
+        super(accessContext, SCHEME_LOCALCELL + ":/__ctl/", ModelFactory.ODataCtl.cellCtl(accessContext
                 .getCell()));
         this.pCredHeader = pCredHeader;
         this.cellRsCmp = cellRsCmp;

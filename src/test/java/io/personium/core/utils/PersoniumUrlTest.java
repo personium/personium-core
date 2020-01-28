@@ -250,15 +250,15 @@ public class PersoniumUrlTest {
     }
     @Test
     public void getLocalHostDoubleColonUrl() {
-        assertThat(new PersoniumUrl(this.exampleCellRoot()).getLocalUnitDoubleColonUrl(),
+        assertThat(new PersoniumUrl(this.exampleCellRoot()).toLocalunit(),
                 equalTo("personium-localunit:cell1:/"));
-        assertThat(new PersoniumUrl(this.exampleCellRoot() + "/").getLocalUnitDoubleColonUrl(),
+        assertThat(new PersoniumUrl(this.exampleCellRoot() + "/").toLocalunit(),
                 equalTo("personium-localunit:cell1:/"));
-        assertThat(new PersoniumUrl(this.exampleCellRoot() + "/somePath").getLocalUnitDoubleColonUrl(),
+        assertThat(new PersoniumUrl(this.exampleCellRoot() + "/somePath").toLocalunit(),
                 equalTo("personium-localunit:cell1:/somePath"));
 
         try {
-            log.info(new PersoniumUrl("https://unit.example/").getLocalUnitDoubleColonUrl());
+            new PersoniumUrl("https://unit.example/").toLocalunit();
         } catch (Exception e) {
             assertTrue(e instanceof UnsupportedOperationException);
         }
@@ -269,91 +269,123 @@ public class PersoniumUrlTest {
         PersoniumUrl pu;
         // external url should be treated as is;
         pu = new PersoniumUrl("mailto:cell1@unit.example");
-        assertThat(pu.getHttpUrl(), equalTo("mailto:cell1@unit.example"));
+        assertThat(pu.toHttp(), equalTo("mailto:cell1@unit.example"));
         pu = new PersoniumUrl("https://cellx.extunit.example/");
-        assertThat(pu.getHttpUrl(), equalTo("https://cellx.extunit.example/"));
+        assertThat(pu.toHttp(), equalTo("https://cellx.extunit.example/"));
 
         // localunit double colon
         pu = new PersoniumUrl("personium-localunit:cell1:");
         pu.unitDomain = "unit.example";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/"));
 
         pu = new PersoniumUrl("personium-localunit:cell1:/");
         pu.unitDomain = "unit.example";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/"));
 
         pu = new PersoniumUrl("personium-localunit:cell1:/bx/");
         pu.unitDomain = "unit.example";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/bx/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/bx/"));
 
         pu = new PersoniumUrl("personium-localunit:cell1:/bx");
         pu.unitDomain = "unit.example";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/bx/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/bx/"));
 
         pu = new PersoniumUrl("personium-localunit:cell1:/__ctl");
         pu.unitDomain = "unit.example";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/__ctl"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/__ctl"));
 
         // localunit single colon
         pu = new PersoniumUrl("personium-localunit:/cell1");
         pu.unitDomain = "unit.example";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/"));
 
         pu = new PersoniumUrl("personium-localunit:/cell1/");
         pu.unitDomain = "unit.example";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/"));
 
         pu = new PersoniumUrl("personium-localunit:/cell1/bx");
         pu.unitDomain = "unit.example";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/bx/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/bx/"));
 
         pu = new PersoniumUrl("personium-localunit:/cell1/__ctl");
         pu.unitDomain = "unit.example";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/__ctl"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/__ctl"));
 
         pu = new PersoniumUrl("personium-localunit:/__ctl");
         pu.unitDomain = "unit.example";
-        assertThat(pu.getHttpUrl(), equalTo("https://unit.example/__ctl"));
+        assertThat(pu.toHttp(), equalTo("https://unit.example/__ctl"));
 
         // localcell
         pu = new PersoniumUrl("personium-localcell:");
         pu.unitDomain = "unit.example";
         pu.cellName = "cell1";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/"));
 
         pu = new PersoniumUrl("personium-localcell:/");
         pu.unitDomain = "unit.example";
         pu.cellName = "cell1";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/"));
 
         pu = new PersoniumUrl("personium-localcell:/__ctl");
         pu.unitDomain = "unit.example";
         pu.cellName = "cell1";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/__ctl"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/__ctl"));
 
         pu = new PersoniumUrl("personium-localcell:/bx1");
         pu.unitDomain = "unit.example";
         pu.cellName = "cell1";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/bx1/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/bx1/"));
 
         // localbox
         pu = new PersoniumUrl("personium-localbox:");
         pu.unitDomain = "unit.example";
         pu.cellName = "cell1";
         pu.boxName = "bx1";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/bx1/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/bx1/"));
 
         pu = new PersoniumUrl("personium-localbox:/");
         pu.unitDomain = "unit.example";
         pu.cellName = "cell1";
         pu.boxName = "bx1";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/bx1/"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/bx1/"));
 
         pu = new PersoniumUrl("personium-localbox:/some/path.txt");
         pu.unitDomain = "unit.example";
         pu.cellName = "cell1";
         pu.boxName = "bx1";
-        assertThat(pu.getHttpUrl(), equalTo(this.exampleCellRoot() + "/bx1/some/path.txt"));
+        assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/bx1/some/path.txt"));
+
+        String[] neverChange = new String[] {
+                "https://unit.example/",
+                "https://unit.example/__ctl",
+                "https://unit.example/__ctl/Cell?q=Name",
+                "https://cell1.unit.example/",
+                "https://cell1.unit.example/box/",
+                "https://cell1.unit.example/__message",
+                "https://cell1.unit.example/__ctl",
+                "https://cell1.unit.example/__ctl/$metadata",
+                "https://cell1.unit.example/__/",
+                "https://cell1.unit.example/__/odata",
+                "https://cell1.unit.example/__/odata/$metadata",
+                "https://cell1.unit.example/box/odata/ent('foo')/_Np",
+                "https://cell1.unit.example/bx/eng/svc?query=foo#frag=134",
+                "https://external.server.example/",
+                "https://external.server.example"
+        };
+        for (String target: neverChange) {
+            assertEquals(target, PersoniumUrl.create(target).toHttp());
+        }
+        
+        String[] willBeAddedSlash = new String[] {
+                "https://unit.example",
+                "https://cell1.unit.example",
+                "https://cell1.unit.example/box",
+                "https://cell1.unit.example/__"
+        };
+        for (String target: willBeAddedSlash) {
+            assertThat(PersoniumUrl.create(target).toHttp(), equalTo(target + "/"));
+        }
+
     }
 
     @Test

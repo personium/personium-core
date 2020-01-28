@@ -51,6 +51,7 @@ import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.HttpClientFactory;
+import io.personium.core.utils.PersoniumUrl;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -91,7 +92,7 @@ public class MyPasswordTest extends PersoniumTest {
     }
     @Before
     public void before() {
-        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String usrCellLocalUnit = PersoniumUrl.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
         this.cellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
     }
 
