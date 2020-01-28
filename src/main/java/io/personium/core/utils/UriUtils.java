@@ -95,30 +95,14 @@ public class UriUtils {
             return variations;
         }
         variations.add(url);
-        String substitute = getUrlSubstitute(url);
-        if (!url.equals(substitute)) {
-            variations.add(substitute);
-        }
-        return variations;
-    }
-
-    /**
-     * getUrlSubstitute.
-     * @param unitUrl String
-     * @param url String
-     * @return utl String
-     * @throws URISyntaxException
-     */
-    public static String getUrlSubstitute(String url) {
-        if (url == null) {
-        	throw PersoniumCoreException.Common.INVALID_URL.params("null");
-        }
         if (url.startsWith(SCHEME_LOCALUNIT)) {
             url = convertSchemeFromLocalUnitToHttp(url);
+            variations.add(url);
         } else {
             url = convertSchemeFromHttpToLocalUnit(url);
+            variations.add(url);
         }
-        return url;
+        return variations;
     }
 
     /**
