@@ -22,7 +22,6 @@ import io.personium.core.utils.PersoniumUrl.SchemeType;
 public class PersoniumUrlTest {
     static Logger log = LoggerFactory.getLogger(PersoniumUrlTest.class);
 
-
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         CommonUtils.setFQDN("unit.example");;
@@ -66,28 +65,55 @@ public class PersoniumUrlTest {
      * Give various url with supported url schemes, and check the constructed object's resourceType.
      */
     @Test
-    public void constructor_resourceType_UnitLevel() {
+    public void constructor_resourceType_UnitRoot() {
         // unit root
-        assertThat(new PersoniumUrl("https://unit.example/").resourceType,
-                equalTo(ResourceType.UNIT_ROOT));
-        assertThat(new PersoniumUrl("https://unit.example").resourceType,
-                equalTo(ResourceType.UNIT_ROOT));
-        assertThat(new PersoniumUrl("personium-localunit:/").resourceType,
-                equalTo(ResourceType.UNIT_ROOT));
-        assertThat(new PersoniumUrl("personium-localunit:").resourceType,
-                equalTo(ResourceType.UNIT_ROOT));
+        String[] unitRoot = new String[] {
+            "https://unit.example",
+            "https://unit.example/",
+            "https://unit.example/?abc=d",
+            "https://unit.example/#abc=d",
+            "https://unit.example?abc=d",
+            "https://unit.example#abc=d",
+            "personium-localunit:/?abc=d",
+            "personium-localunit:/#abc=d",
+//            "personium-localunit:?abc=d",
+//            "personium-localunit:#abc=d",
+            "personium-localunit:/",
+            "personium-localunit:"
+        };
+        for (String url : unitRoot) {
+            assertThat(new PersoniumUrl(url).resourceType, equalTo(ResourceType.UNIT_ROOT));
+        }
+    }
 
+    /**
+     * Give various url with supported url schemes, and check the constructed object's resourceType.
+     */
+    @Test
+    public void constructor_resourceType_UnitLevel() {
         // unit level
-        assertThat(new PersoniumUrl("https://unit.example/__ctl").resourceType,
-                equalTo(ResourceType.UNIT_LEVEL));
-        assertThat(new PersoniumUrl("https://unit.example/__ctl/").resourceType,
-                equalTo(ResourceType.UNIT_LEVEL));
-        assertThat(new PersoniumUrl("https://unit.example/__ctl/Cell").resourceType,
-                equalTo(ResourceType.UNIT_LEVEL));
-        assertThat(new PersoniumUrl("personium-localunit:/__ctl/Cell").resourceType,
-                equalTo(ResourceType.UNIT_LEVEL));
-        assertThat(new PersoniumUrl("personium-localunit:/__ctl").resourceType,
-                equalTo(ResourceType.UNIT_LEVEL));
+        String[] unitLevel = new String[] {
+            "https://unit.example/__ctl",
+            "https://unit.example/__ctl?abc=d",
+            "https://unit.example/__ctl#abc=d",
+            "https://unit.example/__ctl/",
+            "https://unit.example/__ctl/?abc=d",
+            "https://unit.example/__ctl/#abc=d",
+            "https://unit.example/__ctl/$metadata",
+            "https://unit.example/__ctl/Cell",
+            "https://unit.example/__ctl/Cell?$orderby=Name",
+            "https://unit.example/__ctl/Cell('foo')",
+            "personium-localunit:/__ctl/Cell",
+            "personium-localunit:/__ctl/Cell?$orderby=Name",
+            "personium-localunit:/__ctl/Cell('foo')",
+            "personium-localunit:/__ctl/",
+            "personium-localunit:/__ctl?abc=d",
+            "personium-localunit:/__ctl#abc=d",
+            "personium-localunit:/__ctl"
+        };
+        for (String url : unitLevel) {
+            assertThat(new PersoniumUrl(url).resourceType, equalTo(ResourceType.UNIT_LEVEL));
+        }
     }
 
     String exampleCellRoot() {
@@ -98,76 +124,124 @@ public class PersoniumUrlTest {
      * Give various url with supported url schemes, and check the constructed object's resourceType.
      */
     @Test
-    public void constructor_resourceType_CellLevel() {
+    public void constructor_resourceType_CellRoot() {
         // cell root
-        assertThat(new PersoniumUrl("personium-localunit:cell1:/").resourceType,
-                equalTo(ResourceType.CELL_ROOT));
-        assertThat(new PersoniumUrl("personium-localunit:cell1:").resourceType,
-                equalTo(ResourceType.CELL_ROOT));
-        assertThat(new PersoniumUrl("personium-localcell:/").resourceType,
-                equalTo(ResourceType.CELL_ROOT));
-        assertThat(new PersoniumUrl("personium-localcell:").resourceType,
-                equalTo(ResourceType.CELL_ROOT));
-
-
-        // cell level
-        assertThat(new PersoniumUrl("personium-localcell:/__ctl/").resourceType,
-                equalTo(ResourceType.CELL_LEVEL));
-        assertThat(new PersoniumUrl("personium-localcell:/__ctl").resourceType,
-                equalTo(ResourceType.CELL_LEVEL));
-        assertThat(new PersoniumUrl("personium-localcell:/__message").resourceType,
-                equalTo(ResourceType.CELL_LEVEL));
-        assertThat(new PersoniumUrl("personium-localcell:/__ctl/Account").resourceType,
-                equalTo(ResourceType.CELL_LEVEL));
-
-        assertThat(new PersoniumUrl(exampleCellRoot() + "/").resourceType,
-                equalTo(ResourceType.CELL_ROOT));
-        assertThat(new PersoniumUrl(exampleCellRoot()).resourceType,
-                equalTo(ResourceType.CELL_ROOT));
-        assertThat(new PersoniumUrl(exampleCellRoot() + "/__ctl/").resourceType,
-                equalTo(ResourceType.CELL_LEVEL));
-        assertThat(new PersoniumUrl(exampleCellRoot() + "/__ctl").resourceType,
-                equalTo(ResourceType.CELL_LEVEL));
-        assertThat(new PersoniumUrl(exampleCellRoot() + "/__ctl/Account('me')").resourceType,
-                equalTo(ResourceType.CELL_LEVEL));
-        assertThat(new PersoniumUrl(exampleCellRoot() + "/__mypassword").resourceType,
-                equalTo(ResourceType.CELL_LEVEL));
-        assertThat(new PersoniumUrl(exampleCellRoot() + "/__message").resourceType,
-                equalTo(ResourceType.CELL_LEVEL));
-
+        String[] cellRoot = new String[] {
+            "personium-localunit:cell1:/",
+            "personium-localunit:cell1:",
+            "personium-localunit:/cell1",
+            "personium-localunit:/cell1/",
+            "personium-localcell:/",
+            "personium-localcell:",
+            "personium-localcell:/?abc=d",
+            "personium-localcell:/#abc=d",
+            exampleCellRoot() + "/",
+            exampleCellRoot() + "/?abc=d",
+            exampleCellRoot() + "/#abc=d",
+            exampleCellRoot() + "?abc=d",
+            exampleCellRoot() + "#abc=d",
+            exampleCellRoot()
+        };
+        for (String url : cellRoot) {
+            assertThat(new PersoniumUrl(url).resourceType, equalTo(ResourceType.CELL_ROOT));
+        }
     }
+
+    /**
+     * Give various url with supported url schemes, and check the constructed object's resourceType.
+     */
+    @Test
+    public void constructor_resourceType_CellLevel() {
+        // cell level
+        String[] cellLevel = new String[] {
+            "personium-localunit:cell1:__ctl",
+            "personium-localunit:cell1:/__ctl",
+            "personium-localunit:cell1:/__ctl/",
+            "personium-localunit:cell1:/__ctl/Account",
+            "personium-localunit:cell1:/__ctl/Account('me')",
+            "personium-localcell:/__message",
+            "personium-localcell:/__mypassword",
+            "personium-localcell:/__ctl",
+            "personium-localcell:/__ctl/",
+            "personium-localcell:/__ctl/",
+            "personium-localcell:/__ctl/Account?$orderby=Name",
+            "personium-localcell:/__ctl/Account#abc=d",
+            exampleCellRoot() + "/__ctl/",
+            exampleCellRoot() + "/__ctl/?abc=d",
+            exampleCellRoot() + "/__ctl/#abc=d",
+            exampleCellRoot() + "/__ctl/Account?q=%27",
+            exampleCellRoot() + "/__ctl/Account?$orderby=Name",
+            exampleCellRoot() + "/__ctl?abc=d",
+            exampleCellRoot() + "/__ctl#abc=d",
+            exampleCellRoot() + "/__ctl"
+        };
+        for (String url : cellLevel) {
+            assertThat(new PersoniumUrl(url).resourceType, equalTo(ResourceType.CELL_LEVEL));
+        }
+    }
+
+    /**
+     * Give various url with supported url schemes, and check the constructed object's resourceType.
+     */
+    @Test
+    public void constructor_resourceType_BoxRoot() {
+        // box root
+        String[] boxRoot = new String[] {
+            "personium-localunit:cell1:/bx",
+            "personium-localunit:cell1:/bx/",
+            "personium-localcell:/bx",
+            "personium-localcell:/bx/",
+            "personium-localcell:/__",
+            "personium-localcell:/__/",
+            "personium-localcell:/__/?abc=d",
+            "personium-localcell:/__/#abc=d",
+            "personium-localbox:/",
+            "personium-localbox:/?abc=d",
+            "personium-localbox:/#abc=d",
+            "personium-localbox:",
+            "personium-localbox:?abc=d",
+//            "personium-localbox:#abc=d",
+            exampleCellRoot() + "/bx",
+            exampleCellRoot() + "/bx/",
+            exampleCellRoot() + "/bx/?abc=d",
+            exampleCellRoot() + "/bx/#abc=d",
+            exampleCellRoot() + "/bx?abc=d",
+            exampleCellRoot() + "/bx#abc=d",
+            exampleCellRoot() + "/__/",
+            exampleCellRoot() + "/__"
+        };
+        for (String url : boxRoot) {
+            assertThat(new PersoniumUrl(url).resourceType, equalTo(ResourceType.BOX_ROOT));
+        }
+    }
+
     /**
      * Give various url with supported url schemes, and check the constructed object's resourceType.
      */
     @Test
     public void constructor_resourceType_BoxLevel() {
-        // box root
-        assertThat(new PersoniumUrl("personium-localbox:/").resourceType,
-                equalTo(ResourceType.BOX_ROOT));
-        assertThat(new PersoniumUrl("personium-localbox:").resourceType,
-                equalTo(ResourceType.BOX_ROOT));
-        assertThat(new PersoniumUrl("personium-localcell:/bx1/").resourceType,
-                equalTo(ResourceType.BOX_ROOT));
-        assertThat(new PersoniumUrl("personium-localcell:/bx1").resourceType,
-                equalTo(ResourceType.BOX_ROOT));
-        assertThat(new PersoniumUrl("personium-localcell:/__").resourceType,
-                equalTo(ResourceType.BOX_ROOT));
-        assertThat(new PersoniumUrl(this.exampleCellRoot() + "/__").resourceType,
-                equalTo(ResourceType.BOX_ROOT));
-        assertThat(new PersoniumUrl(this.exampleCellRoot() + "/__/").resourceType,
-                equalTo(ResourceType.BOX_ROOT));
-        assertThat(new PersoniumUrl(this.exampleCellRoot() + "/bx1").resourceType,
-                equalTo(ResourceType.BOX_ROOT));
-        assertThat(new PersoniumUrl(this.exampleCellRoot() + "/bx1/").resourceType,
-                equalTo(ResourceType.BOX_ROOT));
-
         // box level
-        assertThat(new PersoniumUrl("personium-localbox:/path").resourceType,
-                equalTo(ResourceType.BOX_LEVEL));
-        assertThat(new PersoniumUrl("personium-localcell:/bx1/path").resourceType,
-                equalTo(ResourceType.BOX_LEVEL));
-        assertThat(new PersoniumUrl(this.exampleCellRoot() + "/bx1/path").resourceType,
-                equalTo(ResourceType.BOX_LEVEL));
+        String[] boxLevel = new String[] {
+            "personium-localunit:cell1:/bx/col/file.txt",
+            "personium-localunit:cell1:/bx/col/file.txt",
+            "personium-localcell:/bx/col/file.txt",
+            "personium-localcell:/bx/col/file.txt",
+            "personium-localcell:/__/col/file.txt",
+            "personium-localcell:/__/col/",
+            "personium-localbox:/col/file.txt",
+            "personium-localbox:/file.txt",
+            exampleCellRoot() + "/bx/col/file.txt",
+            exampleCellRoot() + "/bx/col/file.txt",
+            exampleCellRoot() + "/bx/col?abc=d",
+            exampleCellRoot() + "/bx/col#abc=d",
+            exampleCellRoot() + "/bx/col/file.txt?abc=d",
+            exampleCellRoot() + "/bx/col/file.txt#abc=d",
+            exampleCellRoot() + "/__/col/file.txt",
+            exampleCellRoot() + "/__/file.txt"
+        };
+        for (String url : boxLevel) {
+            assertThat(new PersoniumUrl(url).resourceType, equalTo(ResourceType.BOX_LEVEL));
+        }
     }
 
     /**
@@ -195,7 +269,7 @@ public class PersoniumUrlTest {
         try {
             new PersoniumUrl("https:///cell1.extunit.example/");
             fail();
-       } catch (Exception e) {
+        } catch (Exception e) {
             assertTrue(e instanceof IllegalArgumentException);
         }
         try {
@@ -217,15 +291,26 @@ public class PersoniumUrlTest {
     /**
      * Give various url with supported url schemes, and check the constructed object's resourceType.
      */
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void constructor_SubSubDomain() {
-        try {
-            PersoniumUrl pu = new PersoniumUrl("https://cell2.cell1.unit.example/");
-            log.info(pu.toString());
-            fail();
-        } catch (Exception e) {
-            assertTrue(e instanceof IllegalArgumentException);
-        }
+        PersoniumUrl pu = new PersoniumUrl("https://cell2.cell1.unit.example/");
+        log.info(pu.toString());
+    }
+
+//    @Test
+//    public void normalize() {
+//        assertThat(PersoniumUrl.create("https://unit.example").normalize(), equalTo("https://unit.example/"));
+//        assertThat(PersoniumUrl.create("https://unit.example/aaa/../__ctl").normalize(), equalTo("https://unit.example/__ctl"));
+//        assertThat(PersoniumUrl.create("https://cell1.unit.example").normalize(), equalTo("https://cell1.unit.example/"));
+//        assertThat(PersoniumUrl.create("https://cell1.unit.example/aaa/../__ctl").normalize(), equalTo("https://cell1.unit.example/__ctl"));
+////        assertThat(PersoniumUrl.create("personium-localunit:cell1:"), equalTo("personium-localunit:cell1:/"));
+//    }
+    @Test
+    public void normalizePath() {
+        assertThat(PersoniumUrl.normalizePath("/aa/../bb"), equalTo("/bb"));
+        assertThat(PersoniumUrl.normalizePath("/aa/./bb/./cc"), equalTo("/aa/bb/cc"));
+        assertThat(PersoniumUrl.normalizePath("/a/../bb?x=y"), equalTo("/bb?x=y"));
+        assertThat(PersoniumUrl.normalizePath("/a?"), equalTo("/a?"));
     }
 
     @Test
@@ -260,6 +345,7 @@ public class PersoniumUrlTest {
         try {
             new PersoniumUrl("https://unit.example/").toLocalunit();
         } catch (Exception e) {
+            e.printStackTrace();
             assertTrue(e instanceof UnsupportedOperationException);
         }
     }
@@ -355,37 +441,36 @@ public class PersoniumUrlTest {
         pu.boxName = "bx1";
         assertThat(pu.toHttp(), equalTo(this.exampleCellRoot() + "/bx1/some/path.txt"));
 
-        String[] neverChange = new String[] {
-                "https://unit.example/",
-                "https://unit.example/__ctl",
-                "https://unit.example/__ctl/Cell?q=Name",
-                "https://cell1.unit.example/",
-                "https://cell1.unit.example/box/",
-                "https://cell1.unit.example/__message",
-                "https://cell1.unit.example/__ctl",
-                "https://cell1.unit.example/__ctl/$metadata",
-                "https://cell1.unit.example/__/",
-                "https://cell1.unit.example/__/odata",
-                "https://cell1.unit.example/__/odata/$metadata",
-                "https://cell1.unit.example/box/odata/ent('foo')/_Np",
-                "https://cell1.unit.example/bx/eng/svc?query=foo#frag=134",
-                "https://external.server.example/",
-                "https://external.server.example"
-        };
-        for (String target: neverChange) {
-            assertEquals(target, PersoniumUrl.create(target).toHttp());
-        }
-        
-        String[] willBeAddedSlash = new String[] {
+        String[] urlsThatShouldBe_addedTrailingSlash = new String[] {
                 "https://unit.example",
-                "https://cell1.unit.example",
-                "https://cell1.unit.example/box",
-                "https://cell1.unit.example/__"
+                this.exampleCellRoot(),
+                this.exampleCellRoot() + "/box",
+                this.exampleCellRoot() + "/__"
         };
-        for (String target: willBeAddedSlash) {
+        for (String target : urlsThatShouldBe_addedTrailingSlash) {
             assertThat(PersoniumUrl.create(target).toHttp(), equalTo(target + "/"));
         }
 
+        String[] urlThatShouldBeUnchanged = new String[] {
+            "https://unit.example/",
+            "https://unit.example/__ctl",
+            "https://unit.example/__ctl/Cell?q=Name",
+            this.exampleCellRoot() + "/",
+            this.exampleCellRoot() + "/box/",
+            this.exampleCellRoot() + "/__message",
+            this.exampleCellRoot() + "/__ctl",
+            this.exampleCellRoot() + "/__ctl/$metadata",
+            this.exampleCellRoot() + "/__/",
+            this.exampleCellRoot() + "/__/odata",
+            this.exampleCellRoot() + "/__/odata/$metadata",
+            this.exampleCellRoot() + "/box/odata/ent('foo')/_Np",
+            this.exampleCellRoot() + "/bx/eng/svc?query=foo#frag=134",
+            "https://external.server.example/",
+            "https://external.server.example"
+        };
+        for (String target : urlThatShouldBeUnchanged) {
+            assertEquals(target, PersoniumUrl.create(target).toHttp());
+        }
     }
 
     @Test

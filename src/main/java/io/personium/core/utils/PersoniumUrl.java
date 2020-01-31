@@ -42,6 +42,7 @@ import io.personium.core.PersoniumUnitConfig;
  *  <pre>{@code
  *    String httpUrl = PersoniumUrl.create("personium-localunit:cell1:/").toHttp();
  *    String celllocalUrl = PersoniumUrl.create("https://cell1.unit.example/").toLocalcellIf();
+ *    PersoniumUrl.create("https://cell1.unit.example/").isNormalized()); // true
  *  }</pre>
  * @author shimono.akio
  */
@@ -76,19 +77,20 @@ public class PersoniumUrl {
     public static final String SCHEME_LOCALBOX = "personium-localbox";
 
     /** Regular expression for extracting scheme part and the rest in a URL */
-    public static final Pattern REGEX_SCHEME = Pattern.compile("^([a-z|\\-]+?):(.*)$");
-    public static final String REGEX_HTTP_SUBDOMAIN = "^(https?|wss?):\\/\\/(.+?)\\.(.*?)(\\/.*$|$)";
-    public static final String REGEX_HTTP_PATH_BASE = "^(https?|wss?):\\/\\/(.+?)\\/(.+?)(\\/.*$|$)";
+    public static final String REGEX_SUBDOMAIN = "^(.+?)\\.(.*?)$";
+    /** Regular expression for matching localunit scheme with single colon */
+    public static final String REGEX_LOCALUNIT = "^([a-zA-Z0-9\\-\\_]+?):(.*)$";
+    /** Regular expression for matching localunit scheme with double colons */
+//    public static final String REGEX_LOCALUNIT_NO_COLON = "^\\/?([^\\/]*)(\\/.*$|$)";
+
+//    public static final Pattern REGEX_SCHEME = Pattern.compile("^([a-z|\\-]+?):(.*)(\\??.*)($|\\#?.*)$");
+//    public static final String REGEX_HTTP_SUBDOMAIN = "^(https?|wss?):\\/\\/(.+?)\\.(.*?)(\\/.*$|$)";
+//    public static final String REGEX_HTTP_PATH_BASE = "^(https?|wss?):\\/\\/([^\\/]+?)($|\\/.*?)($|\\/.*$)";
     public static final String REGEX_DIR = "^\\/?(.*?)($|\\/.*$)";
     public static final String REGEX_CTL = "^__[a-zA-Z]+$";
 
-    /** Regular expression for matching localunit scheme with single colon */
-    public static final String REGEX_LOCALUNIT_SINGLE_COLON = "^" + SCHEME_LOCALUNIT + ":\\/?([^\\/]*)(\\/.*$|$)";
-
-    /** Regular expression for matching localunit scheme with double colons */
-    public static final String REGEX_LOCALUNIT_DOUBLE_COLONS = "^" + SCHEME_LOCALUNIT + ":(.+?):(.*)$";
-
     String givenUrl;
+    URI uri;
     String scheme;
     int port;
     SchemeType schemeType;
@@ -99,7 +101,8 @@ public class PersoniumUrl {
     String pathUnderCell;
     String pathUnderBox;
     String pathUnderUnit;
-    
+    public Boolean isNormalized;
+
     public static PersoniumUrl create(String url) {
         return new PersoniumUrl(url);
     }
@@ -118,21 +121,29 @@ public class PersoniumUrl {
      * @param url
      */
     public PersoniumUrl(String url) {
+//        log.info("-----");
+//        log.info(url);
         if (url == null) {
             throw new IllegalArgumentException("given url is null.");
         }
         this.givenUrl = url;
-        Matcher m = REGEX_SCHEME.matcher(this.givenUrl);
-        if (m.matches()) {
-            this.scheme = m.group(1);
-            this.parseSchemeType();
-            this.parseResourceType();
-        } else {
-            // scheme not given
-            throw new IllegalArgumentException("relative url is not supported.");
+        try {
+            this.uri = URI.create(this.givenUrl);
+        } catch (IllegalArgumentException e) {
+            // we allow personium-* schemes to have
+            // empty scheme specific part
+            this.uri = URI.create(this.givenUrl + "/");
         }
+
+        this.parseSchemeType();
+        this.parseResourceType();
     }
     void parseSchemeType() {
+        // Matcher m = REGEX_SCHEME.matcher(this.givenUrl);
+        if (this.uri == null || !this.uri.isAbsolute()) {
+            throw new IllegalArgumentException("relative url is not supported.");
+        }
+        this.scheme = this.uri.getScheme();
         switch (this.scheme) {
         case "https":
             this.schemeType = SchemeType.HTTP;
@@ -147,21 +158,23 @@ public class PersoniumUrl {
             this.schemeType = SchemeType.WS;
             break;
         case SCHEME_LOCALUNIT:
-            Matcher localUnitSingleColon = Pattern.compile(REGEX_LOCALUNIT_SINGLE_COLON).matcher(this.givenUrl);
-            Matcher localUnitDoubleColon = Pattern.compile(REGEX_LOCALUNIT_DOUBLE_COLONS).matcher(this.givenUrl);
-            if (localUnitDoubleColon.matches()) {
+            String ssp = this.uri.getSchemeSpecificPart();
+            Matcher localUnit = Pattern.compile(REGEX_LOCALUNIT).matcher(ssp);
+            Matcher localUnitNoColon = Pattern.compile(REGEX_DIR).matcher(ssp);
+            if (localUnit.matches()) {
                 this.schemeType = SchemeType.LOCAL_UNIT_DOUBLE_COLON;
-                this.cellName = localUnitDoubleColon.group(1);
-                this.pathUnderCell = localUnitDoubleColon.group(2);
-            } else if (localUnitSingleColon.matches()) {
+                this.cellName = localUnit.group(1);
+                this.pathUnderCell = localUnit.group(2);
+            } else if (localUnitNoColon.matches()) {
                 this.schemeType = SchemeType.LOCAL_UNIT_SINGLE_COLON;
-                this.pathUnderUnit = this.givenUrl.replaceFirst(SCHEME_LOCALUNIT + ":", "");
+                this.pathUnderUnit = this.uri.getPath();
                 if (!this.pathUnderUnit.startsWith("/")) {
+                    this.isNormalized = false;
                     this.pathUnderUnit = "/" + this.pathUnderUnit;
                 }
-                if (!Pattern.matches(REGEX_CTL, localUnitSingleColon.group(1))) {
-                    this.cellName = localUnitSingleColon.group(1);
-                    this.pathUnderCell = localUnitSingleColon.group(2);
+                if (!Pattern.matches(REGEX_CTL, localUnitNoColon.group(1))) {
+                    this.cellName = localUnitNoColon.group(1);
+                    this.pathUnderCell = localUnitNoColon.group(2);
                 }
             }
             break;
@@ -210,20 +223,19 @@ public class PersoniumUrl {
         this.parsePathUnderCell();
     }
     void handleHttpWs() {
-        URI uri = URI.create(this.givenUrl);
-        String targetHost = uri.getHost();
+        String givenUrlHost = this.uri.getHost();
         String unitHost = CommonUtils.getFQDN();
-        if (targetHost == null) {
+        if (givenUrlHost == null) {
             throw new IllegalArgumentException("given url is invalid [" + this.givenUrl + "]");
         }
         // detect external unit
-        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled() && !targetHost.equals(unitHost)) {
+        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled() && !givenUrlHost.equals(unitHost)) {
             this.resourceType = ResourceType.EXTERNAL_UNIT;
             return;
         }
-        if (!targetHost.equals(unitHost) && !targetHost.endsWith("." + unitHost)) {
+        if (!givenUrlHost.equals(unitHost) && !givenUrlHost.endsWith("." + unitHost)) {
             this.resourceType = ResourceType.EXTERNAL_UNIT;
-            // sub-sub domain cases are not detected here. 
+            // sub-sub domain cases are not detected here.
             return;
         }
 
@@ -255,16 +267,16 @@ public class PersoniumUrl {
         // Step1 populate cellName, BoxName, paths
         if (!PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
             // Subdomain-based
-            Matcher m = Pattern.compile(REGEX_HTTP_SUBDOMAIN).matcher(this.givenUrl);
+            String authority = this.uri.getAuthority();
+            Matcher m = Pattern.compile(REGEX_SUBDOMAIN).matcher(authority);
             if (!m.matches()) {
                 // Should match
-                throw new RuntimeException("Unexpected Regex mismatch: [" + this.givenUrl
-                        + "] somehow did not match [" + REGEX_HTTP_SUBDOMAIN+ "]");
+                throw new RuntimeException("Unexpected Regex mismatch: [" + authority
+                        + "] somehow did not match [" + REGEX_SUBDOMAIN+ "]");
             }
-            if (unitHost.equals(targetHost)) {
+            if (unitHost.equals(givenUrlHost)) {
                 this.unitDomain = unitHost;
-                this.pathUnderUnit = m.group(4);
-                log.info(this.pathUnderUnit);
+                this.pathUnderUnit = this.uri.getPath();
                 if (StringUtils.isEmpty(this.pathUnderUnit)) {
                     this.pathUnderUnit = "/";
                 }
@@ -275,36 +287,47 @@ public class PersoniumUrl {
                 }
                 return;
             }
-            this.cellName = m.group(2);
-            this.unitDomain = m.group(3);
-            this.pathUnderCell = m.group(4);
-
+            this.cellName = m.group(1);
+            this.unitDomain = m.group(2);
+            this.pathUnderCell = this.uri.getPath();
         } else {
             // Path-based
-            this.unitDomain = targetHost;
-            Matcher m = Pattern.compile(REGEX_HTTP_PATH_BASE).matcher(this.givenUrl);
-            if (!m.matches()) {
-                // Should match
-                throw new RuntimeException("Unexpected Regex mismatch: [" + this.givenUrl
-                        + "] somehow did not match [" + REGEX_HTTP_PATH_BASE+ "]");
+            this.unitDomain = this.uri.getAuthority();
+            this.pathUnderUnit = this.uri.getPath();
+            switch (this.pathUnderUnit.length()) {
+            case 0:
+                this.pathUnderUnit = "/";
+            case 1:
+                this.resourceType = ResourceType.UNIT_ROOT;
+                break;
+            default:
+                Matcher m = Pattern.compile(REGEX_DIR).matcher(this.uri.getPath());
+                if (!m.matches()) {
+                    // Should match
+                    throw new RuntimeException("Unexpected Regex mismatch: [" + this.uri.getPath()
+                            + "] somehow did not match [" + REGEX_DIR+ "]");
+                }
+                if (Pattern.matches(REGEX_CTL, m.group(1))) {
+                    this.resourceType = ResourceType.UNIT_LEVEL;
+                } else {
+                    this.cellName = m.group(1);
+                    this.pathUnderCell = m.group(2);
+                }
             }
-            this.cellName = m.group(3);
-            this.unitDomain = m.group(2);
-            this.pathUnderCell = m.group(4);
         }
         //  sub-sub domain case comes here.
         if (!unitHost.equals(this.unitDomain)) {
             throw new IllegalArgumentException("Invalid Url given [" + this.givenUrl + "]");
         }
-        this.parsePathUnderCell();
-
-        // Step2. Determine ResourceType
-        if (this.cellName == null) {
-            this.resourceType = ResourceType.UNIT_LEVEL;
+        if (this.pathUnderCell != null) {
+            this.parsePathUnderCell();
         }
     }
     void handleLocalbox() {
-        this.pathUnderBox = this.givenUrl.replaceFirst(SCHEME_LOCALBOX + ":", "");
+        this.pathUnderBox = this.uri.getPath();
+        if (this.pathUnderBox == null) {
+            this.pathUnderBox = "/";
+        }
         if (!this.pathUnderBox.startsWith("/")) {
             this.pathUnderBox = "/" + this.pathUnderBox;
         }
@@ -315,7 +338,10 @@ public class PersoniumUrl {
         }
     }
     void handleLocalcell() {
-        this.pathUnderCell = this.givenUrl.replaceFirst(SCHEME_LOCALCELL + ":", "");
+        this.pathUnderCell = this.uri.getPath();
+        if (this.pathUnderCell == null) {
+            this.pathUnderCell = "/";
+        }
         if (!this.pathUnderCell.startsWith("/")) {
             this.pathUnderCell = "/" + this.pathUnderCell;
         }
@@ -349,6 +375,9 @@ public class PersoniumUrl {
         }
     }
     public static String addTrailingSlashIfMissing(String url) {
+        if (url == null) {
+            return null;
+        }
         if (!url.endsWith("/")) {
             return url + "/";
         }
@@ -372,7 +401,7 @@ public class PersoniumUrl {
         }
         StringBuilder sb = new StringBuilder(SCHEME_LOCALUNIT);
         sb.append(":");
-        if (this.cellName == null) {
+        if (StringUtils.isEmpty(this.cellName)) {
             throw new UnsupportedOperationException("Double colon syntax is not applicable for unit level url.");
         }
         sb.append(this.cellName);
@@ -402,6 +431,7 @@ public class PersoniumUrl {
         if (this.resourceType == ResourceType.EXTERNAL_UNIT) {
             return this.givenUrl;
         }
+        this.unitDomain = CommonUtils.getFQDN();
         // Construct Scheme-Domain-Port part
         StringBuilder sb = new StringBuilder(PersoniumUnitConfig.getUnitScheme());
         sb.append("://");
@@ -417,14 +447,14 @@ public class PersoniumUrl {
         }
         if (this.resourceType == ResourceType.UNIT_ROOT) {
             sb.append("/");
-            return sb.toString();
+            return this.addQueryAndFragment(sb);
         }
         if (this.resourceType == ResourceType.UNIT_LEVEL) {
             if (!this.pathUnderUnit.startsWith("/")) {
                 sb.append("/");
             }
             sb.append(this.pathUnderUnit);
-            return sb.toString();
+            return this.addQueryAndFragment(sb);
         }
         // Add Cell Path for pathBased
         if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
@@ -436,25 +466,83 @@ public class PersoniumUrl {
         // Cell Level
         if (this.resourceType == ResourceType.CELL_ROOT) {
             sb.append("/");
-            return sb.toString();
+            return this.addQueryAndFragment(sb);
         }
         if (this.resourceType == ResourceType.CELL_LEVEL) {
             sb.append(this.pathUnderCell);
-            return sb.toString();
+            return this.addQueryAndFragment(sb);
         }
         // Add Box Path for pathBased
         sb.append("/");
         sb.append(this.boxName);
         if (this.resourceType == ResourceType.BOX_ROOT) {
             sb.append("/");
-            return sb.toString();
+            return this.addQueryAndFragment(sb);
         }
         sb.append(this.pathUnderBox);
+        return this.addQueryAndFragment(sb);
+    }
+    String addQueryAndFragment(StringBuilder sb) {
+        if (this.uri.getQuery() != null) {
+            sb.append("?");
+            sb.append(this.uri.getQuery());
+        }
+        if (this.uri.getFragment() != null) {
+            sb.append("#");
+            sb.append(this.uri.getFragment());
+        }
         return sb.toString();
     }
     public List<String> getVariations() {
         List<String> ret = new ArrayList<>();
         return ret;
+    }
+
+    public boolean isNormalized() {
+        String normalizedUrl = this.normalize();
+        return (this.givenUrl.equals(normalizedUrl));
+    }
+    public String normalize() {
+        PersoniumUrl clone = PersoniumUrl.create(this.givenUrl);
+
+        // normalize the path part
+        clone.pathUnderBox = normalizePath(this.pathUnderBox);
+        clone.pathUnderCell = normalizePath(this.pathUnderCell);
+        clone.pathUnderUnit = normalizePath(this.pathUnderUnit);
+
+        // add trailing slash for unit / cell / box root
+        switch (this.resourceType) {
+        case BOX_ROOT:
+            clone.pathUnderBox = "/";
+        case CELL_ROOT:
+            clone.pathUnderCell = addTrailingSlashIfMissing(clone.pathUnderCell);
+        case UNIT_ROOT:
+            clone.pathUnderUnit = addTrailingSlashIfMissing(clone.pathUnderUnit);
+            break;
+        default:
+        }
+        log.info(clone.toString());
+        switch (this.schemeType) {
+        case HTTP:
+            return clone.toHttp();
+        case LOCAL_UNIT_DOUBLE_COLON:
+            return clone.toLocalunit();
+        case LOCAL_UNIT_SINGLE_COLON:
+            return clone.toLocalunit();
+        case LOCAL_CELL:
+            return clone.toLocalunit();
+        case LOCAL_BOX:
+            return clone.toLocalunit();
+        default:
+            return clone.toLocalunit();
+        }
+    }
+    static String normalizePath(String path) {
+        if (path == null) {
+            return null;
+        }
+        URI uri = URI.create(path);
+        return uri.normalize().toString();
     }
 
     public String toString() {
