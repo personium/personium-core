@@ -24,15 +24,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
@@ -42,16 +40,22 @@ import io.personium.test.categories.Unit;
  * Unit Test class for UriUtils.
  */
 @Category({ Unit.class })
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ PersoniumUnitConfig.class, UriUtils.class })
 public class UriUtilsTest {
     static Logger log = LoggerFactory.getLogger(UriUtilsTest.class);
 
-    @AfterClass
-    public static void tearDown() {
-        PersoniumUnitConfig.reload();
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        CommonUtils.setFQDN("unit.example");;
+        PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_SCHEME, "https");
     }
 
+    @AfterClass
+    public static void tearDown() throws Exception {
+        PersoniumUnitConfig.reload();
+        TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
+                PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
+    }
 
     /**
      * Test convertSchemeFromLocalUnitToHttp().
@@ -61,43 +65,37 @@ public class UriUtilsTest {
      */
     @Test
     public void convertSchemeFromLocalUnitToHttp_Normal_pathBase() throws Exception {
-        PowerMockito.spy(PersoniumUnitConfig.class);
-        PowerMockito.doReturn(true)
-                    .when(PersoniumUnitConfig.class, "isPathBasedCellUrlEnabled");
-        PowerMockito.doReturn("https://host.domain/")
-        .when(PersoniumUnitConfig.class, "getBaseUrl");
-
-
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
         // Single Colon
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp(
             "personium-localunit:/cell/"),
-            equalTo("https://host.domain/cell/"));
+            equalTo("https://unit.example/cell/"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp(
             "personium-localunit:/cell/"),
-                equalTo("https://host.domain/cell/"));
+                equalTo("https://unit.example/cell/"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp(
             "personium-localunit:/cell/#account"),
-                equalTo("https://host.domain/cell/#account"));
+                equalTo("https://unit.example/cell/#account"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp(
             "personium-localunit:/cell/box"),
-                equalTo("https://host.domain/cell/box"));
+                equalTo("https://unit.example/cell/box"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp(
             "personium-localunit:/cell/box/col/ent?$inlinecount=allpages"),
-                equalTo("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
+                equalTo("https://unit.example/cell/box/col/ent?$inlinecount=allpages"));
 
         // Double Colons
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:"),
-            equalTo("https://host.domain/cell/"));
+            equalTo("https://unit.example/cell/"));
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:"),
-            equalTo("https://host.domain/cell/"));
+            equalTo("https://unit.example/cell/"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:#account"),
-                equalTo("https://host.domain/cell/#account"));
+                equalTo("https://unit.example/cell/#account"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:/box"),
-                equalTo("https://host.domain/cell/box"));
+                equalTo("https://unit.example/cell/box"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:/box/col/ent?$inlinecount=allpages"),
-                equalTo("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
+                equalTo("https://unit.example/cell/box/col/ent?$inlinecount=allpages"));
     }
 
     /**
@@ -108,37 +106,31 @@ public class UriUtilsTest {
      */
     @Test
     public void convertSchemeFromLocalUnitToHttp_Normal_fqdnBase() throws Exception {
-        PowerMockito.spy(PersoniumUnitConfig.class);
-        PowerMockito.doReturn(false)
-             .when(PersoniumUnitConfig.class, "isPathBasedCellUrlEnabled");
-        PowerMockito.doReturn("https://host.domain/")
-            .when(PersoniumUnitConfig.class, "getBaseUrl");
-
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         // Single Colon
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:/cell/"),
-            equalTo("https://cell.host.domain/"));
+            equalTo("https://cell.unit.example/"));
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:/cell/"),
-            equalTo("https://cell.host.domain/"));
+            equalTo("https://cell.unit.example/"));
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:/cell/#account"),
-            equalTo("https://cell.host.domain/#account"));
+            equalTo("https://cell.unit.example/#account"));
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:/cell/box"),
-            equalTo("https://cell.host.domain/box"));
+            equalTo("https://cell.unit.example/box"));
         assertThat(
             UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:/cell/box/col/ent?$inlinecount=allpages"),
-            equalTo("https://cell.host.domain/box/col/ent?$inlinecount=allpages"));
+            equalTo("https://cell.unit.example/box/col/ent?$inlinecount=allpages"));
 
         // Double Colons
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:"),
-                equalTo("https://cell.host.domain/"));
+                equalTo("https://cell.unit.example/"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:"),
-                equalTo("https://cell.host.domain/"));
+                equalTo("https://cell.unit.example/"));
         assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:cell:#account"),
-                equalTo("https://cell.host.domain/#account"));
-
+                equalTo("https://cell.unit.example/#account"));
     }
 
     /**
@@ -149,11 +141,7 @@ public class UriUtilsTest {
      */
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_starts_with_uniturl() throws Exception {
-        PowerMockito.spy(PersoniumUnitConfig.class);
-        PowerMockito.doReturn(false)
-             .when(PersoniumUnitConfig.class, "isPathBasedCellUrlEnabled");
-        PowerMockito.doReturn("https://unit.example/")
-            .when(PersoniumUnitConfig.class, "getBaseUrl");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         assertThat(
             UriUtils.convertSchemeFromHttpToLocalUnit("https://unit.example/cell/"),
             equalTo("personium-localunit:/cell/"));
@@ -170,11 +158,7 @@ public class UriUtilsTest {
      */
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_is_fqdn_base() throws Exception {
-        PowerMockito.spy(PersoniumUnitConfig.class);
-        PowerMockito.doReturn(false)
-            .when(PersoniumUnitConfig.class, "isPathBasedCellUrlEnabled");
-        PowerMockito.doReturn("http://unit.example/")
-            .when(PersoniumUnitConfig.class, "getBaseUrl");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         assertThat(
             UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.unit.example/"),
             equalTo("personium-localunit:cell:/"));
@@ -199,13 +183,9 @@ public class UriUtilsTest {
      */
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_is_path_base() throws Exception {
-        PowerMockito.spy(PersoniumUnitConfig.class);
-        PowerMockito.doReturn(true)
-            .when(PersoniumUnitConfig.class, "isPathBasedCellUrlEnabled");
-        PowerMockito.doReturn("http://unit.example/")
-            .when(PersoniumUnitConfig.class, "getBaseUrl");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
         assertThat(
-            UriUtils.convertSchemeFromHttpToLocalUnit("http://unit.example/cell/"),
+            UriUtils.convertSchemeFromHttpToLocalUnit("https://unit.example/cell/"),
             equalTo("personium-localunit:cell:/"));
     }
 
@@ -217,10 +197,7 @@ public class UriUtilsTest {
      */
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_not_starts_with_uniturl() throws Exception {
-        PowerMockito.spy(PersoniumUnitConfig.class);
-        PowerMockito.doReturn("http://unit.example/")
-            .when(PersoniumUnitConfig.class, "getBaseUrl");
-
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         assertThat(
                 UriUtils.convertSchemeFromHttpToLocalUnit("http://otherhost.otherdomain/cell/"),
                 equalTo("http://otherhost.otherdomain/cell/"));
@@ -234,6 +211,7 @@ public class UriUtilsTest {
      */
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_is_null() throws Exception {
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         try {
             UriUtils.convertSchemeFromHttpToLocalUnit(null);
         } catch(PersoniumCoreException e) {
@@ -281,6 +259,7 @@ public class UriUtilsTest {
      */
     @Test
     public void convertSchemeFromLocalBoxToLocalCell_Noraml_url_not_starts_with_localbox() {
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
         String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localunit:/cell", "box");
         assertThat(actual, equalTo("personium-localunit:/cell"));
     }
@@ -303,22 +282,23 @@ public class UriUtilsTest {
      */
     @Test
     public void convertFqdnBaseToPathBase_Noraml() throws Exception {
-        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/"),
-                equalTo("https://host.domain/cell/"));
-        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/box/col"),
-                equalTo("https://host.domain/cell/box/col"));
-        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/box/col/"),
-                equalTo("https://host.domain/cell/box/col/"));
-        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/#account"),
-                equalTo("https://host.domain/cell/#account"));
-        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/box/col/ent?$inlinecount=allpages"),
-                equalTo("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.unit.example/"),
+                equalTo("https://unit.example/cell/"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.unit.example/box/col"),
+                equalTo("https://unit.example/cell/box/col"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.unit.example/box/col/"),
+                equalTo("https://unit.example/cell/box/col/"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.unit.example/#account"),
+                equalTo("https://unit.example/cell/#account"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.unit.example/box/col/ent?$inlinecount=allpages"),
+                equalTo("https://unit.example/cell/box/col/ent?$inlinecount=allpages"));
         assertThat(UriUtils.convertFqdnBaseToPathBase("https://host.domain/cell/"),
                 equalTo("https://domain/host/cell/"));
         assertThat(UriUtils.convertFqdnBaseToPathBase("https://host/cell/"),
                 equalTo("https://host/host/cell/"));
-        assertThat(UriUtils.convertFqdnBaseToPathBase("hoge"),
-                equalTo("hoge"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("foo"),
+                equalTo("foo"));
     }
 
     /**
@@ -338,19 +318,19 @@ public class UriUtilsTest {
      */
     @Test
     public void convertPathBaseToFqdnBase_Noraml() throws Exception {
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/"),
-                equalTo("https://cell.host.domain/"));
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/box/col"),
-                equalTo("https://cell.host.domain/box/col"));
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/box/col/"),
-                equalTo("https://cell.host.domain/box/col/"));
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/#account"),
-                equalTo("https://cell.host.domain/#account"));
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://cell.host.domain/box"),
-                equalTo("https://box.cell.host.domain"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://unit.example/cell/"),
+                equalTo("https://cell.unit.example/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://unit.example/cell/box/col"),
+                equalTo("https://cell.unit.example/box/col"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://unit.example/cell/box/col/"),
+                equalTo("https://cell.unit.example/box/col/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://unit.example/cell/#account"),
+                equalTo("https://cell.unit.example/#account"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://cell.unit.example/box"),
+                equalTo("https://box.cell.unit.example"));
         assertThat(UriUtils.convertPathBaseToFqdnBase("https://host/cell/"), equalTo("https://cell.host/"));
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/"), equalTo("https://host.domain/"));
-        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/__ctl/"), equalTo("https://host.domain/__ctl/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://unit.example/"), equalTo("https://unit.example/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://unit.example/__ctl/"), equalTo("https://unit.example/__ctl/"));
         assertThat(UriUtils.convertPathBaseToFqdnBase("hoge"),
                 equalTo("hoge"));
     }
