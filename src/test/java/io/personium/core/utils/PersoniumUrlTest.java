@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import org.junit.AfterClass;
@@ -67,22 +68,32 @@ public class PersoniumUrlTest {
     @Test
     public void constructor_resourceType_UnitRoot() {
         // unit root
-        String[] unitRoot = new String[] {
-            "https://unit.example",
+        String[] unitRootNormalized = new String[] {
             "https://unit.example/",
             "https://unit.example/?abc=d",
+            "personium-localunit:/?abc=d",
+            "personium-localunit:/"
+        };
+        for (String url : unitRootNormalized) {
+            assertThat(new PersoniumUrl(url).resourceType, equalTo(ResourceType.UNIT_ROOT));
+            assertTrue(new PersoniumUrl(url).isNormalized);
+        }
+        String[] unitRootNotNormal = new String[] {
+            "https://unit.example",
             "https://unit.example/#abc=d",
+            "https://unit.example/aa/../",
+            "https://unit.example/./aa/../bb/.././",
             "https://unit.example?abc=d",
             "https://unit.example#abc=d",
-            "personium-localunit:/?abc=d",
+            "personium-localunit:#abc=d",
+            "personium-localunit:?abc=d",
             "personium-localunit:/#abc=d",
-//            "personium-localunit:?abc=d",
-//            "personium-localunit:#abc=d",
-            "personium-localunit:/",
+            "personium-localunit:/./aa/../bb/.././",
             "personium-localunit:"
         };
-        for (String url : unitRoot) {
+        for (String url : unitRootNotNormal) {
             assertThat(new PersoniumUrl(url).resourceType, equalTo(ResourceType.UNIT_ROOT));
+            assertFalse(new PersoniumUrl(url).isNormalized);
         }
     }
 
@@ -126,24 +137,31 @@ public class PersoniumUrlTest {
     @Test
     public void constructor_resourceType_CellRoot() {
         // cell root
-        String[] cellRoot = new String[] {
+        String[] cellRootNormalized = new String[] {
             "personium-localunit:cell1:/",
-            "personium-localunit:cell1:",
-            "personium-localunit:/cell1",
             "personium-localunit:/cell1/",
             "personium-localcell:/",
-            "personium-localcell:",
             "personium-localcell:/?abc=d",
-            "personium-localcell:/#abc=d",
-            exampleCellRoot() + "/",
             exampleCellRoot() + "/?abc=d",
+            exampleCellRoot() + "/"
+        };
+        for (String url : cellRootNormalized) {
+            assertThat(new PersoniumUrl(url).resourceType, equalTo(ResourceType.CELL_ROOT));
+            assertTrue(new PersoniumUrl(url).isNormalized);
+        }
+        String[] cellRootNotNormal = new String[] {
+            "personium-localcell:",
+            "personium-localcell:/#abc=d",
+            "personium-localunit:cell1:",
+            "personium-localunit:/cell1",
             exampleCellRoot() + "/#abc=d",
-            exampleCellRoot() + "?abc=d",
             exampleCellRoot() + "#abc=d",
+            exampleCellRoot() + "?abc=d",
             exampleCellRoot()
         };
-        for (String url : cellRoot) {
+        for (String url : cellRootNotNormal) {
             assertThat(new PersoniumUrl(url).resourceType, equalTo(ResourceType.CELL_ROOT));
+            assertFalse(new PersoniumUrl(url).isNormalized);
         }
     }
 
@@ -200,7 +218,7 @@ public class PersoniumUrlTest {
             "personium-localbox:/#abc=d",
             "personium-localbox:",
             "personium-localbox:?abc=d",
-//            "personium-localbox:#abc=d",
+            "personium-localbox:#abc=d",
             exampleCellRoot() + "/bx",
             exampleCellRoot() + "/bx/",
             exampleCellRoot() + "/bx/?abc=d",
@@ -316,6 +334,7 @@ public class PersoniumUrlTest {
     @Test
     public void constructor_cellName() {
         assertNull(new PersoniumUrl("https://unit.example/").cellName);
+        assertThat(new PersoniumUrl(exampleCellRoot()).cellName, equalTo("cell1"));
         assertThat(new PersoniumUrl(exampleCellRoot() + "/").cellName, equalTo("cell1"));
     }
     @Test
@@ -323,6 +342,7 @@ public class PersoniumUrlTest {
         assertNull(new PersoniumUrl("personium-localcell:/box/path/a").unitDomain);
         assertThat(new PersoniumUrl("https://unit.example/").unitDomain, equalTo("unit.example"));
         assertThat(new PersoniumUrl(exampleCellRoot() + "/").unitDomain, equalTo("unit.example"));
+        assertThat(new PersoniumUrl(exampleCellRoot()).unitDomain, equalTo("unit.example"));
     }
     @Test
     public void getLocalHostSignleColonUrl() {
@@ -345,7 +365,6 @@ public class PersoniumUrlTest {
         try {
             new PersoniumUrl("https://unit.example/").toLocalunit();
         } catch (Exception e) {
-            e.printStackTrace();
             assertTrue(e instanceof UnsupportedOperationException);
         }
     }
