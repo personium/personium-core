@@ -358,34 +358,27 @@ public class UriUtilsTest {
         for (String r: result) {
             log.info(r);
         }
-        // TODO change to 3
-        assertEquals(2, result.size());
+        assertEquals(3, result.size());
         assertTrue(result.contains(urlDoubleColon));
         assertTrue(result.contains(urlHttp));
-        // TODO add this
-        //assertTrue(result.contains(urlSingleColon));
+        assertTrue(result.contains(urlSingleColon));
         for (String v : result) {
             log.info(v);
         }
 
         result =UriUtils.getUrlVariations(urlSingleColon);
-        // TODO change to 3
-        assertEquals(2, result.size());
-        // TODO add this
-        // assertTrue(result.contains(urlDoubleColon));
+        assertEquals(3, result.size());
+        assertTrue(result.contains(urlDoubleColon));
         assertTrue(result.contains(urlHttp));
         assertTrue(result.contains(urlSingleColon));
         for (String v : result) {
             log.info(v);
         }
         result =UriUtils.getUrlVariations(urlHttp);
-        // TODO change to 3
-        assertEquals(2, result.size());
-        // TODO add this
-        //assertTrue(result.contains(urlDoubleColon));
+        assertEquals(3, result.size());
+        assertTrue(result.contains(urlDoubleColon));
         assertTrue(result.contains(urlHttp));
-        // TODO add this
-        //assertTrue(result.contains(urlSingleColon));
+        assertTrue(result.contains(urlSingleColon));
         for (String v : result) {
             log.info(v);
         }
