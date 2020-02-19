@@ -319,48 +319,60 @@ public class PersoniumUrl {
     }
 
     void handleHttpWs() {
-        String givenUrlHost = this.uri.getHost();
-        String unitHost = CommonUtils.getFQDN();
-        if (givenUrlHost == null) {
-            throw new IllegalArgumentException("given url is invalid [" + this.givenUrl + "]");
+        // ---------------------------
+        // DETECTION OF EXTERNAL UNIT
+        // ---------------------------
+        // 1. Check the URL scheme.
+        //    Only allow configured schemes
+        //     i.e. http/ws or https/wss
+        List<String> acceptableUnitSchemes = new ArrayList<>();
+        String configuredUnitScheme = PersoniumUnitConfig.getUnitScheme();
+        String wsScheme;
+        if ("http".equals(configuredUnitScheme)) {
+            wsScheme = "ws";
+        } else if ("https".equals(configuredUnitScheme)) {
+            wsScheme = "wss";
+        } else {
+            throw new RuntimeException("Configured unit scheme [" + configuredUnitScheme + "] invalid.");
         }
-        // detect external unit
-        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled() && !givenUrlHost.equals(unitHost)) {
+        acceptableUnitSchemes.add(configuredUnitScheme);
+        acceptableUnitSchemes.add(wsScheme);
+        if (!acceptableUnitSchemes.contains(uri.getScheme())) {
             this.resourceType = ResourceType.EXTERNAL_UNIT;
-            return;
-        }
-        if (!givenUrlHost.equals(unitHost) && !givenUrlHost.endsWith("." + unitHost)) {
-            this.resourceType = ResourceType.EXTERNAL_UNIT;
-            // sub-sub domain cases are not detected here.
             return;
         }
 
+        // 2. Url host part check
+        String givenUrlHost = this.uri.getHost();
+        String configuredUnitHost = CommonUtils.getFQDN();
+        if (givenUrlHost == null) {
+            throw new IllegalArgumentException("given url is invalid [" + this.givenUrl + "]");
+        }
+        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled() && !givenUrlHost.equals(configuredUnitHost)) {
+            //  For Path-based mode
+            //  External if the givenUrl Host is different from configured unitHost
+            this.resourceType = ResourceType.EXTERNAL_UNIT;
+            return;
+        } else {
+            //  For Subdomain-based mode
+            //  External if the givenUrl Host is different from neither configured unit Host nor its subdomain.
+            if (!givenUrlHost.equals(configuredUnitHost) && !givenUrlHost.endsWith("." + configuredUnitHost)) {
+                this.resourceType = ResourceType.EXTERNAL_UNIT;
+                // note sub-sub domain cases are not detected here.
+                return;
+            }
+        }
+        // 3. unit port check,
+        //   External if the url port is not unit port
         if (PersoniumUnitConfig.getUnitPort() != uri.getPort()) {
             this.resourceType = ResourceType.EXTERNAL_UNIT;
             return;
         }
 
-        // only allow configured scheme
-        //  i.e. http/ws or https/wss
-        List<String> unitSchemes = new ArrayList<>();
-        String httpScheme = PersoniumUnitConfig.getUnitScheme();
-        String wsScheme;
-        if ("http".equals(httpScheme)) {
-            wsScheme = "ws";
-        } else if ("https".equals(httpScheme)) {
-            wsScheme = "wss";
-        } else {
-            throw new RuntimeException("Configured unit scheme [" + httpScheme + "] invalid.");
-        }
-        unitSchemes.add(httpScheme);
-        unitSchemes.add(wsScheme);
-        if (!unitSchemes.contains(uri.getScheme())) {
-            this.resourceType = ResourceType.EXTERNAL_UNIT;
-            return;
-        }
+        // now that scheme, port, host parts matches this unit,
+        // given url looks to be on this unit.
 
-        // url on this unit
-        // Step1 populate cellName, BoxName, paths
+        // Step 1.  Populate cellName, BoxName, paths
         if (!PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
             // Subdomain-based
             String authority = this.uri.getAuthority();
@@ -370,8 +382,8 @@ public class PersoniumUrl {
                 throw new RuntimeException("Unexpected Regex mismatch: [" + authority
                         + "] somehow did not match [" + REGEX_SUBDOMAIN + "]");
             }
-            if (unitHost.equals(givenUrlHost)) {
-                this.unitDomain = unitHost;
+            if (configuredUnitHost.equals(givenUrlHost)) {
+                this.unitDomain = configuredUnitHost;
                 this.pathUnderUnit = this.uri.getPath();
                 if (StringUtils.isEmpty(this.pathUnderUnit)) {
                     this.isNormalized = false;
@@ -415,7 +427,7 @@ public class PersoniumUrl {
             }
         }
         //  sub-sub domain case comes here.
-        if (!unitHost.equals(this.unitDomain)) {
+        if (!configuredUnitHost.equals(this.uri.getHost())) {
             throw new IllegalArgumentException("Invalid Url given [" + this.givenUrl + "]");
         }
         if (StringUtils.isEmpty(this.pathUnderCell)) {
