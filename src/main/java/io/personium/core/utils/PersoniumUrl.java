@@ -348,11 +348,13 @@ public class PersoniumUrl {
         if (givenUrlHost == null) {
             throw new IllegalArgumentException("given url is invalid [" + this.givenUrl + "]");
         }
-        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled() && !givenUrlHost.equals(configuredUnitHost)) {
+        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
             //  For Path-based mode
             //  External if the givenUrl Host is different from configured unitHost
-            this.resourceType = ResourceType.EXTERNAL_UNIT;
-            return;
+            if (!givenUrlHost.equals(configuredUnitHost)) {
+                this.resourceType = ResourceType.EXTERNAL_UNIT;
+                return;
+            }
         } else {
             //  For Subdomain-based mode
             //  External if the givenUrl Host is different from neither configured unit Host nor its subdomain.
@@ -398,6 +400,9 @@ public class PersoniumUrl {
             }
             this.cellName = m.group(1);
             this.unitDomain = m.group(2);
+            if (!unitDomain.startsWith(configuredUnitHost)) {
+                throw new IllegalArgumentException("Invalid Url. Sub-Sub Domain not supported");
+            }
             this.pathUnderCell = this.uri.getPath();
         } else {
             // Path-based
@@ -425,10 +430,6 @@ public class PersoniumUrl {
                     this.pathUnderCell = m.group(2);
                 }
             }
-        }
-        //  sub-sub domain case comes here.
-        if (!configuredUnitHost.equals(this.uri.getHost())) {
-            throw new IllegalArgumentException("Invalid Url given [" + this.givenUrl + "]");
         }
         if (StringUtils.isEmpty(this.pathUnderCell)) {
             this.isNormalized = false;
