@@ -638,7 +638,7 @@ public class AuthTest extends PersoniumTest {
                     .returns();
             resResource.statusCode(-1);
 
-            // Delete Cell1 Relation, Role & ExtCell
+            // Delete Relation, Role & ExtCell
 
             // Delete Relation on Cell 2
             RelationUtils.delete(TEST_CELL2, MASTER_TOKEN, testrelation, null, -1);
