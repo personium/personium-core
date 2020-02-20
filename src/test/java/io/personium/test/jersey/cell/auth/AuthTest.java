@@ -469,12 +469,14 @@ public class AuthTest extends PersoniumTest {
             // Now, verify that
             // localCellAccessToken has actually Role1
             VisitorLocalAccessToken vlat = VisitorLocalAccessToken.parse(localCellAccessToken, httpCell2Url);
-            assertEquals(1, vlat.getRoleList().size());
+            boolean found = false;
             for (Role role : vlat.getRoleList()) {
-                log.info("  role = " + role.toRoleClassURL());
+                log.info("  role = " + role.toRoleInstanceURL());
+                if ("http://localhost:9998/testcell2/__role/__/transCellTestRole".equals(role.toRoleInstanceURL())) {
+                    found = true;
+                }
             }
-
-            // ここで取得できたlocalCellAccessTokenにRole1が割りあたっていることを検証する。
+            assertTrue(found);
 
             // T3. Should be able to obtain textfile
             //                     w/ localCellAccessToken
