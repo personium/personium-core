@@ -186,8 +186,7 @@ public class PersoniumUrl {
      * @param url
      */
     public PersoniumUrl(String url) {
-        //        log.info("-----");
-        log.info(url);
+        // log.info(url);
         if (url == null) {
             throw new IllegalArgumentException("given url is null.");
         }
@@ -668,7 +667,7 @@ public class PersoniumUrl {
             break;
         default:
         }
-        log.info(clone.toString());
+        // log.info(clone.toString());
         switch (this.schemeType) {
         case HTTP:
             return clone.toHttp();
