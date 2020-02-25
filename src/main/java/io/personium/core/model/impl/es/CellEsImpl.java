@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2020 Personium Project Authors
+ *  - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +102,6 @@ public class CellEsImpl extends Cell {
             CellEsImpl cell = new CellEsImpl();
             cell.setJson(resp.getSource());
             cell.id = resp.getId();
-            cell.url = PersoniumUnitConfig.getBaseUrl() + cell.name + "/";
             return cell;
         } else {
             return null;
@@ -116,9 +116,6 @@ public class CellEsImpl extends Cell {
      */
     public static Cell loadFromName(String cellName) {
         CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", cellName);
-        if (cell != null) {
-            cell.url = PersoniumUnitConfig.getBaseUrl() + cell.name + "/";
-        }
         return cell;
     }
 
@@ -176,10 +173,6 @@ public class CellEsImpl extends Cell {
         } else {
             ret.setJson(cache);
             ret.id = (String) cache.get("_id");
-        }
-
-        if (ret.url == null) {
-            ret.url = PersoniumUnitConfig.getBaseUrl() + ret.name + "/";
         }
 
         return ret;
@@ -425,7 +418,7 @@ public class CellEsImpl extends Cell {
 
         Role role = null;
         try {
-            role = new Role(rUrl);
+            role = Role.createFromRoleInstanceUrl(rUrl.toExternalForm());
         } catch (MalformedURLException e) {
             log.info("Role URL:" + rUrl.toString());
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
@@ -754,8 +747,6 @@ public class CellEsImpl extends Cell {
             boxName = (String) boxs.get(Common.P_NAME.getName());
         }
 
-        roles.add(new Role(roleName, boxName, schema, this.url));
+        roles.add(new Role(roleName, boxName, schema, this.getUrl()));
     }
-
-
 }
