@@ -81,10 +81,12 @@ public class PersoniumUrl {
         WS,
         /**
          * enum indicating "personium-localunit" scheme using a single colon.
+         *  e.g.)  personium-localunit:/cellname/path/under-cell.json
          */
         LOCAL_UNIT_SINGLE_COLON,
         /**
          * enum indicating "personium-localunit" scheme using two colons.
+         * e.g.)  personium-localunit:cellname:/path/under-cell.json
          */
         LOCAL_UNIT_DOUBLE_COLON,
         /**
@@ -273,7 +275,6 @@ public class PersoniumUrl {
         if (this.schemeType != SchemeType.LOCAL_UNIT_DOUBLE_COLON && this.schemeType != SchemeType.INVALID) {
             if (!ssp.startsWith("/")) {
                 String n = this.givenUrl.replaceFirst(":", ":/");
-//                log.info(this.givenUrl + " >>B>> " + n);
                 this.uri = URI.create(n);
                 this.isNormalized = false;
             }
