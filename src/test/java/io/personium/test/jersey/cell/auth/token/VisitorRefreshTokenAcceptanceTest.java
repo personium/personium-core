@@ -79,6 +79,7 @@ public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
     static volatile String usr2CellUrl;
     static volatile String app1CellUrl;
     static volatile String app2CellUrl;
+    static final String TEST_ROLE_NAME = "role1";
 
     @BeforeClass
     public static void beforeClass() {
@@ -103,11 +104,11 @@ public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
         // Create ExtCell pointing to TEST_CELL2
         createExtCellOnTestCell(usr2CellUrl);
         // Create A Role
-        createRoleOnTestCell("role1");
+        createRoleOnTestCell(TEST_ROLE_NAME);
         // Assign A Role
-        linkRoleToExtCellOnTestCell(usr2CellUrl, "role1");
+        linkRoleToExtCellOnTestCell(usr2CellUrl, TEST_ROLE_NAME);
         // Configure the role to have all privilege.
-        grantAllPrivToRoleOnTestCell("role1");
+        grantAllPrivToRoleOnTestCell(TEST_ROLE_NAME);
     }
     
     @Override
@@ -364,9 +365,8 @@ public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
         VisitorLocalAccessToken vlat = VisitorLocalAccessToken.parse(at, testCellUrl);
         log.info("num roles = " + vlat.getRoleList().size());
         assertEquals(1, vlat.getRoleList().size());
-        for (Role r : vlat.getRoleList()) {
-            log.info(r.toRoleInstanceURL());
-        }
+        Role r = vlat.getRoleList().get(0);
+        assertEquals(TEST_ROLE_NAME, r.getName());
     }
 
 
