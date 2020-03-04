@@ -92,30 +92,8 @@ public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
         app2CellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit2);
         usr1CellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit1);
         usr2CellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit2);
+    }
 
-    }
-    @Override
-    public void afterStartingUp() {
-        // Create Special Cell for this class
-        createTestCell();
-        
-        testCellUrl = PersoniumUrl.create(SCHEME_LOCALUNIT + ":" + testCellName + ":/").toHttp();
-        log.info("testCellUrl = " +  testCellUrl);
-        // Create ExtCell pointing to TEST_CELL2
-        createExtCellOnTestCell(usr2CellUrl);
-        // Create A Role
-        createRoleOnTestCell(TEST_ROLE_NAME);
-        // Assign A Role
-        linkRoleToExtCellOnTestCell(usr2CellUrl, TEST_ROLE_NAME);
-        // Configure the role to have all privilege.
-        grantAllPrivToRoleOnTestCell(TEST_ROLE_NAME);
-    }
-    
-    @Override
-    public void beforeShuttingDown() {
-        // Delete the special Cell for this class
-        deleteTestCell();
-    }
     @AfterClass
     public static void afterClass() {
         PersoniumUnitConfig.reload();
@@ -334,39 +312,57 @@ public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
      */
     @Test
     public final void RefreshedAccessToken_ShouldHaveAppropriate_Roles() throws Exception {
-        // Generate Refresh Token
+        // Create a Cell for this test
+        createTestCell();
+        String testCellUrl = PersoniumUrl.create(SCHEME_LOCALUNIT + ":" + testCellName + ":/").toHttp();
+        log.info("testCellUrl = " +  testCellUrl);
+        // Create ExtCell pointing to TEST_CELL2
+        createExtCellOnTestCell(usr2CellUrl);
+        // Create A Role
+        createRoleOnTestCell(TEST_ROLE_NAME);
+        // Assign A Role
+        linkRoleToExtCellOnTestCell(usr2CellUrl, TEST_ROLE_NAME);
+        // Configure the role to have all privilege.
+        grantAllPrivToRoleOnTestCell(TEST_ROLE_NAME);
         
-        VisitorRefreshToken rt = new VisitorRefreshToken(
-            "" + new Date().getTime(),
-            new Date().getTime(),
-            AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
-            testCellUrl, // issuer
-            usr2CellUrl + "#account1", // subject
-            null,
-            null,
-            app1CellUrl,
-            new String[] {"root"}
-        );
-
-        // Generate AppAuth Token
-        List<Role> roleList = new ArrayList<Role>();
-        TransCellAccessToken appAuthToken = new TransCellAccessToken(app1CellUrl, app1CellUrl + "#account1",
-                testCellUrl, roleList,
-                null, null);
-
-        // Refresh Token
-        HttpResponse res = refreshToken(testCellUrl, rt.toTokenString(), null, app1CellUrl, appAuthToken.toTokenString());
-        assertEquals(200, res.getStatusLine().getStatusCode());
-        JsonObject j  = parseJsonResponse(res);
-
-        String at = j.getString(OAuth2Helper.Key.ACCESS_TOKEN);
-        log.info(at);
-
-        VisitorLocalAccessToken vlat = VisitorLocalAccessToken.parse(at, testCellUrl);
-        log.info("num roles = " + vlat.getRoleList().size());
-        assertEquals(1, vlat.getRoleList().size());
-        Role r = vlat.getRoleList().get(0);
-        assertEquals(TEST_ROLE_NAME, r.getName());
+        try {
+            // Generate Refresh Token
+            
+            VisitorRefreshToken rt = new VisitorRefreshToken(
+                "" + new Date().getTime(),
+                new Date().getTime(),
+                AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
+                testCellUrl, // issuer
+                usr2CellUrl + "#account1", // subject
+                null,
+                null,
+                app1CellUrl,
+                new String[] {"root"}
+            );
+    
+            // Generate AppAuth Token
+            List<Role> roleList = new ArrayList<Role>();
+            TransCellAccessToken appAuthToken = new TransCellAccessToken(app1CellUrl, app1CellUrl + "#account1",
+                    testCellUrl, roleList,
+                    null, null);
+    
+            // Refresh Token
+            HttpResponse res = refreshToken(testCellUrl, rt.toTokenString(), null, app1CellUrl, appAuthToken.toTokenString());
+            assertEquals(200, res.getStatusLine().getStatusCode());
+            JsonObject j  = parseJsonResponse(res);
+    
+            String at = j.getString(OAuth2Helper.Key.ACCESS_TOKEN);
+            log.info(at);
+    
+            VisitorLocalAccessToken vlat = VisitorLocalAccessToken.parse(at, testCellUrl);
+            log.info("num roles = " + vlat.getRoleList().size());
+            assertEquals(1, vlat.getRoleList().size());
+            Role r = vlat.getRoleList().get(0);
+            assertEquals(TEST_ROLE_NAME, r.getName());
+        } finally {
+            // Delete the Cell for this test
+            deleteTestCell();
+        }
     }
 
 
