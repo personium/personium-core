@@ -102,36 +102,43 @@ public class FacadeResource {
             PersoniumCoreLog.Server.REQUEST_KEY.params("received", headerPersoniumRequestKey).writeLog();
         }
 
-        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
+        String accessUrlAuthority = uriInfo.getBaseUri().getAuthority();
+        String unitAuthority = PersoniumUnitConfig.getUnitAuthority();
+
+        // if URL authority matches the config then OK.
+        if (unitAuthority.equals(accessUrlAuthority)) {
             return new UnitResource(cookieAuthValue, cookiePeer, headerAuthz, headerHost,
                     headerPersoniumUnitUser, uriInfo);
         }
 
-        String accessUrl = uriInfo.getBaseUri().toString();
-        String configUrl = PersoniumUnitConfig.getBaseUrl();
-        if (configUrl.equals(accessUrl)) {
-            return new UnitResource(cookieAuthValue, cookiePeer, headerAuthz, headerHost,
-                    headerPersoniumUnitUser, uriInfo);
+        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
+            // if path based, then respond error since unitAuthority itself is the only allowable authority.
+            throw PersoniumCoreException.Common.INVALID_URL_AUTHORITY.params(accessUrlAuthority, unitAuthority);
         } else {
-            // {CellName}.{FQDN} access
+            // if sub-domain based, then ..
             String cellName = headerHost.split("\\.")[0];
-            Cell cell = ModelFactory.cellFromName(cellName);
-            if (cell == null) {
-                throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
-            }
-            AccessContext ac = AccessContext.create(headerAuthz, uriInfo, cookiePeer, cookieAuthValue, cell,
-                    uriInfo.getBaseUri().toString(), headerHost, headerPersoniumUnitUser);
+            // subdomain case is also fine
+            if (accessUrlAuthority.equals(cellName + "." + unitAuthority)) {
+                Cell cell = ModelFactory.cellFromName(cellName);
+                if (cell == null) {
+                    throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
+                }
+                AccessContext ac = AccessContext.create(headerAuthz, uriInfo, cookiePeer, cookieAuthValue, cell,
+                        uriInfo.getBaseUri().toString(), headerHost, headerPersoniumUnitUser);
 
-            CellLockManager.STATUS cellStatus = CellLockManager.getCellStatus(cell.getId());
-            if (CellLockManager.STATUS.BULK_DELETION.equals(cellStatus)) {
-                throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
-            }
+                CellLockManager.STATUS cellStatus = CellLockManager.getCellStatus(cell.getId());
+                if (CellLockManager.STATUS.BULK_DELETION.equals(cellStatus)) {
+                    throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
+                }
 
-            CellLockManager.incrementReferenceCount(cell.getId());
-            httpServletRequest.setAttribute("cellId", cell.getId());
+                CellLockManager.incrementReferenceCount(cell.getId());
+                httpServletRequest.setAttribute("cellId", cell.getId());
 
-            return new CellResource(ac, requestKey,
-                    headerPersoniumEventId, headerPersoniumRuleChain, headerPersoniumVia, httpServletRequest);
+                return new CellResource(ac, requestKey,
+                        headerPersoniumEventId, headerPersoniumRuleChain, headerPersoniumVia, httpServletRequest);
+            } 
+            // otherwise respond error
+            throw PersoniumCoreException.Common.INVALID_URL_AUTHORITY.params(accessUrlAuthority, unitAuthority + ", *." + unitAuthority);
         }
     }
 }

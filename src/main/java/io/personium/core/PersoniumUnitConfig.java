@@ -869,6 +869,21 @@ public class PersoniumUnitConfig {
         }
         return port;
     }
+    /**
+     * Returns the URL authority of the Unit.
+     * For path-based cell URL mode, this will be the only allowable authority.
+     * For sub-domain-based cell URL mode, this and its sub-domain FQDN will be allowed.
+     * @return URL authority of the Unit.
+     */
+    public static String getUnitAuthority() {
+        String ret = CommonUtils.getFQDN();
+        int p = getUnitPort();
+        if (p == -1) {
+            return ret;
+        }
+        ret = ret + ":" + p;
+        return ret;
+    }
 
     /**
      * URL format to access cell.
