@@ -28,7 +28,7 @@ import io.personium.core.model.impl.fs.CellCmpFsImpl;
 import io.personium.core.model.impl.fs.CellSnapshotCellCmpFsImpl;
 
 /**
- * Factory class of model object.
+ * Factory class for model objects.
  */
 public final class ModelFactory {
     /**
@@ -150,7 +150,5 @@ public final class ModelFactory {
         public static UserDataODataProducer userData(final Cell cell, final DavCmp davCmp) {
             return new UserDataODataProducer(cell, davCmp);
         }
-
     }
-
 }
