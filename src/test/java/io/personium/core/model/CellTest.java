@@ -1,3 +1,19 @@
+/**
+ * Personium
+ * Copyright 2020 Personium Project Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.personium.core.model;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +31,6 @@ import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.utils.UriUtils;
 
 public class CellTest {
     static Cell testCell;
@@ -23,13 +38,9 @@ public class CellTest {
     static final String CELL_ID = "12345";
     static final String CELL_OWNER = "somebody";
     static Logger log = LoggerFactory.getLogger(CellTest.class);
-    static volatile String fqdnShelter;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        fqdnShelter = CommonUtils.getFQDN();
-        TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
-                PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
 
         CommonUtils.setFQDN("testunit.example");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "");
@@ -76,13 +87,16 @@ public class CellTest {
         };
         testCell.id = CELL_ID;
         testCell.name = CELL_NAME;
-        testCell.owner = CELL_NAME;
+        testCell.owner = CELL_OWNER;
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
+        // reload FQDN
+        TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
+                PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
+        // reload unit config
         PersoniumUnitConfig.reload();
-        CommonUtils.setFQDN(fqdnShelter);
     }
 
     @Test
@@ -113,28 +127,28 @@ public class CellTest {
         // When just a normal string
         testCell.owner = "abcde";
         // Should be same as raw
-        assertEquals(testCell.getOwnerRaw(), testCell.getOwnerNormalized());
+        assertEquals("abcde", testCell.getOwnerNormalized());
 
         // When http based url
         testCell.owner = "https://example.com/";
         // Should be same as raw
-        assertEquals(testCell.getOwnerRaw(), testCell.getOwnerNormalized());
+        assertEquals("https://example.com/", testCell.getOwnerNormalized());
 
         // When personium-localunit schem url
         testCell.owner = "personium-localunit:cellname:/";
         String result = testCell.getOwnerNormalized();
         log.info(result);
         // Should be resolved to http based url
-        assertEquals(UriUtils.convertSchemeFromLocalUnitToHttp(testCell.getOwnerRaw()), result);
+        assertEquals("https://cellname.testunit.example/", result);
 
         // When personium-localunit schem url with single colon (old format)
         testCell.owner = "personium-localunit:/cellname/";
         String result2 = testCell.getOwnerNormalized();
         log.info(result2);
         // Still Should be resolved to same http based url
-        assertEquals(result, result2);
+        assertEquals("https://cellname.testunit.example/", result2);
 
         // set null again;
-        testCell.owner = null;
+        testCell.owner = CELL_OWNER;
     }
 }
