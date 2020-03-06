@@ -16,6 +16,8 @@
  */
 package io.personium.core.snapshot;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.FileVisitor;
@@ -125,7 +127,7 @@ public class SnapshotFileImportRunner implements Runnable {
             // Delete error file.
             deleteErrorFile();
             // Post event to EventBus.
-            String object = UriUtils.SCHEME_LOCALCELL + ":/__import";
+            String object = SCHEME_LOCALCELL + ":/__import";
             String info = "";
             String type = PersoniumEventType.cell(PersoniumEventType.Operation.IMPORT);
             PersoniumEvent event = new PersoniumEvent.Builder()

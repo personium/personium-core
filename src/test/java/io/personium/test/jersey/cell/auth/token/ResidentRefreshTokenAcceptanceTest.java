@@ -19,6 +19,7 @@ package io.personium.test.jersey.cell.auth.token;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,8 +89,8 @@ public class ResidentRefreshTokenAcceptanceTest extends PersoniumTest {
     @Test
     public final void Should_FailRefreshingToken_When_NewClientSpecifiedForTokenWithoutSchema()
             throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
-        String appCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
-        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String appCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String usrCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
         String appCellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit);
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
@@ -121,9 +122,9 @@ public class ResidentRefreshTokenAcceptanceTest extends PersoniumTest {
     @Test
     public final void Should_FailRefreshingToken_When_ClientIdNotMatchesSchemaInRefreshToken()
             throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
-        String appCellLocalUnit1 = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
-        String appCellLocalUnit2 = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA2 + ":/";
-        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String appCellLocalUnit1 = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String appCellLocalUnit2 = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA2 + ":/";
+        String usrCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
         String appCellUrl1 = UriUtils.resolveLocalUnit(appCellLocalUnit1);
         String appCellUrl2 = UriUtils.resolveLocalUnit(appCellLocalUnit2);
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
@@ -157,8 +158,8 @@ public class ResidentRefreshTokenAcceptanceTest extends PersoniumTest {
     @Test
     public final void Should_SuccessRefrehingToken__When_ClientIdMatchesSchemaInRefreshToken()
             throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
-        String appCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
-        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String appCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String usrCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
         String appCellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit);
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
@@ -183,7 +184,7 @@ public class ResidentRefreshTokenAcceptanceTest extends PersoniumTest {
         String aud = tcat.getTarget();
         log.info(aud);
 
-        assertFalse(aud.startsWith(UriUtils.SCHEME_LOCALUNIT));
+        assertFalse(aud.startsWith(SCHEME_LOCALUNIT));
         assertTrue(aud.startsWith("http"));
     }
 
@@ -198,8 +199,8 @@ public class ResidentRefreshTokenAcceptanceTest extends PersoniumTest {
     @Test
     public final void Should_FailRefrehingToken__When_RefreshTokenHasSchemaButNoAppAuth()
             throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
-        String appCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
-        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String appCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String usrCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
         String appCellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit);
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
@@ -223,8 +224,8 @@ public class ResidentRefreshTokenAcceptanceTest extends PersoniumTest {
     @Test
     public final void Should_SuccessRefrehingToken__When_ClientIdNullAndRefreshTokenWithoutSchema()
             throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
-        String appCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
-        String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+        String appCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+        String usrCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
         String appCellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit);
         String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 
@@ -243,7 +244,7 @@ public class ResidentRefreshTokenAcceptanceTest extends PersoniumTest {
         String aud = tcat.getTarget();
         log.info(aud);
 
-        assertFalse(aud.startsWith(UriUtils.SCHEME_LOCALUNIT));
+        assertFalse(aud.startsWith(SCHEME_LOCALUNIT));
         assertTrue(aud.startsWith("http"));
     }
 

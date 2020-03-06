@@ -16,6 +16,8 @@
  */
 package io.personium.core.rs.unit;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
+
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -67,7 +69,7 @@ public class UnitCtlResource extends ODataResource {
      * @param accessContext AccessContext
      */
     public UnitCtlResource(AccessContext accessContext) {
-        super(accessContext, UriUtils.SCHEME_LOCALUNIT + ":/__ctl/",
+        super(accessContext, SCHEME_LOCALUNIT + ":/__ctl/",
                 ModelFactory.ODataCtl.unitCtl(accessContext));
         checkReferenceMode(accessContext);
     }

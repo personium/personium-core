@@ -17,6 +17,7 @@
 package io.personium.test.jersey.cell;
 
 import static org.junit.Assert.assertTrue;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +50,6 @@ import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
 import io.personium.core.model.jaxb.Acl;
 import io.personium.core.rs.PersoniumCoreApplication;
-import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -170,7 +170,7 @@ public class AclTest extends AbstractCase {
             log.info(acl.toJSON());
             JSONObject j = (JSONObject) new JSONParser().parse(acl.toJSON());
             String base = (String)j.get("@xml.base");
-            assertTrue(base.startsWith(UriUtils.SCHEME_LOCALUNIT));
+            assertTrue(base.startsWith(SCHEME_LOCALUNIT));
 
         } finally {
             // ACLの設定を元に戻す

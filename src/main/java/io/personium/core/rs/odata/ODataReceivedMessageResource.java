@@ -16,6 +16,8 @@
  */
 package io.personium.core.rs.odata;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+
 import java.io.Reader;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +130,7 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
         } else if (ReceivedMessage.STATUS_REJECTED.equals(status)) {
             op = PersoniumEventType.Operation.REJECT;
         }
-        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+        String object = new StringBuilder(SCHEME_LOCALCELL)
                 .append(":/__ctl/")
                 .append(getEntitySetName())
                 .append(oEntityKey.toKeyString())
