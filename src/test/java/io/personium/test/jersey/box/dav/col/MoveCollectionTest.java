@@ -46,7 +46,7 @@ import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UrlUtils;
 
 /**
- * MOVEのテスト.
+ * Integration test for MOVE method against a collection resource.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
@@ -57,8 +57,9 @@ public class MoveCollectionTest extends PersoniumTest {
     private static final String FILE_NAME = "file1.txt";
     private static final String FILE_BODY = "testFileBody";
 
+
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public MoveCollectionTest() {
         super(new PersoniumCoreApplication());
@@ -73,13 +74,13 @@ public class MoveCollectionTest extends PersoniumTest {
         final String destColName = "destCol";
         final String destUrl = UrlUtils.box(CELL_NAME, BOX_NAME, destColName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, srcColName);
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + srcColName + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN,
                     HttpStatus.SC_CREATED);
 
-            // 移動
+            // MOVE
             String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, srcColName);
             PersoniumRequest req = PersoniumRequest.move(srcUrl);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
@@ -88,7 +89,7 @@ public class MoveCollectionTest extends PersoniumTest {
             PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
 
-            // 存在確認
+            // Check the existence
             TResponse res = DavResourceUtils.propfind(TOKEN, CELL_NAME, BOX_NAME,
                     "1", HttpStatus.SC_MULTI_STATUS);
             assertNotContainsHrefUrl(srcUrl, res);
@@ -96,22 +97,22 @@ public class MoveCollectionTest extends PersoniumTest {
             res = DavResourceUtils.getWebDav(CELL_NAME, TOKEN, BOX_NAME,
                     srcColName, HttpStatus.SC_NOT_FOUND);
 
-            // 移動したコレクションが取得できること
+            // MOVEしたコレクションが取得できること
             res = DavResourceUtils.getWebDav(CELL_NAME, TOKEN, BOX_NAME,
                     destColName, HttpStatus.SC_OK);
             String expectedBody = "URL : " + destUrl;
             assertThat(res.getBody()).contains(expectedBody);
 
-            // 移動したファイルが取得できること
+            // MOVEしたファイルが取得できること
             DavResourceUtils.getWebDav(CELL_NAME, TOKEN, BOX_NAME,
                     destColName + "/" + FILE_NAME, HttpStatus.SC_OK);
 
-            // 移動したコレクション配下にファイルを追加
+            // MOVEしたコレクション配下にファイルを追加
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + destColName + "/" + FILE_NAME + "2", FILE_BODY, MediaType.TEXT_PLAIN,
                     HttpStatus.SC_CREATED);
 
-            // 元の場所に移動
+            // move to the original position
             req = PersoniumRequest.move(destUrl);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, srcUrl);
@@ -119,7 +120,7 @@ public class MoveCollectionTest extends PersoniumTest {
             response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
 
-            // 存在確認
+            // Check the existence
             res = DavResourceUtils.propfind(TOKEN, CELL_NAME, BOX_NAME,
                     "1", HttpStatus.SC_MULTI_STATUS);
             assertNotContainsHrefUrl(destUrl, res);
