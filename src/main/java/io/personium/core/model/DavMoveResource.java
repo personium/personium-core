@@ -17,7 +17,6 @@
  */
 package io.personium.core.model;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -27,6 +26,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.utils.PersoniumUrl;
 
 /**
  * A class that performs processing relating to Move of Dav after receiving processing delegation from the JaxRS Resource object.
@@ -130,35 +130,14 @@ public class DavMoveResource extends DavRsCmp {
             throw PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
         }
 
-        DavPath destinationPath = getDestination();
-        if (!this.getAccessContext().getBaseUri().equals(destinationPath.getBaseUri())) {
+        PersoniumUrl destUrl = PersoniumUrl.create(this.destination);
+        PersoniumUrl currentUrl = PersoniumUrl.create(this.getUrl());
+        
+        if (!destUrl.isOnSameBox(currentUrl)) {
             //If the schema and the host are different from the source and the destination, an error is assumed
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     org.apache.http.HttpHeaders.DESTINATION, destination);
         }
-
-        if (!this.getCell().getName().equals(destinationPath.getCellName())
-                || !this.getBox().getName().equals(destinationPath.getBoxName())) {
-            //If Cell and Box are different between the source and the destination, an error is assumed
-            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    org.apache.http.HttpHeaders.DESTINATION, destination);
-        }
-    }
-
-    /**
-     * Create and return path information of the destination object.
-     * @return DavPath Object managing the resource path of the destination
-     */
-    private DavPath getDestination() {
-        URI destUri;
-        try {
-            destUri = new URI(destination);
-        } catch (URISyntaxException e) {
-            //Not in URI format
-            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.DESTINATION,
-                    destination);
-        }
-        return new DavPath(destUri, this.getAccessContext().getBaseUri());
     }
 
     /**
