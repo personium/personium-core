@@ -118,13 +118,13 @@ public class FacadeResourceTest {
     }
     @Test
     public void facade_SubdomainBased_InvalidUrlAccess_ShouldThrow_Exception() {
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         URI[] accessUrlList2 = new URI[] {
                 URI.create("https://cell.unit.example:8801/"),
                 URI.create("https://cell.unit.example:8801/_ctl")
         };
         this.assertFacadeThrowsPersoniumCoreException(accessUrlList2,  PersoniumCoreException.Dav.CELL_NOT_FOUND);
         
-        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         URI[] accessUrlList = new URI[] {
                 URI.create("https://cell.unit.example:8800/"),
                 URI.create("https://sub.cell.unit.example:8801/"),
