@@ -49,8 +49,8 @@ import io.personium.core.PersoniumUnitConfig;
 public class PersoniumUrl {
     static Logger log = LoggerFactory.getLogger(PersoniumUrl.class);
 
-    /** enum indicating the resource type of the URL */
-    public static enum ResourceType {
+    /** enum indicating the resource type of the URL. */
+    public enum ResourceType {
         /** enum value indicating the resource type of this URL is cell root.  */
         CELL_ROOT,
         /** enum value indicating the resource type of this URL is box root. */
@@ -74,7 +74,7 @@ public class PersoniumUrl {
     /**
      * enum indicating the Scheme type of the URL.
      */
-    public static enum SchemeType {
+    public enum SchemeType {
         /** enum value indicating "http" or "https" scheme. */
         HTTP,
         /** enum value indicating "ws" or "wss" scheme. */
@@ -114,7 +114,7 @@ public class PersoniumUrl {
     public static final String REGEX_SUBDOMAIN = "^(.+?)\\.(.*?)$";
     /** Regular expression for matching localunit scheme. */
     public static final String REGEX_LOCALUNIT = "^([a-zA-Z0-9\\-\\_]+?):(.*)$";
-    /** Regular expression for extracting a directory */
+    /** Regular expression for extracting a directory. */
     public static final String REGEX_DIR = "^\\/?(.*?)($|\\/.*$)";
     /** Regular expression for matching non-directory API endpoint. */
     public static final String REGEX_CTL = "^__[a-zA-Z]+$";
@@ -159,6 +159,7 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an object of this class.
+     * @return PersoniumUrl object
      */
     public static PersoniumUrl create(String url) {
         return new PersoniumUrl(url);
@@ -166,6 +167,7 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an object of this class.
+     * @return PersoniumUrl object
      */
     public static PersoniumUrl create(String url, String cellName) {
         PersoniumUrl ret = new PersoniumUrl(url);
@@ -177,13 +179,14 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an URL with "personium-localunit" scheme.
+     * @return PersoniumUrl object
      */
-    public static PersoniumUrl localUnit(String cellName, String path) {
+    public static PersoniumUrl newLocalUnit(String cellName, String path) {
         return new PersoniumUrl(SCHEME_LOCALUNIT + ":" + cellName + ":" + path);
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param url
      */
     public PersoniumUrl(String url) {
@@ -501,7 +504,7 @@ public class PersoniumUrl {
 
     /**
      * Add trailing slash if missing.
-     * @param url
+     * @param url input url
      * @return url with trailing slash.
      */
     public static String addTrailingSlashIfMissing(String url) {
@@ -588,7 +591,6 @@ public class PersoniumUrl {
         return sb.toString();
     }
 
-    
     /**
      * Try to convert to a URL string with "http(s)" scheme.
      * @return an URL string with "http(s)" scheme.
@@ -662,7 +664,6 @@ public class PersoniumUrl {
         return sb.toString();
     }
 
-
     static String normalizePath(String path) {
         if (path == null) {
             return null;
@@ -671,6 +672,9 @@ public class PersoniumUrl {
         return uri.normalize().toString();
     }
 
+    /**
+     * Creates a string explaining the status of the object for debug use. 
+     */
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("givenUrl: " + this.givenUrl + "\n");
@@ -686,19 +690,19 @@ public class PersoniumUrl {
     /**
      * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Cell as this Url.
      * False If this or target URL is EXTERNAL / UNIT_LEVEL or below.
-     * @param comparison
+     * @param comparison target PersoniumUrl object to compare with 
      * @return true if the given PersoniumUrl is on the same Cell as this Url.
      */
     public boolean isOnSameCell(PersoniumUrl comparison) {
-        return (this.cellName != null && this.cellName.equals(comparison.cellName));
+        return this.cellName != null && this.cellName.equals(comparison.cellName);
     }
     /**
      * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Box as this Url.
      * False If this or target URL is EXTERNAL / CELL_LEVEL or below.
-     * @param comparison
-     * @return
+     * @param comparison target PersoniumUrl object to compare with
+     * @return true if the given PersoniumUrl is on the same Box as this Url.
      */
     public boolean isOnSameBox(PersoniumUrl comparison) {
-        return (this.isOnSameCell(comparison) && this.boxName != null && this.boxName.equals(comparison.boxName));
+        return this.isOnSameCell(comparison) && this.boxName != null && this.boxName.equals(comparison.boxName);
     }
 }
