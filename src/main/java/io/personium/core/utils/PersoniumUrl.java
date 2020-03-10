@@ -159,8 +159,8 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an object of this class.
-     * @param url String
-     * @return PersoniumUrl
+     * @param url URL string to handle with this class.
+     * @return PersoniumUrl object
      */
     public static PersoniumUrl create(String url) {
         return new PersoniumUrl(url);
@@ -168,9 +168,9 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an object of this class.
-     * @param url String
-     * @param cellName String
-     * @return PersoniumUrl
+     * @param url URL string to handle with this class.
+     * @param cellName String name
+     * @return PersoniumUrl object
      */
     public static PersoniumUrl create(String url, String cellName) {
         PersoniumUrl ret = new PersoniumUrl(url);
@@ -184,9 +184,9 @@ public class PersoniumUrl {
      * Factory method to create an URL with "personium-localunit" scheme.
      * @param cellName String
      * @param path String
-     * @return PersoniumUrl
+     * @return PersoniumUrl object
      */
-    public static PersoniumUrl localUnit(String cellName, String path) {
+    public static PersoniumUrl newLocalUnit(String cellName, String path) {
         return new PersoniumUrl(SCHEME_LOCALUNIT + ":" + cellName + ":" + path);
     }
 
@@ -509,7 +509,7 @@ public class PersoniumUrl {
 
     /**
      * Add trailing slash if missing.
-     * @param url String
+     * @param url input url
      * @return url with trailing slash.
      */
     public static String addTrailingSlashIfMissing(String url) {
@@ -596,7 +596,6 @@ public class PersoniumUrl {
         return sb.toString();
     }
 
-    
     /**
      * Try to convert to a URL string with "http(s)" scheme.
      * @return an URL string with "http(s)" scheme.
@@ -670,7 +669,6 @@ public class PersoniumUrl {
         return sb.toString();
     }
 
-
     static String normalizePath(String path) {
         if (path == null) {
             return null;
@@ -680,7 +678,8 @@ public class PersoniumUrl {
     }
 
     /**
-     * toString.
+     * Creates a string explaining the status of the object for debug use.
+     * @return a string explaining the status of the object.
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -697,19 +696,19 @@ public class PersoniumUrl {
     /**
      * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Cell as this Url.
      * False If this or target URL is EXTERNAL / UNIT_LEVEL or below.
-     * @param comparison
+     * @param comparison target PersoniumUrl object to compare with
      * @return true if the given PersoniumUrl is on the same Cell as this Url.
      */
     public boolean isOnSameCell(PersoniumUrl comparison) {
-        return (this.cellName != null && this.cellName.equals(comparison.cellName));
+        return this.cellName != null && this.cellName.equals(comparison.cellName);
     }
     /**
      * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Box as this Url.
      * False If this or target URL is EXTERNAL / CELL_LEVEL or below.
-     * @param comparison
-     * @return
+     * @param comparison target PersoniumUrl object to compare with
+     * @return true if the given PersoniumUrl is on the same Box as this Url.
      */
     public boolean isOnSameBox(PersoniumUrl comparison) {
-        return (this.isOnSameCell(comparison) && this.boxName != null && this.boxName.equals(comparison.boxName));
+        return this.isOnSameCell(comparison) && this.boxName != null && this.boxName.equals(comparison.boxName);
     }
 }
