@@ -159,6 +159,7 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an object of this class.
+     * @param url URL string to handle with this class.
      * @return PersoniumUrl object
      */
     public static PersoniumUrl create(String url) {
@@ -167,6 +168,8 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an object of this class.
+     * @param url URL string to handle with this class.
+     * @param cellName Cell name
      * @return PersoniumUrl object
      */
     public static PersoniumUrl create(String url, String cellName) {
@@ -179,6 +182,8 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an URL with "personium-localunit" scheme.
+     * @param cellName Cell name
+     * @param path path under cell
      * @return PersoniumUrl object
      */
     public static PersoniumUrl newLocalUnit(String cellName, String path) {
@@ -673,7 +678,8 @@ public class PersoniumUrl {
     }
 
     /**
-     * Creates a string explaining the status of the object for debug use. 
+     * Creates a string explaining the status of the object for debug use.
+     * @return a string explaining the status of the object.
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -690,7 +696,7 @@ public class PersoniumUrl {
     /**
      * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Cell as this Url.
      * False If this or target URL is EXTERNAL / UNIT_LEVEL or below.
-     * @param comparison target PersoniumUrl object to compare with 
+     * @param comparison target PersoniumUrl object to compare with
      * @return true if the given PersoniumUrl is on the same Cell as this Url.
      */
     public boolean isOnSameCell(PersoniumUrl comparison) {

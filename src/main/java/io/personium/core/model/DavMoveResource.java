@@ -67,7 +67,7 @@ public class DavMoveResource extends DavRsCmp {
         //Generate destination information
         DavDestination davDestination;
         try {
-            davDestination = new DavDestination(destination, this.getAccessContext().getBaseUri(), boxRsCmp);
+            davDestination = new DavDestination(destination, boxRsCmp);
         } catch (URISyntaxException e) {
             //Not in URI format
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.DESTINATION,
