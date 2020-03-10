@@ -389,8 +389,7 @@ public class MoveCollectionTest extends PersoniumTest {
             // 移動
             TResponse response = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME, BOX_NAME + "/" + srcColName, destUrl,
                     HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    HttpHeaders.DESTINATION, destUrl);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, srcColName, TOKEN, -1);
@@ -1100,8 +1099,7 @@ public class MoveCollectionTest extends PersoniumTest {
             // 移動
             TResponse response = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME, BOX_NAME + "/" + srcColName, destUrl,
                     HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    HttpHeaders.DESTINATION, destUrl);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, srcColName, TOKEN, -1);
@@ -1618,8 +1616,7 @@ public class MoveCollectionTest extends PersoniumTest {
             // 移動
             TResponse response = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME, BOX_NAME + "/" + srcColName, destUrl,
                     HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    HttpHeaders.DESTINATION, destUrl);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, srcColName, TOKEN, -1);
