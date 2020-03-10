@@ -137,7 +137,10 @@ public class DavDestination {
             String sourceResourceType) {
         if (currentCmp.exists()) {
             //Check required if you are about to overwrite the destination resource
-
+            if (DavCmp.TYPE_COL_BOX.equals(currentCmp.getType())) {
+                //The destination cannot be a Box root.
+                throw PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
+            }
             if (DavCommon.OVERWRITE_FALSE.equalsIgnoreCase(overwrite)) {
                 //When F is specified in the Overwrite header, it is an error because it can not be overwritten
                 throw PersoniumCoreException.Dav.DESTINATION_ALREADY_EXISTS;
@@ -183,7 +186,7 @@ public class DavDestination {
         //Check whether the destination path exists from the highest level to the lowest level
         List<String> destinationPaths = Arrays.asList(this.destUrl.pathUnderBox.split("/"));
         DavRsCmp parentRsCmp = boxRsCmp;
-        DavRsCmp currentRsCmp = null;
+        DavRsCmp currentRsCmp = boxRsCmp;
         int pathIndex;
         for (pathIndex = 0; pathIndex < destinationPaths.size(); pathIndex++) {
             DavCmp parentCmp = parentRsCmp.getDavCmp();

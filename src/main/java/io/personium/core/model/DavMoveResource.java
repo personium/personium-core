@@ -129,11 +129,16 @@ public class DavMoveResource extends DavRsCmp {
             throw PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
         }
 
-        PersoniumUrl destUrl = PersoniumUrl.create(this.destination);
         PersoniumUrl currentUrl = PersoniumUrl.create(this.getUrl());
-        
-        if (!destUrl.isOnSameBox(currentUrl)) {
-            //If the schema and the host are different from the source and the destination, an error is assumed
+        try {
+            PersoniumUrl destUrl = PersoniumUrl.create(this.destination);
+            if (!destUrl.isOnSameBox(currentUrl)) {
+                //If the schema and the host are different from the source and the destination, an error is assumed
+                throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
+                        org.apache.http.HttpHeaders.DESTINATION, destination);
+            }
+            
+        } catch (IllegalArgumentException e) {
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     org.apache.http.HttpHeaders.DESTINATION, destination);
         }
