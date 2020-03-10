@@ -42,7 +42,7 @@ public class DavDestination {
      * @param box Box information on the destination
      * @throws URISyntaxException URI parse error
      */
-    public DavDestination(String destinationUriString, String baseUriString, DavRsCmp box) throws URISyntaxException {
+    public DavDestination(String destinationUriString, DavRsCmp box) throws URISyntaxException {
         this.destUrl = PersoniumUrl.create(destinationUriString);
         boxRsCmp = box;
     }

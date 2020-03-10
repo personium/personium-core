@@ -169,7 +169,7 @@ public class PersoniumUrl {
     /**
      * Factory method to create an object of this class.
      * @param url URL string to handle with this class.
-     * @param cellName String name
+     * @param cellName Cell name
      * @return PersoniumUrl object
      */
     public static PersoniumUrl create(String url, String cellName) {
@@ -182,8 +182,8 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an URL with "personium-localunit" scheme.
-     * @param cellName String
-     * @param path String
+     * @param cellName Cell name
+     * @param path path under cell
      * @return PersoniumUrl object
      */
     public static PersoniumUrl newLocalUnit(String cellName, String path) {
