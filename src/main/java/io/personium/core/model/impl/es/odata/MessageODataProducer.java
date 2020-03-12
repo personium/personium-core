@@ -16,6 +16,8 @@
  */
 package io.personium.core.model.impl.es.odata;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -351,7 +353,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                 createEntityWithoutLock(ExtCell.EDM_TYPE_NAME, oew);
 
                 // post event
-                String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                String object = new StringBuilder(SCHEME_LOCALCELL)
                         .append(":/__ctl/")
                         .append(ExtCell.EDM_TYPE_NAME)
                         .append(extCellKeyString)
@@ -370,7 +372,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                 createLinkWithoutLock(entityId, targetNavProp, extCellEntityId);
 
                 // post event
-                String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                String object = new StringBuilder(SCHEME_LOCALCELL)
                         .append(":/__ctl/")
                         .append(Relation.EDM_TYPE_NAME)
                         .append(keyString)
@@ -401,7 +403,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
             deleteLinkWithoutLock(entityId, targetNavProp, extCellKey);
 
             // post event
-            String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+            String object = new StringBuilder(SCHEME_LOCALCELL)
                     .append(":/__ctl/")
                     .append(Relation.EDM_TYPE_NAME)
                     .append(keyString)
@@ -505,7 +507,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                 createEntityWithoutLock(ExtCell.EDM_TYPE_NAME, oew);
 
                 // post event
-                String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                String object = new StringBuilder(SCHEME_LOCALCELL)
                         .append(":/__ctl/")
                         .append(ExtCell.EDM_TYPE_NAME)
                         .append(extCellKeyString)
@@ -524,7 +526,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                 createLinkWithoutLock(entityId, targetNavProp, extCellEntityId);
 
                 // post event
-                String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                String object = new StringBuilder(SCHEME_LOCALCELL)
                         .append(":/__ctl/")
                         .append(Role.EDM_TYPE_NAME)
                         .append(keyString)
@@ -555,7 +557,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
             deleteLinkWithoutLock(entityId, targetNavProp, extCellKey);
 
             // post event
-            String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+            String object = new StringBuilder(SCHEME_LOCALCELL)
                     .append(":/__ctl/")
                     .append(Role.EDM_TYPE_NAME)
                     .append(keyString)
@@ -620,7 +622,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
 
             // post rule event to eventBus
             String keyString = AbstractODataResource.replaceDummyKeyToNull(entityKey.toKeyString());
-            String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+            String object = new StringBuilder(SCHEME_LOCALCELL)
                     .append(":/__ctl/")
                     .append(Rule.EDM_TYPE_NAME)
                     .append(keyString)
@@ -642,7 +644,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
 
             // post rule event to eventBus
             String keyString = AbstractODataResource.replaceDummyKeyToNull(entityKey.toKeyString());
-            String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+            String object = new StringBuilder(SCHEME_LOCALCELL)
                     .append(":/__ctl/")
                     .append(Rule.EDM_TYPE_NAME)
                     .append(keyString)

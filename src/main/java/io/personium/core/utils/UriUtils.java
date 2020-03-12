@@ -16,6 +16,10 @@
  */
 package io.personium.core.utils;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALBOX;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -49,12 +53,6 @@ public class UriUtils {
     public static final String SCHEME_HTTPS = "https";
     /** Scheme string, "urn". */
     public static final String SCHEME_URN = "urn";
-    /** Scheme string, "personium-localunit". */
-    public static final String SCHEME_LOCALUNIT = "personium-localunit";
-    /** Scheme string, "personium-localcell". */
-    public static final String SCHEME_LOCALCELL = "personium-localcell";
-    /** Scheme string, "personium-localbox". */
-    public static final String SCHEME_LOCALBOX = "personium-localbox";
 
     /** LOCAL_CELL ADDITION. */
     public static final String SCHEME_CELL_URI = SCHEME_LOCALCELL + ":/";
@@ -95,30 +93,14 @@ public class UriUtils {
             return variations;
         }
         variations.add(url);
-        String substitute = getUrlSubstitute(url);
-        if (!url.equals(substitute)) {
-            variations.add(substitute);
-        }
-        return variations;
-    }
-
-    /**
-     * getUrlSubstitute.
-     * @param unitUrl String
-     * @param url String
-     * @return utl String
-     * @throws URISyntaxException
-     */
-    public static String getUrlSubstitute(String url) {
-        if (url == null) {
-        	throw PersoniumCoreException.Common.INVALID_URL.params("null");
-        }
         if (url.startsWith(SCHEME_LOCALUNIT)) {
             url = convertSchemeFromLocalUnitToHttp(url);
+            variations.add(url);
         } else {
             url = convertSchemeFromHttpToLocalUnit(url);
+            variations.add(url);
         }
-        return url;
+        return variations;
     }
 
     /**

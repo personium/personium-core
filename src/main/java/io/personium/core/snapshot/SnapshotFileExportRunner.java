@@ -16,6 +16,8 @@
  */
 package io.personium.core.snapshot;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,7 +58,6 @@ import io.personium.core.model.impl.es.odata.EsQueryHandler;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.impl.fs.DavMetadataFile;
 import io.personium.core.model.lock.CellLockManager;
-import io.personium.core.utils.UriUtils;
 
 /**
  * Runner that performs cell export processing.
@@ -128,7 +129,7 @@ public class SnapshotFileExportRunner implements Runnable {
             // Create new metadata file
             createMetaFile();
             // Post event to EventBus.
-            String object = UriUtils.SCHEME_LOCALCELL + ":/__export";
+            String object = SCHEME_LOCALCELL + ":/__export";
             String info = "";
             String type = PersoniumEventType.cell(PersoniumEventType.Operation.EXPORT);
             PersoniumEvent event = new PersoniumEvent.Builder()

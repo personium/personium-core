@@ -75,6 +75,7 @@ import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
 import io.personium.core.model.impl.fs.DavCmpFsImplTest.MockDavCmpFsImpl;
 import io.personium.core.model.jaxb.Acl;
+import io.personium.core.utils.PersoniumUrl;
 import io.personium.core.utils.TestUtils;
 import io.personium.core.utils.UriUtils;
 
@@ -107,8 +108,8 @@ public class BarFileExporterTest {
         CommonUtils.setFQDN("unit.example");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_SCHEME, "https");
-        CELL_URL = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:user1:/");
-        BOX_SCHEMA_URL = UriUtils.convertSchemeFromLocalUnitToHttp("personium-localunit:app1:/");
+        CELL_URL = PersoniumUrl.create("personium-localunit:user1:/").toHttp();
+        BOX_SCHEMA_URL = PersoniumUrl.create("personium-localunit:app1:/").toHttp();
         PersoniumUnitConfig.set(PersoniumUnitConfig.BAR.BAR_TMP_DIR, "/tmp/");
     }
     /**
