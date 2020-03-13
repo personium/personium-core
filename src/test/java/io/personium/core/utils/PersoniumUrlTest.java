@@ -2,10 +2,10 @@ package io.personium.core.utils;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import org.junit.AfterClass;
@@ -315,14 +315,6 @@ public class PersoniumUrlTest {
         log.info(pu.toString());
     }
 
-//    @Test
-//    public void normalize() {
-//        assertThat(PersoniumUrl.create("https://unit.example").normalize(), equalTo("https://unit.example/"));
-//        assertThat(PersoniumUrl.create("https://unit.example/aaa/../__ctl").normalize(), equalTo("https://unit.example/__ctl"));
-//        assertThat(PersoniumUrl.create("https://cell1.unit.example").normalize(), equalTo("https://cell1.unit.example/"));
-//        assertThat(PersoniumUrl.create("https://cell1.unit.example/aaa/../__ctl").normalize(), equalTo("https://cell1.unit.example/__ctl"));
-////        assertThat(PersoniumUrl.create("personium-localunit:cell1:"), equalTo("personium-localunit:cell1:/"));
-//    }
     @Test
     public void normalizePath() {
         assertThat(PersoniumUrl.normalizePath("/aa/../bb"), equalTo("/bb"));

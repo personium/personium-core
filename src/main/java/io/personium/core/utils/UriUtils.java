@@ -93,12 +93,28 @@ public class UriUtils {
             return variations;
         }
         variations.add(url);
-        if (url.startsWith(SCHEME_LOCALUNIT)) {
-            url = convertSchemeFromLocalUnitToHttp(url);
-            variations.add(url);
-        } else {
-            url = convertSchemeFromHttpToLocalUnit(url);
-            variations.add(url);
+        try {
+            PersoniumUrl pUrl = PersoniumUrl.create(url);
+            switch (pUrl.schemeType) {
+            case HTTP:
+                variations.add(pUrl.toLocalunit());
+                variations.add(pUrl.getLocalUnitSingleColonUrl());
+                break;
+            case LOCAL_UNIT_DOUBLE_COLON:
+                variations.add(pUrl.toHttp());
+                variations.add(pUrl.getLocalUnitSingleColonUrl());
+                break;
+            case LOCAL_UNIT_SINGLE_COLON:
+                variations.add(pUrl.toHttp());
+                variations.add(pUrl.toLocalunit());
+            default:
+                // no variation for other scheme
+            }
+        } catch (IllegalArgumentException e) {
+            // No op.
+            // When Given Url is invalid, PersoniumUrl will throw IllegalArgumentException.
+            // Even in such case, this class should just return the original given url as
+            // a single variation.
         }
         return variations;
     }
