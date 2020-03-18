@@ -38,6 +38,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -51,10 +52,13 @@ import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.HttpClientFactory;
+import io.personium.core.utils.PersoniumUrl;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -70,13 +74,16 @@ import io.personium.test.setup.Setup;
 @Category({Unit.class, Integration.class, Regression.class })
 public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
     private static Logger log = LoggerFactory.getLogger(VisitorRefreshTokenAcceptanceTest.class);
+    static volatile String testCellUrl;
     static volatile String usr1CellUrl;
     static volatile String usr2CellUrl;
     static volatile String app1CellUrl;
     static volatile String app2CellUrl;
+    static final String TEST_ROLE_NAME = "role1";
 
     @BeforeClass
     public static void beforeClass() {
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         String appCellLocalUnit1 = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
         String appCellLocalUnit2 = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA2 + ":/";
         String usrCellLocalUnit1 = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
@@ -85,6 +92,11 @@ public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
         app2CellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit2);
         usr1CellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit1);
         usr2CellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit2);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        PersoniumUnitConfig.reload();
     }
 
     /**
@@ -174,6 +186,34 @@ public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
         log.info(parseJsonResponse(res).toString());
     }
 
+    /**
+     * Should_FailRefrehingToken__When_RefreshTokenHasSchemaButNoAppAuth.
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws TokenRootCrtException
+     * @throws TokenDsigException
+     * @throws TokenParseException
+     */
+    @Test
+    public final void Should_FailRefrehingToken__When_RefreshTokenHasSchemaButNoAppAuth()
+            throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
+        // Generate Refresh Token
+        VisitorRefreshToken rt = new VisitorRefreshToken(
+            "" + new Date().getTime(),
+            new Date().getTime(),
+            AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
+            usr1CellUrl, // issuer
+            usr2CellUrl + "#account1", // subject
+            null,
+            null,
+            app1CellUrl,
+            new String[] {"root"}
+        );
+
+        // Refresh Token
+        HttpResponse res = refreshToken(usr1CellUrl, rt.toTokenString(), null);
+        assertEquals(401, res.getStatusLine().getStatusCode());
+    }
 
     /**
      * Should_SuccessRefrehingToken__When_ClientIdMatchesSchemaInRefreshToken.
@@ -221,34 +261,6 @@ public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
         assertTrue(aud.startsWith("http"));
     }
 
-    /**
-     * Should_FailRefrehingToken__When_RefreshTokenHasSchemaButNoAppAuth.
-     * @throws IOException
-     * @throws ClientProtocolException
-     * @throws TokenRootCrtException
-     * @throws TokenDsigException
-     * @throws TokenParseException
-     */
-    @Test
-    public final void Should_FailRefrehingToken__When_RefreshTokenHasSchemaButNoAppAuth()
-            throws ClientProtocolException, IOException, TokenParseException, TokenDsigException, TokenRootCrtException {
-        // Generate Refresh Token
-        VisitorRefreshToken rt = new VisitorRefreshToken(
-            "" + new Date().getTime(),
-            new Date().getTime(),
-            AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
-            usr1CellUrl, // issuer
-            usr2CellUrl + "#account1", // subject
-            null,
-            null,
-            app1CellUrl,
-            new String[] {"root"}
-        );
-
-        // Refresh Token
-        HttpResponse res = refreshToken(usr1CellUrl, rt.toTokenString(), null);
-        assertEquals(401, res.getStatusLine().getStatusCode());
-    }
 
     /**
      * Should_SuccessRefrehingToken__When_ClientIdNullAndRefreshTokenWithoutSchema.
@@ -289,6 +301,70 @@ public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
         assertFalse(aud.startsWith(SCHEME_LOCALUNIT));
         assertTrue(aud.startsWith("http"));
     }
+    
+    /**
+     * Should_SuccessRefrehingToken__When_ClientIdMatchesSchemaInRefreshToken.
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws TokenRootCrtException
+     * @throws TokenDsigException
+     * @throws TokenParseException
+     */
+    @Test
+    public final void RefreshedAccessToken_ShouldHaveAppropriate_Roles() throws Exception {
+        // Create a Cell for this test
+        createTestCell();
+        String testCellUrl = PersoniumUrl.create(SCHEME_LOCALUNIT + ":" + testCellName + ":/").toHttp();
+        log.info("testCellUrl = " +  testCellUrl);
+        // Create ExtCell pointing to TEST_CELL2
+        createExtCellOnTestCell(usr2CellUrl);
+        // Create A Role
+        createRoleOnTestCell(TEST_ROLE_NAME);
+        // Assign A Role
+        linkRoleToExtCellOnTestCell(usr2CellUrl, TEST_ROLE_NAME);
+        // Configure the role to have all privilege.
+        grantAllPrivToRoleOnTestCell(TEST_ROLE_NAME);
+        
+        try {
+            // Generate Refresh Token
+            
+            VisitorRefreshToken rt = new VisitorRefreshToken(
+                "" + new Date().getTime(),
+                new Date().getTime(),
+                AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
+                testCellUrl, // issuer
+                usr2CellUrl + "#account1", // subject
+                null,
+                null,
+                app1CellUrl,
+                new String[] {"root"}
+            );
+    
+            // Generate AppAuth Token
+            List<Role> roleList = new ArrayList<Role>();
+            TransCellAccessToken appAuthToken = new TransCellAccessToken(app1CellUrl, app1CellUrl + "#account1",
+                    testCellUrl, roleList,
+                    null, null);
+    
+            // Refresh Token
+            HttpResponse res = refreshToken(testCellUrl, rt.toTokenString(), null, app1CellUrl, appAuthToken.toTokenString());
+            assertEquals(200, res.getStatusLine().getStatusCode());
+            JsonObject j  = parseJsonResponse(res);
+    
+            String at = j.getString(OAuth2Helper.Key.ACCESS_TOKEN);
+            log.info(at);
+    
+            VisitorLocalAccessToken vlat = VisitorLocalAccessToken.parse(at, testCellUrl);
+            log.info("num roles = " + vlat.getRoleList().size());
+            assertEquals(1, vlat.getRoleList().size());
+            Role r = vlat.getRoleList().get(0);
+            assertEquals(TEST_ROLE_NAME, r.getName());
+        } finally {
+            // Delete the Cell for this test
+            deleteTestCell();
+        }
+    }
+
 
     private static JsonObject parseJsonResponse(HttpResponse res) {
         try (InputStream is = res.getEntity().getContent()){
@@ -305,7 +381,7 @@ public class VisitorRefreshTokenAcceptanceTest extends PersoniumTest {
 
     private static HttpResponse refreshToken(String cellUrl, String refreshToken, String pTarget, String clientId, String clientSecret)
             throws ClientProtocolException, IOException {
-        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_DEFAULT);
+        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL);
 
         String tokenEndpoint = cellUrl + "__token";
         log.info("Testing against: " + tokenEndpoint);

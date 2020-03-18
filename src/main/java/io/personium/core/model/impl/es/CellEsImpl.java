@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.Role;
+import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchHits;
@@ -518,11 +519,10 @@ public class CellEsImpl extends Cell {
     }
 
     /**
-     * Match ExtCell and Role and decide which Role to pay out.
-     * @param token
-     * Transcell access token
+     * Check ExtCell-Role config and decide which Roles to pay out.
+     * @param token TransCellAccessToken or VisitorRefreshToken
      * @param roles
-     * List of roles to be withdrawn. Add here (destructive method)
+     * List of roles to which found roles are to be added.  (destructive method)
      */
     private void addRoleListExtCelltoRole(final IExtRoleContainingToken token, List<Role> roles) {
         String tokenIssuer = token.getIssuer();
@@ -537,7 +537,7 @@ public class CellEsImpl extends Cell {
         // If the token subject cell is different from token issuer
         // ( = two or more levels of transcell token authentication),
         // Do not assign any role.
-        if (!tokenIssuer.equals(tokenSubjectCell)) {
+        if (token instanceof TransCellAccessToken && !tokenIssuer.equals(tokenSubjectCell)) {
             return;
         }
         // otherwise
@@ -546,11 +546,11 @@ public class CellEsImpl extends Cell {
         //Number of search result output setting
         QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
 
-        List<String> list = UriUtils.getUrlVariations(tokenIssuer);
+        List<String> list = UriUtils.getUrlVariations(tokenSubjectCell);
         for (int i = 0; i < list.size(); i++) {
             String extCellUrl = list.get(i);
             try {
-                //Acquire Roles via  ExtCell-Role Navigatio Property.
+                //Acquire Roles via  ExtCell-Role Navigation Property.
                 response = (EntitiesResponse) op.getNavProperty(ExtCell.EDM_TYPE_NAME,
                         OEntityKey.create(extCellUrl),
                         "_" + Role.EDM_TYPE_NAME, qi);
