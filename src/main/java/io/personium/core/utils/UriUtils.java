@@ -82,12 +82,10 @@ public class UriUtils {
 
     /**
      * Get Url Variations.
-     * @param unitUrl String
      * @param url String
      * @return ArrayList<String>
-     * @throws URISyntaxException
      */
-    public static List<String> getUrlVariations(String url) throws PersoniumCoreException {
+    public static List<String> getUrlVariations(String url) {
         List<String> variations = new ArrayList<String>();
         if (url == null) {
             return variations;
@@ -180,7 +178,6 @@ public class UriUtils {
     /**
      * Convert scheme from http(s) to LocalUnit.
      * Convert only if the target URL matches UnitURL, otherwise just return the given value as-is.
-     * @param unitUrl unit url
      * @param url target url
      * @return url string with local unit scheme
      */
@@ -543,6 +540,11 @@ public class UriUtils {
         }
     }
 
+    /**
+     * @param url1 String
+     * @param url2 String
+     * @return if urls are equal or not
+     */
     public static boolean equalIgnoringPort(String url1, String url2) {
 
         try {
@@ -569,6 +571,10 @@ public class UriUtils {
         }
     }
 
+    /**
+     * @param url String
+     * @return http url
+     */
     public static String resolveLocalUnit(String url) {
         return UriUtils.convertSchemeFromLocalUnitToHttp(url);
     }
