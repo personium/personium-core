@@ -60,15 +60,15 @@ public class UriUtils {
     public static final String SCHEME_BOX_URI = SCHEME_LOCALBOX + ":/";
 
 
-    /** Regular expression for matching localunit scheme with single colon */
+    /** Regular expression for matching localunit scheme with single colon. */
     public static final Pattern REGEX_LOCALUNIT_SINGLE_COLON
         = Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.*)$");
 
-    /** Regular expression for matching localunit scheme with double colons */
+    /** Regular expression for matching localunit scheme with double colons. */
     public static final Pattern REGEX_LOCALUNIT_DOUBLE_COLONS
         = Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.+?):(.*)$");
 
-    /** Regular expression for matching Cell URL */
+    /** Regular expression for matching Cell URL. */
     public static final String REGEX_HTTP_SUBDOMAIN = "^(http|https):\\/\\/(.+?)\\.(.*)$";
 
     /** String Slash. */
