@@ -1,5 +1,5 @@
 /**
- * Personium
+ * personium.io
  * Copyright 2020 Personium Project Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,8 +49,8 @@ import io.personium.core.PersoniumUnitConfig;
 public class PersoniumUrl {
     static Logger log = LoggerFactory.getLogger(PersoniumUrl.class);
 
-    /** enum indicating the resource type of the URL */
-    public static enum ResourceType {
+    /** enum indicating the resource type of the URL. */
+    public enum ResourceType {
         /** enum value indicating the resource type of this URL is cell root.  */
         CELL_ROOT,
         /** enum value indicating the resource type of this URL is box root. */
@@ -74,7 +74,7 @@ public class PersoniumUrl {
     /**
      * enum indicating the Scheme type of the URL.
      */
-    public static enum SchemeType {
+    public enum SchemeType {
         /** enum value indicating "http" or "https" scheme. */
         HTTP,
         /** enum value indicating "ws" or "wss" scheme. */
@@ -114,7 +114,7 @@ public class PersoniumUrl {
     public static final String REGEX_SUBDOMAIN = "^(.+?)\\.(.*?)$";
     /** Regular expression for matching localunit scheme. */
     public static final String REGEX_LOCALUNIT = "^([a-zA-Z0-9\\-\\_]+?):(.*)$";
-    /** Regular expression for extracting a directory */
+    /** Regular expression for extracting a directory. */
     public static final String REGEX_DIR = "^\\/?(.*?)($|\\/.*$)";
     /** Regular expression for matching non-directory API endpoint. */
     public static final String REGEX_CTL = "^__[a-zA-Z]+$";
@@ -160,6 +160,8 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an object of this class.
+     * @param url String
+     * @return PersoniumUrl
      */
     public static PersoniumUrl create(String url) {
         return new PersoniumUrl(url);
@@ -167,6 +169,9 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an object of this class.
+     * @param url String
+     * @param cellName String
+     * @return PersoniumUrl
      */
     public static PersoniumUrl create(String url, String cellName) {
         PersoniumUrl ret = new PersoniumUrl(url);
@@ -178,14 +183,17 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an URL with "personium-localunit" scheme.
+     * @param cellName String
+     * @param path String
+     * @return PersoniumUrl
      */
     public static PersoniumUrl localUnit(String cellName, String path) {
         return new PersoniumUrl(SCHEME_LOCALUNIT + ":" + cellName + ":" + path);
     }
 
     /**
-     * Constructor
-     * @param url
+     * Constructor.
+     * @param url String
      */
     public PersoniumUrl(String url) {
         // log.info(url);
@@ -502,7 +510,7 @@ public class PersoniumUrl {
 
     /**
      * Add trailing slash if missing.
-     * @param url
+     * @param url String
      * @return url with trailing slash.
      */
     public static String addTrailingSlashIfMissing(String url) {
@@ -693,6 +701,9 @@ public class PersoniumUrl {
         return uri.normalize().toString();
     }
 
+    /**
+     * toString.
+     */
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("givenUrl: " + this.givenUrl + "\n");
