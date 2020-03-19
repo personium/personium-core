@@ -1,8 +1,7 @@
 /**
- * Personium
+ * personium.io
  * Copyright 2014-2020 Personium Project Authors
  *  - FUJITSU LIMITED
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -574,7 +573,7 @@ public class CellEsImpl extends Cell {
     }
 
     /**
-     * List the Roles to be granted via Relation and ExtRole
+     * List the Roles to be granted via Relation and ExtRole.
      * @param token Transcell access token
      * @param roles List of roles which Roles are to be added to. (destructive method)
      */
