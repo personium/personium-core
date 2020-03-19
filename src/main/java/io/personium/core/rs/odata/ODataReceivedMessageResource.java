@@ -50,7 +50,6 @@ import io.personium.core.rs.cell.CellCtlResource;
 import io.personium.core.rs.cell.MessageResource;
 import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.ResourceUtils;
-import io.personium.core.utils.UriUtils;
 
 /**
  * OData operation class of received message.
