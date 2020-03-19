@@ -62,11 +62,11 @@ public class UriUtils {
 
     /** Regular expression for matching localunit scheme with single colon */
     public static final Pattern REGEX_LOCALUNIT_SINGLE_COLON
-    	= Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.*)$");
+        = Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.*)$");
 
     /** Regular expression for matching localunit scheme with double colons */
     public static final Pattern REGEX_LOCALUNIT_DOUBLE_COLONS
-    	= Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.+?):(.*)$");
+        = Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.+?):(.*)$");
 
     /** Regular expression for matching Cell URL */
     public static final String REGEX_HTTP_SUBDOMAIN = "^(http|https):\\/\\/(.+?)\\.(.*)$";
@@ -139,7 +139,7 @@ public class UriUtils {
      */
     public static String convertSchemeFromLocalUnitToHttp(String localUnitSchemeUrl) {
         if (localUnitSchemeUrl == null) {
-        	return null;
+            return null;
         }
         String unitUrl = PersoniumUnitConfig.getBaseUrl();
         Matcher localUnitDoubleColons = REGEX_LOCALUNIT_DOUBLE_COLONS.matcher(localUnitSchemeUrl);
@@ -157,7 +157,7 @@ public class UriUtils {
             sb.append(path);
             pathBased = sb.toString();
         } else if (localUnitSingleColon.matches()) {
-        	// when detected personium-localunit scheme with single colon
+            // when detected personium-localunit scheme with single colon
             String path = localUnitSingleColon.group(1);
             if (path.startsWith(STRING_SLASH) && unitUrl.endsWith(STRING_SLASH)) {
                 unitUrl = unitUrl.replaceFirst("/*$", "");
@@ -186,11 +186,11 @@ public class UriUtils {
      */
     public static String convertSchemeFromHttpToLocalUnit(String url) {
         if (url == null) {
-        	return null;
+            return null;
         }
         String unitUrl = PersoniumUnitConfig.getBaseUrl();
         if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
-        	// path based
+            // path based
             if (!url.startsWith(unitUrl)) {
                 // return as-is when url is foreign
                 return url;
@@ -208,16 +208,16 @@ public class UriUtils {
             // return with double colon syntax when url is cell level.
             URI uri;
             try {
-	            uri = new URI(url);
-	        } catch (URISyntaxException e) {
-	        	throw PersoniumCoreException.Common.INVALID_URL.params(url).reason(e);
-	        }
+                uri = new URI(url);
+            } catch (URISyntaxException e) {
+                throw PersoniumCoreException.Common.INVALID_URL.params(url).reason(e);
+            }
             URI unitUri;
             try {
                 unitUri = new URI(unitUrl);
             } catch (URISyntaxException e) {
-	            throw PersoniumCoreException.Common.INVALID_URL.params(unitUrl).reason(e);
-	        }
+                throw PersoniumCoreException.Common.INVALID_URL.params(unitUrl).reason(e);
+            }
             if (uri.getHost() == null) {
                 return url;
             }
