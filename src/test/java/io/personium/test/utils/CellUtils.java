@@ -35,7 +35,6 @@ import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * Httpリクエストドキュメントを利用するユーティリティ.
@@ -304,6 +303,13 @@ public class CellUtils {
                 .with("cellName", cellName)
                 .returns()
                 .statusCode(code);
+
+    }
+    public static TResponse deleteRecursive(String celllName) {
+        return Http.request("cell/cell-bulk-delete.txt")
+                .with("cell", celllName)
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .returns();
     }
 
     /**

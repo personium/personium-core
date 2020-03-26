@@ -35,6 +35,7 @@ import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.VisitorLocalAccessToken;
 import io.personium.common.auth.token.VisitorRefreshToken;
+import io.personium.core.model.Box;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -42,9 +43,9 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * Access Token Acceptance test.
@@ -52,9 +53,9 @@ import io.personium.test.utils.ResourceUtils;
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class TokenTest extends PersoniumTest {
-    static final String TEST_CELL1 = "testcell1";
-    static final String TEST_CELL2 = "testcell2";
-    static final String TEST_APP_CELL1 = "schema1";
+    static final String TEST_CELL1 = Setup.TEST_CELL1;
+    static final String TEST_CELL2 = Setup.TEST_CELL2;
+    static final String TEST_APP_CELL1 = Setup.TEST_CELL_SCHEMA1;
 
     static final String DAV_COLLECTION = "setdavcol/";
     static final String DAV_RESOURCE = "dav.txt";
@@ -156,6 +157,7 @@ public class TokenTest extends PersoniumTest {
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         VisitorRefreshToken validToken = new VisitorRefreshToken(
                 id, issuedAt - AbstractOAuth2Token.SECS_IN_A_DAY * 1000 + MILLISECS_IN_AN_MINITE,
+                AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
                 issuer, subject, origIssuer, origRoleList, schema, scope);
         // Refresh
         Http.request("authn/refresh-cl.txt")
@@ -167,6 +169,7 @@ public class TokenTest extends PersoniumTest {
         // 期限切れのトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
         VisitorRefreshToken invalidToken = new VisitorRefreshToken(
                 id, issuedAt - AbstractOAuth2Token.SECS_IN_A_DAY * 1000 - MILLISECS_IN_AN_MINITE,
+                AbstractOAuth2Token.REFRESH_TOKEN_EXPIRES_MILLISECS,
                 issuer, subject, origIssuer, origRoleList, schema, scope);
         // Refresh
         Http.request("authn/refresh-cl.txt")
@@ -257,7 +260,7 @@ public class TokenTest extends PersoniumTest {
         String issuer = UrlUtils.cellRoot(TEST_CELL1);
         String subject = issuer + "account2";
         List<Role> roleList = new ArrayList<Role>();
-        Role role = new Role(new URL(UrlUtils.roleResource(TEST_CELL1, "__", "role2")));
+        Role role = new Role("role2", Box.MAIN_BOX_NAME, null, issuer);
         roleList.add(role);
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）
@@ -290,7 +293,7 @@ public class TokenTest extends PersoniumTest {
         String subject = issuer + "#account2";
         String target = UrlUtils.cellRoot(TEST_CELL2);
         List<Role> roleList = new ArrayList<Role>();
-        Role role = new Role(new URL(UrlUtils.roleResource(TEST_CELL1, "__", "role2")));
+        Role role = new Role("role2", Box.MAIN_BOX_NAME, null, issuer);
         roleList.add(role);
 
         // 期限切れでないトークンを生成（IT環境の通信時間を考慮して１分余裕を持たせる）

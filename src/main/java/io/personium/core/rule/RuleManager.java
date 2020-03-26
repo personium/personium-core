@@ -16,6 +16,10 @@
  */
 package io.personium.core.rule;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALBOX;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -291,10 +295,10 @@ public class RuleManager {
                                 try {
                                     URI uri = new URI(targetUrl);
                                     String scheme = uri.getScheme();
-                                    if (UriUtils.SCHEME_LOCALCELL.equals(scheme)) {
+                                    if (SCHEME_LOCALCELL.equals(scheme)) {
                                         relative = uri.getPath().substring(1);
                                         targetUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), targetUrl);
-                                    } else if (UriUtils.SCHEME_LOCALBOX.equals(scheme)) {
+                                    } else if (SCHEME_LOCALBOX.equals(scheme)) {
                                         synchronized (boxLockObj) {
                                             String boxName = getBoxName(rule);
                                             if (boxName != null) {
@@ -858,7 +862,7 @@ public class RuleManager {
         rule.targeturl = removeFragment(rule.targeturl);
         try {
             URI uri = new URI(rule.targeturl);
-            if (UriUtils.SCHEME_LOCALUNIT.equals(uri.getScheme())) {
+            if (SCHEME_LOCALUNIT.equals(uri.getScheme())) {
                 String path = uri.getPath();
                 List<String> list = Stream.of(path.split(Pattern.quote("/")))
                                           .filter(s -> !s.isEmpty())

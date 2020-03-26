@@ -16,6 +16,9 @@
  */
 package io.personium.core.bar;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALBOX;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -96,8 +99,8 @@ public class BarFileInstallRunner implements Runnable {
 
     /** Contents directory in bar file. */
     private static final String CONTENTS_DIR = BarFile.CONTENTS_DIR + "/";
-    /** personium-localbox:/ non slush. */
-    private static final String LOCALBOX_NO_SLUSH = UriUtils.SCHEME_LOCALBOX + ":";
+    /** personium-localbox:/ non slash. */
+    private static final String LOCALBOX_NO_SLASH = SCHEME_LOCALBOX + ":";
 
     /** Install target box. */
     private Box box;
@@ -182,7 +185,7 @@ public class BarFileInstallRunner implements Runnable {
     private void setEventBus() {
         //The schema of the TODO Box and the subject's log are implemented at the time of formal correspondence of internal events
         String type = HttpMethod.MKCOL;
-        String object = UriUtils.SCHEME_LOCALCELL + ":/" + box.getName();
+        String object = SCHEME_LOCALCELL + ":/" + box.getName();
         String result = "";
         eventBuilder = new PersoniumEvent.Builder()
                 .type(type)
@@ -224,7 +227,7 @@ public class BarFileInstallRunner implements Runnable {
             log.info("PersoniumException" + e.getMessage(), e.fillInStackTrace());
             writeOutputStream(e);
             writeOutputStream(false, BarFileUtils.CODE_BAR_INSTALL_FAILED,
-                    UriUtils.SCHEME_LOCALCELL + ":/" + box.getName(), e.getMessage());
+                    SCHEME_LOCALCELL + ":/" + box.getName(), e.getMessage());
             return;
         } catch (PersoniumCoreException e) {
             progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
@@ -232,7 +235,7 @@ public class BarFileInstallRunner implements Runnable {
             log.info("PersoniumException" + e.getMessage(), e.fillInStackTrace());
             writeOutputStream(PersoniumBarException.INSTALLATION_FAILED.detail(e.getMessage()));
             writeOutputStream(false, BarFileUtils.CODE_BAR_INSTALL_FAILED,
-                    UriUtils.SCHEME_LOCALCELL + ":/" + box.getName(), e.getMessage());
+                    SCHEME_LOCALCELL + ":/" + box.getName(), e.getMessage());
             return;
         } catch (Throwable t) {
             progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
@@ -241,7 +244,7 @@ public class BarFileInstallRunner implements Runnable {
             log.info("Exception: " + message, t.fillInStackTrace());
             writeOutputStream(true, "PL-BI-1005", "", message);
             writeOutputStream(false, BarFileUtils.CODE_BAR_INSTALL_FAILED,
-                    UriUtils.SCHEME_LOCALCELL + ":/" + box.getName(), message);
+                    SCHEME_LOCALCELL + ":/" + box.getName(), message);
             return;
         } finally {
             try {
@@ -260,7 +263,7 @@ public class BarFileInstallRunner implements Runnable {
      * Record the information that started processing in the cache.
      */
     private void writeStartProgressCache() {
-        writeOutputStream(false, "PL-BI-1000", UriUtils.SCHEME_LOCALCELL + ":/" + box.getName(), "");
+        writeOutputStream(false, "PL-BI-1000", SCHEME_LOCALCELL + ":/" + box.getName(), "");
         BarFileUtils.writeToProgressCache(true, progressInfo);
     }
 
@@ -269,7 +272,7 @@ public class BarFileInstallRunner implements Runnable {
      */
     private void writeCompleteProgressCache() {
         writeOutputStream(false, BarFileUtils.CODE_BAR_INSTALL_COMPLETED,
-                UriUtils.SCHEME_LOCALCELL + ":/" + box.getName());
+                SCHEME_LOCALCELL + ":/" + box.getName());
         progressInfo.setStatus(ProgressInfo.STATUS.COMPLETED);
         progressInfo.setEndTime();
         BarFileUtils.writeToProgressCache(true, progressInfo);
@@ -427,7 +430,7 @@ public class BarFileInstallRunner implements Runnable {
             // post event
             String keyString = AbstractODataResource.replaceDummyKeyToNull(fromOEKey.toString());
             String targetKeyString = AbstractODataResource.replaceDummyKeyToNull(toOEKey.toString());
-            String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+            String object = new StringBuilder(SCHEME_LOCALCELL)
                     .append(":/__ctl/")
                     .append(sourceEntity.getEntitySetName())
                     .append(keyString)
@@ -458,7 +461,7 @@ public class BarFileInstallRunner implements Runnable {
     private void postCellCtlCreateEvent(EntityResponse res) {
         String name = res.getEntity().getEntitySetName();
         String keyString = AbstractODataResource.replaceDummyKeyToNull(res.getEntity().getEntityKey().toKeyString());
-        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+        String object = new StringBuilder(SCHEME_LOCALCELL)
                 .append(":/__ctl/").append(name).append(keyString).toString();
         String info = "box install";
         String type = PersoniumEventType.cellctl(name, PersoniumEventType.Operation.CREATE);
@@ -501,7 +504,7 @@ public class BarFileInstallRunner implements Runnable {
 
                 List<String> hrefs = response.getHref();
                 String href = hrefs.get(0);
-                if (href.equals(LOCALBOX_NO_SLUSH)) {
+                if (href.equals(LOCALBOX_NO_SLASH)) {
                     href = UriUtils.SCHEME_BOX_URI;
                 }
                 if (href.equals(UriUtils.SCHEME_BOX_URI)) {
@@ -606,9 +609,9 @@ public class BarFileInstallRunner implements Runnable {
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
             }
             //If it does not start with localbox as href attribute value, it is regarded as definition error.
-            if (!href.startsWith(LOCALBOX_NO_SLUSH)) {
+            if (!href.startsWith(LOCALBOX_NO_SLASH)) {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail(
-                        "PL-BI-2010", LOCALBOX_NO_SLUSH, href);
+                        "PL-BI-2010", LOCALBOX_NO_SLASH, href);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
             }
             //Select the type of the defined path. Abnormal termination (log output is unnecessary) when an incorrect path type is specified.

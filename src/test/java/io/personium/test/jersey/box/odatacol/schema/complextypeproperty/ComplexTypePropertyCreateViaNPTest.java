@@ -42,8 +42,8 @@ import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * ComplexTypePropertyNP経由登録のテスト.

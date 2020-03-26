@@ -540,12 +540,12 @@ public class DavRsCmp {
         }
         return reqUri;
     }
-
     static final org.apache.wink.webdav.model.Response createDavResponse(final String pathName,
             final String href,
             final DavCmp dCmp,
             final Propfind propfind,
-            final boolean isAclRead) {
+            final boolean isAclRead,
+            final boolean forBarFileUse) {
         ObjectFactory of = new ObjectFactory();
         org.apache.wink.webdav.model.Response ret = of.createResponse();
         ret.getHref().add(href);
@@ -647,11 +647,20 @@ public class DavRsCmp {
         if (isAclRead && acl != null) {
 
             Acl outputAcl = new Acl();
-            outputAcl.setBase(acl.getBase());
+            String baseUrl = acl.getBase();
+            if (forBarFileUse) {
+                String schema = dCmp.getBox().getSchema();
+                if (schema != null) {
+                    baseUrl = schema + "__role/__/";
+                }
+            }
+            outputAcl.setBase(baseUrl, false);
             outputAcl.setRequireSchemaAuthz(acl.getRequireSchemaAuthz());
 
-            // Get ace list including parents.
-            List<Ace> aces = getAces(dCmp, true);
+            // Get ace list
+            //   for propfind use, include inherited ace.
+            //   for bar file use, do not include inherited ace.
+            List<Ace> aces = getAces(dCmp, !forBarFileUse);
             outputAcl.getAceList().addAll(aces);
 
             // Convert to Element.
@@ -694,6 +703,13 @@ public class DavRsCmp {
         }
         return ret;
     }
+    static final org.apache.wink.webdav.model.Response createDavResponse(final String pathName,
+            final String href,
+            final DavCmp dCmp,
+            final Propfind propfind,
+            final boolean isAclRead) {
+        return createDavResponse(pathName, href, dCmp, propfind, isAclRead, false);
+    }
     private static Element parseProp(String value) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -716,7 +732,10 @@ public class DavRsCmp {
      * @param isCurrent is current
      * @return Ace list
      */
-    private static List<Ace> getAces(final DavCmp dCmp, boolean isCurrent) {
+    private static List<Ace> getAces(final DavCmp dCmp, boolean includeInherited) {
+        return doGetAces(dCmp, true, includeInherited);
+    }
+    private static List<Ace> doGetAces(final DavCmp dCmp, boolean isCurrent, boolean includeInherited) {
         List<Ace> aces = new ArrayList<>();
         Acl acl = dCmp.getAcl();
         if (acl != null) {
@@ -729,8 +748,8 @@ public class DavRsCmp {
                 }
             }
         }
-        if (dCmp.getParent() != null) {
-            aces.addAll(getAces(dCmp.getParent(), false));
+        if (includeInherited && dCmp.getParent() != null) {
+            aces.addAll(doGetAces(dCmp.getParent(), false, includeInherited));
         }
         return aces;
     }

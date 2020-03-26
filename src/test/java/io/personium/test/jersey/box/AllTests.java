@@ -29,7 +29,6 @@ import org.junit.runners.Suite.SuiteClasses;
         DavValidateTest.class,
         DavNodePropFindTest.class,
         PropfindContentLengthTest.class,
-        ServiceRelayTest.class,
         ServiceSchmaTest.class,
         ServiceSourceTest.class
 })

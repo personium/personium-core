@@ -48,8 +48,8 @@ import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.test.categories.Integration;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 import io.personium.test.utils.UserDataUtils;
 
 /**

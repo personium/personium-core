@@ -16,6 +16,8 @@
  */
 package io.personium.core.utils;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -338,7 +340,7 @@ public final class ODataUtils {
         return UriUtils.SCHEME_HTTP.equals(scheme)
                 || UriUtils.SCHEME_HTTPS.equals(scheme)
                 || UriUtils.SCHEME_URN.equals(scheme)
-                || UriUtils.SCHEME_LOCALUNIT.equals(scheme);
+                || SCHEME_LOCALUNIT.equals(scheme);
     }
 
     private static boolean isValidUrlScheme(String scheme) {
@@ -353,7 +355,7 @@ public final class ODataUtils {
     private static boolean isValidCellUrlScheme(String scheme) {
         return UriUtils.SCHEME_HTTP.equals(scheme)
                 || UriUtils.SCHEME_HTTPS.equals(scheme)
-                || UriUtils.SCHEME_LOCALUNIT.equals(scheme);
+                || SCHEME_LOCALUNIT.equals(scheme);
     }
 
     private static boolean isValidSchemaUrlScheme(String scheme) {
@@ -443,7 +445,7 @@ public final class ODataUtils {
         }
         String scheme = uri.getScheme();
         boolean isValidScheme = isValidCellUrlScheme(scheme);
-        if (isValidScheme && UriUtils.SCHEME_LOCALUNIT.equals(scheme)) {
+        if (isValidScheme && SCHEME_LOCALUNIT.equals(scheme)) {
             boolean b1 = validateLocalUnitUrl(str, Common.PATTERN_CELL_LOCALUNIT_PATH);
             boolean b2 = UriUtils.REGEX_LOCALUNIT_DOUBLE_COLONS.matcher(str).matches();
             isValidScheme = b1 || b2;
@@ -479,7 +481,7 @@ public final class ODataUtils {
             return false;
         }
         String scheme = uri.getScheme();
-        boolean isValidScheme = UriUtils.SCHEME_LOCALCELL.equals(scheme);
+        boolean isValidScheme = PersoniumUrl.SCHEME_LOCALCELL.equals(scheme);
         boolean isNormalized = uri.normalize().toString().equals(str);
         return isValidLength && isValidScheme && isNormalized;
     }
@@ -501,7 +503,7 @@ public final class ODataUtils {
             return false;
         }
         String scheme = uri.getScheme();
-        boolean isValidScheme = UriUtils.SCHEME_LOCALBOX.equals(scheme);
+        boolean isValidScheme = PersoniumUrl.SCHEME_LOCALBOX.equals(scheme);
         boolean isNormalized = uri.normalize().toString().equals(str);
         return isValidLength && isValidScheme && isNormalized;
     }
@@ -523,7 +525,7 @@ public final class ODataUtils {
             return false;
         }
         String scheme = uri.getScheme();
-        boolean isValidScheme = UriUtils.SCHEME_LOCALUNIT.equals(scheme);
+        boolean isValidScheme = SCHEME_LOCALUNIT.equals(scheme);
         boolean isNormalized = uri.normalize().toString().equals(str);
         return isValidLength && isValidScheme && isNormalized;
     }
@@ -552,7 +554,7 @@ public final class ODataUtils {
             uri = new URI(str);
             String scheme = uri.getScheme();
             // Scheme check
-            if (!UriUtils.SCHEME_LOCALUNIT.equals(scheme)) {
+            if (!SCHEME_LOCALUNIT.equals(scheme)) {
                 return false;
             }
             // String length check

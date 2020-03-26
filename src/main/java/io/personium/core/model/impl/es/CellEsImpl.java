@@ -1,7 +1,7 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
- *
+ * Copyright 2014-2020 Personium Project Authors
+ *  - FUJITSU LIMITED
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.Role;
+import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchHits;
@@ -101,7 +102,6 @@ public class CellEsImpl extends Cell {
             CellEsImpl cell = new CellEsImpl();
             cell.setJson(resp.getSource());
             cell.id = resp.getId();
-            cell.url = PersoniumUnitConfig.getBaseUrl() + cell.name + "/";
             return cell;
         } else {
             return null;
@@ -116,9 +116,6 @@ public class CellEsImpl extends Cell {
      */
     public static Cell loadFromName(String cellName) {
         CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", cellName);
-        if (cell != null) {
-            cell.url = PersoniumUnitConfig.getBaseUrl() + cell.name + "/";
-        }
         return cell;
     }
 
@@ -176,10 +173,6 @@ public class CellEsImpl extends Cell {
         } else {
             ret.setJson(cache);
             ret.id = (String) cache.get("_id");
-        }
-
-        if (ret.url == null) {
-            ret.url = PersoniumUnitConfig.getBaseUrl() + ret.name + "/";
         }
 
         return ret;
@@ -402,7 +395,7 @@ public class CellEsImpl extends Cell {
         }
         String roleName = (String) oe.getProperty("Name").getValue();
         Role roleObj = new Role(roleName, boxName, schema, this.getUrl());
-        return roleObj.createUrl();
+        return roleObj.toRoleInstanceURL();
     }
 
     @Override
@@ -425,7 +418,7 @@ public class CellEsImpl extends Cell {
 
         Role role = null;
         try {
-            role = new Role(rUrl);
+            role = Role.createFromRoleInstanceUrl(rUrl.toExternalForm());
         } catch (MalformedURLException e) {
             log.info("Role URL:" + rUrl.toString());
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
@@ -525,73 +518,69 @@ public class CellEsImpl extends Cell {
     }
 
     /**
-     * Match ExtCell and Role and decide which Role to pay out.
-     * @param token
-     * Transcell access token
+     * Check ExtCell-Role config and decide which Roles to pay out.
+     * @param token TransCellAccessToken or VisitorRefreshToken
      * @param roles
-     * List of roles to be withdrawn. Add here (destructive method)
+     * List of roles to which found roles are to be added.  (destructive method)
      */
     private void addRoleListExtCelltoRole(final IExtRoleContainingToken token, List<Role> roles) {
-        //Acquisition of Role corresponding to ExtCell-Role binding
-        String extCell = token.getIssuer();
-        String principal = token.getSubject();
-        String principalCell;
-        if (principal.contains("#")) {
-            principalCell = token.getSubject().substring(0, principal.indexOf("#"));
+        String tokenIssuer = token.getIssuer();
+        String tokenSubject = token.getSubject();
+        String tokenSubjectCell;
+        if (tokenSubject.contains("#")) {
+            tokenSubjectCell = token.getSubject().substring(0, tokenSubject.indexOf("#"));
         } else {
-            principalCell = token.getSubject();
+            tokenSubjectCell = token.getSubject();
         }
 
-        //If the access subject is different from ExtCell (two or more levels of transcell token authentication), do not allow.
-        if (extCell.equals(principalCell)) {
-            ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
-            EntitiesResponse response = null;
-            //Number of search result output setting
-            QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
+        // If the token subject cell is different from token issuer
+        // ( = two or more levels of transcell token authentication),
+        // Do not assign any role.
+        if (token instanceof TransCellAccessToken && !tokenIssuer.equals(tokenSubjectCell)) {
+            return;
+        }
+        // otherwise
+        ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
+        EntitiesResponse response = null;
+        //Number of search result output setting
+        QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
 
-            List<String> list = UriUtils.getUrlVariations(extCell);
-            for (int i = 0; i < list.size(); i++) {
-                String extCellUrl = list.get(i);
-                try {
-                    //Acquire link information of ExtCell-Role
-                    response = (EntitiesResponse) op.getNavProperty(ExtCell.EDM_TYPE_NAME,
-                            OEntityKey.create(extCellUrl),
-                            "_" + Role.EDM_TYPE_NAME, qi);
-                } catch (PersoniumCoreException dce) {
-                    if (!PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode().equals(dce.getCode())) {
-                        throw dce;
-                    }
-                    // Continue processing with log output only.
-                    log.debug("no such entity.");
-                }
-                if (response != null) {
+        List<String> list = UriUtils.getUrlVariations(tokenSubjectCell);
+        for (int i = 0; i < list.size(); i++) {
+            String extCellUrl = list.get(i);
+            try {
+                //Acquire Roles via  ExtCell-Role Navigation Property.
+                response = (EntitiesResponse) op.getNavProperty(ExtCell.EDM_TYPE_NAME,
+                        OEntityKey.create(extCellUrl),
+                        "_" + Role.EDM_TYPE_NAME, qi);
+                if (response == null) {
                     break;
                 }
-            }
-            if (response == null) {
-                return;
-            }
-
-            //Look at all link information of ExtCell-Role and wash out the roll for cell which has accessed this time.
-            List<OEntity> entList = response.getEntities();
-            for (OEntity ent : entList) {
-                OEntityWrapper entRole = (OEntityWrapper) ent;
-                this.addRole(entRole.getUuid(), roles);
+                //Look at all link information of ExtCell-Role and wash out the roll for cell which has accessed this time.
+                List<OEntity> entList = response.getEntities();
+               for (OEntity ent : entList) {
+                    OEntityWrapper entRole = (OEntityWrapper) ent;
+                    this.addRole(entRole.getUuid(), roles);
+                }
+            } catch (PersoniumCoreException dce) {
+                if (!PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode().equals(dce.getCode())) {
+                    throw dce;
+                }
+                // Continue processing with log output only.
+                log.debug("no such entity.");
             }
         }
     }
 
     /**
-     * List the Role to be paid out from the association between ExtCell, Relation and Role.
-     * List the Role to be paid out from the association between ExtCell, Relation, ExtRole, and Role.
-     * @param token
-     * Transcell access token
-     * @param roles
-     * List of roles to be withdrawn. Add here (destructive method)
+     * List the Roles to be granted via Relation and ExtRole.
+     * @param token Transcell access token
+     * @param roles List of roles which Roles are to be added to. (destructive method)
      */
     @SuppressWarnings("unchecked")
     private void addRoleListExtCelltoRelationAndExtRole(final IExtRoleContainingToken token, List<Role> roles) {
         String extCell = token.getExtCellUrl();
+        List<OEntity> relationList = new ArrayList<>();
 
         //Acquisition of Role corresponding to ExtCell-Role binding
         ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
@@ -606,6 +595,7 @@ public class CellEsImpl extends Cell {
                 response = (EntitiesResponse) op.getNavProperty(ExtCell.EDM_TYPE_NAME,
                         OEntityKey.create(extCellUrl),
                         "_" + Relation.EDM_TYPE_NAME, qi);
+                relationList.addAll(response.getEntities());
             } catch (PersoniumCoreException dce) {
                 if (!PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode().equals(dce.getCode())) {
                     throw dce;
@@ -613,16 +603,9 @@ public class CellEsImpl extends Cell {
                 // Continue processing with log output only.
                 log.debug("no such entity.");
             }
-            if (response != null) {
-                break;
-            }
-        }
-        if (response == null) {
-            return;
         }
 
-        List<OEntity> entList = response.getEntities();
-        for (OEntity ent : entList) {
+        for (OEntity ent : relationList) {
             OEntityWrapper entRelation = (OEntityWrapper) ent;
 
             //Look at all the link information of ExtCell-Relation and wash out the roll for cell accessed this time.
@@ -669,7 +652,7 @@ public class CellEsImpl extends Cell {
 
                 //Match with the rolls in the token
                 for (Role tokenRole : token.getRoleList()) {
-                    if (!tokenRole.createUrl().equals(esExtRole)) {
+                    if (!tokenRole.toRoleInstanceURL().equals(esExtRole)) {
                         continue;
                     }
                     //Look at all link information of ExtCell-Role and wash out the roll for cell which has accessed this time.
@@ -763,8 +746,6 @@ public class CellEsImpl extends Cell {
             boxName = (String) boxs.get(Common.P_NAME.getName());
         }
 
-        roles.add(new Role(roleName, boxName, schema, this.url));
+        roles.add(new Role(roleName, boxName, schema, this.getUrl()));
     }
-
-
 }

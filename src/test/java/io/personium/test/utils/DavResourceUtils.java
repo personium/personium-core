@@ -42,7 +42,6 @@ import io.personium.test.jersey.box.acl.jaxb.Grant;
 import io.personium.test.jersey.box.acl.jaxb.Principal;
 import io.personium.test.jersey.box.acl.jaxb.Privilege;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * WebDAV Httpリクエストドキュメントを利用するユーティリティ.
@@ -1019,6 +1018,7 @@ public class DavResourceUtils {
      * @param path リクエストパス（Box以下）
      * @param code ステータスコード
      * @return リクエストオブジェクト
+     * @deprecated use createWebDavFile(String token, String cell,String path,String fileBody,String contentType, int code) instead.
      */
     @Deprecated
     public static TResponse createWebDavFile(String cell,

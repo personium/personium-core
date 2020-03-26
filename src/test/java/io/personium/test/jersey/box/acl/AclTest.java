@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpStatus;
+import org.apache.http.entity.ContentType;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -45,7 +46,6 @@ import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
@@ -57,6 +57,7 @@ import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * BOXレベルACLのテスト.
@@ -125,11 +126,11 @@ public class AclTest extends PersoniumTest {
             ResourceUtils.accessResourceNoAuth("", HttpStatus.SC_OK, TEST_CELL1);
 
             // Box1に対してPUT（不可：権限エラー）
-            DavResourceUtils.createWebDavFile(Setup.TEST_CELL1, tokenStr, "box/dav-put.txt", "hoge", Setup.TEST_BOX1,
-                    "text.txt", HttpStatus.SC_FORBIDDEN);
+            DavResourceUtils.createWebDavFile(tokenStr, Setup.TEST_CELL1, Setup.TEST_BOX1 +  "/text.txt", "hoge",
+                    ContentType.TEXT_PLAIN.getMimeType(), HttpStatus.SC_FORBIDDEN);
             // トークン空でもbox1に対してPUT（不可：認証エラー）
-            DavResourceUtils.createWebDavFile(Setup.TEST_CELL1, "", "box/dav-put.txt", "hoge", Setup.TEST_BOX1,
-                    "text.txt", HttpStatus.SC_UNAUTHORIZED);
+            DavResourceUtils.createWebDavFile("", Setup.TEST_CELL1, Setup.TEST_BOX1 + "/text.txt", "hoge",
+                    ContentType.TEXT_PLAIN.getMimeType(), HttpStatus.SC_UNAUTHORIZED);
             // AuthorizationHedderが無しでもbox1に対してPUT（不可：認証エラー）
             DavResourceUtils.createWebDavFileNoAuthHeader(Setup.TEST_CELL1, "box/dav-put.txt", "hoge", Setup.TEST_BOX1,
                     "text.txt", HttpStatus.SC_UNAUTHORIZED);
@@ -180,11 +181,11 @@ public class AclTest extends PersoniumTest {
             ResourceUtils.accessResourceNoAuth("", HttpStatus.SC_OK, TEST_CELL1);
 
             // Box1に対してPUT（可能）
-            DavResourceUtils.createWebDavFile(Setup.TEST_CELL1, tokenStr, "box/dav-put.txt", "hoge", Setup.TEST_BOX1,
-                    "text.txt", HttpStatus.SC_CREATED);
+            DavResourceUtils.createWebDavFile(tokenStr, Setup.TEST_CELL1, Setup.TEST_BOX1 + "/text.txt", "hoge",
+                    ContentType.TEXT_PLAIN.getMimeType(), HttpStatus.SC_CREATED);
             // トークン空でもbox1に対してPUT（不可：認証エラー）
-            DavResourceUtils.createWebDavFile(Setup.TEST_CELL1, "", "box/dav-put.txt", "hoge", Setup.TEST_BOX1,
-                    "text.txt", HttpStatus.SC_UNAUTHORIZED);
+            DavResourceUtils.createWebDavFile("", Setup.TEST_CELL1, Setup.TEST_BOX1 + "/text.txt", "hoge",
+                    ContentType.TEXT_PLAIN.getMimeType(), HttpStatus.SC_UNAUTHORIZED);
             // AuthorizationHedderが無しでもbox1に対してPUT（不可：認証エラー）
             DavResourceUtils.createWebDavFileNoAuthHeader(Setup.TEST_CELL1, "box/dav-put.txt", "hoge", Setup.TEST_BOX1,
                     "text.txt", HttpStatus.SC_UNAUTHORIZED);
@@ -484,6 +485,7 @@ public class AclTest extends PersoniumTest {
             // UrlUtilで作成されるURLの最後のスラッシュを削除するため
             StringBuffer sb = new StringBuffer(resorce);
             sb.deleteCharAt(resorce.length() - 1);
+            tresponse.debug();
             TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
                     UrlUtils.roleResource(TEST_CELL1, BOX_NAME, ""), requireSchamaAuthz);
 

@@ -29,7 +29,6 @@ import org.apache.http.HttpStatus;
 import io.personium.test.jersey.PersoniumException;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
  * Httpリクエストドキュメントを利用するユーティリティ.

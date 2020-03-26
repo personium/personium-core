@@ -94,13 +94,13 @@ public class ResourceUtilsTest {
     }
 
     /**
-     * ヘッダの指定が無い場合デフォルト値が入ること.
+     * validateXPersoniumRequestKey_When_NullGiven_Then_ShouldReturn_DefaultPattern.
      */
     @Test
-    public void validateXPersoniumRequestKey_Normal_key_is_null() {
+    public void validateXPersoniumRequestKey_When_NullGiven_Then_ShouldReturn_DefaultPattern() {
         String result = ResourceUtils.validateXPersoniumRequestKey(null);
-        assertTrue(result.startsWith("PCS-"));
-        assertTrue(result.length() == 40);
+        assertEquals(23, result.length());
+        assertTrue(result.matches("^[A-Za-z0-9-_]{4}_[A-Za-z0-9-_]{18}$"));
     }
 
     /**

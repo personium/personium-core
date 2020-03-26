@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2018 FUJITSU LIMITED
+ * Personium
+ * Copyright 2018 Personium Project Authors
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,7 +157,7 @@ public class IntrospectionEndPointResource {
                         map.put(RESP_SUBJECT, issuer + "#" + tk.getSubject());
                         map.put(RESP_ISSUER, issuer);
                         map.put(RESP_EXT_ROLES,
-                                tk.getRoles().stream().map(role -> role.createUrl()).collect(Collectors.toList()));
+                                tk.getRoleList().stream().map(role -> role.toRoleInstanceURL()).collect(Collectors.toList()));
                     }
                 } else if (tk instanceof VisitorLocalAccessToken
                            || tk instanceof VisitorRefreshToken
@@ -173,7 +174,7 @@ public class IntrospectionEndPointResource {
                         map.put(RESP_AUDIENCE, audience);
                         map.put(RESP_ISSUER, issuer);
                         map.put(RESP_EXT_ROLES,
-                                tk.getRoles().stream().map(role -> role.createUrl()).collect(Collectors.toList()));
+                                tk.getRoleList().stream().map(role -> role.toRoleInstanceURL()).collect(Collectors.toList()));
                     }
                 }
             }

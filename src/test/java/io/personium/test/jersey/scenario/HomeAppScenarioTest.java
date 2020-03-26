@@ -19,6 +19,7 @@ package io.personium.test.jersey.scenario;
 
 
 import static org.junit.Assert.assertEquals;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,8 +87,8 @@ public class HomeAppScenarioTest extends PersoniumTest {
     static final String MASTER_TOKEN = AbstractCase.MASTER_TOKEN_NAME;
 
 
-    private String appCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
-    private String usrCellLocalUnit = UriUtils.SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
+    private String appCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL_SCHEMA1 + ":/";
+    private String usrCellLocalUnit = SCHEME_LOCALUNIT + ":" + Setup.TEST_CELL1 + ":/";
     private String appCellUrl = UriUtils.resolveLocalUnit(appCellLocalUnit);
     private String usrCellUrl = UriUtils.resolveLocalUnit(usrCellLocalUnit);
 

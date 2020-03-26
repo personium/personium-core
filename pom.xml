@@ -3,7 +3,7 @@
     <groupId>io.personium</groupId>
     <artifactId>personium-core</artifactId>
     <packaging>war</packaging>
-    <version>1.7.20</version>
+    <version>1.7.21-SNAPSHOT</version>
     <name>personium-core Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <licenses>
@@ -18,11 +18,11 @@
         <final.name>personium-core</final.name>
         <java.source.version>1.8</java.source.version>
         <java.target.version>1.8</java.target.version>
-        <jersey.version>2.27</jersey.version>
+        <jersey.version>2.29.1</jersey.version>
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
         <httpclient.version>4.5.5</httpclient.version>
-        <jackson.version>2.9.10</jackson.version>
+        <jackson.version>2.9.10.3</jackson.version>
         <jacoco.include.package>io.personium.*</jacoco.include.package>
         <activemq.version>5.15.9</activemq.version>
         <kafka.version>1.1.1</kafka.version>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-common</artifactId>
-            <version>1.5.2</version>
+            <version>1.5.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
@@ -184,7 +184,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>24.1-jre</version>
+            <version>28.1-jre</version>
         </dependency>
 
         <!-- For test. -->
@@ -197,43 +197,43 @@
         <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
-            <version>2.25.1</version>
+            <version>${jersey.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.test-framework</groupId>
             <artifactId>jersey-test-framework-core</artifactId>
-            <version>2.25.1</version>
+            <version>${jersey.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-grizzly2-servlet</artifactId>
-            <version>2.25.1</version>
+            <version>${jersey.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!-- dependency>
             <groupId>org.glassfish.jersey.bundles.repackaged</groupId>
             <artifactId>jersey-guava</artifactId>
             <version>2.25.1</version>
             <scope>test</scope>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
-            <version>1.7.4</version>
+            <version>2.0.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
+            <artifactId>mockito-core</artifactId>
+            <version>2.28.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-            <version>1.7.4</version>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>2.0.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -281,7 +281,7 @@
             <id>central</id>
             <name>Maven Repository Switchboard</name>
             <layout>default</layout>
-            <url>http://repo1.maven.org/maven2</url>
+            <url>https://repo1.maven.org/maven2</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -289,7 +289,7 @@
         <repository>
             <id>personium.io</id>
             <name>personium.io</name>
-            <url>http://personium.io/mvnrepo</url>
+            <url>https://personium.io/mvnrepo</url>
         </repository>
         <repository>
             <id>spy</id>
@@ -324,7 +324,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${java.source.version}</source>
                     <target>${java.target.version}</target>
@@ -339,7 +339,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -367,46 +367,99 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>2.22.2</version>
                 <configuration>
                     <argLine>${jacocoArgs} -Xms512m -Xmx1024m</argLine>
+                    <includes>
+                        <include>io/personium/core/**/*Test.java</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <io.personium.core.lock.type>inProcess</io.personium.core.lock.type>
+                        <io.personium.core.cache.type>inProcess</io.personium.core.cache.type>
+                        <io.personium.core.security.secret16>gv7hpmmf5siwj5by</io.personium.core.security.secret16>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <!--
+                Prerequisite to run integration-test:
+                  - Following middlewares are setup in localhost.
+                    - ElasticSearch
+                    - ActiveMQ
+                    - Memcached
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <includes>
+                        <include>io/personium/test/**/*Test.java</include>
+                    </includes>
                     <excludes>
-                        <exclude>**/jersey/box/ServiceRelayTest.java</exclude>
-                        <exclude>**/jersey/AcceptEncodingTest.java</exclude>
+                        <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
+                        <exclude>**/engine/ServiceRelayTest.java</exclude>
                         <exclude>**/performance/**/*Test.java</exclude>
+                        <!-- Tests that fail when running tests from outside for various reasons. -->
+                        <!-- TODO Should be fixed so that all tests are successful. -->
+                        <!--
+                        <exclude>**/jersey/StatusTest.java</exclude>
+                        <exclude>**/jersey/cell/CellBulkDeletionTest.java</exclude>
+                        <exclude>**/jersey/cell/UnitUserCellCRUDTest.java</exclude>
+                        <exclude>**/jersey/cell/EventTest.java</exclude>
+                        <exclude>**/jersey/cell/CellRootGetTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/AuthCheckTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/AuthCookieTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/AuthTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/AuthzGetTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/ImplicitFlowTest.java</exclude>
+                        <exclude>**/jersey/cell/auth/X509AuthTest.java</exclude>
+                        <exclude>**/jersey/cell/ctl/ExtCellReadTest.java</exclude>
+                        -->
                     </excludes>
+                    <systemPropertyVariables>
+                        <jersey.test.port>9998</jersey.test.port>
+                        <pcs.distribution>standard</pcs.distribution>
+                        <io.personium.core.lock.type>memcached</io.personium.core.lock.type>
+                        <io.personium.core.cache.type>memcached</io.personium.core.cache.type>
+                        <io.personium.core.cache.cell.enabled>true</io.personium.core.cache.cell.enabled>
+                        <io.personium.core.cache.box.enabled>true</io.personium.core.cache.box.enabled>
+                        <io.personium.core.cache.schema.enabled>true</io.personium.core.cache.schema.enabled>
+                        <io.personium.core.binaryData.fsync.enabled>false</io.personium.core.binaryData.fsync.enabled>
+                        <io.personium.core.security.secret16>gv7hpmmf5siwj5by</io.personium.core.security.secret16>
+                    </systemPropertyVariables>
                 </configuration>
                 <executions>
                     <execution>
-                        <!-- Test group assuming execution from environment outside Personium server. -->
-                        <id>integration-tests</id>
-                        <phase>integration-test</phase>
                         <goals>
-                            <goal>test</goal>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>reset-data</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
                         </goals>
                         <configuration>
-                            <skip>false</skip>
                             <includes>
-                                <include>**/test/jersey/**/*Test.java</include>
+                                <include>**/setup/Setup.java</include>
                             </includes>
-                            <excludes>
-                                <!-- Tests that fail when running tests from outside for various reasons. -->
-                                <!-- TODO Should be fixed so that all tests are successful. -->
-                                <exclude>**/jersey/box/ServiceRelayTest.java</exclude>
-                                <exclude>**/jersey/AcceptEncodingTest.java</exclude>
-                                <exclude>**/jersey/StatusTest.java</exclude>
-                                <exclude>**/jersey/cell/CellBulkDeletionTest.java</exclude>
-                                <exclude>**/jersey/cell/UnitUserCellCRUDTest.java</exclude>
-                                <exclude>**/jersey/cell/EventTest.java</exclude>
-                                <exclude>**/jersey/cell/CellRootGetTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/AuthCheckTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/AuthCookieTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/AuthTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/AuthzGetTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/ImplicitFlowTest.java</exclude>
-                                <exclude>**/jersey/cell/auth/X509AuthTest.java</exclude>
-                                <exclude>**/jersey/cell/ctl/ExtCellReadTest.java</exclude>
-                            </excludes>
+                            <test>Setup#reset</test>
+                        </configuration>
+                    </execution>
+                    <!-- reset-eventlog is necessary to run after reset. -->
+                    <execution>
+                        <id>reset-eventlog</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/setup/Setup.java</include>
+                            </includes>
+                            <test>Setup#resetEventLog</test>
                         </configuration>
                     </execution>
                 </executions>
@@ -469,7 +522,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.1</version>
+                <version>0.8.3</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -551,7 +604,13 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.1</version>
+                <reportSets>
+	                <reportSet>
+	                    <reports>
+	                        <report>report</report>
+	                    </reports>
+	                </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>

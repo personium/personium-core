@@ -16,6 +16,8 @@
  */
 package io.personium.core.bar;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -128,7 +130,6 @@ import io.personium.core.rs.odata.BulkRequest;
 import io.personium.core.rs.odata.ODataEntitiesResource;
 import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.rs.odata.ODataResource;
-import io.personium.core.utils.UriUtils;
 
 /**
  * Http Class for reading bar files from the request body.
@@ -322,11 +323,11 @@ public class BarFileReadRunner implements Runnable {
             writeOutputStream(true, "PL-BI-1005", "", message);
         } finally {
             if (isSuccess) {
-                writeOutputStream(false, CODE_BAR_INSTALL_COMPLETED, UriUtils.SCHEME_LOCALCELL + ":/" + boxName, "");
+                writeOutputStream(false, CODE_BAR_INSTALL_COMPLETED, SCHEME_LOCALCELL + ":/" + boxName, "");
                 this.progressInfo.setStatus(ProgressInfo.STATUS.COMPLETED);
             } else {
                 String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
-                writeOutputStream(false, CODE_BAR_INSTALL_FAILED, UriUtils.SCHEME_LOCALCELL + ":/" + boxName, message);
+                writeOutputStream(false, CODE_BAR_INSTALL_FAILED, SCHEME_LOCALCELL + ":/" + boxName, message);
                 this.progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
             }
             this.progressInfo.setEndTime();
@@ -345,7 +346,7 @@ public class BarFileReadRunner implements Runnable {
         // The schema of the TODO Box and the subject's log are implemented at the time of formal correspondence of internal events
 
         String type = HttpMethod.MKCOL;
-        String object = UriUtils.SCHEME_LOCALCELL + ":/" + boxName;
+        String object = SCHEME_LOCALCELL + ":/" + boxName;
         String result = "";
         this.eventBuilder = new PersoniumEvent.Builder()
                 .type(type)
@@ -1777,7 +1778,7 @@ public class BarFileReadRunner implements Runnable {
     private void postCellCtlCreateEvent(EntityResponse res) {
         String name = res.getEntity().getEntitySetName();
         String keyString = AbstractODataResource.replaceDummyKeyToNull(res.getEntity().getEntityKey().toKeyString());
-        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+        String object = new StringBuilder(SCHEME_LOCALCELL)
                 .append(":/__ctl/").append(name).append(keyString).toString();
         String info = "box install";
         String type = PersoniumEventType.cellctl(name, PersoniumEventType.Operation.CREATE);
@@ -1936,7 +1937,7 @@ public class BarFileReadRunner implements Runnable {
         // post event
         String keyString = AbstractODataResource.replaceDummyKeyToNull(fromOEKey.toString());
         String targetKeyString = AbstractODataResource.replaceDummyKeyToNull(toOEKey.toString());
-        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+        String object = new StringBuilder(SCHEME_LOCALCELL)
                 .append(":/__ctl/")
                 .append(sourceEntity.getEntitySetName())
                 .append(keyString)
@@ -2479,7 +2480,7 @@ public class BarFileReadRunner implements Runnable {
      */
     public void writeInitProgressCache() {
         setEventBus();
-        writeOutputStream(false, "PL-BI-1000", UriUtils.SCHEME_LOCALCELL + ":/" + boxName, "");
+        writeOutputStream(false, "PL-BI-1000", SCHEME_LOCALCELL + ":/" + boxName, "");
         writeToProgressCache(true);
     }
 

@@ -36,15 +36,15 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.rs.PersoniumCoreApplication;
-import io.personium.core.utils.UriUtils;
+import io.personium.core.utils.PersoniumUrl;
 import io.personium.test.categories.Integration;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * GET Cell root url tests.
@@ -313,7 +313,7 @@ public class CellRootGetTest extends AbstractCase {
      */
     @Test
     public void normal_get_html_unit_url() {
-        String relayhtmlurl = UriUtils.SCHEME_LOCALUNIT + ":/" + Setup.TEST_CELL1 + "/"
+        String relayhtmlurl = PersoniumUrl.SCHEME_LOCALUNIT + ":/" + Setup.TEST_CELL1 + "/"
                 + Setup.TEST_BOX1 + "/" + RELAY_HTML_NAME;
         String aclPath = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/" + RELAY_HTML_NAME;
         try {
@@ -357,7 +357,7 @@ public class CellRootGetTest extends AbstractCase {
      */
     @Test
     public void normal_get_html_cell_url() {
-        String relayhtmlurl = UriUtils.SCHEME_LOCALCELL + ":/"
+        String relayhtmlurl = PersoniumUrl.SCHEME_LOCALCELL + ":/"
                 + Setup.TEST_BOX1 + "/" + RELAY_HTML_NAME;
         String aclPath = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/" + RELAY_HTML_NAME;
         try {

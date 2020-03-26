@@ -9,15 +9,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 
 public class ScopeArbitratorTest {
+    static Logger log = LoggerFactory.getLogger(ScopeArbitratorTest.class);
     Cell mockCell = mock(Cell.class);
     Box mockBox = mock(Box.class);
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void beforeClass() throws Exception {
     }
 
     @Before
@@ -45,8 +48,8 @@ public class ScopeArbitratorTest {
         sa.unitMaxScopePrivilege = Privilege.get(CellPrivilege.class, "root");
         sa.requestString("openid root root message foo https://personium.example/__role/__/someRole");
         String[] res = sa.getResults();
-        System.out.println(StringUtils.join(sa.requestedScopes, " "));
-        System.out.println(StringUtils.join(res, " "));
+        log.info(StringUtils.join(sa.requestedScopes, " "));
+        log.info(StringUtils.join(res, " "));
         assertEquals(3, res.length);
     }
     /**

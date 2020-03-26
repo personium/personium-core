@@ -25,9 +25,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -38,18 +38,25 @@ import static org.mockito.Mockito.verify;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.commons.io.Charsets;
 import org.apache.http.HttpStatus;
+import org.apache.http.entity.ContentType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -79,7 +86,10 @@ import io.personium.core.model.file.StreamingOutputForDavFile;
 import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.accessor.CellDataAccessor;
+import io.personium.core.model.jaxb.Acl;
 import io.personium.core.model.lock.Lock;
+import io.personium.core.model.lock.LockManager;
+import io.personium.core.utils.TestUtils;
 import io.personium.test.categories.Unit;
 
 /**
@@ -95,7 +105,7 @@ public class DavCmpFsImplTest {
     /** Class name. */
     private static final String CLASS_NAME = "DavCmpFsImplTest";
     /** Test dir path. */
-    private static final String TEST_DIR_PATH = "/personium_nfs/personium-core/unitTest/" + CLASS_NAME + "/";
+    private static final String TEST_DIR_PATH = "/tmp/personium-core/unitTest/" + CLASS_NAME + "/";
     /** Content file name for update. */
     private static final String CONTENT_FILE = "content";
     /** Temp content file name for update. */
@@ -116,11 +126,21 @@ public class DavCmpFsImplTest {
     /** UnitTest path. */
     private static String unitTestPath;
 
+    private static String lockTypeBefore;
+
     /**
      * BeforeClass.
      */
     @BeforeClass
     public static void beforeClass() {
+        // In order for this test to run without any configuration,
+        //   use inProcess lock
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Lock.TYPE, LockManager.TYPE_IN_PROCESS);
+        //   do not use cache
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cache.CELL_CACHE_ENABLED, "false");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cache.BOX_CACHE_ENABLED, "false");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cache.SCHEMA_CACHE_ENABLED, "false");
+
         unitTestPath = PersoniumUnitConfig.get("io.personium.core.test.unitTest.root");
         if (unitTestPath != null) {
             unitTestPath += "/" + CLASS_NAME + "/";
@@ -138,6 +158,7 @@ public class DavCmpFsImplTest {
     @AfterClass
     public static void afterClass() {
         testDir.delete();
+        PersoniumUnitConfig.reload();
     }
 
     /**
@@ -1268,6 +1289,105 @@ public class DavCmpFsImplTest {
         boolean actual = (boolean) method.invoke(davCmpFsImpl, etag);
         // Confirm result
         assertThat(actual, is(expected));
+    }
+
+    /**
+     * A mock subclass of DavCmpFsImpl for use from other unit tests.
+     * It is defined here for the following reasons.
+     *   - Should be shared by various unit tests.
+     *   - Should easily be found and used from various unit tests.
+     *   - Original class and mock should be in same package.
+     * @author shimono.akio
+     *
+     * TODO this class should rather be MockDavCmp.
+     * TODO DavCmp may well be turned to an abstract class.
+     * TODO DavCmp may well be renamed to DavItem or somehting.
+     */
+    public static class MockDavCmpFsImpl extends DavCmpFsImpl {
+        public static final String MOCK_DATA = "{foo: 1}";
+        Map<String, DavCmp> children = new HashMap<>();
+        public String url;
+        public String type;
+        public Date created = TestUtils.DATE_PUBLISHED;
+        public Date updated = TestUtils.DATE_UPDATED;
+        byte[] data = MOCK_DATA.getBytes(Charsets.UTF_8);
+
+        public MockDavCmpFsImpl(Box box, MockDavCmpFsImpl parent, Acl acl) {
+            super(box.getName(), parent);
+            if (parent != null) {
+                parent.children.put(name, this);
+            }
+            this.acl = acl;
+            this.box = box;
+            this.cell = box.getCell();
+            this.url = box.getUrl();
+            this.type = TYPE_COL_BOX;
+        }
+        public MockDavCmpFsImpl(String name, MockDavCmpFsImpl parent, Acl acl, String type) {
+            super(name, parent);
+            this.acl = acl;
+            this.type = type;
+            this.box = parent.getBox();
+            this.cell = box.getCell();
+            this.url = parent.getUrl() + "/" + name;
+            if (parent != null) {
+                parent.children.put(name, this);
+            }
+        }
+        public MockDavCmpFsImpl(Cell cell, Acl acl) {
+            super(cell.getName(), null);
+            this.acl = acl;
+            this.cell = cell;
+            this.url = cell.getUrl();
+            this.type = TYPE_CELL;
+        }
+        public MockDavCmpFsImpl(String name, MockDavCmpFsImpl parent, Acl acl) {
+            this(name, parent, acl, DavCmp.TYPE_COL_WEBDAV);
+        }
+        @Override
+        public Map<String, DavCmp> getChildren() {
+            return this.children;
+        }
+        @Override
+        public DavCmp getChild(String name) {
+            return this.children.get(name);
+        }
+        @Override
+        public String getUrl() {
+            return this.url;
+        }
+        @Override
+        public String getType() {
+            return this.type;
+        }
+        @Override
+        public Long getUpdated() {
+            return this.updated.getTime();
+        }
+        @Override
+        public Long getPublished() {
+            return this.created.getTime();
+        }
+        @Override
+        public String getContentType() {
+            return ContentType.APPLICATION_JSON.toString();
+        }
+        @Override
+        public Long getContentLength() {
+            return Long.valueOf(data.length);
+        }
+        @Override
+        public ResponseBuilder get(final String rangeHeaderField) {
+            StreamingOutput sout = new StreamingOutput() {
+                @Override
+                public void write(OutputStream output) throws IOException, WebApplicationException {
+                    output.write(MOCK_DATA.getBytes());
+                }
+            };
+            return javax.ws.rs.core.Response.ok(sout)
+                    .header(HttpHeaders.CONTENT_LENGTH, this.getContentLength())
+                    .header(HttpHeaders.CONTENT_TYPE, this.getContentType());
+        }
     }
 }
 

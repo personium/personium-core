@@ -41,7 +41,7 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * Cellの作成のIT.

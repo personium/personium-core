@@ -1,7 +1,8 @@
 /**
- * personium.io
- * Copyright 2014-2018 FUJITSU LIMITED
- *
+ * Personium
+ * Copyright 2014-2019 Personium Project Authors
+ *  - FUJITSU LIMITED
+*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -694,7 +695,7 @@ public class DavCmpFsImpl implements DavCmp {
      * {@inheritDoc}
      */
     @Override
-    public final ResponseBuilder get(final String rangeHeaderField) {
+    public ResponseBuilder get(final String rangeHeaderField) {
 
         String contentType = getContentType();
 
@@ -1180,12 +1181,12 @@ public class DavCmpFsImpl implements DavCmp {
         if (this.box != null) {
             //For ACLs below the Box level, the URL of the Box resource
             //Since cell URLs are attached with slashes in concatenation, erase the URL if it ends with a slash.
-            result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl().replaceFirst("/$", ""),
+            result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl(),
                     this.box.getName(), "");
         } else {
             //In case of Cell level ACL, the resource URL of default box
             //Since cell URLs are attached with slashes in concatenation, erase the URL if it ends with a slash.
-            result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl().replaceFirst("/$", ""),
+            result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl(),
                     Box.MAIN_BOX_NAME, "");
         }
         return result;

@@ -59,7 +59,7 @@ import io.personium.core.utils.UriUtils;
 @XmlRootElement(namespace = "DAV:", name = "acl")
 public final class Acl {
 
-    static final String KEY_REQUIRE_SCHEMA_AUTHZ = "@requireSchemaAuthz";
+    static final String KEY_LEGACY_REQUIRE_SCHEMA_AUTHZ = "@requireSchemaAuthz";
 
     /** xml:base. */
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace")
@@ -94,7 +94,20 @@ public final class Acl {
      * @param base baseUrl
      */
     public void setBase(String base) {
-        this.base = UriUtils.convertSchemeFromHttpToLocalUnit(base);
+        this.setBase(base, true);
+    }
+
+    /**
+     * xml:base setter.
+     * @param base baseUrl
+     * @param convertLocalUnit true if given base url should be converted to personium-localunit scheme when possible.
+     */
+    public void setBase(String base, boolean convertLocalUnit) {
+        if (convertLocalUnit) {
+            this.base = UriUtils.convertSchemeFromHttpToLocalUnit(base);
+        } else {
+            this.base = base;
+        }
     }
 
     /**
@@ -143,7 +156,12 @@ public final class Acl {
             //  attr somehow not unmarshalled so manually fix the object
             JSONParser parser = new JSONParser();
             JSONObject j = (JSONObject) parser.parse(jsonString);
-            ret.setRequireSchemaAuthz((String) j.get(KEY_REQUIRE_SCHEMA_AUTHZ));
+            // -- TODO Delete this block after 1.8.x
+            // backward compatibility for json data before 1.7.20
+            if (ret.requireSchemaAuthz == null) {
+                ret.setRequireSchemaAuthz((String) j.get(KEY_LEGACY_REQUIRE_SCHEMA_AUTHZ));
+            }
+            // -- backward compatibility
             return ret;
         } catch (IOException e) {
             throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
@@ -164,7 +182,7 @@ public final class Acl {
         List<String> ret = new ArrayList<String>();
         for (Role role : roles) {
             for (Ace ace : this.aces) {
-                if (ace.getPrincipalHref().equals(role.createUrl())) {
+                if (ace.getPrincipalHref().equals(role.toRoleInstanceURL())) {
                     List<String> privList = ace.getGrantedPrivilegeList();
                     for (String priv : privList) {
                         ret.add(priv);

@@ -55,7 +55,6 @@ import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.box.odatacol.UserDataListWithNPTest;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.AssociationEndUtils;
 import io.personium.test.utils.BoxUtils;
@@ -69,6 +68,7 @@ import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.RuleUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 import io.personium.test.utils.UserDataUtils;
 
 /**

@@ -16,6 +16,10 @@
  */
 package io.personium.core.utils;
 
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALBOX;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -49,12 +53,6 @@ public class UriUtils {
     public static final String SCHEME_HTTPS = "https";
     /** Scheme string, "urn". */
     public static final String SCHEME_URN = "urn";
-    /** Scheme string, "personium-localunit". */
-    public static final String SCHEME_LOCALUNIT = "personium-localunit";
-    /** Scheme string, "personium-localcell". */
-    public static final String SCHEME_LOCALCELL = "personium-localcell";
-    /** Scheme string, "personium-localbox". */
-    public static final String SCHEME_LOCALBOX = "personium-localbox";
 
     /** LOCAL_CELL ADDITION. */
     public static final String SCHEME_CELL_URI = SCHEME_LOCALCELL + ":/";
@@ -62,15 +60,15 @@ public class UriUtils {
     public static final String SCHEME_BOX_URI = SCHEME_LOCALBOX + ":/";
 
 
-    /** Regular expression for matching localunit scheme with single colon */
+    /** Regular expression for matching localunit scheme with single colon. */
     public static final Pattern REGEX_LOCALUNIT_SINGLE_COLON
-    	= Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.*)$");
+        = Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.*)$");
 
-    /** Regular expression for matching localunit scheme with double colons */
+    /** Regular expression for matching localunit scheme with double colons. */
     public static final Pattern REGEX_LOCALUNIT_DOUBLE_COLONS
-    	= Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.+?):(.*)$");
+        = Pattern.compile("^" + SCHEME_LOCALUNIT + ":(.+?):(.*)$");
 
-    /** Regular expression for matching Cell URL */
+    /** Regular expression for matching Cell URL. */
     public static final String REGEX_HTTP_SUBDOMAIN = "^(http|https):\\/\\/(.+?)\\.(.*)$";
 
     /** String Slash. */
@@ -84,41 +82,39 @@ public class UriUtils {
 
     /**
      * Get Url Variations.
-     * @param unitUrl String
      * @param url String
      * @return ArrayList<String>
-     * @throws URISyntaxException
      */
-    public static List<String> getUrlVariations(String url) throws PersoniumCoreException {
+    public static List<String> getUrlVariations(String url) {
         List<String> variations = new ArrayList<String>();
         if (url == null) {
             return variations;
         }
         variations.add(url);
-        String substitute = getUrlSubstitute(url);
-        if (!url.equals(substitute)) {
-            variations.add(substitute);
+        try {
+            PersoniumUrl pUrl = PersoniumUrl.create(url);
+            switch (pUrl.schemeType) {
+            case HTTP:
+                variations.add(pUrl.toLocalunit());
+                variations.add(pUrl.getLocalUnitSingleColonUrl());
+                break;
+            case LOCAL_UNIT_DOUBLE_COLON:
+                variations.add(pUrl.toHttp());
+                variations.add(pUrl.getLocalUnitSingleColonUrl());
+                break;
+            case LOCAL_UNIT_SINGLE_COLON:
+                variations.add(pUrl.toHttp());
+                variations.add(pUrl.toLocalunit());
+            default:
+                // no variation for other scheme
+            }
+        } catch (IllegalArgumentException e) {
+            // No op.
+            // When Given Url is invalid, PersoniumUrl will throw IllegalArgumentException.
+            // Even in such case, this class should just return the original given url as
+            // a single variation.
         }
         return variations;
-    }
-
-    /**
-     * getUrlSubstitute.
-     * @param unitUrl String
-     * @param url String
-     * @return utl String
-     * @throws URISyntaxException
-     */
-    public static String getUrlSubstitute(String url) {
-        if (url == null) {
-        	throw PersoniumCoreException.Common.INVALID_URL.params("null");
-        }
-        if (url.startsWith(SCHEME_LOCALUNIT)) {
-            url = convertSchemeFromLocalUnitToHttp(url);
-        } else {
-            url = convertSchemeFromHttpToLocalUnit(url);
-        }
-        return url;
     }
 
     /**
@@ -141,7 +137,7 @@ public class UriUtils {
      */
     public static String convertSchemeFromLocalUnitToHttp(String localUnitSchemeUrl) {
         if (localUnitSchemeUrl == null) {
-        	return null;
+            return null;
         }
         String unitUrl = PersoniumUnitConfig.getBaseUrl();
         Matcher localUnitDoubleColons = REGEX_LOCALUNIT_DOUBLE_COLONS.matcher(localUnitSchemeUrl);
@@ -159,7 +155,7 @@ public class UriUtils {
             sb.append(path);
             pathBased = sb.toString();
         } else if (localUnitSingleColon.matches()) {
-        	// when detected personium-localunit scheme with single colon
+            // when detected personium-localunit scheme with single colon
             String path = localUnitSingleColon.group(1);
             if (path.startsWith(STRING_SLASH) && unitUrl.endsWith(STRING_SLASH)) {
                 unitUrl = unitUrl.replaceFirst("/*$", "");
@@ -182,17 +178,16 @@ public class UriUtils {
     /**
      * Convert scheme from http(s) to LocalUnit.
      * Convert only if the target URL matches UnitURL, otherwise just return the given value as-is.
-     * @param unitUrl unit url
      * @param url target url
      * @return url string with local unit scheme
      */
     public static String convertSchemeFromHttpToLocalUnit(String url) {
         if (url == null) {
-        	return null;
+            return null;
         }
         String unitUrl = PersoniumUnitConfig.getBaseUrl();
         if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
-        	// path based
+            // path based
             if (!url.startsWith(unitUrl)) {
                 // return as-is when url is foreign
                 return url;
@@ -210,16 +205,16 @@ public class UriUtils {
             // return with double colon syntax when url is cell level.
             URI uri;
             try {
-	            uri = new URI(url);
-	        } catch (URISyntaxException e) {
-	        	throw PersoniumCoreException.Common.INVALID_URL.params(url).reason(e);
-	        }
+                uri = new URI(url);
+            } catch (URISyntaxException e) {
+                throw PersoniumCoreException.Common.INVALID_URL.params(url).reason(e);
+            }
             URI unitUri;
             try {
                 unitUri = new URI(unitUrl);
             } catch (URISyntaxException e) {
-	            throw PersoniumCoreException.Common.INVALID_URL.params(unitUrl).reason(e);
-	        }
+                throw PersoniumCoreException.Common.INVALID_URL.params(unitUrl).reason(e);
+            }
             if (uri.getHost() == null) {
                 return url;
             }
@@ -545,6 +540,11 @@ public class UriUtils {
         }
     }
 
+    /**
+     * @param url1 String
+     * @param url2 String
+     * @return if urls are equal or not
+     */
     public static boolean equalIgnoringPort(String url1, String url2) {
 
         try {
@@ -571,6 +571,10 @@ public class UriUtils {
         }
     }
 
+    /**
+     * @param url String
+     * @return http url
+     */
     public static String resolveLocalUnit(String url) {
         return UriUtils.convertSchemeFromLocalUnitToHttp(url);
     }

@@ -33,6 +33,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.common.utils.CommonUtils;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumReadDeleteModeManager;
 import io.personium.core.model.lock.ReadDeleteModeLockManager;
 
 /**

@@ -1,2 +1,2 @@
 # unitTest
-io.personium.core.testkey=unitTest
+io.personium.test.key=confValue

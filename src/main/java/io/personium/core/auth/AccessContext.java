@@ -372,7 +372,7 @@ public class AccessContext {
                 }
 
                 //Detect setting corresponding to role
-                if (role.localCreateUrl(this.cell.getUrl()).equals(principalHref)) {
+                if (role.toRoleInstanceURL().equals(principalHref)) {
                     //Confirm whether Root is set
                     if (ace.getGrantedPrivilegeList().contains(CellPrivilege.ROOT.getName())) {
                         return true;
@@ -796,7 +796,7 @@ public class AccessContext {
             VisitorLocalAccessToken clat = (VisitorLocalAccessToken) tk;
             ret.accessType = TYPE_VISITOR;
             //Acquire roll information and pack it.
-            ret.roles = clat.getRoles();
+            ret.roles = clat.getRoleList();
             ret.subject = tk.getSubject();
             ret.issuer = tk.getIssuer();
         } else if (tk instanceof UnitLocalUnitUserToken) {
@@ -942,19 +942,19 @@ public class AccessContext {
             ret.issuer = tca.getIssuer();
 
             //Take role information and if you have unit admin roll, promote to unit admin.
-            List<Role> roles = tca.getRoles();
+            List<Role> roles = tca.getRoleList();
             Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.MAIN_BOX_NAME, null, tca.getIssuer());
-            String unitAdminRoleUrl = unitAdminRole.createUrl();
+            String unitAdminRoleUrl = unitAdminRole.toRoleInstanceURL();
             Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.MAIN_BOX_NAME,
                     null, tca.getIssuer());
-            String cellContentsReaderUrl = cellContentsReaderRole.createUrl();
+            String cellContentsReaderUrl = cellContentsReaderRole.toRoleInstanceURL();
             Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.MAIN_BOX_NAME,
                     null, tca.getIssuer());
-            String cellContentsAdminUrl = cellContentsAdminRole.createUrl();
+            String cellContentsAdminUrl = cellContentsAdminRole.toRoleInstanceURL();
 
             String unitUserRole = null;
             for (Role role : roles) {
-                String roleUrl = role.createUrl();
+                String roleUrl = role.toRoleInstanceURL();
                 if (unitAdminRoleUrl.equals(roleUrl)) {
                     if (xPersoniumUnitUser == null) {
                         // If there is no X-Personium-UnitUser header, UnitAdmin

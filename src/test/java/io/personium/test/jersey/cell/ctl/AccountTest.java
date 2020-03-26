@@ -52,12 +52,12 @@ import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * Accountの作成のIT.
@@ -184,8 +184,8 @@ public class AccountTest extends ODataCommon {
         assertNotNull(accessToken);
         TransCellAccessToken tcat = TransCellAccessToken.parse(accessToken);
         String url = UrlUtils.cellRoot(cellName);
-        assertEquals(testRoleName, tcat.getRoles().get(0).getName());
-        assertEquals(url + "__role/__/" + testRoleName, tcat.getRoles().get(0).schemeCreateUrl(url));
+        assertEquals(testRoleName, tcat.getRoleList().get(0).getName());
+        assertEquals(url + "__role/__/" + testRoleName, tcat.getRoleList().get(0).toRoleInstanceURL());
         assertEquals(url, tcat.getIssuer());
         assertEquals(url + "#" + testAccountName, tcat.getSubject());
 

@@ -31,9 +31,9 @@ import org.junit.runner.RunWith;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * GET Unit root url tests.

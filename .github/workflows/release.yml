@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: master
+
+    - name: Remove -SNAPSHOT from pom.xml on master branch
+      run: |
+        bash ./.github/workflows/scripts/remove-SNAPSHOT.sh
+      env:
+        GITHUB_USER: personiumio
+        GITHUB_TOKEN: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
+
+    - name: Create Release Note
+      run: |
+        python3 ./.github/workflows/scripts/create-release-note.py
+      env:
+        GITHUB_USER: personiumio
+        GITHUB_TOKEN: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
+        COMPONENT: personium-lib-common
+
+    - uses: actions/checkout@v2
+      with:
+        ref: develop
+
+    - name: Update versions on develop branch
+      run: |
+        bash ./.github/workflows/scripts/update-version.sh
+      env:
+        GITHUB_USER: personiumio
+        GITHUB_TOKEN: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
+        COMPONENT: personium-core

@@ -46,7 +46,7 @@ import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.UrlUtils;
 
 /**
  * ComplexTypeProperty1件取得のテスト.

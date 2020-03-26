@@ -1235,18 +1235,22 @@ public class PersoniumCoreException extends RuntimeException {
         //Log output
         switch (sv) {
         case INFO:
-            l.info(message);         // Info-level do not print stack trace
-            logCauseChain(l, cause); // instead log the causing exception chain in a simple format.
+            if (l.isDebugEnabled()) {
+                l.debug(message, this);
+            } else {
+                l.info(message);         // Info-level do not print stack trace
+                logCauseChain(l, cause); // instead log the causing exception chain in a simple format.
+            }
             break;
         case WARN:
-            l.warn(message, cause);
+            l.warn(message, this);
             break;
         case ERROR:
-            l.error(message, cause);
+            l.error(message, this);
             break;
         default:
             l.error("Exception Severity Not Defined");
-            l.error(message, cause);
+            l.error(message, this);
         }
     }
     private static void logCauseChain(final Logger log, Throwable cause) {
