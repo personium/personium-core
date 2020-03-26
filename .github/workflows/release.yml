@@ -25,7 +25,7 @@ jobs:
       env:
         GITHUB_USER: personiumio
         GITHUB_TOKEN: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
-        COMPONENT: personium-lib-common
+        COMPONENT: personium-core
 
     - uses: actions/checkout@v2
       with:
