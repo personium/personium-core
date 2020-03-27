@@ -34,7 +34,7 @@ IMPROVEMENTS:
      1. Default configuration (personium-unit-config-default.properties bundled in personium-core.war file)
 
 NOTES:
-* Use personium-engine 1.5.26 for this version of personium-core
+* Use personium-engine 1.5.27 for this version of personium-core
 
 ## 1.7.20
 BUG FIXES:
