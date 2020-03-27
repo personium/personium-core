@@ -2,10 +2,19 @@
 
 echo 'Update version started.'
 
+# Check git version
+git checkout master
+
 MINOR_VERSION=$(
-  sed -n 's|^    <version>[0-9]\+\.[0-9]\+\.\([0-9]\+\)-SNAPSHOT</version>|\1|p' pom.xml
+  sed -n 's|^    <version>[0-9]\+\.[0-9]\+\.\([0-9]\+\)</version>|\1|p' pom.xml
 )
+if [ -z "$MINOR_VERSION" ]; then
+  echo 'Cannot get version.'
+  exit 1
+fi
+
 MINOR_VERSION=$((++MINOR_VERSION))
+git checkout develop
 
 # update version in pom.xml
 sed -i \
@@ -20,28 +29,15 @@ if [ "${COMPONENT}" = "personium-core" -o "${COMPONENT}" = "personium-engine" ];
 fi
 
 # Git commit and push
-git branch
-git --version
-git diff
-git add .
-
-git config --global user.name "Personium Bot"
-git config --global user.email "personium.io@gmail.com"
 
 VERSION=$(
   sed -n 's|^    <version>\([0-9]\+\.[0-9]\+\.[0-9]\+-SNAPSHOT\)</version>|\1|p' pom.xml
 )
 echo ${VERSION}
 
+git diff
+git add .
 git commit -m "Update to v${VERSION}"
-
-cat << EOS >~/.netrc
-machine github.com
-login $GITHUB_USER
-password $GITHUB_TOKEN
-EOS
-
-git remote -v
 git push origin develop
 
 echo 'Suceeded!'
