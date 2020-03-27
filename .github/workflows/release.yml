@@ -7,34 +7,37 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      GITHUB_USER: personiumio
+      GITHUB_TOKEN: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
+      COMPONENT: personium-core
+
     steps:
-    - uses: actions/checkout@v2
-      with:
-        ref: master
+    - name: git settings
+      run: |
+        if [ -z "$GITHUB_USER" -o -z "$GITHUB_TOKEN" ]; then
+          echo '$GITHUB_USER or $GITHUB_TOKEN is empty.'
+          exit 1
+        fi
+        cat << EOS >~/.netrc
+        machine github.com
+        login $GITHUB_USER
+        password $GITHUB_TOKEN
+        EOS
+        git config --global user.name "Personium Bot"
+        git config --global user.email "personium.io@gmail.com"
+        git clone https://github.com/personium/${COMPONENT}.git .
+        git checkout master
 
     - name: Remove -SNAPSHOT from pom.xml on master branch
       run: |
         bash ./.github/workflows/scripts/remove-SNAPSHOT.sh
-      env:
-        GITHUB_USER: personiumio
-        GITHUB_TOKEN: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
 
     - name: Create Release Note
       run: |
         python3 ./.github/workflows/scripts/create-release-note.py
-      env:
-        GITHUB_USER: personiumio
-        GITHUB_TOKEN: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
-        COMPONENT: personium-core
-
-    - uses: actions/checkout@v2
-      with:
-        ref: develop
 
     - name: Update versions on develop branch
       run: |
         bash ./.github/workflows/scripts/update-version.sh
-      env:
-        GITHUB_USER: personiumio
-        GITHUB_TOKEN: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
-        COMPONENT: personium-core
