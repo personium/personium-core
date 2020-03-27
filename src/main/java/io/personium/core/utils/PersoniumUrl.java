@@ -182,9 +182,9 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an URL with "personium-localunit" scheme.
-     * @param cellName Cell name
-     * @param path path under cell
-     * @return PersoniumUrl object
+     * @param cellName String
+     * @param path String
+     * @return PersoniumUrl
      */
     public static PersoniumUrl newLocalUnit(String cellName, String path) {
         return new PersoniumUrl(SCHEME_LOCALUNIT + ":" + cellName + ":" + path);
@@ -192,7 +192,7 @@ public class PersoniumUrl {
 
     /**
      * Constructor.
-     * @param url
+     * @param url String
      */
     public PersoniumUrl(String url) {
         // log.info(url);
@@ -509,7 +509,7 @@ public class PersoniumUrl {
 
     /**
      * Add trailing slash if missing.
-     * @param url input url
+     * @param url String
      * @return url with trailing slash.
      */
     public static String addTrailingSlashIfMissing(String url) {
