@@ -17,6 +17,7 @@
 package io.personium.test.jersey.unit;
 
 import static org.junit.Assert.assertEquals;
+import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -218,7 +219,7 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
                 "false");
         issuersBackup = PersoniumUnitConfig.get(PersoniumUnitConfig.UNIT_USER_ISSUERS);
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_USER_ISSUERS,
-        		UriUtils.SCHEME_LOCALUNIT + ":" + UNIT_USER_CELL + ":/");
+                SCHEME_LOCALUNIT + ":" + UNIT_USER_CELL + ":/");
 
         // Read role name from AccessContext
         Field admin = AccessContext.class.getDeclaredField("ROLE_UNIT_ADMIN");

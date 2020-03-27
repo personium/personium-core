@@ -9,12 +9,19 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 /**
  * Unit Test class for ObjectIo class.
@@ -92,7 +99,7 @@ public class ObjectIoTest {
         return acl;
     }
     @Test
-    public void marshal_Acl() throws IOException, JAXBException {
+    public void marshal_Acl() throws Exception {
         Acl acl = this.prepareAcl();
         String jsonStr = acl.toJSON();
 
@@ -105,19 +112,27 @@ public class ObjectIoTest {
         // Target method call
         ObjectIo.marshal(acl2, sw);
         String xmlStr = sw.toString();
+        log.info(xmlStr.replaceAll("><", ">\n<"));
 
-        StringReader sr = new StringReader(xmlStr);
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
 
-        // unmarshall again
-        Acl acl3 = ObjectIo.unmarshal(sr, Acl.class);
+        Document result = db.parse(new InputSource(new StringReader(xmlStr)));
+        XPath xpath = XPathFactory.newInstance().newXPath();
 
-        //log.info(xmlStr.replaceAll(">", ">\n"));
-
-        // check the acl contents are kept the same
-        assertEquals(acl.getRequireSchemaAuthz(), acl3.getRequireSchemaAuthz());
-        assertEquals(acl.getBase(), acl3.getBase());
-        assertEquals(acl.getAceList().size(), acl3.getAceList().size());
-
+        // ACL base Url 
+        String base = xpath.evaluate("//acl[position()=1]/@base", result);
+        log.info("//acl[position()=1]/@base = " + base);
+        assertEquals(acl.getBase(), base);
+        
+        // ACL requireSchemaAuthz
+        String requiredSchemaAuthz = xpath.evaluate("//acl[position()=1]/@requireSchemaAuthz", result);
+        log.info("//acl[position()=1]/@requireSchemaAuthz = " + requiredSchemaAuthz);
+        assertEquals(acl.getRequireSchemaAuthz(), requiredSchemaAuthz);
+        
+        // Number of ACE's 
+        String roleHref = xpath.evaluate("count(//ace)", result);
+        log.info("count(//ace) = " + roleHref);
+        assertEquals("" +acl.getAceList().size(), roleHref);
     }
-
 }

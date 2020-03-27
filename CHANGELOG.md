@@ -22,7 +22,7 @@ BREAKING CHANGES:
 
 BUG FIXES:
 * When Unit FQDN is less than 14 letters long, token parsing may possibly fail. ([#518](https://github.com/personium/personium-core/issues/518))
-* Refreshed Visitor Access Token cannot access target Cell's box. ([#516](https://github.com/personium/personium-core/issues/516))
+* Refreshed visitor access token does not have Roles directly assigned from ExtCell. ([#516](https://github.com/personium/personium-core/issues/516))
 
 IMPROVEMENTS:
 * Upgraded personium-lib-common to 1.5.3
