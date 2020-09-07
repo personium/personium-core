@@ -25,6 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+        FileUtilsTest.class,
         ODataUtilsTest.class,
         UriUtilsTest.class
 })
