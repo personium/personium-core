@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.Charsets;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -58,6 +57,7 @@ import io.personium.core.model.impl.es.odata.EsQueryHandler;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.impl.fs.DavMetadataFile;
 import io.personium.core.model.lock.CellLockManager;
+import io.personium.core.utils.FileUtils;
 
 /**
  * Runner that performs cell export processing.
@@ -358,7 +358,7 @@ public class SnapshotFileExportRunner implements Runnable {
      */
     private void deleteSnapshotFile() {
         try {
-            FileUtils.deleteDirectory(snapshotFilePath.getParent().toFile());
+            FileUtils.deleteDirectory(snapshotFilePath.getParent());
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("delete snapshot file").reason(e);
         }
