@@ -19,6 +19,7 @@ package io.personium.core.utils;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -32,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.utils.CommonUtils;
-import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 
@@ -199,8 +199,8 @@ public class UriUtilsTest {
     public void convertSchemeFromHttpToLocalUnit_Normal_url_not_starts_with_uniturl() throws Exception {
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         assertThat(
-                UriUtils.convertSchemeFromHttpToLocalUnit("http://otherhost.otherdomain/cell/"),
-                equalTo("http://otherhost.otherdomain/cell/"));
+            UriUtils.convertSchemeFromHttpToLocalUnit("http://otherhost.otherdomain/cell/"),
+            equalTo("http://otherhost.otherdomain/cell/"));
     }
 
     /**
@@ -212,11 +212,7 @@ public class UriUtilsTest {
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_is_null() throws Exception {
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
-        try {
-            UriUtils.convertSchemeFromHttpToLocalUnit(null);
-        } catch(PersoniumCoreException e) {
-            assertEquals(e.getCode(), "PR500-CM-0003");
-        }
+        assertNull(UriUtils.convertSchemeFromHttpToLocalUnit(null));
     }
 
     /**
