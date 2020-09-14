@@ -200,6 +200,20 @@ public class UriUtilsTest {
     public void convertSchemeFromHttpToLocalUnit_Normal_url_not_starts_with_uniturl() throws Exception {
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
         assertThat(
+            UriUtils.convertSchemeFromHttpToLocalUnit("http://cell.otherhost.otherdomain/"),
+            equalTo("http://cell.otherhost.otherdomain/"));
+    }
+
+    /**
+     * Test convertSchemeFromHttpToLocalUnit().
+     * normal.
+     * url not starts with uniturl.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void convertSchemeFromHttpToLocalUnit_Normal_url_not_starts_with_uniturl_and_url_is_path_base() throws Exception {
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");
+        assertThat(
             UriUtils.convertSchemeFromHttpToLocalUnit("http://otherhost.otherdomain/cell/"),
             equalTo("http://otherhost.otherdomain/cell/"));
     }
