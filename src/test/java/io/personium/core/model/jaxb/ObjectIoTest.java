@@ -11,7 +11,6 @@ import java.io.StringWriter;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
@@ -98,6 +97,7 @@ public class ObjectIoTest {
         }
         return acl;
     }
+
     @Test
     public void marshal_Acl() throws Exception {
         Acl acl = this.prepareAcl();
@@ -120,19 +120,19 @@ public class ObjectIoTest {
         Document result = db.parse(new InputSource(new StringReader(xmlStr)));
         XPath xpath = XPathFactory.newInstance().newXPath();
 
-        // ACL base Url 
+        // ACL base Url
         String base = xpath.evaluate("//acl[position()=1]/@base", result);
         log.info("//acl[position()=1]/@base = " + base);
         assertEquals(acl.getBase(), base);
-        
+
         // ACL requireSchemaAuthz
         String requiredSchemaAuthz = xpath.evaluate("//acl[position()=1]/@requireSchemaAuthz", result);
         log.info("//acl[position()=1]/@requireSchemaAuthz = " + requiredSchemaAuthz);
         assertEquals(acl.getRequireSchemaAuthz(), requiredSchemaAuthz);
-        
-        // Number of ACE's 
+
+        // Number of ACE's
         String roleHref = xpath.evaluate("count(//ace)", result);
         log.info("count(//ace) = " + roleHref);
-        assertEquals("" +acl.getAceList().size(), roleHref);
+        assertEquals("" + acl.getAceList().size(), roleHref);
     }
 }
