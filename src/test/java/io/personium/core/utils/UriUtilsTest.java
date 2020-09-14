@@ -45,7 +45,7 @@ public class UriUtilsTest {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        CommonUtils.setFQDN("unit.example");;
+        CommonUtils.setFQDN("unit.example");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_SCHEME, "https");
     }
