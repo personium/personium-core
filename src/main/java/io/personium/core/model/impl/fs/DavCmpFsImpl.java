@@ -45,7 +45,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.codec.CharEncoding;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.wink.webdav.model.Multistatus;
@@ -99,6 +98,7 @@ import io.personium.core.model.lock.Lock;
 import io.personium.core.model.lock.LockKeyComposer;
 import io.personium.core.model.lock.LockManager;
 import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.utils.FileUtils;
 
 /**
  * DavCmp implementation using FileSystem.

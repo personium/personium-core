@@ -25,7 +25,8 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-        AclTest.class
+        AclTest.class,
+        ObjectIoTest.class
     })
 public class AllTests {
 }

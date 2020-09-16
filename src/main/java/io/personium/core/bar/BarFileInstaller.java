@@ -227,8 +227,10 @@ public class BarFileInstaller {
     }
 
     private void removeBarFile(File barFile) {
-        if (barFile.exists() && !barFile.delete()) {
-            log.warn("Failed to remove bar file. [" + barFile.getAbsolutePath() + "].");
+        try {
+            Files.deleteIfExists(barFile.toPath());
+        } catch (IOException e) {
+            log.warn("Failed to remove bar file. [" + barFile.getAbsolutePath() + "].", e);
         }
     }
 

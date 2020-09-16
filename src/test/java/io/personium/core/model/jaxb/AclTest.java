@@ -58,7 +58,7 @@ public class AclTest {
     }
 
     /**
-     * toJSON_requiredSchemaAuthz_ShouldBe_MappedToKeyWithNamespacePrefix
+     * toJSON_requiredSchemaAuthz_ShouldBe_MappedToKeyWithNamespacePrefix.
      * @throws Exception
      */
     @Test
@@ -74,7 +74,7 @@ public class AclTest {
 
         // call toJSON
         JSONObject j = (JSONObject) new JSONParser().parse(acl.toJSON());
- 
+
         // requireSchemaAuthz should be mapped to the following key.
         String prsa = (String) j.get("@p.requireSchemaAuthz");
         log.info(j.toJSONString());
@@ -82,23 +82,23 @@ public class AclTest {
         // should be equal to the previously set value.
         assertEquals(requiredSchemaAuthz, prsa);
     }
-    
+
     @Test
     public void fromJSON_requiredSchemaAuthz_ShouldBeMappedTo_KeyEitherWithOrWithoutNamespacePrefix() throws Exception {
         // prepare Json expression with @p.requireSchemaAuthz key (with namespace prefix  p)
         //   new format starting from 1.7.21
         String jsonStrWithPrefix = "{\"@p.requireSchemaAuthz\":\"public\",\"@xml.base\":\"personium-localunit:foo:\\/__\\/\",\"D.ace\":[]}";
-        // call  fromJson() 
+        // call  fromJson()
         Acl acl = Acl.fromJson(jsonStrWithPrefix);
         assertEquals("public", acl.getRequireSchemaAuthz());
- 
+
         // prepare Json expression with @requireSchemaAuthz key (without namespace prefix  p)
         //   old format upto 1.7.20
         String jsonStrWithoutPrefix = "{\"@requireSchemaAuthz\":\"public\",\"@xml.base\":\"personium-localunit:foo:\\/__\\/\",\"D.ace\":[]}";
         Acl acl2 = Acl.fromJson(jsonStrWithoutPrefix);
         assertEquals("public", acl2.getRequireSchemaAuthz());
     }
-    
+
     /**
      * test toJSON method and check that requiredSchemaAuthz should be mapped to key with a name space prefix.
      * @throws Exception
@@ -113,7 +113,7 @@ public class AclTest {
         // setRequireSchemaAuthz()
         String requiredSchemaAuthz = "public";
         acl.setRequireSchemaAuthz(requiredSchemaAuthz);
-        
+
         Ace ace0 = new Ace();
         ace0.setPrincipalHref("role1");
         ace0.addGrantedPrivilege("read");
@@ -129,49 +129,49 @@ public class AclTest {
         StringWriter sw = new StringWriter();
         ObjectIo.marshal(acl, sw);
         log.info(sw.toString());
-        
+
         // call toJSON
         JSONObject j = (JSONObject) new JSONParser().parse(acl.toJSON());
         log.info(j.toJSONString());
 
         // requireSchemaAuthz should be mapped to the following key.
-        JSONArray aces = (JSONArray)j.get("D.ace");
+        JSONArray aces = (JSONArray) j.get("D.ace");
         assertEquals(2, aces.size());
-        
+
         // check 1st ace
-        JSONObject a0 = (JSONObject)aces.get(0);
+        JSONObject a0 = (JSONObject) aces.get(0);
         //    principal should be href = role1
-        JSONObject a0principal = (JSONObject)a0.get("D.principal");
-        assertEquals("role1", (String)a0principal.get("D.href"));
+        JSONObject a0principal = (JSONObject) a0.get("D.principal");
+        assertEquals("role1", (String) a0principal.get("D.href"));
         assertNull(a0principal.get("D.all"));
-        
+
         //    privilege .
-        JSONArray a0priv = (JSONArray) ((JSONObject)a0.get("D.grant")).get("D.privilege");
+        JSONArray a0priv = (JSONArray) ((JSONObject) a0.get("D.grant")).get("D.privilege");
         assertEquals(2, a0priv.size());
         JSONObject a0priv0 = (JSONObject) a0priv.get(0);
         //    D.read should be populated .
-        assertNotNull((JSONObject)a0priv0.get("D.read"));
-        assertNull((JSONObject)a0priv0.get("D.write"));
-        
+        assertNotNull((JSONObject) a0priv0.get("D.read"));
+        assertNull((JSONObject) a0priv0.get("D.write"));
+
         JSONObject a0priv1 = (JSONObject) a0priv.get(1);
         //    D.write-properties should be populated .
-        assertNotNull((JSONObject)a0priv1.get("D.write-properties"));
-        assertNull((JSONObject)a0priv1.get("D.write"));
-        
+        assertNotNull((JSONObject) a0priv1.get("D.write-properties"));
+        assertNull((JSONObject) a0priv1.get("D.write"));
+
         // check 2nd ace
-        JSONObject a1 = (JSONObject)aces.get(1);
+        JSONObject a1 = (JSONObject) aces.get(1);
         //    principal should be D.all
-        JSONObject a1principal = (JSONObject)a1.get("D.principal");
+        JSONObject a1principal = (JSONObject) a1.get("D.principal");
         assertNotNull(a1principal.get("D.all"));
         assertNull(a1principal.get("D.href"));
 
         //    privilege .
-        JSONArray a1priv = (JSONArray) ((JSONObject)a1.get("D.grant")).get("D.privilege");
+        JSONArray a1priv = (JSONArray) ((JSONObject) a1.get("D.grant")).get("D.privilege");
         assertEquals(1, a1priv.size());
         JSONObject a1priv0 = (JSONObject) a1priv.get(0);
         //    p.root should be populated .
-        assertNotNull((JSONObject)a1priv0.get("p.root"));
-        assertNull((JSONObject)a1priv0.get("D.root"));
+        assertNotNull((JSONObject) a1priv0.get("p.root"));
+        assertNull((JSONObject) a1priv0.get("D.root"));
     }
 
     /**
@@ -213,7 +213,7 @@ public class AclTest {
         Ace ace = aclToSet.aces.get(0);
         assertEquals("", ace.getPrincipalAll());
         assertNull(ace.getPrincipalHref());
-        
+
         // The ace granted privilege should be just "all"
         assertEquals(1, ace.getGrantedPrivilegeList().size());
         String priv = ace.getGrantedPrivilegeList().get(0);
