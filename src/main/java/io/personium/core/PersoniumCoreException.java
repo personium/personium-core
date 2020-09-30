@@ -1271,3 +1271,4 @@ public class PersoniumCoreException extends RuntimeException {
         }
     }
 }
+

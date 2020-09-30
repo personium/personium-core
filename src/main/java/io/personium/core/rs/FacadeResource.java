@@ -136,9 +136,12 @@ public class FacadeResource {
 
                 return new CellResource(ac, requestKey,
                         headerPersoniumEventId, headerPersoniumRuleChain, headerPersoniumVia, httpServletRequest);
-            } 
+            }
+
             // otherwise respond error
-            throw PersoniumCoreException.Common.INVALID_URL_AUTHORITY.params(accessUrlAuthority, unitAuthority + ", *." + unitAuthority);
+            throw PersoniumCoreException.Common.INVALID_URL_AUTHORITY
+                .params(accessUrlAuthority, unitAuthority + ", *." + unitAuthority);
         }
     }
 }
+
