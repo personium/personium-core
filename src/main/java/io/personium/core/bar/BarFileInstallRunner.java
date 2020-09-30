@@ -78,6 +78,7 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavCommon;
 import io.personium.core.model.ModelFactory;
+import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.Relation;
@@ -93,7 +94,6 @@ import io.personium.core.utils.UriUtils;
  * Runner that performs bar install processing.
  */
 public class BarFileInstallRunner implements Runnable {
-
     /** Logger. */
     static Logger log = LoggerFactory.getLogger(BarFileInstallRunner.class);
 
@@ -146,8 +146,8 @@ public class BarFileInstallRunner implements Runnable {
         this.barFilePath = barFilePath;
         this.entityResource = entityResource;
         this.requestKey = requestKey;
+        this.box = new Box(null, boxName, schema, null, null);
 
-        createBox(boxName, schema);
         // Since manifest.json has already been processed, subtract 1 from entryCount.
         progressInfo = new BarInstallProgressInfo(box.getCell().getId(), box.getId(), entryCount - 1);
         setEventBus();
@@ -158,10 +158,10 @@ public class BarFileInstallRunner implements Runnable {
      * @param json JSON object read from JSON file
      */
     @SuppressWarnings("unchecked")
-    private void createBox(String boxName, String schema) {
+    private void createBox() {
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("Name", boxName);
-        jsonObj.put("Schema", schema);
+        jsonObj.put(Common.P_NAME.getName(), this.box.getName());
+        jsonObj.put(Box.P_SCHEMA.getName(), this.box.getSchema());
         StringReader stringReader = new StringReader(jsonObj.toJSONString());
 
         OEntityWrapper oew = entityResource.getOEntityWrapper(stringReader,
@@ -171,9 +171,9 @@ public class BarFileInstallRunner implements Runnable {
         //Register Box
         EntityResponse res = entityResource.getOdataProducer().createEntity(Box.EDM_TYPE_NAME, oew);
 
-        //Register Dav
-        box = new Box(entityResource.getAccessContext().getCell(), oew);
-        boxCmp = ModelFactory.boxCmp(box);
+        //Update member var box and boxCmp
+        this.box = new Box(entityResource.getAccessContext().getCell(), oew);
+        this.boxCmp = ModelFactory.boxCmp(this.box);
 
         // post event
         postCellCtlCreateEvent(res);
@@ -203,6 +203,9 @@ public class BarFileInstallRunner implements Runnable {
         try (BarFile barFile = BarFile.newInstance(barFilePath)) {
             // Start install.
             writeStartProgressCache();
+
+            // Create Box entry in ElasticSearch
+            createBox();
 
             // Install cell control objects.
             ObjectMapper mapper = new ObjectMapper();
@@ -901,3 +904,4 @@ public class BarFileInstallRunner implements Runnable {
         log.info(output);
     }
 }
+
