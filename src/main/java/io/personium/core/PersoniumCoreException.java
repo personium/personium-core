@@ -1003,6 +1003,14 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException JSON_PARSE_ERROR = create("PR400-CM-0004");
         /**
+         * Invalid URL authority.
+         * <p>
+         * {0} : Given authority
+         * {1} : Configured authority
+         */
+        public static final PersoniumCoreException INVALID_URL_AUTHORITY = create("PR400-CM-0005");
+
+        /**
          * Executing API that is not allowed when the cell status is "import failed".
          */
         public static final PersoniumCoreException CELL_STATUS_IMPORT_FAILED = create("PR409-CM-0001");
@@ -1263,3 +1271,4 @@ public class PersoniumCoreException extends RuntimeException {
         }
     }
 }
+
