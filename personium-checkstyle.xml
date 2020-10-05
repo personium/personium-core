@@ -115,6 +115,7 @@
     </module>
     <module name="RegexpHeader">
         <property name="headerFile" value="${project_loc}/checkstyle.header"/>
+        <property name="multiLines" value="4"/>
         <property name="fileExtensions" value="java"/>
     </module>
     <module name="SuppressionFilter">
