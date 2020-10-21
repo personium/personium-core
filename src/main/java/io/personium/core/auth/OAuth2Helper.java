@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2019 Personium Project
+ * Copyright 2014-2020 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
