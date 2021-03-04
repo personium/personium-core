@@ -292,7 +292,7 @@ public class PersoniumEngineSvcCollectionResource {
      * @param headers header
      * @return JAX-RS Response
      */
-    @Path("{path}")
+    @Path("{path:.+}")
     @GET
     public Response relayget(@PathParam("path") String path,
             @Context final UriInfo uriInfo,
@@ -311,7 +311,7 @@ public class PersoniumEngineSvcCollectionResource {
      * @return JAX-RS Response
      */
     @WriteAPI
-    @Path("{path}")
+    @Path("{path:.+}")
     @POST
     public Response relaypost(@PathParam("path") String path,
             @Context final UriInfo uriInfo,
@@ -331,7 +331,7 @@ public class PersoniumEngineSvcCollectionResource {
      * @return JAX-RS Response
      */
     @WriteAPI
-    @Path("{path}")
+    @Path("{path:.+}")
     @PUT
     public Response relayput(@PathParam("path") String path,
             @Context final UriInfo uriInfo,
@@ -350,7 +350,7 @@ public class PersoniumEngineSvcCollectionResource {
      * @return JAX-RS Response
      */
     @WriteAPI
-    @Path("{path}")
+    @Path("{path:.+}")
     @DELETE
     public Response relaydelete(@PathParam("path") String path,
             @Context final UriInfo uriInfo,
