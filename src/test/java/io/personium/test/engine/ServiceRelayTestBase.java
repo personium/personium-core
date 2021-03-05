@@ -72,7 +72,7 @@ public abstract class ServiceRelayTestBase extends PersoniumTest {
         + "}";
 
     /** レスポンスヘッダーのチェック項目. */
-    protected static final String[] CHECK_HEADERS = {"x-baseurl",
+    private static final String[] CHECK_HEADERS = {"x-baseurl",
             "x-request-uri",
             "x-personium-fs-path",
             "x-personium-fs-routing-id",
@@ -82,10 +82,20 @@ public abstract class ServiceRelayTestBase extends PersoniumTest {
             "user-agent",
             "x-personium-requestkey"};
 
+    /**
+     * Method called when test class configures service endpoint
+     */
     abstract void configureService();
 
+    /**
+     * Method called when test class deconfigures service endpoint
+     */
     abstract void deconfigureService();
 
+    /**
+     * Method called when test class decides the endpoint to execute
+     * @return relative path in service collection to execute
+     */
     abstract String getPathToExecute();
 
     /**
