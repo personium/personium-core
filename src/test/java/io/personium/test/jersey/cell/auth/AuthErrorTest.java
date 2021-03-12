@@ -61,6 +61,27 @@ public class AuthErrorTest extends PersoniumTest {
     }
 
     /**
+     * Testing for returning 400 when unsupported grant_type is passed
+     */
+    @Test
+    public final void Returns400_WhenUnsupportedGrantTypesIsPassed() {
+        String unsupported_grant_type = "unsupported_grant_type";
+
+        TResponse passRes = Http.request("authn/auth.txt")
+                .with("remoteCell", TEST_CELL1)
+                .with("body", "grant_type=" + unsupported_grant_type)
+                .returns()
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
+
+        AuthTestCommon.checkAuthenticateHeaderNotExists(passRes);
+        String code = PersoniumCoreAuthnException.CLIENT_ASSERTION_PARSE_ERROR.getCode();
+        String message = PersoniumCoreAuthnException.CLIENT_ASSERTION_PARSE_ERROR.getMessage();
+        String errDesc = String.format("[%s] - %s", code, message);
+
+        checkErrorResponseBody(passRes, String.format(Error.UNSUPPORTED_GRANT_TYPE, unsupported_grant_type), errDesc);
+    }
+
+    /**
      * パスワード認証で不正なパスワードを指定して自分セルトークンを取得し認証フォームにエラーメッセージが出力されること.
      * @throws InterruptedException 待機失敗
      */
