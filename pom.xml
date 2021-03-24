@@ -397,7 +397,6 @@
                     </includes>
                     <excludes>
                         <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
-                        <exclude>**/engine/ServiceRelayTest.java</exclude>
                         <exclude>**/performance/**/*Test.java</exclude>
                         <!-- Tests that fail when running tests from outside for various reasons. -->
                         <!-- TODO Should be fixed so that all tests are successful. -->
