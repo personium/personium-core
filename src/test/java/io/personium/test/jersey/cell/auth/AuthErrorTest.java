@@ -74,7 +74,7 @@ public class AuthErrorTest extends PersoniumTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(passRes);
-        String code = PersoniumCoreAuthnException.CLIENT_ASSERTION_PARSE_ERROR.getCode();
+        String code = PersoniumCoreAuthnException.UNSUPPORTED_GRANT_TYPE.getCode();
         String message = PersoniumCoreAuthnException.CLIENT_ASSERTION_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
