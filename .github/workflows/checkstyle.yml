@@ -1,4 +1,4 @@
-on: pull_request
+on: pull_request_target
 
 jobs:
   checkstyle_job:
@@ -11,7 +11,7 @@ jobs:
     - name: Run java checkstyle
       # You may pin to the exact commit or the version.
       # uses: nikitasavinov/checkstyle-action@d236d4d9a3563684368581f1127f7e4773013e9d
-      uses: nikitasavinov/checkstyle-action@0.3.1
+      uses: tochi-y/checkstyle-action@master
       with:
         # GITHUB_TOKEN.
         github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -26,6 +26,8 @@ jobs:
         # Checkstyle config file
         checkstyle_config: personium-checkstyle.xml
         # Working directory relative to the root directory.
-        workdir: .
+        workdir: src/
         # Tool name to use for reviewdog reporter
         tool_name: reviewdog
+        # Properties file relative to the root directory.
+        properties_file: checkstyle_maven.properties
