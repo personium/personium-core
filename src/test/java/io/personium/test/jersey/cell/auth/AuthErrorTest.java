@@ -65,20 +65,26 @@ public class AuthErrorTest extends PersoniumTest {
      */
     @Test
     public final void Returns400_WhenUnsupportedGrantTypesIsPassed() {
-        String unsupported_grant_type = "unsupported_grant_type";
+        String unsupported_grant_type = "unsupported_grant_type_test";
 
-        TResponse passRes = Http.request("authn/auth.txt")
+        TResponse res = Http.request("authn/auth.txt")
                 .with("remoteCell", TEST_CELL1)
                 .with("body", "grant_type=" + unsupported_grant_type)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
-        AuthTestCommon.checkAuthenticateHeaderNotExists(passRes);
-        String code = PersoniumCoreAuthnException.CLIENT_ASSERTION_PARSE_ERROR.getCode();
-        String message = PersoniumCoreAuthnException.CLIENT_ASSERTION_PARSE_ERROR.getMessage();
+        AuthTestCommon.checkAuthenticateHeaderNotExists(res);
+        String code = PersoniumCoreAuthnException
+            .UNSUPPORTED_GRANT_TYPE
+            .getCode();
+        String message = PersoniumCoreAuthnException
+            .UNSUPPORTED_GRANT_TYPE
+            .params(unsupported_grant_type)
+            .getMessage();
+
         String errDesc = String.format("[%s] - %s", code, message);
 
-        checkErrorResponseBody(passRes, String.format(Error.UNSUPPORTED_GRANT_TYPE, unsupported_grant_type), errDesc);
+        checkErrorResponseBody(res, Error.UNSUPPORTED_GRANT_TYPE, errDesc);
     }
 
     /**
