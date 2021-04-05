@@ -14,7 +14,10 @@ if [ -z "$MINOR_VERSION" ]; then
 fi
 
 MINOR_VERSION=$((++MINOR_VERSION))
+
+# Rebase develop onto master branch after removing -SNAPSHOT
 git checkout develop
+git rebase master
 
 # update version in pom.xml
 sed -i \
