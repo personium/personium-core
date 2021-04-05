@@ -1,8 +1,8 @@
 /**
  * Personium
  * Copyright 2020 Personium Project Authors
- *  - Akio Shimono
- *  - FUJITSU LIMITED
+ * - Akio Shimono
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class MoveTest extends IntegrationTestBase {
         createBoxOnTestCell("box1", "https://app1.unit.example/");
     }
     @AfterClass
-    public static void tearDown() throws Exception{
+    public static void tearDown() throws Exception {
         deleteTestCell();
     }
 
@@ -73,8 +73,8 @@ public class MoveTest extends IntegrationTestBase {
         String destPath = "box1/destination.txt";
         String testFileContent = "testFileContent";
         putFileOnTestCell(orignPath, testFileContent.getBytes("utf-8"), ContentType.TEXT_PLAIN.toString());
-        
-        try(CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
+
+        try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
             // MOVE request
             HttpRequestBase req = new HttpRequestBase() {
                 @Override
@@ -89,16 +89,16 @@ public class MoveTest extends IntegrationTestBase {
             req.setHeader(HttpHeaders.DESTINATION, cellUrl + "box1/destination.txt");
 
             // Issue the request
-            try (CloseableHttpResponse resp = client.execute(req) ) {
+            try (CloseableHttpResponse resp = client.execute(req)) {
                 // should respond 201
                 int statusCode = resp.getStatusLine().getStatusCode();
                 assertEquals(201, statusCode);
-            };
-            
+            }
+
             // Confirm that the moved resource actually exists on the destination URL.
             HttpGet getReq = new HttpGet(cellUrl + destPath);
             getReq.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
-            try (CloseableHttpResponse resp = client.execute(getReq) ) {
+            try (CloseableHttpResponse resp = client.execute(getReq)) {
                 // should respond 200
                 int statusCode = resp.getStatusLine().getStatusCode();
                 assertEquals(200, statusCode);
@@ -110,7 +110,7 @@ public class MoveTest extends IntegrationTestBase {
                 String bodyStr = baos.toString("utf-8");
                 baos.close();
                 assertEquals(testFileContent, bodyStr);
-            };
+            }
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }

@@ -1,8 +1,8 @@
 /**
  * Personium
  * Copyright 2020 Personium Project Authors
- *  - Akio Shimono
- *  - FUJITSU LIMITED
+ * - Akio Shimono
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class Move_PathBasedTest extends MoveTest {
         createBoxOnTestCell("box1", "https://app1.unit.example/");
     }
     @AfterClass
-    public static void tearDown() throws Exception{
+    public static void tearDown() throws Exception {
         deleteTestCell();
     }
 }

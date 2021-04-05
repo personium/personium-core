@@ -1,3 +1,20 @@
+/**
+ * Personium
+ * Copyright 2014-2020 Personium Project Authors
+ * - FUJITSU LIMITED
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.personium.test.jersey;
 
 import static org.junit.Assert.assertEquals;
@@ -59,7 +76,7 @@ public class IntegrationTestBase {
      */
     static TestContainer testContainer;
     static AtomicReference<Client> client = new AtomicReference<>(null);
-    
+
     /**
      * Name of the test cell. null unless createTestCell() is called.
      * This value is used when deleteTestCell() is called.
@@ -89,7 +106,7 @@ public class IntegrationTestBase {
 //    @After
 //    public void tearDown() throws Exception{
 //    }
-    
+
     public void startJServer() {
         if (testContainer == null) {
             testContainer = getTestContainerFactory().create(getBaseUri(), context);
@@ -121,7 +138,7 @@ public class IntegrationTestBase {
         }
     }
 //  private static HttpServer server = null;
-    
+
 //    public static void startServer() throws IOException {
 //        if (server == null) {
 //            log.info("Initializing an instance of Grizzly Container");
@@ -131,7 +148,7 @@ public class IntegrationTestBase {
 //            //ctx.addListener("com.package.something.AServletContextListener");
 //            String unitUrl = PersoniumUnitConfig.getBaseUrl();
 //            log.info("Unit Url = [" + unitUrl + "]");
-//    
+//
 //            server = GrizzlyWebContainerFactory.create(unitUrl, Collections.singletonMap(
 //                          "jersey.config.server.provider.packages", "io.personium.core.rs"));
 //            //GrizzlyHttpServerFactory.createHttpServer(URI.create(unitUrl), rc);
@@ -148,7 +165,7 @@ public class IntegrationTestBase {
 //            server = null;
 //        }
 //    }
-    
+
     protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
         return new TestContainerFactory() {
 
@@ -188,33 +205,33 @@ public class IntegrationTestBase {
 
                     @Override
                     public void stop() {
-                        this.server.shutdownNow();;
+                        this.server.shutdownNow();
                     }
                 };
             }
         };
     }
-    
+
     /**
      * Create a cell for testing.
      * @return created cell name.
      */
     public static String createTestCell()  {
         long timestamp = new Date().getTime();
-        testCellName = "ptest" + timestamp%1000000;
+        testCellName = "ptest" + timestamp % 1000000;
         String uUrl = PersoniumUnitConfig.getBaseUrl();
 
-        try(CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
+        try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
             HttpPost req = new HttpPost(uUrl + "__ctl/Cell");
             req.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             req.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
             String ent = Json.createObjectBuilder().add("Name", testCellName).build().toString();
             req.setEntity(new StringEntity(ent));
             req.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
-            try (CloseableHttpResponse resp = client.execute(req) ) {
+            try (CloseableHttpResponse resp = client.execute(req)) {
                 int statusCode = resp.getStatusLine().getStatusCode();
                 assertEquals(201, statusCode);
-            };
+            }
             return testCellName;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
@@ -224,10 +241,10 @@ public class IntegrationTestBase {
      * Create a box on the test cell.
      * @return created box name.
      */
-    public static String createBoxOnTestCell(String boxName, String boxSchema)  {
+    public static String createBoxOnTestCell(String boxName, String boxSchema) {
         String cellUrl = PersoniumUrl.create("personium-localunit:" + testCellName + ":/").toHttp();
 
-        try(CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
+        try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
             HttpPost req = new HttpPost(cellUrl + "__ctl/Box");
             log.info("Cell Url = " + cellUrl);
 
@@ -239,10 +256,10 @@ public class IntegrationTestBase {
                     .build().toString();
             req.setEntity(new StringEntity(ent));
             req.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
-            try (CloseableHttpResponse resp = client.execute(req) ) {
+            try (CloseableHttpResponse resp = client.execute(req)) {
                 int statusCode = resp.getStatusLine().getStatusCode();
                 assertEquals(201, statusCode);
-            };
+            }
             return testCellName;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
@@ -254,7 +271,7 @@ public class IntegrationTestBase {
     public static void deleteTestCell() {
         String localunitCellUrl = "personium-localunit:" + testCellName + ":/";
         PersoniumUrl pUrl = PersoniumUrl.create(localunitCellUrl);
-        try(CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
+        try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
             HttpDelete req = new HttpDelete(pUrl.toHttp());
             req.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
             req.setHeader("X-Personium-Recursive", "true");
@@ -268,20 +285,20 @@ public class IntegrationTestBase {
      * Put a file on the test cell.
      * @return created box name.
      */
-    public static String putFileOnTestCell(String path, byte[] contents, String contentType)  {
+    public static String putFileOnTestCell(String path, byte[] contents, String contentType) {
         String cellUrl = PersoniumUrl.create("personium-localunit:" + testCellName + ":/").toHttp();
 
-        try(CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
+        try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
             HttpPut req = new HttpPut(cellUrl + path);
             log.info("Req Url = " + req.getURI().toString());
 
             req.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
             req.setEntity(new ByteArrayEntity(contents));
             req.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
-            try (CloseableHttpResponse resp = client.execute(req) ) {
+            try (CloseableHttpResponse resp = client.execute(req)) {
                 int statusCode = resp.getStatusLine().getStatusCode();
                 assertEquals(201, statusCode);
-            };
+            }
             return testCellName;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
