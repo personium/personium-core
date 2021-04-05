@@ -418,41 +418,6 @@
                     <systemPropertyVariables>
                         <jersey.test.port>9998</jersey.test.port>
                         <pcs.distribution>standard</pcs.distribution>
-                        <!-- # general configurations -->
-                        <io.personium.core.masterToken>personiumio</io.personium.core.masterToken>
-                        <io.personium.core.unitScheme>http</io.personium.core.unitScheme>
-                        <io.personium.core.unitPort>9998</io.personium.core.unitPort>
-                        <io.personium.core.unitPath></io.personium.core.unitPath>
-                        <io.personium.core.pathBasedCellUrl.enabled>true</io.personium.core.pathBasedCellUrl.enabled>
-                        <io.personium.core.unitUser.issuers>personium-localunit:/unitadmin/ personium-localunit:/unitadmincell/ personium-localunit:/unitusercell/</io.personium.core.unitUser.issuers>
-                        <!-- # cell configurations -->
-                        <io.personium.core.cell.relayhtmlurl.default>https://app-cc-home.demo.personium.io/__/index.html</io.personium.core.cell.relayhtmlurl.default>
-                        <io.personium.core.es.cluster.name>personium</io.personium.core.es.cluster.name>
-                        <io.personium.core.es.retryTimes>10</io.personium.core.es.retryTimes>
-                        <io.personium.core.plugin.path>/personium/plugins</io.personium.core.plugin.path>
-                        <io.personium.core.blobStore.root>/personium_nfs/personium-core/dav</io.personium.core.blobStore.root>
-                        <io.personium.core.bar.tmp.dir>/personium_nfs/personium-core/bar</io.personium.core.bar.tmp.dir>
-                        <io.personium.core.event.log.current.dir>/personium_nfs/personium-core/eventlog</io.personium.core.event.log.current.dir>
-                        <io.personium.core.cellSnapshot.root>/personium_nfs/personium-core/snapshot</io.personium.core.cellSnapshot.root>
-                        <!-- # lock type configurations -->
-                        <io.personium.core.lock.type>memcached</io.personium.core.lock.type>
-                        <!-- # cache configurations (memcached protocol) -->
-                        <io.personium.core.cache.type>memcached</io.personium.core.cache.type>
-                        <io.personium.core.cache.cell.enabled>true</io.personium.core.cache.cell.enabled>
-                        <io.personium.core.cache.box.enabled>true</io.personium.core.cache.box.enabled>
-                        <io.personium.core.cache.schema.enabled>true</io.personium.core.cache.schema.enabled>
-                        <!-- # security configurations -->
-                        <io.personium.core.security.secret16>gv7hpmmf5siwj5by</io.personium.core.security.secret16>
-                        <io.personium.core.security.auth.password.salt>voAbizvF</io.personium.core.security.auth.password.salt>
-                        <io.personium.core.security.dav.encrypt.enabled>false</io.personium.core.security.dav.encrypt.enabled>
-                        <!-- # Davlimit configurations -->
-                        <io.personium.core.dav.childresource.maxnum>20</io.personium.core.dav.childresource.maxnum>
-                        <io.personium.core.dav.depth.maxnum>5</io.personium.core.dav.depth.maxnum>
-                        <!-- # OData $links configurations -->
-                        <io.personium.core.odata.links.NtoN.maxnum>40</io.personium.core.odata.links.NtoN.maxnum>
-                        <io.personium.core.binaryData.fsync.enabled>false</io.personium.core.binaryData.fsync.enabled>
-                        <!-- # jenkins test setting -->
-                        <io.personium.core.engine.port>18888</io.personium.core.engine.port>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>
