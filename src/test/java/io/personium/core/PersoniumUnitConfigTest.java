@@ -83,7 +83,7 @@ public class PersoniumUnitConfigTest {
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void getBaseUrl_Noraml() throws Exception {
+    public void getBaseUrl_Normal() throws Exception {
         String testFqdn = "host.domain";
         PowerMockito.mockStatic(CommonUtils.class);
         PowerMockito.when(CommonUtils.getFQDN()).thenReturn(testFqdn);
