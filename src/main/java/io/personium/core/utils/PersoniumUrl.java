@@ -695,6 +695,17 @@ public class PersoniumUrl {
     }
 
     /**
+     * Determines if the url is Box url.
+     * The following are examples of Box urls:
+     *   - "https://cell.unit.example/box"
+     *   - "https://cell.unit.example/box/"
+     * @return true if the url is Box url; false otherwise.
+     */
+    public boolean isBoxUrl() {
+        return this.cellName != null && this.boxName != null && pathUnderBox.matches("^/?$");
+    }
+
+    /**
      * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Unit as this Url.
      * False If this or target URL is EXTERNAL / UNIT_LEVEL or below.
      * @param comparison target PersoniumUrl object to compare with

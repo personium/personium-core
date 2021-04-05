@@ -133,8 +133,9 @@ public class DavMoveResource extends DavRsCmp {
         PersoniumUrl currentUrl = PersoniumUrl.create(this.getUrl());
         try {
             PersoniumUrl destUrl = PersoniumUrl.create(this.destination);
-            if (!destUrl.isOnSameBox(currentUrl)) {
-                //If the schema and the host are different from the source and the destination, an error is assumed
+            if (!destUrl.isOnSameBox(currentUrl) || destUrl.isBoxUrl()) {
+                //If the schema and the host are different from the source and the destination,
+                //or the destination is box, an error is assumed
                 throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                         org.apache.http.HttpHeaders.DESTINATION, destination);
             }
