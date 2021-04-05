@@ -693,6 +693,17 @@ public class PersoniumUrl {
         sb.append("path under box: " + this.pathUnderBox + "\n");
         return sb.toString();
     }
+
+    /**
+     * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Unit as this Url.
+     * False If this or target URL is EXTERNAL / UNIT_LEVEL or below.
+     * @param comparison target PersoniumUrl object to compare with
+     * @return true if the given PersoniumUrl is on the same Unit as this Url.
+     */
+    public boolean isOnSameUnit(PersoniumUrl comparison) {
+        return this.unitDomain != null && this.unitDomain.equals(comparison.unitDomain);
+    }
+
     /**
      * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Cell as this Url.
      * False If this or target URL is EXTERNAL / UNIT_LEVEL or below.
@@ -700,8 +711,9 @@ public class PersoniumUrl {
      * @return true if the given PersoniumUrl is on the same Cell as this Url.
      */
     public boolean isOnSameCell(PersoniumUrl comparison) {
-        return this.cellName != null && this.cellName.equals(comparison.cellName);
+        return this.isOnSameUnit(comparison) && this.cellName != null && this.cellName.equals(comparison.cellName);
     }
+
     /**
      * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Box as this Url.
      * False If this or target URL is EXTERNAL / CELL_LEVEL or below.
