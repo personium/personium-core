@@ -265,7 +265,8 @@ public class TokenEndPointResource {
         if (pi == null) {
             // When there is no plugin.
             throw PersoniumCoreAuthnException.UNSUPPORTED_GRANT_TYPE
-                    .realm(this.cell.getUrl());
+                    .realm(this.cell.getUrl())
+                    .params(grantType);
         }
 
         AuthenticatedIdentity ai = null;
