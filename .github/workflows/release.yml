@@ -11,7 +11,6 @@ jobs:
     env:
       GITHUB_USER: personiumio
       GITHUB_TOKEN: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
-      COMPONENT: personium-core
 
     steps:
     - name: git settings
@@ -27,16 +26,40 @@ jobs:
         EOS
         git config --global user.name "Personium Bot"
         git config --global user.email "personium.io@gmail.com"
-        git clone https://github.com/personium/${COMPONENT}.git .
+        git clone https://github.com/${GITHUB_REPOSITORY}.git .
         git checkout master
+
+    - name: Get Component Name
+      run: |
+        echo "COMPONENT=$(echo $GITHUB_REPOSITORY | awk -F '/' '{ print $2 }')" >> $GITHUB_ENV
+
+    - name: Get Release Version String
+      run: |
+        echo "RELEASE_VERSION=$(cat CHANGELOG.md | grep -m 1 -E '## .+' | awk '{ print $2 }')" >> $GITHUB_ENV
 
     - name: Remove -SNAPSHOT from pom.xml on master branch
       run: |
         bash ./.github/workflows/scripts/remove-SNAPSHOT.sh
 
     - name: Create Release Note
-      run: |
-        python3 ./.github/workflows/scripts/create-release-note.py
+      run: awk '/##/{i++}i==1' CHANGELOG.md | tail +2 > ${{ github.workflow }}_CHANGELOG.md
+
+    - name: Build with maven
+      run: mvn -B package --file pom.xml -DskipTests && mv target/${{ env.COMPONENT }}.war target/${{ env.COMPONENT }}-${{ env.RELEASE_VERSION }}.war
+ 
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: "Release v${{ env.RELEASE_VERSION }}"
+        tag_name: "v${{ env.RELEASE_VERSION }}"
+        body_path: ${{ github.workflow }}_CHANGELOG.md
+        draft: True
+        files: |
+          target/${{ env.COMPONENT }}-${{ env.RELEASE_VERSION }}.war
+        prerelease: False
+    
+    - name: Delete Temporary Release Note
+      run: rm ${{ github.workflow }}_CHANGELOG.md
 
     - name: Update versions on develop branch
       run: |
