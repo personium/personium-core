@@ -138,7 +138,7 @@ public class DavMoveResource extends DavRsCmp {
                 throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                         org.apache.http.HttpHeaders.DESTINATION, destination);
             }
-            
+
         } catch (IllegalArgumentException e) {
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     org.apache.http.HttpHeaders.DESTINATION, destination);
