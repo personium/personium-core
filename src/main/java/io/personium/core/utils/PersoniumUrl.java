@@ -118,11 +118,6 @@ public class PersoniumUrl {
     public static final String REGEX_DIR = "^\\/?(.*?)($|\\/.*$)";
     /** Regular expression for matching non-directory API endpoint. */
     public static final String REGEX_CTL = "^__[a-zA-Z]+$";
-    //    public static final String REGEX_LOCALUNIT_NO_COLON = "^\\/?([^\\/]*)(\\/.*$|$)";
-
-    //    public static final Pattern REGEX_SCHEME = Pattern.compile("^([a-z|\\-]+?):(.*)(\\??.*)($|\\#?.*)$");
-    //    public static final String REGEX_HTTP_SUBDOMAIN = "^(https?|wss?):\\/\\/(.+?)\\.(.*?)(\\/.*$|$)";
-    //    public static final String REGEX_HTTP_PATH_BASE = "^(https?|wss?):\\/\\/([^\\/]+?)($|\\/.*?)($|\\/.*$)";
 
     String givenUrl;
     URI uri;
@@ -151,7 +146,11 @@ public class PersoniumUrl {
      */
     public String boxName;
     String pathUnderCell;
-    String pathUnderBox;
+    /**
+     * Property to indicate the relative url under box of this URL.
+     * null if the resource type is CELL_LEVEL/above or EXTERNAL_UNIT
+     */
+    public String pathUnderBox;
     String pathUnderUnit;
     /**
      * Property indicating if this URL is normalized form or not.
@@ -160,8 +159,8 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an object of this class.
-     * @param url String
-     * @return PersoniumUrl
+     * @param url URL string to handle with this class.
+     * @return PersoniumUrl object
      */
     public static PersoniumUrl create(String url) {
         return new PersoniumUrl(url);
@@ -169,9 +168,9 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an object of this class.
-     * @param url String
-     * @param cellName String
-     * @return PersoniumUrl
+     * @param url URL string to handle with this class.
+     * @param cellName Cell name
+     * @return PersoniumUrl object
      */
     public static PersoniumUrl create(String url, String cellName) {
         PersoniumUrl ret = new PersoniumUrl(url);
@@ -183,11 +182,11 @@ public class PersoniumUrl {
 
     /**
      * Factory method to create an URL with "personium-localunit" scheme.
-     * @param cellName String
-     * @param path String
-     * @return PersoniumUrl
+     * @param cellName Cell name
+     * @param path path under cell
+     * @return PersoniumUrl object
      */
-    public static PersoniumUrl localUnit(String cellName, String path) {
+    public static PersoniumUrl newLocalUnit(String cellName, String path) {
         return new PersoniumUrl(SCHEME_LOCALUNIT + ":" + cellName + ":" + path);
     }
 
@@ -510,7 +509,7 @@ public class PersoniumUrl {
 
     /**
      * Add trailing slash if missing.
-     * @param url String
+     * @param url input url
      * @return url with trailing slash.
      */
     public static String addTrailingSlashIfMissing(String url) {
@@ -561,15 +560,33 @@ public class PersoniumUrl {
     }
 
     /**
-     * Try to convert to a URL string with "personium-localunit" scheme.
-     * returns original url when the resourceType is EXTERNAL_UNIT or INVALID.
-     * @return an URL string representation using "personium-localunit" scheme.
+     * Try to convert to a URL string with "personium-localcell" scheme.
+     * returns original url when the resourceType is EXTERNAL_UNIT, INVALID, or below CELL_ROOT.
+     * @return an URL string representation using "personium-localcell" scheme.
      */
     public String toLocalcell() {
         if (this.resourceType == ResourceType.EXTERNAL_UNIT) {
             return this.givenUrl;
         }
         StringBuilder sb = new StringBuilder(SCHEME_LOCALCELL);
+        sb.append(":");
+        if (this.pathUnderCell != null) {
+            sb.append(this.pathUnderCell);
+        } else {
+            sb.append("/");
+        }
+        return sb.toString();
+    }
+    /**
+     * Try to convert to a URL string with "personium-localbox" scheme.
+     * returns original url when the resourceType is EXTERNAL_UNIT, INVALID or below BOX_ROOT.
+     * @return an URL string representation using "personium-localbox" scheme.
+     */
+    public String toLocalBox() {
+        if (!(this.resourceType == ResourceType.BOX_LEVEL || this.resourceType == ResourceType.BOX_ROOT)) {
+            return this.givenUrl;
+        }
+        StringBuilder sb = new StringBuilder(SCHEME_LOCALBOX);
         sb.append(":");
         if (this.pathUnderBox != null) {
             sb.append(this.pathUnderBox);
@@ -652,47 +669,6 @@ public class PersoniumUrl {
         return sb.toString();
     }
 
-    /**
-     *
-     * @deprecated
-     * @return
-     */
-    public String normalize() {
-        PersoniumUrl clone = PersoniumUrl.create(this.givenUrl);
-
-        // normalize the path part
-        clone.pathUnderBox = normalizePath(this.pathUnderBox);
-        clone.pathUnderCell = normalizePath(this.pathUnderCell);
-        clone.pathUnderUnit = normalizePath(this.pathUnderUnit);
-
-        // add trailing slash for unit / cell / box root
-        switch (this.resourceType) {
-        case BOX_ROOT:
-            clone.pathUnderBox = "/";
-        case CELL_ROOT:
-            clone.pathUnderCell = addTrailingSlashIfMissing(clone.pathUnderCell);
-        case UNIT_ROOT:
-            clone.pathUnderUnit = addTrailingSlashIfMissing(clone.pathUnderUnit);
-            break;
-        default:
-        }
-        // log.info(clone.toString());
-        switch (this.schemeType) {
-        case HTTP:
-            return clone.toHttp();
-        case LOCAL_UNIT_DOUBLE_COLON:
-            return clone.toLocalunit();
-        case LOCAL_UNIT_SINGLE_COLON:
-            return clone.toLocalunit();
-        case LOCAL_CELL:
-            return clone.toLocalunit();
-        case LOCAL_BOX:
-            return clone.toLocalunit();
-        default:
-            return clone.toLocalunit();
-        }
-    }
-
     static String normalizePath(String path) {
         if (path == null) {
             return null;
@@ -702,7 +678,8 @@ public class PersoniumUrl {
     }
 
     /**
-     * toString.
+     * Creates a string explaining the status of the object for debug use.
+     * @return a string explaining the status of the object.
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -715,5 +692,46 @@ public class PersoniumUrl {
         sb.append("path under cell: " + this.pathUnderCell + "\n");
         sb.append("path under box: " + this.pathUnderBox + "\n");
         return sb.toString();
+    }
+
+    /**
+     * Determines if the url is Box url.
+     * The following are examples of Box urls:
+     *   - "https://cell.unit.example/box"
+     *   - "https://cell.unit.example/box/"
+     * @return true if the url is Box url; false otherwise.
+     */
+    public boolean isBoxUrl() {
+        return this.cellName != null && this.boxName != null && pathUnderBox.matches("^/?$");
+    }
+
+    /**
+     * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Unit as this Url.
+     * False If this or target URL is EXTERNAL / UNIT_LEVEL or below.
+     * @param comparison target PersoniumUrl object to compare with
+     * @return true if the given PersoniumUrl is on the same Unit as this Url.
+     */
+    public boolean isOnSameUnit(PersoniumUrl comparison) {
+        return this.unitDomain != null && this.unitDomain.equals(comparison.unitDomain);
+    }
+
+    /**
+     * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Cell as this Url.
+     * False If this or target URL is EXTERNAL / UNIT_LEVEL or below.
+     * @param comparison target PersoniumUrl object to compare with
+     * @return true if the given PersoniumUrl is on the same Cell as this Url.
+     */
+    public boolean isOnSameCell(PersoniumUrl comparison) {
+        return this.isOnSameUnit(comparison) && this.cellName != null && this.cellName.equals(comparison.cellName);
+    }
+
+    /**
+     * Compare another PersoniumUrl object and return true if the given PersoniumUrl is on the same Box as this Url.
+     * False If this or target URL is EXTERNAL / CELL_LEVEL or below.
+     * @param comparison target PersoniumUrl object to compare with
+     * @return true if the given PersoniumUrl is on the same Box as this Url.
+     */
+    public boolean isOnSameBox(PersoniumUrl comparison) {
+        return this.isOnSameCell(comparison) && this.boxName != null && this.boxName.equals(comparison.boxName);
     }
 }

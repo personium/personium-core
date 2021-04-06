@@ -17,11 +17,12 @@
  */
 package io.personium.core.model;
 
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.utils.PersoniumUrl;
 import io.personium.core.PersoniumCoreException;
 
 /**
@@ -31,21 +32,17 @@ public class DavDestination {
 
     private DavRsCmp destinationRsCmp = null;
     private int destinationHierarchyNumber = 0; //Number of hierarchies to move to
-    private DavPath destinationPath = null;
     private DavRsCmp boxRsCmp = null; //box information
-    private String destinationUri = null;
+    PersoniumUrl destUrl;
 
     /**
      * constructor.
      * @param destinationUriString String indicating the destination path
-     * @param baseUriString String indicating base URI
      * @param box Box information on the destination
      * @throws URISyntaxException URI parse error
      */
-    public DavDestination(String destinationUriString, String baseUriString, DavRsCmp box) throws URISyntaxException {
-        destinationUri = destinationUriString;
-        URI destUri = new URI(destinationUriString);
-        destinationPath = new DavPath(destUri, baseUriString);
+    public DavDestination(String destinationUriString, DavRsCmp box) throws URISyntaxException {
+        this.destUrl = PersoniumUrl.create(destinationUriString);
         boxRsCmp = box;
     }
 
@@ -54,7 +51,7 @@ public class DavDestination {
      * @return Uri string to move to
      */
     public String getDestinationUri() {
-        return destinationUri;
+        return destUrl.toHttp();
     }
 
     /**
@@ -79,7 +76,7 @@ public class DavDestination {
      * @param davCmp DavCmp of source resource
      */
     public void validateDestinationResource(String overwrite, DavCmp davCmp) {
-        List<String> destinationPaths = this.destinationPath.getResourcePath();
+        List<String> destinationPaths = Arrays.asList(this.destUrl.pathUnderBox.split("/"));
         DavCmp currentCmp =  this.destinationRsCmp.getDavCmp();
         DavCmp parentCmp = this.destinationRsCmp.getParent().getDavCmp();
 
@@ -140,7 +137,6 @@ public class DavDestination {
             String sourceResourceType) {
         if (currentCmp.exists()) {
             //Check required if you are about to overwrite the destination resource
-
             if (DavCommon.OVERWRITE_FALSE.equalsIgnoreCase(overwrite)) {
                 //When F is specified in the Overwrite header, it is an error because it can not be overwritten
                 throw PersoniumCoreException.Dav.DESTINATION_ALREADY_EXISTS;
@@ -184,9 +180,9 @@ public class DavDestination {
      */
     public void loadDestinationHierarchy() {
         //Check whether the destination path exists from the highest level to the lowest level
-        List<String> destinationPaths = this.destinationPath.getResourcePath();
+        List<String> destinationPaths = Arrays.asList(this.destUrl.pathUnderBox.split("/"));
         DavRsCmp parentRsCmp = boxRsCmp;
-        DavRsCmp currentRsCmp = null;
+        DavRsCmp currentRsCmp = boxRsCmp;
         int pathIndex;
         for (pathIndex = 0; pathIndex < destinationPaths.size(); pathIndex++) {
             DavCmp parentCmp = parentRsCmp.getDavCmp();
