@@ -14,6 +14,7 @@ if [ -z "$MINOR_VERSION" ]; then
 fi
 
 MINOR_VERSION=$((++MINOR_VERSION))
+git checkout develop
 
 # Rebase develop onto master branch after removing -SNAPSHOT
 git checkout develop
