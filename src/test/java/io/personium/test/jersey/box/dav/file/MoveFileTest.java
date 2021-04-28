@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2020 Personium Project Authors
+ * Copyright 2014-2021 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -774,7 +774,8 @@ public class MoveFileTest extends PersoniumTest {
             // Request Execution
             PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
+                HttpHeaders.DESTINATION, destination);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
