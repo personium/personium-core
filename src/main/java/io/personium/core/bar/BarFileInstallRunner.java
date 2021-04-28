@@ -102,6 +102,8 @@ public class BarFileInstallRunner implements Runnable {
     /** personium-localbox:/ non slash. */
     private static final String LOCALBOX_NO_SLASH = SCHEME_LOCALBOX + ":";
 
+    /** Install target cell. */
+    private Cell cell;
     /** Install target box. */
     private Box box;
     /** Install target boxCmp. */
@@ -146,10 +148,11 @@ public class BarFileInstallRunner implements Runnable {
         this.barFilePath = barFilePath;
         this.entityResource = entityResource;
         this.requestKey = requestKey;
-        this.box = new Box(null, boxName, schema, null, null);
+        this.cell = entityResource.getAccessContext().getCell();
+        this.box = new Box(null, boxName, schema, null, 0L);
 
         // Since manifest.json has already been processed, subtract 1 from entryCount.
-        progressInfo = new BarInstallProgressInfo(box.getCell().getId(), box.getId(), entryCount - 1);
+        progressInfo = new BarInstallProgressInfo(this.cell.getId(), box.getId(), entryCount - 1);
         setEventBus();
     }
 
@@ -172,7 +175,7 @@ public class BarFileInstallRunner implements Runnable {
         EntityResponse res = entityResource.getOdataProducer().createEntity(Box.EDM_TYPE_NAME, oew);
 
         //Update member var box and boxCmp
-        this.box = new Box(entityResource.getAccessContext().getCell(), oew);
+        this.box = new Box(this.cell, oew);
         this.boxCmp = ModelFactory.boxCmp(this.box);
 
         // post event
@@ -192,7 +195,7 @@ public class BarFileInstallRunner implements Runnable {
                 .object(object)
                 .info(result)
                 .requestKey(this.requestKey);
-        eventBus = box.getCell().getEventBus();
+        eventBus = this.cell.getEventBus();
     }
 
     /**
