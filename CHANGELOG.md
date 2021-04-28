@@ -1,3 +1,25 @@
+## 1.7.22
+IMPROVEMENTS:
+* Implement for relaying request of dynamic path service execution ([#593](https://github.com/personium/personium-core/issues/593))
+* Use java 7+ nio file APIs for more flexible and precise File handling ([#579](https://github.com/personium/personium-core/issues/579))
+* Should respond error when accessed via domain name different from the one configured in Unit Certificate ([#535](https://github.com/personium/personium-core/issues/535))
+* Update elasticsearch version 6.8.15 ([#602](https://github.com/personium/personium-core/issues/602))
+
+BUG FIXES:
+* WebDAV MOVE fails on subdomain-based mode ([#553](https://github.com/personium/personium-core/issues/553))
+* Box metadata falsely returns "ready" at the initial instant of bar installation ([#574](https://github.com/personium/personium-core/issues/574))
+* Unit test case ObjectIoTest.marshal_Acl failed when PathBasedCellUrl is enabled. ([#581](https://github.com/personium/personium-core/issues/581))
+* Modifying error message for unsupported grant type ([#595](https://github.com/personium/personium-core/issues/595))
+
+MISC:
+* Implementing multi-stage Dockerfile ([#594](https://github.com/personium/personium-core/issues/594))
+* Update checkstyle version and check rules
+* Updating forkflow scripts for Releasing ([#599](https://github.com/personium/personium-core/issues/599))
+* move properties from pom to src/test/resources  ([#601](https://github.com/personium/personium-core/issues/601))
+
+NOTES:
+* Use personium-engine 1.5.28 for this version of personium-core
+
 ## 1.7.21
 BREAKING CHANGES:
 * Exported bar file now does not use a "personium-localunit:" URL ([#512](https://github.com/personium/personium-core/issues/512))
