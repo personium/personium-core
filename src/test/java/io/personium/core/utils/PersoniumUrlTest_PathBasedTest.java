@@ -12,12 +12,12 @@ import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.utils.PersoniumUrl.ResourceType;
 
-public class PersoniumUrlTest_PathBasedTest extends PersoniumUrlTest{
+public class PersoniumUrlTest_PathBasedTest extends PersoniumUrlTest {
 
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        CommonUtils.setFQDN("unit.example");;
+        CommonUtils.setFQDN("unit.example");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "");
         PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_SCHEME, "https");
         PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "true");

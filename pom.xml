@@ -3,7 +3,7 @@
     <groupId>io.personium</groupId>
     <artifactId>personium-core</artifactId>
     <packaging>war</packaging>
-    <version>1.7.21</version>
+    <version>1.7.22-SNAPSHOT</version>
     <name>personium-core Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <licenses>
@@ -22,7 +22,7 @@
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
         <httpclient.version>4.5.5</httpclient.version>
-        <jackson.version>2.9.10.3</jackson.version>
+        <jackson.version>2.10.0.pr1</jackson.version>
         <jacoco.include.package>io.personium.*</jacoco.include.package>
         <activemq.version>5.15.9</activemq.version>
         <kafka.version>1.1.1</kafka.version>
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-es-adapter</artifactId>
-            <version>1_es6.6.1_5</version>
+            <version>1_es6.8.15_1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
@@ -139,7 +139,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4</version>
+            <version>2.7</version>
         </dependency>
         <dependency>
             <groupId>commons-net</groupId>
@@ -184,14 +184,14 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>28.1-jre</version>
+            <version>30.1.1-jre</version>
         </dependency>
 
         <!-- For test. -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -397,7 +397,6 @@
                     </includes>
                     <excludes>
                         <exclude>**/revproxy/AcceptEncodingTest.java</exclude>
-                        <exclude>**/engine/ServiceRelayTest.java</exclude>
                         <exclude>**/performance/**/*Test.java</exclude>
                         <!-- Tests that fail when running tests from outside for various reasons. -->
                         <!-- TODO Should be fixed so that all tests are successful. -->
@@ -419,13 +418,6 @@
                     <systemPropertyVariables>
                         <jersey.test.port>9998</jersey.test.port>
                         <pcs.distribution>standard</pcs.distribution>
-                        <io.personium.core.lock.type>memcached</io.personium.core.lock.type>
-                        <io.personium.core.cache.type>memcached</io.personium.core.cache.type>
-                        <io.personium.core.cache.cell.enabled>true</io.personium.core.cache.cell.enabled>
-                        <io.personium.core.cache.box.enabled>true</io.personium.core.cache.box.enabled>
-                        <io.personium.core.cache.schema.enabled>true</io.personium.core.cache.schema.enabled>
-                        <io.personium.core.binaryData.fsync.enabled>false</io.personium.core.binaryData.fsync.enabled>
-                        <io.personium.core.security.secret16>gv7hpmmf5siwj5by</io.personium.core.security.secret16>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>
@@ -477,7 +469,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.2</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <configLocation>personium-checkstyle.xml</configLocation>
@@ -561,7 +553,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.2</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <configLocation>personium-checkstyle.xml</configLocation>

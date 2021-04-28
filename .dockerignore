@@ -1,0 +1,13 @@
+.github
+.gitattributes
+.gitignore
+
+.checkstyle
+checkstyle_maven.properties
+checkstyle-suppressions.xml
+
+findbugs-exclude.xml
+formatter.xml
+personium-checks.xml
+personium-checkstyle.xml
+README.md

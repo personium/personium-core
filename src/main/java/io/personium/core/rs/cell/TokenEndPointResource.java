@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2019 FUJITSU LIMITED
+ * Copyright 2019-2021 Personium Project Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -265,7 +265,8 @@ public class TokenEndPointResource {
         if (pi == null) {
             // When there is no plugin.
             throw PersoniumCoreAuthnException.UNSUPPORTED_GRANT_TYPE
-                    .realm(this.cell.getUrl());
+                    .realm(this.cell.getUrl())
+                    .params(grantType);
         }
 
         AuthenticatedIdentity ai = null;

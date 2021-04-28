@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2021 Personium Project Authors
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +64,7 @@ public class MoveFileTest extends PersoniumTest {
     private static final String FILE_BODY = "testFileBody";
 
     /**
-     * コンストラクタ.
+     * Constructor.
      */
     public MoveFileTest() {
         super(new PersoniumCoreApplication());
@@ -96,7 +97,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, destFileName);
         final String svcColName = "svcColforMOVE";
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createServiceCollection(AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED,
                     CELL_NAME, BOX_NAME, svcColName);
 
@@ -259,7 +260,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destPath = "destResource";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, destPath);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED,
                     CELL_NAME, BOX_NAME, colName);
             String sourcePath = BOX_NAME + "/" + colName + "/" + FILE_NAME;
@@ -303,7 +304,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destPath = "destResource";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, destPath);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, colName);
             String sourcePath = BOX_NAME + "/" + colName + "/" + FILE_NAME;
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
@@ -343,7 +344,7 @@ public class MoveFileTest extends PersoniumTest {
     public final void FileのMOVEでDestinationヘッダの値がリクエストURLと同じ場合に403エラーとなること() {
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, FILE_NAME);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -374,7 +375,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destination = String.format("%s://%s/%s/%s/%s",
                 PersoniumUnitConfig.getUnitScheme(), "fqdn", CELL_NAME, BOX_NAME, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -403,7 +404,7 @@ public class MoveFileTest extends PersoniumTest {
     public final void FileのMOVEでDestinationヘッダにBaseURLを指定した場合に400エラーとなること() {
         final String destination = UrlUtils.getBaseUrl();
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -433,7 +434,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box("another_cell", BOX_NAME, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -463,7 +464,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box(CELL_NAME, "another_box", destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -493,7 +494,7 @@ public class MoveFileTest extends PersoniumTest {
         final String colName = "svcColforMOVE";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, colName, FILE_NAME);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             DavResourceUtils.createServiceCollection(AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED,
@@ -527,7 +528,7 @@ public class MoveFileTest extends PersoniumTest {
         final String colName = "svcColforMOVE";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, colName, "__src", FILE_NAME);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             DavResourceUtils.createServiceCollection(AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED,
@@ -558,7 +559,7 @@ public class MoveFileTest extends PersoniumTest {
         String invalidColName = "invalidCol";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, invalidColName, FILE_NAME);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -588,7 +589,7 @@ public class MoveFileTest extends PersoniumTest {
         String invalidColName = "invalidCol";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, colName, invalidColName, FILE_NAME);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED,
@@ -619,7 +620,7 @@ public class MoveFileTest extends PersoniumTest {
     public final void FileのMOVEでDestinationヘッダに存在しないCellのURLを指定した場合に400エラーとなること() {
         final String destination = UrlUtils.cellRoot("dummyTestCellForMove");
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -648,7 +649,7 @@ public class MoveFileTest extends PersoniumTest {
     public final void FileのMOVEでDestinationヘッダに存在しないBoxのURLを指定した場合に400エラーとなること() {
         final String destination = UrlUtils.boxRoot(CELL_NAME, "dummyTestBoxForMove");
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -688,7 +689,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destPath = "destResource";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, destPath);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED,
                     CELL_NAME, BOX_NAME, colName);
             String sourcePath = BOX_NAME + "/" + colName + "/" + FILE_NAME;
@@ -731,7 +732,7 @@ public class MoveFileTest extends PersoniumTest {
     public final void FileのMOVEでDestinationヘッダに存在するCellのURLを指定した場合に400エラーとなること() {
         final String destination = UrlUtils.cellRoot(CELL_NAME);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -760,21 +761,21 @@ public class MoveFileTest extends PersoniumTest {
     public final void FileのMOVEでDestinationヘッダに存在するBoxのURLを指定した場合に400エラーとなること() {
         final String destination = UrlUtils.boxRoot(CELL_NAME, BOX_NAME);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
-            // Fileの移動
+            // Move a File
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, FILE_NAME);
             PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
 
-            // リクエスト実行
+            // Request Execution
             PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
-                    HttpHeaders.DESTINATION, destination);
+                HttpHeaders.DESTINATION, destination);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -791,7 +792,7 @@ public class MoveFileTest extends PersoniumTest {
         final String colName = "davColforMOVE";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, colName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED,
@@ -823,7 +824,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "file2.txt";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
@@ -855,7 +856,7 @@ public class MoveFileTest extends PersoniumTest {
         final String parentFileName = "parent_file";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, parentFileName, FILE_NAME);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
@@ -888,7 +889,7 @@ public class MoveFileTest extends PersoniumTest {
         final String colName = "svcColforMOVE";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, colName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             DavResourceUtils.createServiceCollection(AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED,
@@ -920,7 +921,7 @@ public class MoveFileTest extends PersoniumTest {
         final String colName = "svcColforMOVE";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, colName, "__src");
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             DavResourceUtils.createServiceCollection(AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED,
@@ -953,7 +954,7 @@ public class MoveFileTest extends PersoniumTest {
     public final void FileのMOVEで移動先が存在するODataコレクションの場合400エラーとなること() {
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -981,7 +982,7 @@ public class MoveFileTest extends PersoniumTest {
     public final void FileのMOVEで移動先が存在するODataコレクション配下のファイルの場合400エラーとなること() {
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA) + "/" + FILE_NAME;
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -1011,7 +1012,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -1054,7 +1055,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
 
@@ -1097,7 +1098,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
@@ -1129,7 +1130,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
@@ -1171,7 +1172,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, colName, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, colName);
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + colName + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
@@ -1218,7 +1219,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, colName, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, colName);
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + colName + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
@@ -1264,7 +1265,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, colName, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, colName);
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + colName + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
@@ -1309,7 +1310,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, colName, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, colName);
             DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + colName + "/" + FILE_NAME, FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
@@ -1360,7 +1361,7 @@ public class MoveFileTest extends PersoniumTest {
         final String destFileName = "destFile.txt";
         final String destination = UrlUtils.box(CELL_NAME, BOX_NAME, dstColName1, dstColName2, destFileName);
         try {
-            // 事前準備
+            // Preparation
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, srcColName1);
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME,
                     srcColName1 + "/" + srcColName2);

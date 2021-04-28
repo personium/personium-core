@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2018 Personium Project
+ * Copyright 2014-2021 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -868,6 +868,21 @@ public class PersoniumUnitConfig {
             port = -1;
         }
         return port;
+    }
+    /**
+     * Returns the URL authority of the Unit.
+     * For path-based cell URL mode, this will be the only allowable authority.
+     * For sub-domain-based cell URL mode, this and its sub-domain FQDN will be allowed.
+     * @return URL authority of the Unit.
+     */
+    public static String getUnitAuthority() {
+        String ret = CommonUtils.getFQDN();
+        int p = getUnitPort();
+        if (p == -1) {
+            return ret;
+        }
+        ret = ret + ":" + p;
+        return ret;
     }
 
     /**

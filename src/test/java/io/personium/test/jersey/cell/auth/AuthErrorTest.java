@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2021 Personium Project Authors
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +58,33 @@ public class AuthErrorTest extends PersoniumTest {
      */
     public AuthErrorTest() {
         super(new PersoniumCoreApplication());
+    }
+
+    /**
+     * Testing for returning 400 when unsupported grant_type is passed
+     */
+    @Test
+    public final void Returns400_WhenUnsupportedGrantTypesIsPassed() {
+        String unsupported_grant_type = "unsupported_grant_type_test";
+
+        TResponse res = Http.request("authn/auth.txt")
+                .with("remoteCell", TEST_CELL1)
+                .with("body", "grant_type=" + unsupported_grant_type)
+                .returns()
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
+
+        AuthTestCommon.checkAuthenticateHeaderNotExists(res);
+        String code = PersoniumCoreAuthnException
+            .UNSUPPORTED_GRANT_TYPE
+            .getCode();
+        String message = PersoniumCoreAuthnException
+            .UNSUPPORTED_GRANT_TYPE
+            .params(unsupported_grant_type)
+            .getMessage();
+
+        String errDesc = String.format("[%s] - %s", code, message);
+
+        checkErrorResponseBody(res, Error.UNSUPPORTED_GRANT_TYPE, errDesc);
     }
 
     /**

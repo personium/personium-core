@@ -1,6 +1,7 @@
 /**
  * Personium
- * Copyright 2014-2019 FUJITSU LIMITED
+ * Copyright 2014-2021 Personium Project Authors
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -227,8 +228,10 @@ public class BarFileInstaller {
     }
 
     private void removeBarFile(File barFile) {
-        if (barFile.exists() && !barFile.delete()) {
-            log.warn("Failed to remove bar file. [" + barFile.getAbsolutePath() + "].");
+        try {
+            Files.deleteIfExists(barFile.toPath());
+        } catch (IOException e) {
+            log.warn("Failed to remove bar file. [" + barFile.getAbsolutePath() + "].", e);
         }
     }
 

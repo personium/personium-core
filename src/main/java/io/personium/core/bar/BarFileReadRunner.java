@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014-2018 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2021 Personium Project Authors
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -333,8 +335,10 @@ public class BarFileReadRunner implements Runnable {
             this.progressInfo.setEndTime();
             writeToProgressCache(true);
             IOUtils.closeQuietly(this.zipArchiveInputStream);
-            if (this.barFile.exists() && !this.barFile.delete()) {
-                log.warn("Failed to remove bar file. [" + this.barFile.getAbsolutePath() + "].");
+            try {
+                Files.deleteIfExists(this.barFile.toPath());
+            } catch (IOException e) {
+                log.warn("Failed to remove bar file. [" + this.barFile.getAbsolutePath() + "].", e);
             }
         }
     }

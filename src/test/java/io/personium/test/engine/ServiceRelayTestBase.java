@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2021 Personium Project Authors
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,11 +45,11 @@ import io.personium.test.utils.TResponse;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Integration.class, Regression.class })
-public class ServiceRelayTest extends PersoniumTest {
+public abstract class ServiceRelayTestBase extends PersoniumTest {
     /**
      * コンストラクタ.
      */
-    public ServiceRelayTest() {
+    public ServiceRelayTestBase() {
         super(new PersoniumCoreApplication());
     }
 
@@ -73,39 +74,36 @@ public class ServiceRelayTest extends PersoniumTest {
     /** レスポンスヘッダーのチェック項目. */
     private static final String[] CHECK_HEADERS = {"x-baseurl",
             "x-request-uri",
-            "x-dc-es-index",
-            "x-dc-es-id",
-            "x-dc-es-type",
+            "x-personium-fs-path",
+            "x-personium-fs-routing-id",
             "host",
             "connection",
             "authorization",
             "user-agent",
-            "X-Personium-RequestKey"};
+            "x-personium-requestkey"};
+
+    /**
+     * Method called when test class configures service endpoint
+     */
+    abstract void configureService();
+
+    /**
+     * Method called when test class deconfigures service endpoint
+     */
+    abstract void deconfigureService();
+
+    /**
+     * Method called when test class decides the endpoint to execute
+     * @return relative path in service collection to execute
+     */
+    abstract String getPathToExecute();
 
     /**
      * 事前準備.
      */
     @Before
     public final void before() {
-        // PropPatch サービス設定の登録
-        Http.request("box/proppatch-set-service.txt")
-                .with("path", "service_relay")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("name", "relay")
-                .with("src", "relay.js")
-                .returns()
-                .statusCode(HttpStatus.SC_MULTI_STATUS);
-
-        // WebDAV サービスリソースの登録
-        Http.request("box/dav-put.txt")
-                .with("cellPath", "testcell1")
-                .with("path", "service_relay/__src/relay.js")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("box", "box1")
-                .with("contentType", "text/javascript")
-                .with("source", SOURCE)
-                .returns()
-                .statusCode(HttpStatus.SC_CREATED);
+        this.configureService();
     }
 
     /**
@@ -113,14 +111,7 @@ public class ServiceRelayTest extends PersoniumTest {
      */
     @After
     public final void after() {
-        // WebDAV サービスリソースの削除
-        Http.request("box/dav-delete.txt")
-                .with("cellPath", "testcell1")
-                .with("path", "service_relay/__src/relay.js")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("box", "box1")
-                .returns()
-                .statusCode(HttpStatus.SC_NO_CONTENT);
+        this.deconfigureService();
     }
 
     /**
@@ -209,15 +200,26 @@ public class ServiceRelayTest extends PersoniumTest {
     }
 
     /**
-     * レスポンスのチェック.
+     * Execute service with checking result status code.
      */
     private void exexServiceWithCheck(String method, String body, String query) {
+        execServiceWithCheck(method, this.getPathToExecute(), body, query);
+    }
+
+    /**
+     * Execute service with checking status code
+     * @param method
+     * @param path
+     * @param body
+     * @param query
+     */
+    private void execServiceWithCheck(String method, String path, String body, String query) {
         // リクエストの実行
         String requestQuery = "";
         if (query.length() != 0) {
             requestQuery = "?" + query;
         }
-        TResponse response = execService(method, body, requestQuery, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK);
+        TResponse response = execService(method, path, body, requestQuery, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK);
 
         // レスポンスのチェック
         JSONObject checkObj = response.bodyAsJson();
@@ -225,23 +227,38 @@ public class ServiceRelayTest extends PersoniumTest {
         assertEquals((String) checkObj.get("body"), body);
         assertEquals((String) checkObj.get("query"), query);
         JSONObject headerObj = (JSONObject) checkObj.get("header");
+        System.out.println(headerObj);
         for (String key : CHECK_HEADERS) {
             assertNotNull(headerObj.get(key));
         }
     }
 
     /**
-     * サービスリクエストを実行する.
-     * @param method リクエストメソッド
-     * @param body リクエストボディ
-     * @param requestQuery リクエストクエリ
-     * @param token 認証トークン
-     * @param code 期待するレスポンスコード
+     * Function for send service request
+     * @param method Method of request
+     * @param body Request body
+     * @param requestQuery Request query
+     * @param token authentication token
+     * @param code expected status code of response
      * @return
      */
     private TResponse execService(String method, String body, String requestQuery, String token, int code) {
+        return execService(method, this.getPathToExecute(), body, requestQuery, token, code);
+    }
+
+    /**
+     * Function for send service request
+     * @param method Method of request
+     * @param path Request path
+     * @param body Request body
+     * @param requestQuery Request query
+     * @param token authentication token
+     * @param code expected status code of response
+     * @return
+     */
+    protected TResponse execService(String method, String path, String body, String requestQuery, String token, int code) {
         TResponse response = Http.request("box/service-exec.txt")
-                .with("path", "service_relay/relay")
+                .with("path", path)
                 .with("token", token)
                 .with("method", method)
                 .with("body", body)

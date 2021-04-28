@@ -1,0 +1,33 @@
+on: pull_request_target
+
+jobs:
+  checkstyle_job:
+    runs-on: ubuntu-latest
+    name: Checkstyle job
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Run java checkstyle
+      # You may pin to the exact commit or the version.
+      # uses: nikitasavinov/checkstyle-action@d236d4d9a3563684368581f1127f7e4773013e9d
+      uses: tochi-y/checkstyle-action@master
+      with:
+        # GITHUB_TOKEN.
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        # Report level for reviewdog [info,warning,error]
+        level: info
+        # Reporter of reviewdog command [github-pr-check,github-pr-review]
+        reporter: github-pr-check
+        # Filtering for the reviewdog command [added,diff_context,file,nofilter]. Default is `added`.
+        filter_mode: added
+        # Exit code for reviewdog when errors are found [true,false] Default is `false`.
+        fail_on_error: false
+        # Checkstyle config file
+        checkstyle_config: personium-checkstyle.xml
+        # Working directory relative to the root directory.
+        workdir: src/
+        # Tool name to use for reviewdog reporter
+        tool_name: reviewdog
+        # Properties file relative to the root directory.
+        properties_file: checkstyle_maven.properties

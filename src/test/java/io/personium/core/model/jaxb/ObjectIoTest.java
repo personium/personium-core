@@ -11,7 +11,6 @@ import java.io.StringWriter;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
@@ -22,6 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+
+import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.utils.CommonUtils;
+import io.personium.core.PersoniumUnitConfig;
 
 /**
  * Unit Test class for ObjectIo class.
@@ -42,12 +45,20 @@ public class ObjectIoTest {
             + "<grant><privilege><read/></privilege></grant>"
             + "</ace>"
             + "</acl>";
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+        CommonUtils.setFQDN("unit.example");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_PORT, "");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.UNIT_SCHEME, "https");
+        PersoniumUnitConfig.set(PersoniumUnitConfig.PATH_BASED_CELL_URL_ENABLED, "false");
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
+        PersoniumUnitConfig.reload();
+        TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
+            PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
     }
 
     @Test
@@ -78,7 +89,7 @@ public class ObjectIoTest {
         assertEquals(1, ace2.getGrantedPrivilegeList().size());
     }
 
-    public Acl prepareAcl() {
+    private Acl prepareAcl() {
         Acl acl = new Acl();
         acl.setRequireSchemaAuthz("public");
         acl.setBase("https://cell.unit.example/__role/__/");
@@ -98,41 +109,46 @@ public class ObjectIoTest {
         }
         return acl;
     }
-    @Test
-    public void marshal_Acl() throws Exception {
-        Acl acl = this.prepareAcl();
+
+    private void printDebugInfo(Acl acl) {
         String jsonStr = acl.toJSON();
-
         log.info(jsonStr.replaceAll(",", ",\n"));
-        //        log.info("-----------");
+    }
 
-        Acl acl2 = Acl.fromJson(jsonStr);
-        StringWriter sw = new StringWriter();
-
-        // Target method call
-        ObjectIo.marshal(acl2, sw);
+    private Document getXMLDocument(StringWriter sw) throws Exception {
         String xmlStr = sw.toString();
         log.info(xmlStr.replaceAll("><", ">\n<"));
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
-
         Document result = db.parse(new InputSource(new StringReader(xmlStr)));
+        return result;
+    }
+
+    @Test
+    public void marshal_Acl() throws Exception {
+        Acl acl = this.prepareAcl();
+        printDebugInfo(acl);
+
+        StringWriter sw = new StringWriter();
+
+        // Target method call
+        ObjectIo.marshal(acl, sw);
+
+        Document result = getXMLDocument(sw);
         XPath xpath = XPathFactory.newInstance().newXPath();
 
-        // ACL base Url 
+        // ACL base Url
         String base = xpath.evaluate("//acl[position()=1]/@base", result);
-        log.info("//acl[position()=1]/@base = " + base);
-        assertEquals(acl.getBase(), base);
-        
+        assertEquals("personium-localunit:cell:/__role/__/", base);
+
         // ACL requireSchemaAuthz
         String requiredSchemaAuthz = xpath.evaluate("//acl[position()=1]/@requireSchemaAuthz", result);
-        log.info("//acl[position()=1]/@requireSchemaAuthz = " + requiredSchemaAuthz);
-        assertEquals(acl.getRequireSchemaAuthz(), requiredSchemaAuthz);
-        
-        // Number of ACE's 
+        assertEquals("public", requiredSchemaAuthz);
+
+        // Number of ACE's
         String roleHref = xpath.evaluate("count(//ace)", result);
-        log.info("count(//ace) = " + roleHref);
-        assertEquals("" +acl.getAceList().size(), roleHref);
+        assertEquals("2", roleHref);
     }
+
 }

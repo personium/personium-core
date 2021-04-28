@@ -493,4 +493,103 @@ public class PersoniumUrlTest {
         result = PersoniumUrl.addTrailingSlashIfMissing(urlWithSlash);
         assertEquals(urlWithSlash, result);
     }
+
+    @Test
+    public void isBoxUrl_Normal() {
+        PersoniumUrl url = createPersoniumUrl("https://", "unit.example", "testcell", "box");
+        assertTrue(url.isBoxUrl());
+        PersoniumUrl url2 = createPersoniumUrl("https://", "unit.example", "testcell", "box/");
+        assertTrue(url2.isBoxUrl());
+    }
+
+    @Test
+    public void isBoxUrl_WithNonBoxUrl() {
+        PersoniumUrl url = createPersoniumUrl("https://", "unit.example", "testcell", "box/item");
+        assertFalse(url.isBoxUrl());
+        PersoniumUrl url2 = createPersoniumUrl("https://", "unit.example", "testcell", "");
+        assertFalse(url2.isBoxUrl());
+        PersoniumUrl url3 = createPersoniumUrl("https://", "unit.example", "", "");
+        assertFalse(url3.isBoxUrl());
+    }
+
+    @Test
+    public void isOnSameUnit_SameUnit() {
+        PersoniumUrl url1 = createPersoniumUrl("https://", "unit.example", "", "");
+        PersoniumUrl url2 = createPersoniumUrl("https://", "unit.example", "", "");
+        assertTrue(url1.isOnSameUnit(url2));
+    }
+
+    @Test
+    public void isOnSameUnit_DifferentUnit() {
+        PersoniumUrl url1 = createPersoniumUrl("https://", "unit.example", "", "");
+        PersoniumUrl url2 = createPersoniumUrl("https://", "different.example", "", "");
+        assertFalse(url1.isOnSameUnit(url2));
+    }
+
+    @Test
+    public void isOnSameCell_SameCell() {
+        PersoniumUrl url1 = createPersoniumUrl("https://", "unit.example", "testcell", "");
+        PersoniumUrl url2 = createPersoniumUrl("https://", "unit.example", "testcell", "");
+        assertTrue(url1.isOnSameCell(url2));
+    }
+
+    @Test
+    public void isOnSameCell_DifferentCell() {
+        PersoniumUrl url1 = createPersoniumUrl("https://", "unit.example", "testcell", "");
+        PersoniumUrl url2 = createPersoniumUrl("https://", "unit.example", "different", "");
+        assertFalse(url1.isOnSameCell(url2));
+    }
+
+    @Test
+    public void isOnSameCell_DifferentUnit() {
+        PersoniumUrl url1 = createPersoniumUrl("https://", "unit.example", "testcell", "");
+        PersoniumUrl url2 = createPersoniumUrl("https://", "different.example", "testcell", "");
+        assertFalse(url1.isOnSameCell(url2));
+    }
+
+    @Test
+    public void isOnSameBox_SameBox() {
+        PersoniumUrl url1 = createPersoniumUrl("https://", "unit.example", "testcell", "box");
+        PersoniumUrl url2 = createPersoniumUrl("https://", "unit.example", "testcell", "box");
+        assertTrue(url1.isOnSameBox(url2));
+    }
+
+    @Test
+    public void isOnSameBox_DifferentBox() {
+        PersoniumUrl url1 = createPersoniumUrl("https://", "unit.example", "testcell", "box");
+        PersoniumUrl url2 = createPersoniumUrl("https://", "unit.example", "testcell", "different");
+        assertFalse(url1.isOnSameBox(url2));
+    }
+
+    @Test
+    public void isOnSameBox_DifferentCell() {
+        PersoniumUrl url1 = createPersoniumUrl("https://", "unit.example", "testcell", "box");
+        PersoniumUrl url2 = createPersoniumUrl("https://", "different.example", "testcell", "box");
+        assertFalse(url1.isOnSameBox(url2));
+    }
+
+    @Test
+    public void isOnSameBox_DifferentUnit() {
+        PersoniumUrl url1 = createPersoniumUrl("https://", "unit.example", "testcell", "box");
+        PersoniumUrl url2 = createPersoniumUrl("https://", "different.example", "testcell", "box");
+        assertFalse(url1.isOnSameBox(url2));
+    }
+
+    protected PersoniumUrl createPersoniumUrl(String scheme, String unitDomain, String cellName, String path) {
+        StringBuilder sb = new StringBuilder(scheme);
+        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
+            sb.append(unitDomain);
+            if (!cellName.isEmpty()) {
+                sb.append("/").append(cellName).append("/").append(path);
+            }
+        } else {
+            if (cellName.isEmpty()) {
+                sb.append(unitDomain);
+            } else {
+                sb.append(cellName).append(".").append(unitDomain).append("/").append(path);
+            }
+        }
+        return PersoniumUrl.create(sb.toString());
+    }
+
 }

@@ -16,6 +16,10 @@ fi
 MINOR_VERSION=$((++MINOR_VERSION))
 git checkout develop
 
+# Rebase develop onto master branch after removing -SNAPSHOT
+git checkout develop
+git rebase master
+
 # update version in pom.xml
 sed -i \
  "s|^\(    <version>[0-9]\+\.[0-9]\+\.\)[0-9]\+-SNAPSHOT\(</version>\)|\1${MINOR_VERSION}-SNAPSHOT\2|" \

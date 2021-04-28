@@ -1,8 +1,8 @@
 /**
  * Personium
- * Copyright 2014-2019 Personium Project Authors
- *  - FUJITSU LIMITED
-*
+ * Copyright 2014-2021 Personium Project Authors
+ * - FUJITSU LIMITED
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.codec.CharEncoding;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.wink.webdav.model.Multistatus;
@@ -99,6 +98,7 @@ import io.personium.core.model.lock.Lock;
 import io.personium.core.model.lock.LockKeyComposer;
 import io.personium.core.model.lock.LockManager;
 import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.utils.FileUtils;
 
 /**
  * DavCmp implementation using FileSystem.

@@ -1,6 +1,7 @@
 /**
- * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Personium
+ * Copyright 2014-2021 Personium Project Authors
+ * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +29,7 @@ import io.personium.core.model.impl.fs.CellCmpFsImpl;
 import io.personium.core.model.impl.fs.CellSnapshotCellCmpFsImpl;
 
 /**
- * Factory class of model object.
+ * Factory class for model objects.
  */
 public final class ModelFactory {
     /**
@@ -150,7 +151,5 @@ public final class ModelFactory {
         public static UserDataODataProducer userData(final Cell cell, final DavCmp davCmp) {
             return new UserDataODataProducer(cell, davCmp);
         }
-
     }
-
 }
