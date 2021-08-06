@@ -139,20 +139,17 @@ public class PluginFactory {
     }
 
     /**
-     * loadDefault.
-     * @param name String
+     * Loading default auth plugin which is included in personium-plugin.jar
+     * @param name default class name
      * @return obj
      */
     public Object loadDefaultPlugin(String name) {
         Object obj = null;
-        // personium-core pox.xml
-        // original plug-in
-        // set personium-plugins jar
+
         try {
             Class<?> clazz;
             clazz = Class.forName(name);
             obj = clazz.newInstance();
-
         } catch (ClassNotFoundException e) {
             //Class does not exist
             e.printStackTrace();
