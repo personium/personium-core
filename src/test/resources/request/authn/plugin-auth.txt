@@ -4,4 +4,4 @@ Content-Type: application/x-www-form-urlencoded
 Content-Length: ?
 Connection: close
 
-grant_type=urn:x-personium:oidc:${id_provider}&id_token=${id_token}
+grant_type=${grant_type}&${key_param}=${param}
