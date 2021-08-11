@@ -22,7 +22,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.plugin.base.auth.AuthPlugin;
 import io.personium.plugin.base.auth.AuthPluginLoader;
 
 /**
@@ -30,12 +34,14 @@ import io.personium.plugin.base.auth.AuthPluginLoader;
  */
 public class PluginsLoader {
 
+    /** Logger. */
+    static Logger log = LoggerFactory.getLogger(PluginsLoader.class);
+
     /** Plugin Classname loaded by default. */
     private String defaultLoadClassname = null;
 
     /**
-     * Default constructor The plugin classname loaded by default is set same as
-     * PersoniumConfig.
+     * Default constructor The plugin classname loaded by default is set same as PersoniumConfig.
      */
     public PluginsLoader() {
         this(PersoniumUnitConfig.getPluginDefaultLoadClassname());
@@ -43,7 +49,6 @@ public class PluginsLoader {
 
     /**
      * Constructor to specify plugin classname loaded by default.
-     *
      * @param defaultLoadedPluginClassname Plugin classname loaded by default
      */
     public PluginsLoader(String defaultLoadedPluginClassname) {
@@ -56,7 +61,6 @@ public class PluginsLoader {
 
     /**
      * Return together an instance of the plug-in class to an ArrayList.
-     *
      * @param cpath String
      * @return ArrayList
      */
@@ -73,47 +77,50 @@ public class PluginsLoader {
                 plugins.addAll(createPluginInfo(obj, className));
             }
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            log.info(ex.getMessage(), ex);
         }
 
         // Load Local File jar
         try {
             File f = new File(cpath);
             String[] files = f.list();
-            for (int i = 0; i < files.length; i++) {
-                ArrayList<PluginInfo> pinfo = null;
-                String fname = files[i];
-                if (!Files.isDirectory(Paths.get(cpath, fname)) && fname.endsWith(".jar")) {
-                    // File *.jar
-                    File file = new File(cpath + File.separator + files[i]);
-                    if (file.isFile()) {
-                        PluginFactory pf = new PluginFactory();
-                        Object obj = pf.getJarPlugin(cpath, fname);
-                        if (obj != null) {
-                            pinfo = createPluginInfo(obj, obj.getClass().getName());
+            if (files != null) {
+                for (int i = 0; i < files.length; i++) {
+                    ArrayList<PluginInfo> pinfo = null;
+                    String fname = files[i];
+                    if (!Files.isDirectory(Paths.get(cpath, fname)) && fname.endsWith(".jar")) {
+                        // File *.jar
+                        File file = new File(cpath + File.separator + files[i]);
+                        if (file.isFile()) {
+                            PluginFactory pf = new PluginFactory();
+                            Object obj = pf.getJarPlugin(cpath, fname);
+                            if (obj != null) {
+                                pinfo = createPluginInfo(obj, obj.getClass().getName());
+                            }
                         }
+                    } else {
+                        // Directory
+                        PluginFactory pf = new PluginFactory();
+                        Object obj = pf.getDirPlugin(cpath, fname);
+                        pinfo = createPluginInfo(obj, obj.getClass().getName());
                     }
-                } else {
-                    // Directory
-                    PluginFactory pf = new PluginFactory();
-                    Object obj = pf.getDirPlugin(cpath, fname);
-                    pinfo = createPluginInfo(obj, obj.getClass().getName());
-                }
-                if (pinfo != null) {
-                    plugins.addAll(pinfo);
+                    if (pinfo != null) {
+                        plugins.addAll(pinfo);
+                    }
                 }
             }
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            log.info(ex.getMessage(), ex);
         }
         return plugins;
     }
 
     /**
-     * createPluginInfo.
-     *
+     * This function wraps object with PluginInfo and returns them. If the arg `plugin` is instanceof AuthPluginLoader,
+     * this function tries to load multiple AuthPlugins and wrap them. If other type of Object is passed, this function
+     * assumes that `plugin` is AuthPlugin.
      * @param plugin Plugin
-     * @param name   String
+     * @param name String
      * @return pi PluginInfo
      */
     public ArrayList<PluginInfo> createPluginInfo(Object plugin, String name) {
@@ -123,8 +130,10 @@ public class PluginsLoader {
             for (Object obj : loader.loadInstances()) {
                 results.add(new PluginInfo(obj, name));
             }
-        } else {
+        } else if (plugin instanceof AuthPlugin) {
             results.add(new PluginInfo(plugin, name));
+        } else {
+            log.info("Loaded object is not instance of AuthPlugin nor AuthPluginLoader: " + name);
         }
         return results;
     }
