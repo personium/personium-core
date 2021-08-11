@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.plugin.base.auth.AuthPluginLoader;
 
 /**
@@ -29,11 +30,33 @@ import io.personium.plugin.base.auth.AuthPluginLoader;
  */
 public class PluginsLoader {
 
-    static final String PLUGIN_DEFAULT_LOAD = 
-           "io.personium.plugin.auth.oidc.OIDCPluginLoader";
+    /** Plugin Classname loaded by default. */
+    private String defaultLoadClassname = null;
+
+    /**
+     * Default constructor The plugin classname loaded by default is set same as
+     * PersoniumConfig.
+     */
+    public PluginsLoader() {
+        this(PersoniumUnitConfig.getPluginDefaultLoadClassname());
+    }
+
+    /**
+     * Constructor to specify plugin classname loaded by default.
+     *
+     * @param defaultLoadedPluginClassname Plugin classname loaded by default
+     */
+    public PluginsLoader(String defaultLoadedPluginClassname) {
+        if (defaultLoadedPluginClassname == null) {
+            this.defaultLoadClassname = "io.personium.plugin.auth.oidc.OIDCPluginLoader";
+        } else {
+            this.defaultLoadClassname = defaultLoadedPluginClassname;
+        }
+    }
 
     /**
      * Return together an instance of the plug-in class to an ArrayList.
+     *
      * @param cpath String
      * @return ArrayList
      */
@@ -43,7 +66,7 @@ public class PluginsLoader {
         // Load jar(maven) specified in pom.xml
         try {
             // personium-plugins original
-            String className = PLUGIN_DEFAULT_LOAD;
+            String className = this.defaultLoadClassname;
             PluginFactory pf = new PluginFactory();
             Object obj = pf.loadDefaultPlugin(className);
             if (obj != null) {
@@ -88,14 +111,15 @@ public class PluginsLoader {
 
     /**
      * createPluginInfo.
+     *
      * @param plugin Plugin
-     * @param name String
+     * @param name   String
      * @return pi PluginInfo
      */
     public ArrayList<PluginInfo> createPluginInfo(Object plugin, String name) {
         ArrayList<PluginInfo> results = new ArrayList<PluginInfo>();
         if (plugin instanceof AuthPluginLoader) {
-            AuthPluginLoader loader = (AuthPluginLoader)plugin;
+            AuthPluginLoader loader = (AuthPluginLoader) plugin;
             for (Object obj : loader.loadInstances()) {
                 results.add(new PluginInfo(obj, name));
             }
