@@ -24,11 +24,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.plugin.base.auth.AuthPlugin;
@@ -38,7 +42,10 @@ import io.personium.test.categories.Unit;
 /**
  * Test for PluginLoader class.
  */
-@Category({ Unit.class })
+@Category({Unit.class})
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({PluginManager.class, PluginUtils.class})
+@PowerMockIgnore({"javax.net.ssl.*"})
 public class PluginsLoaderTest {
 
     /**
@@ -92,20 +99,28 @@ public class PluginsLoaderTest {
     @Test
     @SuppressWarnings("unchecked")
     public void PluginManager_loads_default_plugin() throws Exception {
-        MockedStatic<PluginUtils> mocked = Mockito.mockStatic(PluginUtils.class);
-
         // For testing, http requests return dummy
         // as default plugin uses Http Requests during its initialization.
         JSONObject dummyConfig = new JSONObject();
         dummyConfig.put("jwks_uri", "https://localhost/jwks");
-        mocked.when(() -> {
-            PluginUtils.getHttpJSON(Mockito.anyString());
-        }).thenReturn(dummyConfig);
+        dummyConfig.put("issuer", "https://localhost");
+
+        JSONObject dummyJwksConfig = new JSONObject();
+        dummyJwksConfig.put("keys", new JSONArray());
+        PowerMockito.mockStatic(PluginUtils.class);
+        PowerMockito.when(PluginUtils.getHttpJSON("https://localhost/.well-known/openid-configuration"))
+                .thenReturn(dummyConfig);
+        PowerMockito.when(PluginUtils.getHttpJSON("https://localhost/jwks")).thenReturn(dummyJwksConfig);
 
         String keyConfigurationFile = "io.personium.configurationFile";
 
         String prevConfig = System.getProperty(keyConfigurationFile);
         System.setProperty(keyConfigurationFile, "personium-unit-config-oidcpluginloadertest.properties");
+
+        String prevDefaultClassname = PersoniumUnitConfig.getPluginDefaultLoadClassname();
+        if (prevDefaultClassname != null) {
+            PersoniumUnitConfig.getProperties().remove(PersoniumUnitConfig.PLUGIN_DEFAULT_LOAD_CLASSNAME);
+        }
 
         try {
             PluginManager pm = new PluginManager();
@@ -128,6 +143,9 @@ public class PluginsLoaderTest {
                 System.clearProperty(keyConfigurationFile);
             } else {
                 System.setProperty(keyConfigurationFile, prevConfig);
+            }
+            if (prevDefaultClassname != null) {
+                PersoniumUnitConfig.set(PersoniumUnitConfig.PLUGIN_DEFAULT_LOAD_CLASSNAME, prevDefaultClassname);
             }
         }
     }
