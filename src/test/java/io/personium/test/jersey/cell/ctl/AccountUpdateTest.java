@@ -40,6 +40,7 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.cell.auth.AuthTestCommon;
+import io.personium.test.jersey.plugin.AuthPluginForAuthTest;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
@@ -435,7 +436,7 @@ public class AccountUpdateTest extends ODataCommon {
             // Set all properties and merge.
             JSONObject updateBody = new JSONObject();
             updateBody.put("Name", updateUserName);
-            updateBody.put("Type", "oidc:google");
+            updateBody.put("Type", AuthPluginForAuthTest.ACCOUNT_TYPE);
             updateBody.put("Status", Account.STATUS_DEACTIVATED);
             updateBody.put("IPAddressRange", "192.0.1.0");
             AccountUtils.mergeWithBody(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
@@ -446,7 +447,7 @@ public class AccountUpdateTest extends ODataCommon {
             String type = getResponseResultParam(res, "Type");
             String status = getResponseResultParam(res, "Status");
             String ipAddressRange = getResponseResultParam(res, "IPAddressRange");
-            assertThat(type, is("oidc:google"));
+            assertThat(type, is(AuthPluginForAuthTest.ACCOUNT_TYPE));
             assertThat(status, is(Account.STATUS_DEACTIVATED));
             assertThat(ipAddressRange, is("192.0.1.0"));
 
@@ -460,7 +461,7 @@ public class AccountUpdateTest extends ODataCommon {
             type = getResponseResultParam(res, "Type");
             status = getResponseResultParam(res, "Status");
             ipAddressRange = getResponseResultParam(res, "IPAddressRange");
-            assertThat(type, is("oidc:google"));
+            assertThat(type, is(AuthPluginForAuthTest.ACCOUNT_TYPE));
             assertThat(status, is(Account.STATUS_DEACTIVATED));
             assertThat(ipAddressRange, is("192.0.1.0"));
 

@@ -37,7 +37,7 @@ public class AuthPluginForAuthTest implements AuthPlugin {
     public static final String GRANT_TYPE = "urn:x-personium:authtest";
 
     /** Accout type which this class returns after authentication. */
-    public static final String ACCOUNT_TYPE = "accountTypeForTesting";
+    public static final String ACCOUNT_TYPE = "oidc:plugintest";
 
     /** Key of parameter for authentication. */
     public static final String KEY_PARAM = "test_param";

@@ -37,6 +37,7 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.plugin.AuthPluginForAuthTest;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
@@ -264,12 +265,13 @@ public class AccountCreateTest extends ODataCommon {
     }
 
     /**
-     * Account新規登録時にPasswordなしでTypeに"oidc:google"を指定して登録できること.
+     * Accounts can be registered with accountType specified in loaded plugin and without password.
+     * (In test cases, AuthPluginForAuthTest is loaded by default.)
      */
     @Test
-    public final void Account新規登録時にPasswordなしでTypeにoidcコロンgoogleを指定して登録できること() {
+    public final void Accounts_can_be_registered_with_accountType_and_no_password() {
         String testAccountName = "personium.io@gmail.com";
-        String testAccountType = "oidc:google";
+        String testAccountType = AuthPluginForAuthTest.ACCOUNT_TYPE;
         String accLocHeader = null;
 
         try {
@@ -282,12 +284,13 @@ public class AccountCreateTest extends ODataCommon {
     }
 
     /**
-     * Account新規登録時にPasswordありでTypeに"oidc:google"を指定して登録できること.
+     * Accounts can be registered with accountType specified in loaded plugin and with password.
+     * (In test cases, AuthPluginForAuthTest is loaded by default.)
      */
     @Test
-    public final void Account新規登録時にPasswordありでTypeにoidcコロンgoogleを指定して登録できること() {
+    public final void Accounts_can_be_registered_with_accountType_and_password() {
         String testAccountName = "personium.io@gmail.com";
-        String testAccountType = "oidc:google";
+        String testAccountType = AuthPluginForAuthTest.ACCOUNT_TYPE;
         String testAccountPass = "password1234";
         String accLocHeader = null;
 
@@ -301,12 +304,13 @@ public class AccountCreateTest extends ODataCommon {
     }
 
     /**
-     * Account新規登録時にパスワードなしでTypeに"basic oidc:google"を指定して登録できること.
+     * Accounts can be registered with accountType `basic` and one specified in loaded plugin and without password.
+     * (In test cases, AuthPluginForAuthTest is loaded by default.)
      */
     @Test
-    public final void Account新規登録時にパスワードなしでTypeにbasicスペースoidcコロンgoogleを指定して登録できること() {
+    public final void Accouns_can_be_registered_with_basic_and_acountType_specified_in_plugin_without_password() {
         String testAccountName = "personium.io@gmail.com";
-        String testAccountType = "basic oidc:google";
+        String testAccountType = AuthPluginForAuthTest.ACCOUNT_TYPE;
         String accLocHeader = null;
 
         try {
@@ -319,12 +323,13 @@ public class AccountCreateTest extends ODataCommon {
     }
 
     /**
-     * Account新規登録時にパスワードありでTypeに"basic oidc:google"を指定して登録できること.
+     * Accounts can be registered with accountType `basic` and one specified in loaded plugin and with password.
+     * (In test cases, AuthPluginForAuthTest is loaded by default.)
      */
     @Test
-    public final void Account新規登録時にパスワードありでTypeにbasicスペースoidcコロンgoogleを指定して登録できること() {
+    public final void Accouns_can_be_registered_with_basic_and_acountType_specified_in_plugin_with_password() {
         String testAccountName = "personium.io@gmail.com";
-        String testAccountType = "basic oidc:google";
+        String testAccountType = AuthPluginForAuthTest.ACCOUNT_TYPE;
         String testAccountPass = "password1234";
         String accLocHeader = null;
 
@@ -346,7 +351,7 @@ public class AccountCreateTest extends ODataCommon {
         invalidTypeStrings.add("Type=");
         invalidTypeStrings.add("");
         invalidTypeStrings.add("!aa");
-        invalidTypeStrings.add("basic  oidc:google");
+        invalidTypeStrings.add("basic  " + AuthPluginForAuthTest.ACCOUNT_TYPE);
         invalidTypeStrings.add("%E3%81%82");
         invalidTypeStrings.add("あ");
         invalidTypeStrings.add("       ");
