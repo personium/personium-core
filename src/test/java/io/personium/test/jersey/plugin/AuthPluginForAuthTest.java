@@ -102,8 +102,8 @@ public class AuthPluginForAuthTest implements AuthPlugin {
         // verify
         if (CORRECTVALUE_STRING.equals(param)) {
             AuthenticatedIdentity ai = new AuthenticatedIdentity();
-            ai.setAccountName(ACCOUNT_TYPE);
-            ai.setAccountType(ACCOUNT_NAME);
+            ai.setAccountName(ACCOUNT_NAME);
+            ai.setAccountType(ACCOUNT_TYPE);
             return ai;
         } else if (WRONGVALUE_STRING.equals(param)) {
             throw OidcPluginException.AUTHN_FAILED.create();
