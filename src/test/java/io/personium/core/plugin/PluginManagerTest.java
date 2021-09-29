@@ -84,7 +84,7 @@ public class PluginManagerTest {
      */
     @Test
     public void PluginManager_returns_null_if_invalid_grantType() throws Exception {
-        String invalidGratType = "urn:x-dc1:oidc:hoge:code";
+        String invalidGrantType = "urn:x-dc1:oidc:hoge:code";
 
         PluginManager pm = new PluginManager();
         assertTrue("PluginManager failed to load plugins", (pm.size() > 0));
