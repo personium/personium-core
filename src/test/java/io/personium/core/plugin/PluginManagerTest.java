@@ -89,7 +89,7 @@ public class PluginManagerTest {
         PluginManager pm = new PluginManager();
         assertTrue("PluginManager failed to load plugins", (pm.size() > 0));
 
-        PluginInfo pi = pm.getPluginsByGrantType(invalidGratType);
+        PluginInfo pi = pm.getPluginsByGrantType(invalidGrantType);
         assertNull("PluginManager returns not null", pi);
     }
 
