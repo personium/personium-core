@@ -36,6 +36,7 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
+import io.personium.test.jersey.plugin.AuthPluginForAuthTest;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
@@ -61,15 +62,15 @@ public class AuthErrorTest extends PersoniumTest {
     }
 
     /**
-     * Testing for returning 400 when unsupported grant_type is passed
+     * Testing for returning 400 when unsupported grant_type is passed.
      */
     @Test
     public final void Returns400_WhenUnsupportedGrantTypesIsPassed() {
-        String unsupported_grant_type = "unsupported_grant_type_test";
+        String unsupportedGrantType = "unsupported_grant_type_test";
 
         TResponse res = Http.request("authn/auth.txt")
                 .with("remoteCell", TEST_CELL1)
-                .with("body", "grant_type=" + unsupported_grant_type)
+                .with("body", "grant_type=" + unsupportedGrantType)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
@@ -79,7 +80,7 @@ public class AuthErrorTest extends PersoniumTest {
             .getCode();
         String message = PersoniumCoreAuthnException
             .UNSUPPORTED_GRANT_TYPE
-            .params(unsupported_grant_type)
+            .params(unsupportedGrantType)
             .getMessage();
 
         String errDesc = String.format("[%s] - %s", code, message);
@@ -115,7 +116,7 @@ public class AuthErrorTest extends PersoniumTest {
     @Test
     public final void Typeがoidc系のみのアカウントに対しパスワード認証をしようとするとエラーが返ること() {
         String accountName = "NonBasicTypeAccount";
-        String type = "oidc:google";
+        String type = AuthPluginForAuthTest.ACCOUNT_TYPE;
         String pass = "dammypasswd";
         try {
             AccountUtils.createWithType(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, type, accountName,
