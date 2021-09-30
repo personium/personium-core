@@ -26,10 +26,17 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Plugin Factory.
  */
 public class PluginFactory {
+
+    /** Logger. */
+    static Logger log = LoggerFactory.getLogger(PluginFactory.class);
+
     /** instance. */
     private static PluginFactory instance = new PluginFactory();
     private JarFile jar;
@@ -60,7 +67,7 @@ public class PluginFactory {
     public Object getJarPlugin(String cpath, String fname) {
         Object plugin = null;
         try {
-            File file = new File(cpath + "/" + fname);
+            File file = new File(cpath + File.separator + fname);
             jar = new JarFile(file);
             // get Manifest info.
             Manifest mf = jar.getManifest();
@@ -72,34 +79,29 @@ public class PluginFactory {
                 URL url = file.getCanonicalFile().toURI().toURL();
                 ucl = new URLClassLoader(new URL[] {url}, getClass().getClassLoader());
 
-                System.out.println(ucl.getURLs().toString());
                 Class<?> clazz = ucl.loadClass(cname);
                 if (clazz != null) {
                     plugin = (Object) clazz.newInstance();
                 }
-                System.out.println("Plugin Factory load jar file...... " + cname);
+                log.info("Plugin Factory load jar file...... " + cname);
             } catch (ClassNotFoundException e) {
-                System.out.println("Plugin Factory ClassNotFoundException : class name = " + cname);
-                e.printStackTrace();
+                log.info("ClassNotFoundException: class name = " + cname, e);
             } catch (NoClassDefFoundError e) {
-                System.out.println("Plugin Factory NoClassDefFoundError : class name = " + cname);
-                e.printStackTrace();
+                log.info("NoClassDefFoundError: class name = " + cname, e);
             } catch (NullPointerException e) {
-                e.printStackTrace();
+                log.info("NullPointerExecption: class name = " + cname, e);
             } catch (SecurityException e) {
-                e.printStackTrace();
+                log.info("SecurityException: class name = " + cname, e);
             } catch (ExceptionInInitializerError e) {
-                e.printStackTrace();
+                log.info("ExceptionInInitializerError: class name = " + cname, e);
             } catch (InstantiationException e) {
-                System.out.println(
-                    "Plugin Factory InstantiationException : Instance can not be created class name = " + cname);
-                e.printStackTrace();
+                log.info("Plugin Factory InstantiationException : Instance can not be created class name = " + cname,
+                        e);
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+                log.info("IllegalArgumentException: class name = " + cname, e);
             }
-
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage(), e);
             return null;
         }
         return plugin;
@@ -115,53 +117,50 @@ public class PluginFactory {
         Object plugin = null;
         try {
             // MANIFEST.MF
-            File mfile = new File(cpath + File.separator + dname +  File.separator + "META-INF/MANIFEST.MF");
+            File mfile = new File(cpath + File.separator + dname + File.separator + "META-INF/MANIFEST.MF");
             in = new BufferedReader(new FileReader(mfile));
             in.readLine();
             String line = in.readLine();
             String cname = line.replace("Plugin-Class: ", "");
 
             // get class
-            String cfile = cname.replace(".", "/") + ".class";
+            String cfile = cname.replace(".", File.separator) + ".class";
             File file = new File("file:/" + cpath + File.separator + dname + File.separator + cfile);
             URL url = new URL(file.toString());
             ucl2 = new URLClassLoader(new URL[] {url});
             Class<?> objFile = ucl2.loadClass(cname);
             if (objFile != null) {
                 plugin = (Object) objFile.newInstance();
-                System.out.println("Plugin Factory load directory..... " + cname);
+                log.info("Plugin Factory load directory..... " + cname);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage(), e);
         }
         return plugin;
     }
 
     /**
-     * loadDefault.
-     * @param name String
+     * Loading default auth plugin which is included in personium-plugin.jar.
+     * @param name default class name
      * @return obj
      */
     public Object loadDefaultPlugin(String name) {
         Object obj = null;
-        // personium-core pox.xml
-        // original plug-in
-        // set personium-plugins jar
+
         try {
             Class<?> clazz;
             clazz = Class.forName(name);
             obj = clazz.newInstance();
-
         } catch (ClassNotFoundException e) {
-            //Class does not exist
-            e.printStackTrace();
+            // Class does not exist
+            log.info("ClassNotFoundException: class name = " + name, e);
         } catch (InstantiationException e) {
-            //Instance can not be created
-            e.printStackTrace();
+            // Instance can not be created
+            log.info("InstantiationException: class name = " + name, e);
         } catch (IllegalAccessException e) {
-            //Invocation: Access violation, protected
-            e.printStackTrace();
+            // Invocation: Access violation, protected
+            log.info("IllegalAccessException: class name = " + name, e);
         }
         return obj;
     }

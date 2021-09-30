@@ -30,6 +30,7 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumTest;
+import io.personium.test.jersey.plugin.AuthPluginForAuthTest;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 
@@ -91,11 +92,12 @@ public class AuthOidcTest extends PersoniumTest {
     public final void 不正なIDTokenを指定し400エラーが返却されること()
             throws InterruptedException {
         String accountName = "invalidIdTokenAccount";
+        String accountType = AuthPluginForAuthTest.ACCOUNT_TYPE;
         try {
             // テスト用のアカウントを作成
             // 他のテストと共用するAccountを使用すると、認証失敗のロックがかかり、テストが失敗する。このため、このテスト独自のAccountを作成する
             AccountUtils.createNonCredentialWithType(AbstractCase.MASTER_TOKEN_NAME,
-                    TEST_CELL1, accountName, "oidc:google", HttpStatus.SC_CREATED);
+                    TEST_CELL1, accountName, accountType, HttpStatus.SC_CREATED);
 
             Http.request("authn/oidc-auth.txt")
                     .with("remoteCell", TEST_CELL1)
@@ -115,11 +117,12 @@ public class AuthOidcTest extends PersoniumTest {
     public final void  JWT形式の不正なIDTokenを指定し400エラーが返却されること()
             throws InterruptedException {
         String accountName = "invalidJWTIdTokenAccount";
+        String accountType = AuthPluginForAuthTest.ACCOUNT_TYPE;
         try {
             // テスト用のアカウントを作成
             // 他のテストと共用するAccountを使用すると、認証失敗のロックがかかり、テストが失敗する。このため、このテスト独自のAccountを作成する
             AccountUtils.createNonCredentialWithType(AbstractCase.MASTER_TOKEN_NAME,
-                    TEST_CELL1, accountName, "oidc:google", HttpStatus.SC_CREATED);
+                    TEST_CELL1, accountName, accountType, HttpStatus.SC_CREATED);
 
             Http.request("authn/oidc-auth.txt")
                     .with("remoteCell", TEST_CELL1)
@@ -138,11 +141,12 @@ public class AuthOidcTest extends PersoniumTest {
     public final void 有効期限切れのIDTokenを指定し400エラーが返却されること()
             throws InterruptedException {
         String accountName = "expiredIdTokenAccount";
+        String accountType = AuthPluginForAuthTest.ACCOUNT_TYPE;
         try {
             // テスト用のアカウントを作成
             // 他のテストと共用するAccountを使用すると、認証失敗のロックがかかり、テストが失敗する。このため、このテスト独自のAccountを作成する
             AccountUtils.createNonCredentialWithType(AbstractCase.MASTER_TOKEN_NAME,
-                    TEST_CELL1, accountName, "oidc:google", HttpStatus.SC_CREATED);
+                    TEST_CELL1, accountName, accountType, HttpStatus.SC_CREATED);
 
             Http.request("authn/oidc-auth.txt")
                     .with("remoteCell", TEST_CELL1)
@@ -162,11 +166,12 @@ public class AuthOidcTest extends PersoniumTest {
     public final void デコードできないJWT形式の不正なIDTokenを指定し400エラーが返却されること()
             throws InterruptedException {
         String accountName = "invalidIdTokenAccount";
+        String accountType = AuthPluginForAuthTest.ACCOUNT_TYPE;
         try {
             // テスト用のアカウントを作成
             // 他のテストと共用するAccountを使用すると、認証失敗のロックがかかり、テストが失敗する。このため、このテスト独自のAccountを作成する
             AccountUtils.createNonCredentialWithType(AbstractCase.MASTER_TOKEN_NAME,
-                    TEST_CELL1, accountName, "oidc:google", HttpStatus.SC_CREATED);
+                    TEST_CELL1, accountName, accountType, HttpStatus.SC_CREATED);
 
             Http.request("authn/oidc-auth.txt")
                     .with("remoteCell", TEST_CELL1)

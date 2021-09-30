@@ -83,6 +83,9 @@ public class PersoniumUnitConfig {
     /** Plugin path setting key.*/
     public static final String PLUGIN_PATH = KEY_ROOT + "plugin.path";
 
+    /** Plugin classname loaded by default. */
+    public static final String PLUGIN_DEFAULT_LOAD_CLASSNAME = KEY_ROOT + "plugin.defaultClassname";
+
     /**
      * Cell configurations.
      */
@@ -898,6 +901,13 @@ public class PersoniumUnitConfig {
      */
     public static String getPluginPath() {
         return get(PLUGIN_PATH);
+    }
+
+    /**
+     * @return plugin's classname loaded by deafult
+     */
+    public static String getPluginDefaultLoadClassname() {
+        return get(PLUGIN_DEFAULT_LOAD_CLASSNAME);
     }
 
     /**
