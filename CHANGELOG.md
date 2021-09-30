@@ -1,3 +1,16 @@
+## 1.7.23
+NEW FEATURES:
+* Create AuthPluginLoader interface to load multiple authentication plugins
+([personium-plugin-base#23](https://github.com/personium/personium-plugin-base/pull/23))
+* Enhance the official OpenID Connect plugin, which is loaded by default
+([#614](https://github.com/personium/personium-core/pull/614)
+,[personium-plugins#15](https://github.com/personium/personium-plugins/pull/15))
+  * Support for all generic OpenID Providers, not just Google, which was already supported
+  * AuthPluginLoader support allows multiple OpenID Providers to be configured
+
+IMPROVEMENTS:
+* Update dependent software versions
+
 ## 1.7.22
 IMPROVEMENTS:
 * Implement for relaying request of dynamic path service execution ([#593](https://github.com/personium/personium-core/issues/593))
