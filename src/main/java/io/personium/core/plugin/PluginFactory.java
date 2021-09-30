@@ -67,7 +67,7 @@ public class PluginFactory {
     public Object getJarPlugin(String cpath, String fname) {
         Object plugin = null;
         try {
-            File file = new File(cpath + "/" + fname);
+            File file = new File(cpath + File.separator + fname);
             jar = new JarFile(file);
             // get Manifest info.
             Manifest mf = jar.getManifest();
@@ -124,7 +124,7 @@ public class PluginFactory {
             String cname = line.replace("Plugin-Class: ", "");
 
             // get class
-            String cfile = cname.replace(".", "/") + ".class";
+            String cfile = cname.replace(".", File.separator) + ".class";
             File file = new File("file:/" + cpath + File.separator + dname + File.separator + cfile);
             URL url = new URL(file.toString());
             ucl2 = new URLClassLoader(new URL[] {url});
