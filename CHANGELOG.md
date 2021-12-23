@@ -1,3 +1,11 @@
+## 1.7.24
+SECURITY UPDATES:
+* Update elasticsearch version 6.8.22 to address log4j2 vulnerability - CVE-2021-44228, CVE-2021-45046, CVE-2021-45105
+
+IMPROVEMENTS:
+* Enhance the official OpenID Connect plugin to reload Jwks from OpenID provider Jwks endpoint
+([personium/personium-plugins#21](https://github.com/personium/personium-plugins/pull/21))
+
 ## 1.7.23
 NEW FEATURES:
 * Create AuthPluginLoader interface to load multiple authentication plugins
