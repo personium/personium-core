@@ -37,7 +37,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-es-adapter</artifactId>
-            <version>1_es6.8.17_1-SNAPSHOT</version>
+            <version>1_es6.8.22_1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
@@ -278,24 +278,22 @@
 
     <repositories>
         <repository>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
+            <id>snapshots</id>
+            <name>Nexus Snapshots Repository</name>
             <layout>default</layout>
-            <url>https://repo1.maven.org/maven2</url>
-            <snapshots>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
                 <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
             </snapshots>
-        </repository>
-        <repository>
-            <id>personium.io</id>
-            <name>personium.io</name>
-            <url>https://personium.io/mvnrepo</url>
         </repository>
         <repository>
             <id>spy</id>
             <name>Spy Repository</name>
             <layout>default</layout>
-            <url>http://files.couchbase.com/maven2/</url>
+            <url>https://files.couchbase.com/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
