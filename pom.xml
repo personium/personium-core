@@ -293,7 +293,7 @@
             <id>spy</id>
             <name>Spy Repository</name>
             <layout>default</layout>
-            <url>http://files.couchbase.com/maven2/</url>
+            <url>https://files.couchbase.com/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
