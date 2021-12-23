@@ -278,18 +278,16 @@
 
     <repositories>
         <repository>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
+            <id>snapshots</id>
+            <name>Nexus Snapshots Repository</name>
             <layout>default</layout>
-            <url>https://repo1.maven.org/maven2</url>
-            <snapshots>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
                 <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
             </snapshots>
-        </repository>
-        <repository>
-            <id>personium.io</id>
-            <name>personium.io</name>
-            <url>https://personium.io/mvnrepo</url>
         </repository>
         <repository>
             <id>spy</id>
