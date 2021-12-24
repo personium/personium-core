@@ -1,6 +1,6 @@
 ## 1.7.24
 SECURITY UPDATES:
-* Update elasticsearch version 6.8.22 to address log4j2 vulnerability - CVE-2021-44228, CVE-2021-45046, CVE-2021-45105
+* Update elasticsearch version to 6.8.22 to address log4j2 vulnerability - CVE-2021-44228, CVE-2021-45046, CVE-2021-45105
 
 IMPROVEMENTS:
 * Enhance the official OpenID Connect plugin to reload Jwks from OpenID provider Jwks endpoint
