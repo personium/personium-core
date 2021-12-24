@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.personium</groupId>
     <artifactId>personium-core</artifactId>
@@ -32,22 +32,22 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-common</artifactId>
-            <version>1.5.4-SNAPSHOT</version>
+            <version>1.5.4</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-es-adapter</artifactId>
-            <version>1_es6.8.22_1-SNAPSHOT</version>
+            <version>1_es6.8.22_1</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-plugin-base</artifactId>
-            <version>1.0.9-SNAPSHOT</version>
+            <version>1.0.9</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-plugins</artifactId>
-            <version>1.0.8-SNAPSHOT</version>
+            <version>1.0.8</version>
         </dependency>
 
         <dependency>
