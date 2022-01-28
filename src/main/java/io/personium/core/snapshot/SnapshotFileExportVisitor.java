@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.file.DataCryptor;
 import io.personium.core.auth.AuthHistoryLastFile;
-import io.personium.core.model.impl.fs.CellKeys;
+import io.personium.core.model.impl.fs.CellKeysFsImpl;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.impl.fs.DavMetadataFile;
 
@@ -77,7 +77,7 @@ public class SnapshotFileExportVisitor implements FileVisitor<Path> {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         Path relativezeDir = webdavRootDir.relativize(dir);
         // Skip export pkeys and pauthhistory.
-        if (relativezeDir.startsWith(CellKeys.KEYS_DIR_NAME)
+        if (relativezeDir.startsWith(CellKeysFsImpl.KEYS_DIR_NAME)
                 || relativezeDir.startsWith(AuthHistoryLastFile.AUTH_HISTORY_DIRECTORY)) {
             return FileVisitResult.SKIP_SUBTREE;
         }
