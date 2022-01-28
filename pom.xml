@@ -186,6 +186,11 @@
             <artifactId>guava</artifactId>
             <version>30.1.1-jre</version>
         </dependency>
+        <dependency>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+            <version>0.7.9</version>
+        </dependency>
 
         <!-- For test. -->
         <dependency>
@@ -303,18 +308,10 @@
     <build>
         <finalName>${final.name}</finalName>
         <resources>
-                <resource>
-                    <directory>src/main/resources</directory>
-                    <filtering>true</filtering>
-                </resource>
-                <resource>
-                        <directory>..</directory>
-                        <includes>
-                                <include>LICENSE.txt</include>
-                                <include>NOTICE.txt</include>
-                                <include>CHANGES.txt</include>
-                        </includes>
-                </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
         </resources>
 
         <testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>

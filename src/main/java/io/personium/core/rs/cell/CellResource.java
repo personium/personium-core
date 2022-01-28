@@ -430,6 +430,15 @@ public class CellResource {
     }
 
     /**
+     * Sign endpoint.
+     * @return SignResource
+     */
+    @Path("__sign")
+    public SignResource sign() {
+        return new SignResource(cellRsCmp, cellCmp);
+    }
+
+    /**
      * Certs endpoint.(OpenID Connect).
      * @return CertsResource
      */
