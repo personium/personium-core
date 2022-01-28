@@ -31,6 +31,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
@@ -124,7 +125,12 @@ public class SignResource {
 
         jws.setKey(privKey);
         jws.setKeyIdHeaderValue(cellKeyPair.getKeyId());
-        jws.setAlgorithmHeaderValue(privKey.getAlgorithm());
+
+        String alg = null;
+        if ("RSA".equals(privKey.getAlgorithm())) {
+            alg = AlgorithmIdentifiers.RSA_PSS_USING_SHA256;
+        };
+        jws.setAlgorithmHeaderValue(alg);
 
         String result = null;
         try {
