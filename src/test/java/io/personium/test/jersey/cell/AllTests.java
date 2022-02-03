@@ -47,6 +47,7 @@ import io.personium.test.jersey.unit.UnitUserCellTest;
         PropPatchTest.class,
         ReadListTest.class,
         ReadTest.class,
+        SignTest.class,
         UnitUserCellTest.class,
         UpdateTest.class
 })

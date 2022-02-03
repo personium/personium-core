@@ -17,6 +17,8 @@
  */
 package io.personium.test.utils;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Utility Class for using Sign API
  */
@@ -26,19 +28,54 @@ public class SignUtils {
 
     /**
      * Generate sign for content text
-     * @param token     token to be used
-     * @param text      text to be signed
-     * @param code      expected status code
-     * @param cellName  target cellName
+     * @param cellName target cellName
+     * @param token token to be used
+     * @param text text to be signed
+     * @param code expected status code
      * @return TResponse
      */
-    public static TResponse post(String token, String text, int code, String cellName) {
-        TResponse response = Http.request("cell/sign-post.txt")
-            .with("token", token)
-            .with("cellPath", cellName)
-            .with("textToBeSigned", text)
-            .returns()
-            .statusCode(code);
+    public static TResponse post(String cellName, String token, String text, int code) {
+        return post(cellName, token, "application/jose", text, code);
+    }
+
+    /**
+     * Generate sign for content text
+     * @param cellName target cellName
+     * @param token token to be used
+     * @param body byte array body to be signed
+     * @param code expected status code
+     * @return TResponse
+     */
+    public static TResponse post(String cellName, String token, byte[] body, int code) {
+        return post(cellName, token, "application/jose", body, code);
+    }
+
+    /**
+     * Generate sign for content text
+     * @param cellName target cellName
+     * @param token token to be used
+     * @param accept accept header
+     * @param text text to be signed
+     * @param code expected status code
+     * @return TResponse
+     */
+    public static TResponse post(String cellName, String token, String accept, String text, int code) {
+        return post(cellName, token, accept, text.getBytes(StandardCharsets.UTF_8), code);
+    }
+
+
+    /**
+     * Generate sign for content text
+     * @param cellName target cellName
+     * @param token token to be used
+     * @param accept accept header
+     * @param body byte array body to be signed
+     * @param code expected status code
+     * @return TResponse
+     */
+    public static TResponse post(String cellName, String token, String accept, byte[] body, int code) {
+        TResponse response = Http.request("cell/sign-post.txt").with("token", token).with("accept", accept)
+                .with("cellPath", cellName).setBodyBinary(body).returns().statusCode(code);
         return response;
     }
 }

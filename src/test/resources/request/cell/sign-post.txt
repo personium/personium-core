@@ -3,6 +3,4 @@ Host: ?
 Content-Length: ?
 Connection: close
 Authorization: Bearer ${token}
-Accept: application/jose
-
-${textToBeSigned}
+Accept: ${accept}

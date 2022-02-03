@@ -2028,11 +2028,11 @@ public class AclTest extends AbstractCase {
     private void signTest(List<String> account) {
         // sign POST sign
         // UNIT_MASTER_TOKEN
-        SignUtils.post(TOKEN, "example", HttpStatus.SC_OK, TEST_CELL1).contentType("application/jose");
+        SignUtils.post(TEST_CELL1, TOKEN, "example", HttpStatus.SC_OK);
         // sign privilege
-        SignUtils.post(account.get(21), "example", HttpStatus.SC_OK, TEST_CELL1).contentType("application/jose");
+        SignUtils.post(TEST_CELL1, account.get(21), "example", HttpStatus.SC_OK);
         // other
-        SignUtils.post(account.get(0), "example", HttpStatus.SC_FORBIDDEN, TEST_CELL1).contentType("application/json");
+        SignUtils.post(TEST_CELL1, account.get(0), "example", HttpStatus.SC_FORBIDDEN);
     }
 
     /**

@@ -16,21 +16,17 @@
  */
 package io.personium.core.rs.cell;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.PrivateKey;
 
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
-import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.lang.JoseException;
@@ -73,50 +69,44 @@ public class SignResource {
      * @return
      */
     @POST
-    public Response post(@HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
-            @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            final InputStream inputStream) {
+    @Produces(MEDIATYPE_JOSE)
+    public Response post(final InputStream inputStream) {
         // Access Control
         this.cellRsCmp.checkAccessContext(CellPrivilege.SIGN);
 
-        // set default accept header to "application/jose"
-        String acceptHeader = StringUtils.isNotEmpty(accept) ? accept : MEDIATYPE_JOSE;
+        String result = signJWS(inputStream);
 
-        String result = null;
-        if (MEDIATYPE_JOSE.equals(acceptHeader)) {
-            try {
-                result = signJWS(inputStream);
-            } catch(IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            Response.status(Status.NOT_ACCEPTABLE);
-        }
-
-        return Response.ok(result, "application/jose").build();
+        return Response.ok(result, MEDIATYPE_JOSE).build();
     }
 
     /**
      * Generate JWS from stream
-     * @param inputStream   payload data stream
-     * @return              Signed JWS
-     * @throws IOException  Exception
+     * @param inputStream payload data stream
+     * @return Signed JWS
+     * @throws IOException Exception
      */
-    public String signJWS(InputStream inputStream) throws IOException {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            IOUtils.copy(inputStream, baos);
-            return signJWS(baos.toByteArray());
-        } catch (Exception e) {
+    public String signJWS(InputStream inputStream) {
+        if (inputStream == null) {
+            throw new IllegalArgumentException("given inputStream is null");
+        }
+
+        try {
+            // TODO: check the content size
+            return signJWS(IOUtils.toByteArray(inputStream));
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
      * Generate JWS from bytes
-     * @param plainJwsPayload   payload data bytes
-     * @return  Signed JWS
+     * @param plainJwsPayload payload data bytes
+     * @return Signed JWS
      */
     public String signJWS(byte[] plainJwsPayload) {
+        if (plainJwsPayload == null) {
+            throw new IllegalArgumentException("given plainJwsPayload is null");
+        }
         CellKeyPair cellKeyPair = cellCmp.getCellKeys().getCellKeyPairs();
         PrivateKey privKey = cellKeyPair.getPrivateKey();
 
@@ -126,17 +116,14 @@ public class SignResource {
         jws.setKey(privKey);
         jws.setKeyIdHeaderValue(cellKeyPair.getKeyId());
 
-        String alg = null;
-        if ("RSA".equals(privKey.getAlgorithm())) {
-            alg = AlgorithmIdentifiers.RSA_PSS_USING_SHA256;
-        };
-        jws.setAlgorithmHeaderValue(alg);
+        // Currently support only RS256
+        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_PSS_USING_SHA256);
 
         String result = null;
         try {
             result = jws.getCompactSerialization();
         } catch (JoseException e) {
-            throw new RuntimeException("Happens an exception in generating JWS", e);
+            throw new RuntimeException("An exception is thrown in generating JWS", e);
         }
         return result;
     }
