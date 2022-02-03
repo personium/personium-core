@@ -77,7 +77,7 @@ public class RoleViaNPTest extends ODataCommon {
                     (JSONObject) (new JSONParser()).parse("{\"Name\":\"" + roleName + "\"}"));
 
             // Relation-RoleNP経由一覧取得
-            res = RoleUtils.listViaNP(CELL_NAME, MASTER_TOKEN_NAME, "Relation", RelationUtils.keyString(relationName)).debug();
+            res = RoleUtils.listViaNP(CELL_NAME, MASTER_TOKEN_NAME, "Relation", RelationUtils.keyString(relationName));
 
             // レスポンスヘッダーのチェック
             String location = UrlUtils.cellCtlWithoutSingleQuote(CELL_NAME, Role.EDM_TYPE_NAME,
