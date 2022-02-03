@@ -155,7 +155,7 @@ public class RoleUtils {
                 .with("cell", cellName)
                 .with("entityType", sourceEntityType)
                 .with("id", sourceEntityKeyString)
-                .with("navPropName", "_Box")
+                .with("navPropName", "_Role")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
