@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -239,8 +240,8 @@ public final class Acl {
             if (ace.grant.privileges == null) {
                 throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params("Can not read privilege");
             }
-            Map<String, CellPrivilege> cellPrivilegeMap = CellPrivilege.getPrivilegeMap();
-            Map<String, BoxPrivilege> boxPrivilegeMap = BoxPrivilege.getPrivilegeMap();
+            Map<QName, Privilege> cellPrivilegeMap = io.personium.core.model.jaxb.Privilege.cellPrivileges;
+            Map<QName, Privilege> boxPrivilegeMap = io.personium.core.model.jaxb.Privilege.boxPrivileges;
 
             for (io.personium.core.model.jaxb.Privilege privilege : ace.grant.privileges) {
                 // Privilege is not empty.
@@ -248,16 +249,16 @@ public final class Acl {
                     throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params("Privilege is empty");
                 }
                 // This tag that can be set to privilege?
-                String localName = privilege.body.getLocalName();
+                QName qName = new QName(privilege.body.getNamespaceURI(), privilege.body.getLocalName());
                 if (isCellLevel) {
-                    if (!cellPrivilegeMap.containsKey(localName)
-                     && !boxPrivilegeMap.containsKey(localName)) {
-                        String cause = String.format("[%s] that can not be set in privilege", localName);
+                    if (!cellPrivilegeMap.containsKey(qName)
+                     && !boxPrivilegeMap.containsKey(qName)) {
+                        String cause = String.format("[%s] that can not be set in privilege", qName);
                         throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(cause);
                     }
                 } else {
-                    if (!boxPrivilegeMap.containsKey(localName)) {
-                        String cause = String.format("[%s] that can not be set in privilege", localName);
+                    if (!boxPrivilegeMap.containsKey(qName)) {
+                        String cause = String.format("[%s] that can not be set in privilege", qName);
                         throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(cause);
                     }
                 }
