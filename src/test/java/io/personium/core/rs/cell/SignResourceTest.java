@@ -16,39 +16,41 @@
  */
 package io.personium.core.rs.cell;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 
 import java.io.InputStream;
-import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.Random;
+import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.fusesource.hawtbuf.BufferInputStream;
 import org.jose4j.jws.JsonWebSignature;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
-import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellKeyPair;
 import io.personium.core.model.CellKeys;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
-import io.personium.core.model.impl.fs.CellKeyPairFsImpl;
 import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.test.categories.Unit;
 
@@ -63,78 +65,142 @@ public class SignResourceTest {
     /** Test class. */
     private SignResource signResource;
 
+    // keyId for mock
+    String keyId;
+    // public key for mock
+    PublicKey publicKey;
+    // private key for mock
+    PrivateKey privateKey;
+
     /**
-     * Mock CellResource.
-     * @param cell cell
-     * @param cellCmp cellCmp
-     * @param cellRsCmp cellRsCmp
-     * @param accessContext accessContext
-     * @throws Exception Unintended exception in test
+     * Initializing mock for testing
+     * @throws Exception
      */
-    private void initCellResource(
-            Cell cell, CellCmp cellCmp, CellRsCmp cellRsCmp, AccessContext accessContext) throws Exception {
-        // Mock settings
-        doReturn(cell).when(accessContext).getCell();
-        PowerMockito.mockStatic(ModelFactory.class);
-        PowerMockito.doReturn(cellCmp).when(ModelFactory.class, "cellCmp", any());
-        doReturn(true).when(cellCmp).exists();
-        PowerMockito.whenNew(CellRsCmp.class).withAnyArguments().thenReturn(cellRsCmp);
-        PowerMockito.mockStatic(PersoniumUnitConfig.class);
-        PowerMockito.doReturn("u0").when(PersoniumUnitConfig.class, "getEsUnitPrefix");
-        PowerMockito.doReturn(null).when(PersoniumUnitConfig.class, "getLockType");
-        PowerMockito.doReturn("0").when(PersoniumUnitConfig.class, "getLockRetryInterval");
-        PowerMockito.doReturn("0").when(PersoniumUnitConfig.class, "getLockRetryTimes");
-        PowerMockito.doReturn(null).when(PersoniumUnitConfig.class, "getLockMemcachedHost");
-        PowerMockito.doReturn(null).when(PersoniumUnitConfig.class, "getLockMemcachedPort");
-        PowerMockito.doReturn(0).when(PersoniumUnitConfig.class, "getAccountValidAuthnInterval");
-        PowerMockito.doReturn(0).when(PersoniumUnitConfig.class, "getAccountLockCount");
-        PowerMockito.doReturn(0).when(PersoniumUnitConfig.class, "getAccountLockTime");
-        PowerMockito.mockStatic(UnitUserLockManager.class);
-        PowerMockito.doReturn(false).when(UnitUserLockManager.class, "hasLockObject", anyString());
-        doReturn(Cell.STATUS_NORMAL).when(cellCmp).getCellStatus();
-        signResource = spy(new SignResource(cellRsCmp, cellCmp));
+    @Before
+    public void initialize() throws Exception {
+
+        // Initialize key pair
+        String KEY_ALGORITHM = "RSA";
+        int KEY_SIZE = 2048;
+        KeyPairGenerator generator = KeyPairGenerator.getInstance(KEY_ALGORITHM);
+        generator.initialize(KEY_SIZE);
+        KeyPair keyPair = generator.generateKeyPair();
+
+        KeyFactory factoty = KeyFactory.getInstance(KEY_ALGORITHM);
+
+        RSAPublicKeySpec publicKeySpec = factoty.getKeySpec(keyPair.getPublic(), RSAPublicKeySpec.class);
+        RSAPrivateKeySpec privateKeySpec = factoty.getKeySpec(keyPair.getPrivate(), RSAPrivateKeySpec.class);
+
+        publicKey = factoty.generatePublic(publicKeySpec);
+        privateKey = factoty.generatePrivate(privateKeySpec);
+        keyId = UUID.randomUUID().toString();
+
+        // Initialize mocks
+        CellCmp cellCmp = mock(CellCmp.class);
+        CellRsCmp cellRsCmp = mock(CellRsCmp.class);
+        CellKeys cellKeys = mock(CellKeys.class);
+        CellKeyPair cellKeyPair = mock(CellKeyPair.class);
+
+        doReturn(publicKey).when(cellKeyPair).getPublicKey();
+        doReturn(privateKey).when(cellKeyPair).getPrivateKey();
+        doReturn(keyId).when(cellKeyPair).getKeyId();
+        doReturn(cellKeyPair).when(cellKeys).getCellKeyPairs();
+        doReturn(cellKeys).when(cellCmp).getCellKeys();
+
+        this.signResource = new SignResource(cellRsCmp, cellCmp);
     }
 
     /**
-     * Testing that sign
+     * Internal helper function to create stream with specified length
+     * @param size size of unit
+     * @param times repetition count
      * @throws Exception
      */
-    @Test
-    public void Test_that_signResource_generates_valid_jws_from_InputStream() throws Exception {
-        // Mock settings
-        AccessContext accessContext = PowerMockito.mock(AccessContext.class);
-        Cell cell = mock(Cell.class);
-        CellCmp cellCmp = mock(CellCmp.class);
-        CellRsCmp cellRsCmp = mock(CellRsCmp.class);
-        initCellResource(cell, cellCmp, cellRsCmp, accessContext);
-
-        doNothing().when(accessContext).updateBasicAuthenticationStateForResource(null);
-        doReturn(AccessContext.TYPE_UNIT_MASTER).when(accessContext).getType();
-
-        cellCmp.getCellKeys();
-        CellKeys cellKeys = mock(CellKeys.class);
-        CellKeyPair tmpKeyPair = CellKeyPairFsImpl.newInstance(Paths.get("tmp"));
-
-        doReturn(tmpKeyPair).when(cellKeys).getCellKeyPairs();
-        doReturn(cellKeys).when(cellCmp).getCellKeys();
-
-        byte[] dummyToSign = new byte[1024 * 32];
+    private void signAndVerify(int size, int times) throws Exception {
+        byte[] dummyToSign = new byte[size];
         new Random().nextBytes(dummyToSign);
 
-        try (InputStream inputStream = new BufferInputStream(dummyToSign)) {
+        try (InputStream inputStream = createInputStream(dummyToSign, times)) {
             String vcString = signResource.signJWS(inputStream);
 
             JsonWebSignature jws = new JsonWebSignature();
             jws.setCompactSerialization(vcString);
-
-            PublicKey publicKey = tmpKeyPair.getPublicKey();
             jws.setKey(publicKey);
 
             boolean signatureVerified = jws.verifySignature();
 
-            assertEquals("KeyID is not matched", tmpKeyPair.getKeyId(), jws.getKeyIdHeaderValue());
-            assertArrayEquals("Payload is not matched", dummyToSign, jws.getPayloadBytes());
+            assertEquals("KeyID is not matched", this.keyId, jws.getKeyIdHeaderValue());
+            try (InputStream orig = createInputStream(dummyToSign, times);
+                    InputStream result = new BufferInputStream(jws.getPayloadBytes())) {
+                assertTrue("Payload is not matched", IOUtils.contentEquals(orig, result));
+            }
             assertTrue("Verifing JWS is failed", signatureVerified);
         }
+    }
+
+    /**
+     * Create InputStream
+     * @param data data to be repeated
+     * @param times repeated count
+     * @return InputStream which data is repeated specified count.
+     */
+    private InputStream createInputStream(byte[] data, int times) {
+        return new InputStream() {
+            private long pos = 0;
+            private final long total = (long) data.length * times;
+
+            public int read() {
+                return pos < total ? data[(int) (pos++ % data.length)] : -1;
+            }
+        };
+    }
+
+    /**
+     * Testing that signJWS function can generate valid jws with random input
+     */
+    @Test
+    public void signJWS_with_random_bufferinputstream_return_valid_jws() {
+        try {
+            signAndVerify(1024, 32);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    /**
+     * Testing that signJWS function can generate valid jws with zero-size input
+     */
+    @Test
+    public void signJWS_with_zero_length_bufferinputstream_return_valid_jws() {
+        try {
+            signAndVerify(0, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    /**
+     * Testing that signJWS throws IllegalArgumentException when null is input
+     */
+    @Test
+    public void signJWS_with_null_inputstream_throws_illegalargumentexception() {
+        try {
+            signResource.signJWS((InputStream) null);
+            fail("Exception is not thrown");
+        } catch (Exception e) {
+            assert (e instanceof IllegalArgumentException);
+        }
+    }
+
+    /**
+     * Testing that signJWS can generate valid jws
+     * @throws Exception
+     */
+    @Test
+    @Ignore
+    public void signJWS_with_too_large_inputstream_throws_ioexception() throws Exception {
+        signAndVerify(1024, 1024 * 1024 * 1024); // 1TiB
     }
 }

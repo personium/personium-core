@@ -76,7 +76,8 @@ public class SignTest extends AbstractCase {
     @Test
     public void Test_that_cell_reject_accept_is_not_jose() {
         byte[] testBody = "example_text".getBytes(StandardCharsets.UTF_8);
-        SignUtils.post(Setup.TEST_CELL1, MASTER_TOKEN_NAME, "application/json", testBody, HttpStatus.SC_NOT_ACCEPTABLE);
+        TResponse res = SignUtils.post(Setup.TEST_CELL1, MASTER_TOKEN_NAME, "application/json", testBody, HttpStatus.SC_NOT_ACCEPTABLE);
+        this.checkErrorResponse(res.bodyAsJson(), "PR406-CM-0001");
     }
 
     /**
