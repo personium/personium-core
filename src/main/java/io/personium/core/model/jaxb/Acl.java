@@ -41,8 +41,6 @@ import io.personium.common.auth.token.Role;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
-import io.personium.core.auth.BoxPrivilege;
-import io.personium.core.auth.CellPrivilege;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.Privilege;
 import io.personium.core.utils.UriUtils;
