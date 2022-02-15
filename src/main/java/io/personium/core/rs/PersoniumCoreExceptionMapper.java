@@ -20,6 +20,8 @@ package io.personium.core.rs;
 import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -38,6 +40,9 @@ import io.personium.core.exceptions.ODataErrorMessage;
 public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Exception> {
     static final int ERROR_ID_ROOT = 100000;
     static Logger log = LoggerFactory.getLogger(PersoniumCoreExceptionMapper.class);
+
+    @Context
+    HttpHeaders headers;
 
     @Override
     public Response toResponse(final Exception exception) {
@@ -89,6 +94,9 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
             return this.handlePersoniumCoreException(PersoniumCoreException.Misc.NOT_FOUND);
         } else if (HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE == res.getStatus()) {
             return this.handlePersoniumCoreException(PersoniumCoreException.Misc.UNSUPPORTED_MEDIA_TYPE_NO_PARAMS);
+        } else if (HttpStatus.SC_NOT_ACCEPTABLE == res.getStatus()) {
+            return this.handlePersoniumCoreException(PersoniumCoreException.Common.MEDIATYPE_NOT_ACCEPTABLE
+                .params(headers.getHeaderString(HttpHeaders.ACCEPT)));
         }
         return res;
     }

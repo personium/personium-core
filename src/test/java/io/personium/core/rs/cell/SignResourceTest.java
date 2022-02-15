@@ -184,14 +184,9 @@ public class SignResourceTest {
     /**
      * Testing that signJWS throws IllegalArgumentException when null is input
      */
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void signJWS_with_null_inputstream_throws_illegalargumentexception() {
-        try {
-            signResource.signJWS((InputStream) null);
-            fail("Exception is not thrown");
-        } catch (Exception e) {
-            assert (e instanceof IllegalArgumentException);
-        }
+        signResource.signJWS((InputStream) null);
     }
 
     /**
@@ -200,7 +195,7 @@ public class SignResourceTest {
      */
     @Test
     @Ignore
-    public void signJWS_with_too_large_inputstream_throws_ioexception() throws Exception {
+    public void signJWS_with_too_large_inputstream_throws_outofmemory() throws Exception {
         signAndVerify(1024, 1024 * 1024 * 1024); // 1TiB
     }
 }

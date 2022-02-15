@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.PrivateKey;
 
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
@@ -33,7 +32,6 @@ import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 
-import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellRsCmp;
@@ -64,15 +62,6 @@ public class SignResource {
     }
 
     /**
-     * Default handler
-     * @return no response
-     */
-    @POST
-    public Response post(@HeaderParam("accept") String accept) {
-        throw PersoniumCoreException.Common.MEDIATYPE_NOT_ACCEPTABLE.params(accept);
-    }
-
-    /**
      * Generating JWS from received InputStream
      * @param inputStream
      * @return
@@ -100,7 +89,7 @@ public class SignResource {
         }
 
         try {
-            // TODO: To avoid outofmemory, modify function not to copy entire stream on byte array.
+            //TODO To avoid outofmemory, modify function not to copy entire stream on byte array.
             return signJWS(IOUtils.toByteArray(inputStream));
         } catch (IOException e) {
             throw new RuntimeException(e);
