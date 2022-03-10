@@ -161,4 +161,19 @@ public class TokenUtils {
                 .with("body", body)
                 .returns().statusCode(statusCode).debug();
     }
+
+    /**
+     * Exec token introspection API
+     * @param cellName  Target cell name
+     * @param token     A token used to auth
+     * @param targetToken     A token to be introspect
+     * @return API response
+     */
+    public static TResponse execTokenIntrospection(String cellName, String token, String targetToken) {
+        return Http.request("cell/introspect.txt")
+                .with("cellPath", cellName)
+                .with("token", token)
+                .with("targetToken", targetToken)
+                .returns();
+    }
 }

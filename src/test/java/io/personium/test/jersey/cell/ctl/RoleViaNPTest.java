@@ -81,7 +81,7 @@ public class RoleViaNPTest extends ODataCommon {
 
             // レスポンスヘッダーのチェック
             String location = UrlUtils.cellCtlWithoutSingleQuote(CELL_NAME, Role.EDM_TYPE_NAME,
-                    "Name='" + roleName + "',_Box.Name=null'");
+                    "Name='" + roleName + "',_Box.Name=null");
             ODataCommon.checkCommonResponseHeader(res);
 
             // レスポンスボディーのチェック
