@@ -22,7 +22,7 @@
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
         <httpclient.version>4.5.13</httpclient.version>
-        <jackson.version>2.10.0.pr1</jackson.version>
+        <jackson.version>2.13.1</jackson.version>
         <jacoco.include.package>io.personium.*</jacoco.include.package>
         <activemq.version>5.15.9</activemq.version>
         <kafka.version>1.1.1</kafka.version>
@@ -303,10 +303,10 @@
     <build>
         <finalName>${final.name}</finalName>
         <resources>
-                <resource>
-                    <directory>src/main/resources</directory>
-                    <filtering>true</filtering>
-                </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
                 <resource>
                         <directory>..</directory>
                         <includes>
