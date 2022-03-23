@@ -307,14 +307,6 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
-                <resource>
-                        <directory>..</directory>
-                        <includes>
-                                <include>LICENSE.txt</include>
-                                <include>NOTICE.txt</include>
-                                <include>CHANGES.txt</include>
-                        </includes>
-                </resource>
         </resources>
 
         <testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
