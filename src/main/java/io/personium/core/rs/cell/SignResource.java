@@ -115,7 +115,7 @@ public class SignResource {
         jws.setKeyIdHeaderValue(cellKeyPair.getKeyId());
 
         // Currently support only RS256
-        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_PSS_USING_SHA256);
+        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
 
         String result = null;
         try {
