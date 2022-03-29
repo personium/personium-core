@@ -1009,7 +1009,12 @@ public class PersoniumCoreException extends RuntimeException {
          * {1} : Configured authority
          */
         public static final PersoniumCoreException INVALID_URL_AUTHORITY = create("PR400-CM-0005");
-
+        /**
+         * Requested media type is not acceptable.
+         * <p>
+         * {0} : Given media type
+         */
+        public static final PersoniumCoreException MEDIATYPE_NOT_ACCEPTABLE = create("PR406-CM-0001");
         /**
          * Executing API that is not allowed when the cell status is "import failed".
          */

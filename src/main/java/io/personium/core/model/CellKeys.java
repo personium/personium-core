@@ -1,7 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
- * - FUJITSU LIMITED
+ * Copyright 2019-2021 Personium Project Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +17,22 @@
 package io.personium.core.model;
 
 /**
- * Interface of parts corresponding to Cell.
+ * Interface that manages cell specific key information.
  */
-public interface CellCmp extends DavCmp {
+public interface CellKeys {
 
     /**
-     * Set cell status and save metadata file.
-     * @param status cell status
-     */
-    void setCellStatusAndSave(String status);
-
-    /**
-     * Get CellKeys.
+     * Read the keys file.
+     * If it does not exist, it creates and returns it.
      * @return CellKeys
      */
-    CellKeys getCellKeys();
+    public CellKeys load();
+
+    /**
+     * Get CellKeysFile.
+     * Currently return only one.
+     * In the future we will return map with another method.
+     * @return CellKeysFile
+     */
+    public CellKeyPair getCellKeyPairs();
 }

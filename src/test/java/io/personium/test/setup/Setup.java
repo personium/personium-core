@@ -82,7 +82,7 @@ public class Setup extends AbstractCase {
     List<Config> confs = new ArrayList<Config>();
     List<Config> eventLogConfs = new ArrayList<Config>();
 
-    static final int NUM_ACCOUNTS = 31;
+    static final int NUM_ACCOUNTS = 32;
     static final int NUM_APP_AUTH_ACCOUNTS = 2;
     static final int NUM_ROLES = NUM_ACCOUNTS;
     static final int NUM_USERDATA = 10;

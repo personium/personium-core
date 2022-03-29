@@ -73,6 +73,7 @@ import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.SentMessageUtils;
+import io.personium.test.utils.SignUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
 import io.personium.test.utils.UrlUtils;
@@ -993,6 +994,9 @@ public class AclTest extends AbstractCase {
                 "");
         DavResourceUtils.setACL(TEST_CELL1, account.get(16), HttpStatus.SC_FORBIDDEN, "", aclTestFile, Setup.TEST_BOX1,
                 "");
+
+        // sign
+        signTest(account);
     }
 
     /**
@@ -1269,6 +1273,8 @@ public class AclTest extends AbstractCase {
         result.add(ResourceUtils.getMyCellLocalToken(TEST_CELL1, "account29", "password29"));
         // 20 account30 log-read
         result.add(ResourceUtils.getMyCellLocalToken(TEST_CELL1, "account30", "password30"));
+        // 21 account31 sign
+        result.add(ResourceUtils.getMyCellLocalToken(TEST_CELL1, "account31", "password31"));
 
         // CellレベルACL設定
         String aclTestFile = "cell/acl-authtest.txt";
@@ -2017,6 +2023,16 @@ public class AclTest extends AbstractCase {
         ResourceUtils.logCollectionPropfind(TEST_CELL1, "archive", "0", account.get(13), HttpStatus.SC_FORBIDDEN);
         ResourceUtils.logCollectionPropfind(TEST_CELL1, "archive", "0", account.get(19), HttpStatus.SC_MULTI_STATUS);
         ResourceUtils.logCollectionPropfind(TEST_CELL1, "archive", "0", account.get(20), HttpStatus.SC_MULTI_STATUS);
+    }
+
+    private void signTest(List<String> account) {
+        // sign POST sign
+        // UNIT_MASTER_TOKEN
+        SignUtils.post(TEST_CELL1, TOKEN, "example", HttpStatus.SC_OK);
+        // sign privilege
+        SignUtils.post(TEST_CELL1, account.get(21), "example", HttpStatus.SC_OK);
+        // other
+        SignUtils.post(TEST_CELL1, account.get(0), "example", HttpStatus.SC_FORBIDDEN);
     }
 
     /**
