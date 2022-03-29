@@ -186,6 +186,7 @@
             <artifactId>guava</artifactId>
             <version>30.1.1-jre</version>
         </dependency>
+        <!-- Using jose4j instead of cxf-rt-rs-security-jose for signing byte array -->
         <dependency>
             <groupId>org.bitbucket.b_c</groupId>
             <artifactId>jose4j</artifactId>
