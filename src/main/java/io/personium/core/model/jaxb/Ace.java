@@ -114,7 +114,7 @@ public final class Ace {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         Document doc;
         try {
-            String ns = "DAV:";
+            String ns = CommonUtils.XmlConst.NS_DAV;
             if (CellPrivilege.ROOT.getName().equals(privilege)) {
                 ns = CommonUtils.XmlConst.NS_PERSONIUM;
             }

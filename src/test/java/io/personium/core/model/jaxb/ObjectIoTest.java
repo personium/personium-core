@@ -147,7 +147,7 @@ public class ObjectIoTest {
         assertEquals("public", requiredSchemaAuthz);
 
         // Number of ACE's
-        String roleHref = xpath.evaluate("count(//ace)", result);
+        String roleHref = xpath.evaluate("count(//*[local-name()='ace'])", result);
         assertEquals("2", roleHref);
     }
 
