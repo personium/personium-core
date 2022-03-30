@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project
+ * Copyright 2014-2022 Personium Project
  *  - Akio Shimono
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
