@@ -91,7 +91,7 @@ public class AuthAccountUpdateTest extends PersoniumTest {
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("roleBaseUrl", UrlUtils.roleResource(cellName, null, ""))
                     .with("role", roleName)
-                    .with("privilege", "<D:auth/></D:privilege><D:privilege><D:auth-read/>")
+                    .with("privilege", "<p:auth/></D:privilege><D:privilege><p:auth-read/>")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
