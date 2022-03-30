@@ -137,7 +137,7 @@ public class EventActionTest extends PersoniumTest {
 
         // No exec privilege
         CellUtils.setAclSingle(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "role4",
-                "<D:event/>", HttpStatus.SC_OK);
+                "<p:event/>", HttpStatus.SC_OK);
         String token = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account4", "password4");
         CellUtils.event(token, HttpStatus.SC_OK, Setup.TEST_CELL1, eventJson.toJSONString());
         waitForInterval();
@@ -145,7 +145,7 @@ public class EventActionTest extends PersoniumTest {
 
         // exec privilege
         CellUtils.setAclSingle(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "role5",
-                "<D:event/>", HttpStatus.SC_OK);
+                "<p:event/>", HttpStatus.SC_OK);
         token = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account5", "password5");
         CellUtils.event(token, HttpStatus.SC_OK, Setup.TEST_CELL1, eventJson.toJSONString());
         waitForInterval();

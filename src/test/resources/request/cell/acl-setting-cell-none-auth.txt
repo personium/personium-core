@@ -13,7 +13,7 @@ Authorization: Bearer ${token}
             <D:href>${roleBaseUrl}${role1}</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><D:auth/></D:privilege>
+            <D:privilege><p:auth/></D:privilege>
         </D:grant>
     </D:ace>
 </D:acl>

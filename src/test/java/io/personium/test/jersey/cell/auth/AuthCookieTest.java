@@ -893,7 +893,7 @@ public class AuthCookieTest extends PersoniumTest {
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("roleBaseUrl", boxUrl)
                 .with("role", "appadmin")
-                .with("privilege", "<D:box/>")
+                .with("privilege", "<p:box/>")
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 

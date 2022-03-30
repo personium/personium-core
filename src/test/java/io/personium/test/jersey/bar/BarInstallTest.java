@@ -2050,7 +2050,7 @@ public class BarInstallTest extends PersoniumTest {
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("roleBaseUrl", UrlUtils.roleResource(reqCellName, null, ""))
                     .with("role", "boxInstallTestRole")
-                    .with("privilege", "<D:box-install/>")
+                    .with("privilege", "<p:box-install/>")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
         }
