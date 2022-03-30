@@ -1,3 +1,17 @@
+## 1.7.25
+NEW FEATURES:
+* Add `sign` API, which is function to generate JWS (Json Web Signature) with Cell private key.
+([personium/personium-core#625](https://github.com/personium/personium-core/pull/625))
+
+IMPROVEMENTS:
+* Improve stricity about WebDAV ACL with validating XML namespace.
+([personium/personium-core#629](https://github.com/personium/personium-core/pull/629))
+  * This improvement may contain some incompatibility. Before version `1.7.25`, you could specify personium specific privileges with any namespace. From this release, you must specify Personium namespace (`urn:x-personium:xmlns`) when you use personium specific WebDAV privileges.
+
+MISC:
+* Refactoring codes of test utilities. ([personium/personium-core#626](https://github.com/personium/personium-core/pull/626))
+* Update copyright year to 2022. ([personium/personium-core#635](https://github.com/personium/personium-core/pull/635))
+
 ## 1.7.24
 SECURITY UPDATES:
 * Update elasticsearch version to 6.8.22 to address log4j2 vulnerability - CVE-2021-44228, CVE-2021-45046, CVE-2021-45105
