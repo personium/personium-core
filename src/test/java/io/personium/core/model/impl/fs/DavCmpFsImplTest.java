@@ -44,6 +44,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,7 +56,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.apache.commons.io.Charsets;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.junit.AfterClass;
@@ -1311,7 +1311,7 @@ public class DavCmpFsImplTest {
         public String type;
         public Date created = TestUtils.DATE_PUBLISHED;
         public Date updated = TestUtils.DATE_UPDATED;
-        byte[] data = MOCK_DATA.getBytes(Charsets.UTF_8);
+        byte[] data = MOCK_DATA.getBytes(StandardCharsets.UTF_8);
 
         public MockDavCmpFsImpl(Box box, MockDavCmpFsImpl parent, Acl acl) {
             super(box.getName(), parent);

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -41,7 +42,6 @@ import java.util.stream.Stream;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.RuntimeDelegate;
 
-import org.apache.commons.io.Charsets;
 import org.apache.wink.webdav.model.Propertyupdate;
 import org.json.simple.JSONObject;
 import org.odata4j.core.OEntity;
@@ -599,7 +599,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
         EdmDataServices metadata = null;
         //If you pass InputStream to the XML parser (StAX, SAX, DOM) as is, the file list acquisition processing
         //Because it will be interrupted, store it as a provisional countermeasure and then parse it
-        try (BufferedReader bufferedReader = Files.newBufferedReader(pathInZip, Charsets.UTF_8)) {
+        try (BufferedReader bufferedReader = Files.newBufferedReader(pathInZip, StandardCharsets.UTF_8)) {
             //Load 00_ $ metadata.xml and register user schema
             XMLFactoryProvider2 provider = StaxXMLFactoryProvider2.getInstance();
             XMLInputFactory2 factory = provider.newXMLInputFactory2();
@@ -846,7 +846,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
      */
     private JSONUserDataLinks registJsonLinksUserdata(String entryName, Path pathInZip) {
         ObjectMapper mapper = new ObjectMapper();
-        try (BufferedReader reader = Files.newBufferedReader(pathInZip, Charsets.UTF_8)) {
+        try (BufferedReader reader = Files.newBufferedReader(pathInZip, StandardCharsets.UTF_8)) {
             JSONUserDataLinks links = mapper.readValue(reader, JSONUserDataLinks.class);
             for (JSONUserDataLink userDataLink : links.getLinks()) {
                 userDataLinksJsonValidate(userDataLink);
@@ -956,7 +956,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     private StringReader getStringReaderFromPath(Path pathInZip) throws IOException {
-        BufferedReader bufferedReader = Files.newBufferedReader(pathInZip, Charsets.UTF_8);
+        BufferedReader bufferedReader = Files.newBufferedReader(pathInZip, StandardCharsets.UTF_8);
 
         StringBuffer buf = new StringBuffer();
         String str = null;

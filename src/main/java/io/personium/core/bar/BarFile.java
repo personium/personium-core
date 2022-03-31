@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -36,7 +37,6 @@ import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.apache.commons.io.Charsets;
 import org.apache.wink.webdav.model.Multistatus;
 
 import io.personium.common.utils.CommonUtils;
@@ -159,7 +159,7 @@ public class BarFile implements Closeable {
     public BufferedReader getReader(String fileName) {
         Path pathInZip = pathMap.get(fileName);
         try {
-            return Files.newBufferedReader(pathInZip, Charsets.UTF_8);
+            return Files.newBufferedReader(pathInZip, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params(fileName);
         }
@@ -171,7 +171,7 @@ public class BarFile implements Closeable {
      */
     public void writeManifestJson(String data) {
         Path pathInZip = pathMap.get(MANIFEST_JSON);
-        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, StandardCharsets.UTF_8)) {
             writer.write(data);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add manifest json to bar file").reason(e);
@@ -184,7 +184,7 @@ public class BarFile implements Closeable {
      */
     public void writeRelationsJson(String data) {
         Path pathInZip = pathMap.get(RELATIONS_JSON);
-        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, StandardCharsets.UTF_8)) {
             writer.write(data);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add relations json to bar file").reason(e);
@@ -197,7 +197,7 @@ public class BarFile implements Closeable {
      */
     public void writeRolesJson(String data) {
         Path pathInZip = pathMap.get(ROLES_JSON);
-        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, StandardCharsets.UTF_8)) {
             writer.write(data);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add roles json to bar file").reason(e);
@@ -210,7 +210,7 @@ public class BarFile implements Closeable {
      */
     public void writeRulesJson(String data) {
         Path pathInZip = pathMap.get(RULES_JSON);
-        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, StandardCharsets.UTF_8)) {
             writer.write(data);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add roles json to bar file").reason(e);
@@ -223,7 +223,7 @@ public class BarFile implements Closeable {
      */
     public void writeRootPropsXml(Multistatus multistatus) {
         Path pathInZip = pathMap.get(ROOTPROPS_XML);
-        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, StandardCharsets.UTF_8)) {
             Multistatus.marshal(multistatus, writer);
             writer.flush();
         } catch (WebApplicationException | IOException e) {
@@ -265,7 +265,7 @@ public class BarFile implements Closeable {
      */
     public void writeMetadataXml(Path relativePath, String data) {
         Path pathInZip = pathMap.get(CONTENTS_DIR).resolve(relativePath.toString()).resolve(METADATA_XML);
-        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, StandardCharsets.UTF_8)) {
             writer.write(data);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add metadata xml to bar file").reason(e);
