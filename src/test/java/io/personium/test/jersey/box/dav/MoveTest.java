@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2020-2021 Personium Project Authors
+ * Copyright 2020-2022 Personium Project Authors
  * - Akio Shimono
  * - FUJITSU LIMITED
  *

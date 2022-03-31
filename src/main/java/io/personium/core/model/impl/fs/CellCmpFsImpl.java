@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +32,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
+import io.personium.core.model.CellKeys;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.model.lock.LockManager;
@@ -76,7 +77,7 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
         this.load();
         // When accessing under Cell, read it every time.
         // In case of performance problems, fix it to read with "__token, __authz, __certs".
-        cellKeys = new CellKeys(Paths.get(fsPath, CellKeys.KEYS_DIR_NAME));
+        cellKeys = new CellKeysFsImpl(Paths.get(fsPath, CellKeysFsImpl.KEYS_DIR_NAME));
         cellKeys.load();
     }
 

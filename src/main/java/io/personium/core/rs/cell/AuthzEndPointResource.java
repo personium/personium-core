@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,6 +82,7 @@ import io.personium.core.auth.ScopeArbitrator;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
+import io.personium.core.model.CellKeyPair;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
@@ -89,7 +90,6 @@ import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
-import io.personium.core.model.impl.fs.CellKeysFile;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.FacadeResource;
@@ -585,12 +585,12 @@ public class AuthzEndPointResource {
             }
         } else {
             CellCmp cellCmp = (CellCmp) cellRsCmp.getDavCmp();
-            CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
+            CellKeyPair cellKeyPair = cellCmp.getCellKeys().getCellKeyPairs();
             long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
             long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_AN_HOUR;
             IdToken idToken = new IdToken(
-                    cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
-                    username, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
+                    cellKeyPair.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
+                    username, schema, expiryTime, issuedAtSec, cellKeyPair.getPrivateKey());
             paramMap.put(OAuth2Helper.Key.ID_TOKEN, idToken.toTokenString());
         }
 
@@ -700,13 +700,13 @@ public class AuthzEndPointResource {
             }
         } else {
             CellCmp cellCmp = (CellCmp) cellRsCmp.getDavCmp();
-            CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
+            CellKeyPair cellKeyPair = cellCmp.getCellKeys().getCellKeyPairs();
             String subject = token.getSubject();
             long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
             long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_AN_HOUR;
             IdToken idToken = new IdToken(
-                    cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
-                    subject, clientId, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
+                    cellKeyPair.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
+                    subject, clientId, expiryTime, issuedAtSec, cellKeyPair.getPrivateKey());
             paramMap.put(OAuth2Helper.Key.ID_TOKEN, idToken.toTokenString());
         }
         if (StringUtils.isNotEmpty(state)) {

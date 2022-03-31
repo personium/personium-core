@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -155,7 +155,7 @@ public class RoleUtils {
                 .with("cell", cellName)
                 .with("entityType", sourceEntityType)
                 .with("id", sourceEntityKeyString)
-                .with("navPropName", "_Box")
+                .with("navPropName", "_Role")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_OK);

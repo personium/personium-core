@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,6 +47,7 @@ import io.personium.test.jersey.unit.UnitUserCellTest;
         PropPatchTest.class,
         ReadListTest.class,
         ReadTest.class,
+        SignTest.class,
         UnitUserCellTest.class,
         UpdateTest.class
 })

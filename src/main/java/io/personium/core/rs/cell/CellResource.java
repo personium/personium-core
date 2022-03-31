@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -427,6 +427,15 @@ public class CellResource {
     @Path("__import")
     public CellImportResource importCell() {
         return new CellImportResource(cellRsCmp);
+    }
+
+    /**
+     * Sign endpoint.
+     * @return SignResource
+     */
+    @Path("__sign")
+    public SignResource sign() {
+        return new SignResource(cellRsCmp, cellCmp);
     }
 
     /**

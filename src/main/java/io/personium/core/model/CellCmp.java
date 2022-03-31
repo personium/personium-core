@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,6 @@
  * limitations under the License.
  */
 package io.personium.core.model;
-
-import io.personium.core.model.impl.fs.CellKeys;
 
 /**
  * Interface of parts corresponding to Cell.

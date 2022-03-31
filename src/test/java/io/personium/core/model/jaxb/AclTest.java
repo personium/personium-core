@@ -631,7 +631,37 @@ public class AclTest {
             fail("Not throws exception.");
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
-                    "[test] that can not be set in privilege");
+                    "[{DAV:}test] that can not be set in privilege");
+            assertEquals(expected.getCode(), e.getCode());
+            assertEquals(expected.getMessage(), e.getMessage());
+        }
+    }
+
+    /**
+     * Test that validateAcl function refuses privilege specified not valid namespace.
+     * Related Issue: https://github.com/personium/personium-core/issues/64
+     * @throws IOException
+     * @throws JAXBException
+     */
+    @Test
+    public void validateAcl_aclString_with_errorneous_namespace_throws_exception() throws IOException, JAXBException {
+        String aclString = "<D:acl xmlns:D='DAV:' xml:base='https://fqdn/aclTest/__role/__/'>"
+                + "<D:ace>" 
+                + "<D:principal><D:all/></D:principal>"
+                + "<D:grant>"
+                + "<D:privilege><p:read xmlns:p='urn:x-personium:xmlns'/></D:privilege>"
+                + "</D:grant>"
+                + "</D:ace>"
+                + "</D:acl>";
+        Acl aclToSet = null;
+
+        try (Reader reader = new StringReader(aclString)) {
+            aclToSet = ObjectIo.unmarshal(reader, Acl.class);
+            aclToSet.validateAcl(true);
+            fail("No exceptions thrown");
+        } catch (PersoniumCoreException e) {
+            PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
+                "[{urn:x-personium:xmlns}read] that can not be set in privilege");
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
         }
@@ -644,14 +674,14 @@ public class AclTest {
      */
     @Test
     public void CellレベルのACLのバリデートでprivilegeの項目に許可するPrivilegeを指定した場合() throws IOException, JAXBException {
-        String aclString = "<D:acl xmlns:D='DAV:' xml:base='https://fqdn/aclTest/__role/__/'>"
+        String aclString = "<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns' xml:base='https://fqdn/aclTest/__role/__/'>"
                 + "<D:ace>"
                 + "<D:principal>"
                 + "<D:all/>"
                 + "</D:principal>"
                 + "<D:grant>"
                 + "<D:privilege>"
-                + "<D:auth-read/>"
+                + "<p:auth-read/>"
                 + "</D:privilege>"
                 + "</D:grant>"
                 + "</D:ace>"
@@ -691,7 +721,7 @@ public class AclTest {
             fail("Not throws exception.");
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
-                    "[test] that can not be set in privilege");
+                    "[{DAV:}test] that can not be set in privilege");
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
         }

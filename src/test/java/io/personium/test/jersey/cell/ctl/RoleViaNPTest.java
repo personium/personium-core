@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,7 +81,7 @@ public class RoleViaNPTest extends ODataCommon {
 
             // レスポンスヘッダーのチェック
             String location = UrlUtils.cellCtlWithoutSingleQuote(CELL_NAME, Role.EDM_TYPE_NAME,
-                    "Name='" + roleName + "',_Box.Name=null'");
+                    "Name='" + roleName + "',_Box.Name=null");
             ODataCommon.checkCommonResponseHeader(res);
 
             // レスポンスボディーのチェック

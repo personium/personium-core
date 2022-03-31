@@ -7,7 +7,7 @@ Content-Type: application/xml
 Authorization: Bearer ${token}
 
 <?xml version="1.0" encoding="utf-8" ?>
-<D:acl xmlns:D="DAV:" xml:base="${roleBaseUrl}">
+<D:acl xmlns:D="DAV:" xml:base="${roleBaseUrl}" xmlns:p="urn:x-personium:xmlns">
     <D:ace>
         <D:principal>
             <D:href>role2</D:href>
@@ -38,7 +38,7 @@ Authorization: Bearer ${token}
             <D:href>role5</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><D:exec/></D:privilege>
+            <D:privilege><p:exec/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>

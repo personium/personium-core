@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -73,6 +73,8 @@ public class CellPrivilege extends Privilege {
     public static final CellPrivilege RULE = new CellPrivilege("rule", ACCESS_TYPE_WRITE, ROOT);
     /** Rule read privilege. */
     public static final CellPrivilege RULE_READ = new CellPrivilege("rule-read", ACCESS_TYPE_READ, RULE);
+    /** Sign privilege. */
+    public static final CellPrivilege SIGN = new CellPrivilege("sign", ACCESS_TYPE_EXEC, ROOT);
 
     static Map<String, CellPrivilege> map = new HashMap<String, CellPrivilege>();
 
@@ -104,6 +106,7 @@ public class CellPrivilege extends Privilege {
         register(PROPFIND);
         register(RULE);
         register(RULE_READ);
+        register(SIGN);
     }
 
     private static void register(final CellPrivilege p) {

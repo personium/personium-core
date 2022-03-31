@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2019-2021 Personium Project Authors
+ * Copyright 2019-2022 Personium Project Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.model.CellKeyPair;
+import io.personium.core.model.CellKeys;
 
 /**
  * Class that manages cell specific key information.
  */
-public class CellKeys {
+public class CellKeysFsImpl implements CellKeys {
     /** Logger. */
-    private static Logger log = LoggerFactory.getLogger(CellKeys.class);
+    private static Logger log = LoggerFactory.getLogger(CellKeysFsImpl.class);
 
     /** Keys file storage directory name. */
     public static final String KEYS_DIR_NAME = ".pkeys";
@@ -43,7 +45,7 @@ public class CellKeys {
      * It is a map because there is a possibility of having two or more information in the future.
      * Currently only one can be created.
      */
-    private Map<String, CellKeysFile> keysFileMap;
+    private Map<String, CellKeyPairFsImpl> keysFileMap;
     /** Keys file storage directory path. */
     private Path keysDirPath;
 
@@ -51,7 +53,7 @@ public class CellKeys {
      * Constructor.
      * @param keysDirPath Keys file storage directory path
      */
-    public CellKeys(Path keysDirPath) {
+    public CellKeysFsImpl(Path keysDirPath) {
         keysFileMap = new HashMap<>();
         this.keysDirPath = keysDirPath;
     }
@@ -79,8 +81,8 @@ public class CellKeys {
      * In the future we will return map with another method.
      * @return CellKeysFile
      */
-    public CellKeysFile getCellKeysFile() {
-        CellKeysFile cellKeysFile = null;
+    public CellKeyPair getCellKeyPairs() {
+        CellKeyPair cellKeysFile = null;
         for (String keyId : keysFileMap.keySet()) {
             cellKeysFile = keysFileMap.get(keyId);
         }
@@ -109,7 +111,7 @@ public class CellKeys {
      */
     private void doLoad() {
         for (String keyId : keysDirPath.toFile().list()) {
-            CellKeysFile cellKeysFile = CellKeysFile.load(keysDirPath, keyId);
+            CellKeyPairFsImpl cellKeysFile = CellKeyPairFsImpl.load(keysDirPath, keyId);
             keysFileMap.put(keyId, cellKeysFile);
         }
     }
@@ -118,7 +120,7 @@ public class CellKeys {
      * Create keys file.
      */
     private void doCreate() {
-        CellKeysFile cellKeysFile = CellKeysFile.newInstance(keysDirPath);
+        CellKeyPairFsImpl cellKeysFile = CellKeyPairFsImpl.newInstance(keysDirPath);
         // Perform presence check again just before file writing.
         // To reduce the risk of writing at the same timing.
         if (exists()) {

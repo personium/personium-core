@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2019-2021 Personium Project Authors
+ * Copyright 2019-2022 Personium Project Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,13 +41,14 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.CellKeyPair;
 
 /**
  * Class dealing with cell specific key information.
  */
-public class CellKeysFile {
+public class CellKeyPairFsImpl implements CellKeyPair {
     /** Logger. */
-    private static Logger log = LoggerFactory.getLogger(CellKeysFile.class);
+    private static Logger log = LoggerFactory.getLogger(CellKeyPairFsImpl.class);
 
     /** Algorithm at key creation. */
     private static final String KEY_ALGORITHM = "RSA";
@@ -76,7 +77,7 @@ public class CellKeysFile {
      * Constructor.
      * @param keysDirPath Keys file storage directory path
      */
-    private CellKeysFile(Path keysDirPath) {
+    private CellKeyPairFsImpl(Path keysDirPath) {
         this.keysDirPath = keysDirPath;
     }
 
@@ -85,7 +86,7 @@ public class CellKeysFile {
      * @param keysDirPath Keys file storage directory path
      * @param keyId Key ID
      */
-    private CellKeysFile(Path keysDirPath, String keyId) {
+    private CellKeyPairFsImpl(Path keysDirPath, String keyId) {
         this.keysDirPath = keysDirPath;
         this.keyId = keyId;
     }
@@ -98,8 +99,8 @@ public class CellKeysFile {
      *        Directories of keyId is created under this.
      * @return Created new instance.
      */
-    public static CellKeysFile newInstance(Path keysDirPath) { // CHECKSTYLE IGNORE
-        CellKeysFile cellKeysFile = new CellKeysFile(keysDirPath);
+    public static CellKeyPairFsImpl newInstance(Path keysDirPath) { // CHECKSTYLE IGNORE
+        CellKeyPairFsImpl cellKeysFile = new CellKeyPairFsImpl(keysDirPath);
         try {
             cellKeysFile.createKeys();
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -115,8 +116,8 @@ public class CellKeysFile {
      * @param keyId Key ID
      * @return Loaded instance
      */
-    public static CellKeysFile load(Path keysDirPath, String keyId) { // CHECKSTYLE IGNORE
-        CellKeysFile cellKeysFile = new CellKeysFile(keysDirPath, keyId);
+    public static CellKeyPairFsImpl load(Path keysDirPath, String keyId) { // CHECKSTYLE IGNORE
+        CellKeyPairFsImpl cellKeysFile = new CellKeyPairFsImpl(keysDirPath, keyId);
 
         int retryCount = 0;
         while (true) {

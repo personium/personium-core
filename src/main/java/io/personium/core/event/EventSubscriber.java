@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2018-2021 Personium Project Authors
+ * Copyright 2018-2022 Personium Project Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

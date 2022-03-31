@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2019-2021 Personium Project Authors
+ * Copyright 2019-2022 Personium Project Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,5 +160,20 @@ public class TokenUtils {
                 .with("remoteCell", cellName)
                 .with("body", body)
                 .returns().statusCode(statusCode).debug();
+    }
+
+    /**
+     * Exec token introspection API
+     * @param cellName  Target cell name
+     * @param token     A token used to auth
+     * @param targetToken     A token to be introspect
+     * @return API response
+     */
+    public static TResponse execTokenIntrospection(String cellName, String token, String targetToken) {
+        return Http.request("cell/introspect.txt")
+                .with("cellPath", cellName)
+                .with("token", token)
+                .with("targetToken", targetToken)
+                .returns();
     }
 }

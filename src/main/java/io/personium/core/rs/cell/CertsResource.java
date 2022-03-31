@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2018-2021 Personium Project Authors
+ * Copyright 2018-2022 Personium Project Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
 
 import io.personium.core.model.CellCmp;
-import io.personium.core.model.impl.fs.CellKeysFile;
+import io.personium.core.model.CellKeyPair;
 import io.personium.core.utils.ResourceUtils;
 
 /**
@@ -57,10 +57,10 @@ public class CertsResource {
      */
     @GET
     public Response get() {
-        CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
-        RSAPublicKey publicKey = (RSAPublicKey) cellKeysFile.getPublicKey();
+        CellKeyPair cellKeyPair = cellCmp.getCellKeys().getCellKeyPairs();
+        RSAPublicKey publicKey = (RSAPublicKey) cellKeyPair.getPublicKey();
         JsonWebKey jwk = JwkUtils.fromRSAPublicKey(
-                publicKey, AlgorithmUtils.RS_SHA_256_ALGO, cellKeysFile.getKeyId());
+                publicKey, AlgorithmUtils.RS_SHA_256_ALGO, cellKeyPair.getKeyId());
         JsonWebKeys jwks = new JsonWebKeys(jwk);
         return Response.ok(JwkUtils.jwkSetToJson(jwks), MediaType.APPLICATION_JSON).build();
     }

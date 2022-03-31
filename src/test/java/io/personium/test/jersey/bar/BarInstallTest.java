@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -2050,7 +2050,7 @@ public class BarInstallTest extends PersoniumTest {
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("roleBaseUrl", UrlUtils.roleResource(reqCellName, null, ""))
                     .with("role", "boxInstallTestRole")
-                    .with("privilege", "<D:box-install/>")
+                    .with("privilege", "<p:box-install/>")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
         }

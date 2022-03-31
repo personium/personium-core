@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -893,7 +893,7 @@ public class AuthCookieTest extends PersoniumTest {
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("roleBaseUrl", boxUrl)
                 .with("role", "appadmin")
-                .with("privilege", "<D:box/>")
+                .with("privilege", "<p:box/>")
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 

@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -40,8 +41,6 @@ import io.personium.common.auth.token.Role;
 import io.personium.common.utils.CommonUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
-import io.personium.core.auth.BoxPrivilege;
-import io.personium.core.auth.CellPrivilege;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.Privilege;
 import io.personium.core.utils.UriUtils;
@@ -239,8 +238,8 @@ public final class Acl {
             if (ace.grant.privileges == null) {
                 throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params("Can not read privilege");
             }
-            Map<String, CellPrivilege> cellPrivilegeMap = CellPrivilege.getPrivilegeMap();
-            Map<String, BoxPrivilege> boxPrivilegeMap = BoxPrivilege.getPrivilegeMap();
+            Map<QName, Privilege> cellPrivilegeMap = io.personium.core.model.jaxb.Privilege.cellPrivileges;
+            Map<QName, Privilege> boxPrivilegeMap = io.personium.core.model.jaxb.Privilege.boxPrivileges;
 
             for (io.personium.core.model.jaxb.Privilege privilege : ace.grant.privileges) {
                 // Privilege is not empty.
@@ -248,16 +247,16 @@ public final class Acl {
                     throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params("Privilege is empty");
                 }
                 // This tag that can be set to privilege?
-                String localName = privilege.body.getLocalName();
+                QName qName = new QName(privilege.body.getNamespaceURI(), privilege.body.getLocalName());
                 if (isCellLevel) {
-                    if (!cellPrivilegeMap.containsKey(localName)
-                     && !boxPrivilegeMap.containsKey(localName)) {
-                        String cause = String.format("[%s] that can not be set in privilege", localName);
+                    if (!cellPrivilegeMap.containsKey(qName)
+                     && !boxPrivilegeMap.containsKey(qName)) {
+                        String cause = String.format("[%s] that can not be set in privilege", qName);
                         throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(cause);
                     }
                 } else {
-                    if (!boxPrivilegeMap.containsKey(localName)) {
-                        String cause = String.format("[%s] that can not be set in privilege", localName);
+                    if (!boxPrivilegeMap.containsKey(qName)) {
+                        String cause = String.format("[%s] that can not be set in privilege", qName);
                         throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(cause);
                     }
                 }

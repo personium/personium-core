@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2014-2021 Personium Project Authors
+ * Copyright 2014-2022 Personium Project Authors
  * - FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -114,7 +114,7 @@ public final class Ace {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         Document doc;
         try {
-            String ns = "DAV:";
+            String ns = CommonUtils.XmlConst.NS_DAV;
             if (CellPrivilege.ROOT.getName().equals(privilege)) {
                 ns = CommonUtils.XmlConst.NS_PERSONIUM;
             }

@@ -171,4 +171,12 @@ Authorization: Bearer ${token}
             <D:privilege><p:log-read/></D:privilege>
         </D:grant>
     </D:ace>
+    <D:ace>
+        <D:principal>
+            <D:href>role31</D:href>
+        </D:principal>
+        <D:grant>
+            <D:privilege><p:sign/></D:privilege>
+        </D:grant>
+    </D:ace>
 </D:acl>

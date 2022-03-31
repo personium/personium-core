@@ -1,6 +1,6 @@
 /**
  * Personium
- * Copyright 2019-2021 Personium Project Authors
+ * Copyright 2019-2022 Personium Project Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,9 +79,9 @@ import io.personium.core.auth.ScopeArbitrator;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
+import io.personium.core.model.CellKeyPair;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ctl.Account;
-import io.personium.core.model.impl.fs.CellKeysFile;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.plugin.PluginInfo;
 import io.personium.core.plugin.PluginManager;
@@ -551,13 +551,13 @@ public class TokenEndPointResource {
         Set<String> reqScopes = new HashSet<>(Arrays.asList(grantCode.getScope()));
         if (reqScopes.contains(OAuth2Helper.Scope.OPENID)) {
             CellCmp cellCmp = (CellCmp) davRsCmp.getDavCmp();
-            CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
+            CellKeyPair cellKeyPair = cellCmp.getCellKeys().getCellKeyPairs();
             String subject = grantCode.getSubject();
             long issuedAtSec = issuedAt / AbstractOAuth2Token.MILLISECS_IN_A_SEC;
             long expiryTime = issuedAtSec + AbstractOAuth2Token.SECS_IN_AN_HOUR;
             idToken = new IdToken(
-                    cellKeysFile.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
-                    subject, schema, expiryTime, issuedAtSec, cellKeysFile.getPrivateKey());
+                    cellKeyPair.getKeyId(), AlgorithmUtils.RS_SHA_256_ALGO, getIssuerUrl(),
+                    subject, schema, expiryTime, issuedAtSec, cellKeyPair.getPrivateKey());
         }
 
         return this.responseAuthSuccess(aToken, rToken, idToken, issuedAt);
