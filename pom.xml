@@ -218,6 +218,11 @@
             <artifactId>org.eclipse.persistence.moxy</artifactId>
             <version>2.7.10</version>
         </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.28.0-GA</version>
+        </dependency>
 
         <!-- For test. -->
         <dependency>
@@ -266,12 +271,6 @@
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito2</artifactId>
             <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.28.0-GA</version>
             <scope>test</scope>
         </dependency>
         <dependency>
