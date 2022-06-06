@@ -32,7 +32,6 @@ import static org.mockito.Mockito.verify;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -299,8 +298,7 @@ public class CellDataAccessorTest {
         String cellId = "cellId";
         cellDataAccessor = spy(new CellDataAccessor(index, cellId));
 
-        SearchResponse searchResponse = new SearchResponse();
-        PersoniumSearchResponse response = PersoniumSearchResponseImpl.getInstance(searchResponse);
+        PersoniumSearchResponse response = PowerMockito.mock(PersoniumSearchResponseImpl.class);
         doReturn(response).when(cellDataAccessor).searchForIndex(anyString(), any());
 
         // Expected result

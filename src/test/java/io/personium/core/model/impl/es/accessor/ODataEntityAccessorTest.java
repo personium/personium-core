@@ -22,17 +22,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.support.PlainActionFuture;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -41,18 +38,21 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.common.es.EsIndex;
+import io.personium.common.es.EsType;
 import io.personium.common.es.impl.InternalEsClient;
+import io.personium.common.es.response.PersoniumDeleteResponse;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.test.categories.Unit;
 import io.personium.test.utils.UrlUtils;
+
 /**
  * Unit test for ODataEntityAccessor.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(InternalEsClient.class)
-@Category({Unit.class })
+@PrepareForTest({ InternalEsClient.class, EsModel.class })
+@Category({ Unit.class })
 public class ODataEntityAccessorTest {
 
     private static final String INDEX_NAME = "index_for_test";
@@ -61,37 +61,33 @@ public class ODataEntityAccessorTest {
 
     private static EsIndex index;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @Before
+    public void before() {
         PowerMockito.spy(InternalEsClient.class);
         PowerMockito.mockStatic(InternalEsClient.class);
         InternalEsClient mockClient = PowerMockito.mock(InternalEsClient.class);
-        PowerMockito.when(InternalEsClient.getInstance(anyString(), anyString())).thenReturn(mockClient);
-        PowerMockito.when(mockClient.createIndex(anyString(), any())).thenReturn(new PlainActionFuture<CreateIndexResponse>() {
-            @Override
-            public CreateIndexResponse get() {
-                CreateIndexResponse ret = PowerMockito.mock(CreateIndexResponse.class);
-                return ret;
-            }
-        });
-        PowerMockito.when(mockClient.asyncIndex(anyString(), anyString(), anyString(), anyString(), any(), any(), anyLong()))
-            .thenReturn(new PlainActionFuture<IndexResponse>() {
-            @Override
-            public IndexResponse get() {
-                IndexResponse ret = PowerMockito.mock(IndexResponse.class);
-                PowerMockito.when(ret.getId()).thenReturn("12");
-                return ret;
-            }
-        });
-        PowerMockito.when(mockClient.asyncDelete(anyString(), anyString(), anyString(), anyString(), anyLong()))
-        .thenReturn(new PlainActionFuture<DeleteResponse>() {
-            @Override
-            public DeleteResponse get() {
-                DeleteResponse ret = PowerMockito.mock(DeleteResponse.class);
-                //PowerMockito.when(ret.getId()).thenReturn("12");
-                return ret;
-            }
-        });
+        PowerMockito
+            .when(InternalEsClient.getInstance(anyString(), anyString()))
+            .thenReturn(mockClient);
+
+        var mockIndex = PowerMockito.mock(EsIndex.class);
+        PowerMockito.when(mockIndex.getName()).thenReturn(INDEX_NAME);
+        var mockEsType = PowerMockito.mock(EsType.class);
+        var pIndexResponse = PowerMockito.mock(PersoniumIndexResponse.class);
+        PowerMockito.when(pIndexResponse.getId()).thenReturn("12");
+        var pDeleteResponse = PowerMockito.mock(PersoniumDeleteResponse.class);
+
+        PowerMockito
+            .when(mockEsType.create(anyString(), any()))
+            .thenReturn(pIndexResponse);
+        PowerMockito.when(mockEsType.update(anyString(), any(), anyLong())).thenReturn(pIndexResponse);
+        PowerMockito.when(mockEsType.delete(anyString(), anyLong())).thenReturn(pDeleteResponse);
+
+        PowerMockito.spy(EsModel.class);
+        PowerMockito.mockStatic(EsModel.class);
+        PowerMockito.when(EsModel.idxUserWithUnitPrefix(anyString())).thenReturn(mockIndex);
+        PowerMockito.when(EsModel.type(anyString(), anyString(), anyString(), anyInt(), anyInt()))
+                .thenReturn(mockEsType);
 
         index = EsModel.idxUserWithUnitPrefix("test");
     }
@@ -100,7 +96,7 @@ public class ODataEntityAccessorTest {
      * create処理が正常に終了する.
      */
     @Test
-    public void create処理が正常に終了する()  {
+    public void create処理が正常に終了する() {
         // Preparation
         ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
         OEntityDocHandler docHandler = createTestOEntityDocHandler();

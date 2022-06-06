@@ -131,7 +131,7 @@ public class LinksUtils {
                 .with("navProp", "_" + navProp)
                 .with("token", token)
                 .with("uri", uri)
-                .returns().statusCode(statusCode).debug();
+                .returns().debug().statusCode(statusCode);
     }
 
     /**
