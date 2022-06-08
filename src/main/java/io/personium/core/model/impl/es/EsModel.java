@@ -92,7 +92,7 @@ public class EsModel {
             }
         });
 
-        esClient = new EsClient(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
+        esClient = new EsClient(PersoniumUnitConfig.getEsHost(), PersoniumUnitConfig.getEsPort());
     }
 
     private EsModel() {
