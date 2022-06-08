@@ -602,12 +602,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                 isDynamic = true;
             }
 
-            //Get value
-            if (!this.staticFields.containsKey(getPropertyNameOrAlias(entitySet.getName(), prop.getName()))
-                    && isDynamic) {
-                continue;
-            }
-            Object valO = this.staticFields.get(getPropertyNameOrAlias(entitySet.getName(), prop.getName()));
+            String propertyNameOrAlias = getPropertyNameOrAlias(entitySet.getName(), prop.getName());
+
+            // If the property is not contained, use null instead.
+            Object valO = this.staticFields.get(propertyNameOrAlias);
 
             EdmType edmType = prop.getType();
 

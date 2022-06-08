@@ -171,7 +171,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             // レスポンスボディーのチェック
             assertTrue(resBody.containsKey("dynamicProperty"));
             assertNull(resBody.get("dynamicProperty"));
-            assertFalse(resBody.containsKey("First"));
+            assertTrue(resBody.containsKey("First"));
             assertTrue(resBody.containsKey("Second"));
             assertNotNull(resBody.get("Second"));
 

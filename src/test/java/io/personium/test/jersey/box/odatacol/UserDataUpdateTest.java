@@ -1736,10 +1736,10 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
             // レスポンスボディーのチェック
             assertTrue(resBody.containsKey("dynamicProperty1"));
             assertNull(resBody.get("dynamicProperty1"));
-            assertFalse(resBody.containsKey("dynamicProperty2"));
+            assertTrue(resBody.containsKey("dynamicProperty2"));
             assertTrue(resBody.containsKey("dynamicProperty3"));
             assertNull(resBody.get("dynamicProperty3"));
-            assertFalse(resBody.containsKey("First"));
+            assertTrue(resBody.containsKey("First"));
             assertTrue(resBody.containsKey("Second"));
             assertNotNull(resBody.get("Second"));
 
