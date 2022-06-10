@@ -410,7 +410,7 @@ public class ComplexTypeUpdateTest extends ODataCommon {
     @Test
     public final void ComplexTypeの更新時Nameに指定可能な文字数の最小値を指定した場合204になること() {
         String complexTypeName = "testComplexType";
-        String complexTypeRename = "1";
+        String complexTypeRename = "a";
 
         try {
             // ComplexTypeの作成

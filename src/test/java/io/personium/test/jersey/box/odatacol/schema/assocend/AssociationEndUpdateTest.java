@@ -675,7 +675,7 @@ public class AssociationEndUpdateTest extends ODataCommon {
     public final void AssociationEndの更新時Nameに指定可能な文字数の最小値を指定した場合204となること() {
         String entityTypeName1 = "entityTypeName1";
         String associationEndName1 = "associationEndName1";
-        String reName = "1";
+        String reName = "a";
 
         try {
             // EntityTypeを作成
@@ -1191,7 +1191,7 @@ public class AssociationEndUpdateTest extends ODataCommon {
      */
     @Test
     public final void AssociationEndの更新時EntityType名に指定可能な文字数の最小値を指定した場合201となること() {
-        String entityTypeName1 = "1";
+        String entityTypeName1 = "a";
         String associationEndName1 = "associationEndName1";
         String reName = "associationEndReName1";
 

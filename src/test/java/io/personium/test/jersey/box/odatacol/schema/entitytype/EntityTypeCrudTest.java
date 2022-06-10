@@ -165,7 +165,7 @@ public class EntityTypeCrudTest extends ODataCommon {
      */
     @Test
     public final void EntityTypeの新規作成時Nameに指定可能な文字数の最小値を指定した場合201になること() {
-        String entityTypeName = "1";
+        String entityTypeName = "a";
         String locationHeader = null;
 
         try {
@@ -515,7 +515,7 @@ public class EntityTypeCrudTest extends ODataCommon {
     @Test
     public final void EntityTypeの更新時Nameに指定可能な文字数の最小値を指定した場合204になること() {
         String entityTypeName = "testDataEntityName";
-        String entityTypeReName = "1";
+        String entityTypeReName = "a";
 
         try {
             // EntityTypeの作成
