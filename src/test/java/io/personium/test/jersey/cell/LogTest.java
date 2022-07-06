@@ -66,6 +66,34 @@ public class LogTest extends ODataCommon {
     }
 
     /**
+     * PROPFIND to log file returns 207 multistatus.
+     * @throws InterruptedException
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void PROPFIND_returns_207() {
+        JSONObject body = new JSONObject();
+        body.put("Type", "POST");
+        body.put("Object", "ObjectData");
+        body.put("Info", "resultData");
+
+        CellUtils.event(MASTER_TOKEN_NAME, HttpStatus.SC_OK, Setup.TEST_CELL1, body.toJSONString());
+
+        TResponse response = Http.request("cell/log-propfind.txt")
+            .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
+            .with("token", AbstractCase.MASTER_TOKEN_NAME)
+            .with("cellPath", Setup.TEST_CELL1)
+            .with("collection", CURRENT_COLLECTION)
+            .with("fileName", DEFAULT_LOG)
+            .with("depth", "0")
+            .returns();
+        response.debug();
+        String responseBody = response.getBody();
+        assertTrue(0 < responseBody.length());
+        response.statusCode(HttpStatus.SC_MULTI_STATUS);
+    }
+
+    /**
      * ログファイルに対するGETで200が返却されること.
      * @throws InterruptedException InterruptedException
      */
@@ -95,6 +123,38 @@ public class LogTest extends ODataCommon {
         String responseBody = response.getBody();
         assertTrue(0 < responseBody.length());
         response.statusCode(HttpStatus.SC_OK);
+    }
+
+    /**
+     * Deleting currentlog responses with 400 BadRequest.
+     * @throws InterruptedException InterruptedException
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void DELETE_currentlog_responses_with_400()
+            throws InterruptedException {
+        JSONObject body = new JSONObject();
+        body.put("Type", "POST");
+        body.put("Object", "ObjectData");
+        body.put("Info", "resultData");
+
+        CellUtils.event(MASTER_TOKEN_NAME, HttpStatus.SC_OK, Setup.TEST_CELL1, body.toJSONString());
+
+        // wait for log output
+        Thread.sleep(WAIT_TIME_FOR_EVENT);
+
+        TResponse response = Http.request("cell/log-get.txt")
+                .with("METHOD", HttpMethod.DELETE)
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .with("cellPath", Setup.TEST_CELL1)
+                .with("collection", CURRENT_COLLECTION)
+                .with("fileName", DEFAULT_LOG)
+                .with("ifNoneMatch", "*")
+                .returns();
+        response.debug();
+        String responseBody = response.getBody();
+        assertTrue(0 < responseBody.length());
+        response.statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     /**
@@ -244,16 +304,6 @@ public class LogTest extends ODataCommon {
 
         Http.request("cell/log-get.txt")
                 .with("METHOD", HttpMethod.PUT)
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", Setup.TEST_CELL1)
-                .with("collection", CURRENT_COLLECTION)
-                .with("fileName", DEFAULT_LOG)
-                .with("ifNoneMatch", "*")
-                .returns()
-                .statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
-
-        Http.request("cell/log-get.txt")
-                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL1)
                 .with("collection", CURRENT_COLLECTION)

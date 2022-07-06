@@ -17,11 +17,10 @@
  */
 package io.personium.core.eventlog;
 
-
 /**
- * Class for archive log files.
+ * Class for log files.
  */
-public class ArchiveLogFile {
+public class LogFile {
 
     private long created;
     private long updated;
@@ -35,13 +34,12 @@ public class ArchiveLogFile {
      * @param size size
      * @param url URL
      */
-    public ArchiveLogFile(long created, long updated, long size, String url) {
+    public LogFile(long created, long updated, long size, String url) {
         this.created = created;
         this.updated = updated;
         this.url = url;
         this.size = size;
     }
-
     /**
      * Return creation date and time.
      * @return Created date and time
@@ -49,15 +47,20 @@ public class ArchiveLogFile {
     public long getCreated() {
         return created;
     }
-
     /**
-     * Refresh date and time is returned.
-     * @return Update date and time
+     * Return updated date and time.
+     * @return Updated date and time
      */
     public long getUpdated() {
         return updated;
     }
-
+    /**
+     * Return file size.
+     * @return File size.
+     */
+    public long getSize() {
+        return size;
+    }
     /**
      * Return URL.
      * @return URL
@@ -65,13 +68,4 @@ public class ArchiveLogFile {
     public String getUrl() {
         return url;
     }
-
-    /**
-     * Return file size.
-     * @return file size
-     */
-    public long getSize() {
-        return size;
-    }
-
 }
