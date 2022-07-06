@@ -21,9 +21,14 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
@@ -37,6 +42,35 @@ import io.personium.test.categories.Unit;
 @Category({Unit.class })
 public class BinaryDataAccessorTest {
 
+    Path tmpFilePath;
+
+    /**
+     * Prepare for test.
+     */
+    @Before
+    public void prepareForTest() {
+        tmpFilePath = null;
+        try {
+            tmpFilePath = Files.createTempFile("dummy", ".txt");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Destroy resources used in test.
+     */
+    @After
+    public void destroyResources() {
+        try {
+            if (tmpFilePath != null) {
+                Files.delete(tmpFilePath);
+            }
+        } catch (IOException e) {
+                throw new RuntimeException(e);
+        }
+    }
+
     /**
      * fsync ON  & FileInputStream.
      * FileDescriptor#sync() should be called.
@@ -48,8 +82,8 @@ public class BinaryDataAccessorTest {
         Method closeOSMethod = FileDataAccessor.class.getDeclaredMethod(
                 "closeOutputStream", new Class<?>[] {OutputStream.class});
         closeOSMethod.setAccessible(true);
-        closeOSMethod.invoke(bda, new FileOutputStream("hoge"));
-        Mockito.verify(bda, Mockito.atLeast(1)).sync((FileDescriptor) Mockito.anyObject());
+        closeOSMethod.invoke(bda, new FileOutputStream(tmpFilePath.toFile()));
+        Mockito.verify(bda, Mockito.atLeast(1)).sync((FileDescriptor) Mockito.any());
     }
 
     /**
@@ -63,8 +97,8 @@ public class BinaryDataAccessorTest {
         Method closeOSMethod = FileDataAccessor.class.getDeclaredMethod(
                 "closeOutputStream", new Class<?>[] {OutputStream.class});
         closeOSMethod.setAccessible(true);
-        closeOSMethod.invoke(bda, new FileOutputStream("hoge"));
-        Mockito.verify(bda, Mockito.never()).sync((FileDescriptor) Mockito.anyObject());
+        closeOSMethod.invoke(bda, new FileOutputStream(tmpFilePath.toFile()));
+        Mockito.verify(bda, Mockito.never()).sync((FileDescriptor) Mockito.any());
     }
 
     /**
@@ -78,8 +112,8 @@ public class BinaryDataAccessorTest {
         Method closeOSMethod = FileDataAccessor.class.getDeclaredMethod(
                 "closeOutputStream", new Class<?>[] {OutputStream.class});
         closeOSMethod.setAccessible(true);
-        closeOSMethod.invoke(bda, new BufferedOutputStream(new FileOutputStream("hoge")));
-        Mockito.verify(bda, Mockito.atLeast(1)).sync((FileDescriptor) Mockito.anyObject());
+        closeOSMethod.invoke(bda, new BufferedOutputStream(new FileOutputStream(tmpFilePath.toFile())));
+        Mockito.verify(bda, Mockito.atLeast(1)).sync((FileDescriptor) Mockito.any());
     }
 
     /**
@@ -94,6 +128,6 @@ public class BinaryDataAccessorTest {
                 "closeOutputStream", new Class<?>[] {OutputStream.class});
         closeOSMethod.setAccessible(true);
         closeOSMethod.invoke(bda, new ByteArrayOutputStream());
-        Mockito.verify(bda, Mockito.never()).sync((FileDescriptor) Mockito.anyObject());
+        Mockito.verify(bda, Mockito.never()).sync((FileDescriptor) Mockito.any());
     }
 }
