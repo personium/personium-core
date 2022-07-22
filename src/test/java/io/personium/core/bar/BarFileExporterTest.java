@@ -54,6 +54,7 @@ import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.producer.EntitiesResponse;
 import org.odata4j.producer.Responses;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
@@ -77,13 +78,13 @@ import io.personium.core.model.impl.fs.DavCmpFsImplTest.MockDavCmpFsImpl;
 import io.personium.core.model.jaxb.Acl;
 import io.personium.core.utils.PersoniumUrl;
 import io.personium.core.utils.TestUtils;
-import io.personium.core.utils.UriUtils;
 
 /**
  * Unit tests for BarFileExporter class.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ModelFactory.ODataCtl.class)
+@PowerMockIgnore({"javax.xml.*", "com.sun.org.apache.xerces.*", "org.w3c.dom.*", "org.xml.*", "com.sun.org.apache.xalan.*", "com.sun.xml.*"})
 public class BarFileExporterTest {
     public static String CELL_URL;
     public static String BOX_SCHEMA_URL;

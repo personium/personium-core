@@ -181,13 +181,13 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        return createContents(dir);
+        return createContents(dir, true);
     }
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         progressInfo.addDelta(1L);
-        return createContents(file);
+        return createContents(file, false);
     }
 
     @Override
@@ -222,14 +222,19 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
      * @param pathInZip File path obj in zip
      * @return boolean Processing result true:success false:failure
      */
-    private FileVisitResult createContents(Path pathInZip) {
+    private FileVisitResult createContents(Path pathInZip, boolean isDirectory) {
         try {
             String entryName = pathInZip.toString();
             if (entryName.startsWith("/")) {
                 entryName = entryName.replaceFirst("/", "");
             }
+            if (isDirectory && !entryName.endsWith("/")) {
+                // workaround for avoid incompatibility which trailing slash is not presented in directory
+                entryName = entryName + "/";
+            }
             log.debug("Entry Name: " + entryName);
             log.debug("Entry Size: " + Files.size(pathInZip));
+            log.debug("Entry isDirectory: " + isDirectory);
             if (BarFile.CONTENTS_DIR.equals(entryName)) {
                 // Do not need to process content root directory.
                 return FileVisitResult.CONTINUE;
@@ -463,9 +468,13 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
             // - Because the order of processing is fixed, sort path and process it
             try {
                 Stream<Path> pathst = Files.list(pathInZip).sorted();
-                pathst.forEach(
-                        path -> createODataCollectionContents(path.toString().replaceFirst("/", ""), path)
-                        );
+                pathst.forEach(path -> {
+                    String nextEntryName = path.toString().replaceFirst("/", "");
+                    if (Files.isDirectory(path)) {
+                        nextEntryName = nextEntryName + "/";
+                    }
+                    createODataCollectionContents(nextEntryName, path);
+                });
             } catch (IOException e) {
                 log.info("IOException: " + e.getMessage(), e.fillInStackTrace());
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2000");
