@@ -431,7 +431,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
         String requestUrl = requestCellUrl + "__message/port";
 
         //Acquire request header, add content below
-        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
+        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_DEFAULT);
         HttpPost req = new HttpPost(requestUrl);
 
         //Request body
