@@ -41,25 +41,29 @@ public class DavCommon {
     /** Overwrite Value when header overwrite is not allowed.*/
     public static final String OVERWRITE_FALSE = "F";
 
+    public static Pattern PATTERN_CTRL_CHARS = Pattern.compile("\\p{C}");
+    public static Pattern PATTERN_INNVALID_RESOURCE_CHARS = Pattern.compile("[\\\\/:*?\"<>| ]");
     /**
      * Invalid name check.
      * @param name Name of the resource to be checked
      * @return true: normal, false: invalid
      */
     public static final boolean isValidResourceName(String name) {
-        //It is not a regular expression of TODO Common.PATTERN_NAME but is it the correct checking method? It does not match the contents of the API specification
-        if (name.length() >= MIN_RESOURCE_LENGTH
-                && name.length() < MAX_RESOURCE_LENGTH) {
-            String regex = "[\\\\/:*?\"<>| ]";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher m = pattern.matcher(name);
-            if (m.find()) {
-                return false;
-            }
-            return true;
-        } else {
+        if (name.length() < MIN_RESOURCE_LENGTH
+                || name.length() > MAX_RESOURCE_LENGTH) {
             return false;
         }
+        // prohibit use of \ / : * ? " < > |
+        Matcher m = PATTERN_INNVALID_RESOURCE_CHARS.matcher(name);
+        if (m.find()) {
+            return false;
+        }
+        // prohibi use of control chars
+        m = PATTERN_CTRL_CHARS.matcher(name);
+        if (m.find()) {
+            return false;
+        }
+        return true;
     }
 
 }
