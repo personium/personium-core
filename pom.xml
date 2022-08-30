@@ -40,7 +40,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-es-adapter</artifactId>
-            <version>2_es8.3_1-SNAPSHOT</version>
+            <version>1_es6.8.22_1</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
