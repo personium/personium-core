@@ -13,6 +13,10 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
 
     steps:
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
     - name: git settings
       run: |
         if [ -z "$GITHUB_USER" -o -z "$GITHUB_TOKEN" ]; then
