@@ -1,3 +1,15 @@
+## 1.8.0
+IMPROVEMENTS:
+* Supporting Java 17.([personium/personium-core#647](https://github.com/personium/personium-core/pull/647), [personium/personium-core#654](https://github.com/personium/personium-core/pull/654))
+
+SECURITY FIX:
+* Using HTTPS in internal communications via messaging API.([personium/personium-core#45](https://github.com/personium/personium-core/pull/45))
+* Implement checks for disabling use of control characters in resource name.([personium/personium-core#655](https://github.com/personium/personium-core/pull/655))
+
+MISC:
+* Fix tests.([personium/personium-core#649](https://github.com/personium/personium-core/pull/649))
+
+
 ## 1.7.25
 NEW FEATURES:
 * Add `sign` API, which is function to generate JWS (Json Web Signature) with Cell private key.
