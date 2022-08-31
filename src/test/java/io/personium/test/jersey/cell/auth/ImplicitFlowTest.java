@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
@@ -45,10 +48,7 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.ResidentLocalAccessToken;
@@ -523,17 +523,21 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     static void checkHtmlBody(PersoniumResponse res, String messageId, String dataCellName, String dcOwner) {
-        DOMParser parser = new DOMParser();
-        InputSource body = null;
-        body = new InputSource(res.bodyAsStream());
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+        Document document = null;
+
         try {
-            parser.parse(body);
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            document = db.parse(res.bodyAsStream());
         } catch (SAXException e) {
             fail(e.getMessage());
         } catch (IOException e) {
             fail(e.getMessage());
+        } catch (ParserConfigurationException e) {
+            fail(e.getMessage());
         }
-        Document document = parser.getDocument();
+
         NodeList nodeList = document.getElementsByTagName("script");
         assertEquals(AuthResourceUtils.getJavascript("ajax.js"), ((Element) nodeList.item(0)).getTextContent());
 

@@ -879,7 +879,7 @@ public class RuleManager {
                 rule.targeturl = turl;
             }
         } catch (Exception e) {
-            logger.debug("exception occurred");
+            logger.debug("exception occurred", e);
         }
 
         if (rule.action == null) {
