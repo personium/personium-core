@@ -68,7 +68,9 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * A JAX-RS resource that is responsible for nonexistent paths below Box.
+ * A JAX-RS resource handling non-existent paths under a Box.
+ * This is used to return 404 errors for GET method
+ * and for creating a new resouce using PUT or MKCOL method.
  */
 public class NullResource {
     static Logger log = LoggerFactory.getLogger(NullResource.class);
@@ -112,25 +114,26 @@ public class NullResource {
             @HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             final InputStream inputStream) {
 
-        //Access control
+        //Access control when a parent directory exists.
         if (!this.isParentNull) {
             this.davRsCmp.getParent().checkAccessContext(BoxPrivilege.BIND);
         }
 
-        //If there is no intermediate path 409 error
-        /*
-         * A PUT that would result in the creation of a resource without an
-         * appropriately scoped parent collection MUST fail with a 409 (Conflict).
-         */
-
+        // If resource name is invalid, then return an error.
         if (!DavCommon.isValidResourceName(this.davRsCmp.getDavCmp().getName())) {
             throw PersoniumCoreException.Dav.RESOURCE_NAME_INVALID;
         }
 
+        //If there is no intermediate path, then return 409 error
+        /*
+         * A PUT operation that would result in the creation of a resource without an
+         * appropriately scoped parent collection MUST fail with a 409 (Conflict).
+         */
+
         if (this.isParentNull) {
             throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(this.davRsCmp.getParent().getUrl());
         }
-
+        // All checks passed, so create.
         Response response = this.davRsCmp.getDavCmp().putForCreate(contentType, inputStream).build();
 
         // post event to EventBus
@@ -204,9 +207,12 @@ public class NullResource {
             throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(this.davRsCmp.getParent().getUrl());
         }
 
+        // If resource name is invalid, then return an error.
         if (!DavCommon.isValidResourceName(this.davRsCmp.getDavCmp().getName())) {
             throw PersoniumCoreException.Dav.RESOURCE_NAME_INVALID;
         }
+
+        // All checks passed, so now tyring to create a collection.
 
         //If request is empty obediently create collection with webdav
         if (!ResourceUtils.hasApparentlyRequestBody(contentLength, transferEncoding)) {
