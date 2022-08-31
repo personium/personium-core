@@ -41,8 +41,8 @@ public class DavCommon {
     /** Overwrite Value when header overwrite is not allowed.*/
     public static final String OVERWRITE_FALSE = "F";
 
-    public static final Pattern PATTERN_CTRL_CHARS = Pattern.compile("\\p{Cntrl}");
-    public static Pattern PATTERN_INNVALID_RESOURCE_CHARS = Pattern.compile("[\\\\/:*?\"<>| ]");
+    public static final Pattern PATTERN_CTRL_CHARS = Pattern.compile("\\p{Cc}");
+    public static final Pattern PATTERN_INNVALID_RESOURCE_CHARS = Pattern.compile("[\\\\/:*?\"<>| ]");
     /**
      * Invalid name check.
      * @param name Name of the resource to be checked
