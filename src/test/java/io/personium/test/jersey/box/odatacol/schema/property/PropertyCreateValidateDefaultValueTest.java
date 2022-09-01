@@ -763,7 +763,7 @@ public class PropertyCreateValidateDefaultValueTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
         req.addJsonBody(PropertyUtils.PROPERTY_TYPE_KEY, EdmSimpleType.DATETIME.getFullyQualifiedTypeName());
         req.addJsonBody(PropertyUtils.PROPERTY_NULLABLE_KEY, null);
-        req.addJsonBody(PropertyUtils.PROPERTY_DEFAULT_VALUE_KEY, new Long("9223372036854775807"));
+        req.addJsonBody(PropertyUtils.PROPERTY_DEFAULT_VALUE_KEY, 9223372036854775807L);
         req.addJsonBody(PropertyUtils.PROPERTY_COLLECTION_KIND_KEY, null);
         req.addJsonBody(PropertyUtils.PROPERTY_IS_KEY_KEY, null);
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
