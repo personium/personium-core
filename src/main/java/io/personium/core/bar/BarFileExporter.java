@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -260,8 +261,9 @@ public class BarFileExporter {
         // Create return objects.
         IJSONMappedObjects jsonObjects;
         try {
-            jsonObjects = (IJSONMappedObjects) clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            jsonObjects = (IJSONMappedObjects) clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException
+                | InvocationTargetException e) {
             // Usually, this Exception does not occur.
             // Throw unknown error for the moment.
             throw PersoniumCoreException.Server.UNKNOWN_ERROR.reason(e);
