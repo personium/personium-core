@@ -43,7 +43,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.rs.cell.LogResource;
 import io.personium.test.categories.Unit;
 
 /**
@@ -410,31 +409,26 @@ public class LogResourceTest {
     }
 
     private void createZip(String fileName, File[] files) throws IOException {
-        ZipOutputStream zos = null;
-        try {
-            zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(new File(fileName))));
+        try (var fos = new FileOutputStream(fileName);
+            var bof = new BufferedOutputStream(fos);
+            var zos = new ZipOutputStream(bof)) {
             createZip(zos, files);
-        } finally {
-            IOUtils.closeQuietly(zos);
         }
     }
 
     private void createZip(ZipOutputStream zos, File[] files) throws IOException {
         byte[] buf = new byte[1024];
-        InputStream is = null;
-        try {
-            for (File file : files) {
-                ZipEntry entry = new ZipEntry(file.getName());
-                zos.putNextEntry(entry);
+        for (File file : files) {
+            ZipEntry entry = new ZipEntry(file.getName());
+            zos.putNextEntry(entry);
 
-                is = new BufferedInputStream(new FileInputStream(file));
-                int len = 0;
-                while ((len = is.read(buf)) != -1) {
-                    zos.write(buf, 0, len);
+            try (var fis = new FileInputStream(file);
+                var bis = new BufferedInputStream(fis)) {
+                    int len = 0;
+                    while ((len = bis.read(buf)) != -1) {
+                        zos.write(buf, 0, len);
+                    }
                 }
-            }
-        } finally {
-            IOUtils.closeQuietly(is);
         }
     }
 }

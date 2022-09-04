@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.odata4j.expression.ExpressionParser.TokenType;
 
-import io.personium.core.odata.PersoniumExpressionParser;
 import io.personium.core.odata.PersoniumExpressionParser.Token;
 import io.personium.test.categories.Unit;
 
