@@ -19,6 +19,7 @@ package io.personium.test.jersey.box;
 
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -60,12 +61,7 @@ public class DavValidateTest extends PersoniumTest {
         validNames.add("a%3C");
         validNames.add("a%3E");
         validNames.add("a%7C");
-        String name;
-        name =  "1234567890123456789012345678901234567890123456789012345678901234567890";
-        name += "1234567890123456789012345678901234567890123456789012345678901234567890";
-        name += "1234567890123456789012345678901234567890123456789012345678901234567890";
-        name += "1234567890123456789012345678901234567890123456";
-        validNames.add(name);
+        validNames.add(StringUtils.repeat("1234567890", 25) + "123456"); // 256
     }
 
     /**
