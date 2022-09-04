@@ -31,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
-import io.personium.core.utils.UriUtils;
 
 /**
  * URLの作成の組立を行う関数群.

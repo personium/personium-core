@@ -27,7 +27,6 @@ import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.ReceivedMessage;
-import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 

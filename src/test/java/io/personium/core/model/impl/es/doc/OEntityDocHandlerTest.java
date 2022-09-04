@@ -32,7 +32,6 @@ import org.odata4j.edm.EdmEntitySet;
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.core.model.ctl.CtlSchema;
-import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.test.categories.Unit;
 
