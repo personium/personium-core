@@ -32,7 +32,7 @@ import io.personium.core.odata.OEntityWrapper;
 /**
  * Property DocHandler.
  */
-public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDocHandler {
+public class PropertyDocHandler extends OEntityDocHandler {
 
     Map<String, PropertyAlias> propertyAliasMap;
     Map<String, String> entityTypeMap;
