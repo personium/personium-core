@@ -867,7 +867,6 @@ public class CellUtils {
      * Set ACL. Single privilege.
      * @param cellName target cell
      * @param token token
-     * @param boxName box name
      * @param roleName target role
      * @param privilege privilege
      * @param code expected response code

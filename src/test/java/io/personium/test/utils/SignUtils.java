@@ -20,14 +20,14 @@ package io.personium.test.utils;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Utility Class for using Sign API
+ * Utility Class for using Sign API.
  */
 public class SignUtils {
     private SignUtils() {
     }
 
     /**
-     * Generate sign for content text
+     * Generate sign for content text.
      * @param cellName target cellName
      * @param token token to be used
      * @param text text to be signed
@@ -39,7 +39,7 @@ public class SignUtils {
     }
 
     /**
-     * Generate sign for content text
+     * Generate sign for content text.
      * @param cellName target cellName
      * @param token token to be used
      * @param body byte array body to be signed
@@ -51,7 +51,7 @@ public class SignUtils {
     }
 
     /**
-     * Generate sign for content text
+     * Generate sign for content text.
      * @param cellName target cellName
      * @param token token to be used
      * @param accept accept header
@@ -65,7 +65,7 @@ public class SignUtils {
 
 
     /**
-     * Generate sign for content text
+     * Generate sign for content text.
      * @param cellName target cellName
      * @param token token to be used
      * @param accept accept header
