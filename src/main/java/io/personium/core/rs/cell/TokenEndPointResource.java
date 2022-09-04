@@ -366,7 +366,8 @@ public class TokenEndPointResource {
         if (clientAssertionType != null || clientAssertion != null) {
             // Then clientAssertionType should be valid value.
             if (!OAuth2Helper.GrantType.SAML2_BEARER.equals(clientAssertionType)) {
-                throw PersoniumCoreAuthnException.INVALID_CLIENT_ASSERTION_TYPE.params(OAuth2Helper.GrantType.SAML2_BEARER);
+                throw PersoniumCoreAuthnException.INVALID_CLIENT_ASSERTION_TYPE
+                    .params(OAuth2Helper.GrantType.SAML2_BEARER);
             }
             // Just ignore clientSecret, authzHeader
             //
@@ -489,7 +490,8 @@ public class TokenEndPointResource {
             final String code, long expiresIn, long rTokenExpiresIn) {
         if (code == null) {
             //If code is not set, it is regarded as a parse error
-            throw PersoniumCoreAuthnException.INVALID_GRANT_CODE.reason(new IllegalArgumentException("grant code not provided"));
+            throw PersoniumCoreAuthnException.INVALID_GRANT_CODE
+                .reason(new IllegalArgumentException("grant code not provided"));
         }
         if (schema == null) {
             throw PersoniumCoreAuthnException.CLIENT_AUTH_REQUIRED.realm(
@@ -616,7 +618,9 @@ public class TokenEndPointResource {
         //Authentication is successful -------------------------------
 
         // Scope arbitration
-        String[] scopes = this.cell.getScopeArbitrator(schema, OAuth2Helper.GrantType.SAML2_BEARER).request(tcToken.getScope()).getResults();
+        String[] scopes = this.cell
+            .getScopeArbitrator(schema, OAuth2Helper.GrantType.SAML2_BEARER)
+            .request(tcToken.getScope()).getResults();
 
         // Create a refresh token based on the authentication information
         long issuedAt = new Date().getTime();
