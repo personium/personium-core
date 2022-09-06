@@ -31,7 +31,7 @@ public class DavCommon {
     /** Resource minimum length.*/
     private static final int MIN_RESOURCE_LENGTH = 1;
     /** Maximum resource length.*/
-    private static final int MAX_RESOURCE_LENGTH = 256;
+    private static final int MAX_RESOURCE_LENGTH = 255;
 
     /** Default value of Depth header.*/
     public static final String DEPTH_INFINITY = "infinity";
