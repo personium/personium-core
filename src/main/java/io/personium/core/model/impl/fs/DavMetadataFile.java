@@ -20,11 +20,11 @@ package io.personium.core.model.impl.fs;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Date;
 
-import org.apache.commons.io.Charsets;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -203,11 +203,11 @@ public class DavMetadataFile {
         ElapsedTimeLog endLog = ElapsedTimeLog.Dav.FILE_OPERATION_END.params();
         endLog.setStartTime();
 
-        try (Reader reader = Files.newBufferedReader(file.toPath(), Charsets.UTF_8)) {
+        try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
             JSONParser parser = new JSONParser();
             this.json = (JSONObject) parser.parse(reader);
             // write end log
-            int jsonSize = this.json.toJSONString().getBytes(Charsets.UTF_8).length;
+            int jsonSize = this.json.toJSONString().getBytes(StandardCharsets.UTF_8).length;
             endLog.setParams(jsonSize / KILO_BYTES);
             endLog.writeLog();
         } catch (IOException | ParseException e) {
@@ -230,17 +230,17 @@ public class DavMetadataFile {
 
         try {
             if (PersoniumUnitConfig.getFsyncEnabled()) {
-                Files.write(this.file.toPath(), jsonStr.getBytes(Charsets.UTF_8),
+                Files.write(this.file.toPath(), jsonStr.getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
             } else {
-                Files.write(this.file.toPath(), jsonStr.getBytes(Charsets.UTF_8));
+                Files.write(this.file.toPath(), jsonStr.getBytes(StandardCharsets.UTF_8));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         // write end log
-        endLog.setParams(jsonStr.getBytes(Charsets.UTF_8).length / KILO_BYTES);
+        endLog.setParams(jsonStr.getBytes(StandardCharsets.UTF_8).length / KILO_BYTES);
         endLog.writeLog();
     }
 

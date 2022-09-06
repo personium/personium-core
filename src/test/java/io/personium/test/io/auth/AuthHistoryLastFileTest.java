@@ -30,9 +30,9 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -464,7 +464,7 @@ public class AuthHistoryLastFileTest {
             // Confirm result
             // --------------------
             assertThat(file.exists(), is(true));
-            try (Reader reader = Files.newBufferedReader(file.toPath(), Charsets.UTF_8)) {
+            try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
                 JSONParser parser = new JSONParser();
                 JSONObject json = (JSONObject) parser.parse(reader);
                 assertThat(json.get("last_authenticated"), is(authHistoryLastFile.getLastAuthenticated()));
@@ -524,7 +524,7 @@ public class AuthHistoryLastFileTest {
             // Confirm result
             // --------------------
             assertThat(file.exists(), is(true));
-            try (Reader reader = Files.newBufferedReader(file.toPath(), Charsets.UTF_8)) {
+            try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
                 JSONParser parser = new JSONParser();
                 JSONObject json = (JSONObject) parser.parse(reader);
                 assertThat(json.get("last_authenticated"), is(authHistoryLastFile.getLastAuthenticated()));

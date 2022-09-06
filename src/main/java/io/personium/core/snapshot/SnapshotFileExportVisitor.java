@@ -20,6 +20,7 @@ import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -27,7 +28,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import org.apache.commons.io.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +106,7 @@ public class SnapshotFileExportVisitor implements FileVisitor<Path> {
                     && !encryptionType.isEmpty()
                     && !DataCryptor.ENCRYPTION_TYPE_NONE.equals(encryptionType)) {
                 metadata.setEncryptionType(DataCryptor.ENCRYPTION_TYPE_NONE);
-                try (BufferedWriter metadataWriter = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+                try (BufferedWriter metadataWriter = Files.newBufferedWriter(pathInZip, StandardCharsets.UTF_8)) {
                     metadataWriter.write(metadata.toJSONString());
                 }
             } else {

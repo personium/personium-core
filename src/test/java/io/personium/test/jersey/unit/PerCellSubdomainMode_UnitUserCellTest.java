@@ -23,12 +23,12 @@ import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import org.apache.commons.io.Charsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -152,7 +152,7 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
             post.setEntity(entity);
             try (CloseableHttpResponse res = client.execute(post)) {
                 assertEquals(200, res.getStatusLine().getStatusCode());
-                JsonObject jo = Json.createReader(new InputStreamReader(res.getEntity().getContent(), Charsets.UTF_8)).readObject();
+                JsonObject jo = Json.createReader(new InputStreamReader(res.getEntity().getContent(), StandardCharsets.UTF_8)).readObject();
                 return jo.getString(OAuth2Helper.Key.ACCESS_TOKEN);
             }
         } catch (Exception e) {
