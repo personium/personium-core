@@ -16,7 +16,7 @@
  */
 package io.personium.core.rs.cell;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 
 import static org.powermock.api.mockito.PowerMockito.doReturn;
