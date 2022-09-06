@@ -19,7 +19,7 @@ package io.personium.core.rs.box;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -63,7 +63,7 @@ public class BoxResourceTest {
         doReturn(box).when(cell).getBoxForName("boxName");
         BoxCmp boxCmp = mock(BoxCmp.class);
         PowerMockito.mockStatic(ModelFactory.class);
-        PowerMockito.doReturn(boxCmp).when(ModelFactory.class, "boxCmp", anyObject());
+        PowerMockito.doReturn(boxCmp).when(ModelFactory.class, "boxCmp", any());
         PowerMockito.whenNew(BoxRsCmp.class).withAnyArguments().thenReturn(null);
 
         return spy(new BoxResource(cell, "boxName", null, null, null));

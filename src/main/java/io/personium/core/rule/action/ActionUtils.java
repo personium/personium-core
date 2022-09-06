@@ -103,8 +103,8 @@ public class ActionUtils {
     @SuppressWarnings("unchecked")
     static Map<String, Object> getEntityAsMap(String body) {
         Map<String, Object> map = ResourceUtils.convertToMap(body);
-        Map<String, Object> d = (Map) map.get("d");
-        Map<String, Object> results = (Map) d.get("results");
+        var d = (Map<String, Object>) map.get("d");
+        var results = (Map<String, Object>) d.get("results");
         // remove reserved key
         results.remove("__metadata");
         results.remove(Common.P_PUBLISHED.getName());

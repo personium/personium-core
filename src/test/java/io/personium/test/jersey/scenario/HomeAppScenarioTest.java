@@ -116,13 +116,17 @@ public class HomeAppScenarioTest extends PersoniumTest {
      *  -  access token issued from token endpoint of user cell.
      *  - BoxDiscovery
      *  - GET BoxMetadata
+     * @throws ClientProtocolException .
+     * @throws IOException .
+     * @throws TokenParseException .
      */
     @Test
     public final void ROPCLogin_SetCookie_AppLaunch_FromCookieToGrantCode_BoxDiscovery_BoxMetadata()
             throws ClientProtocolException, IOException, TokenParseException {
         //ROPC at Test Cell1 By Homeapp
         //account2 (linked with role2) can read the box1 (schema = appCellUrl)
-        JsonHttpResponse res = this.callTokenEndpointWithRopcFlow(this.usrCellUrl, "account2", "password2", null, null, null, true);
+        JsonHttpResponse res = this.callTokenEndpointWithRopcFlow(this.usrCellUrl, "account2", "password2",
+            null, null, null, true);
         assertEquals(200, res.statusCode);
 
         //Start OAuth 2.0 process

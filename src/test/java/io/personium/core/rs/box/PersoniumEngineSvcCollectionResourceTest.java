@@ -19,7 +19,7 @@ package io.personium.core.rs.box;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -98,7 +98,7 @@ public class PersoniumEngineSvcCollectionResourceTest {
         doReturn(PowerMockito.mock(AccessContext.class)).when(davRsCmp).getAccessContext();
         DavRsCmp parent = mock(DavRsCmp.class);
         doReturn(parent).when(davRsCmp).getParent();
-        doNothing().when(parent).checkAccessContext(anyObject(), anyObject());
+        doNothing().when(parent).checkAccessContext(any(), any());
 
         DavCmp davCmp = mock(DavCmp.class);
         doReturn(davCmp).when(davRsCmp).getDavCmp();

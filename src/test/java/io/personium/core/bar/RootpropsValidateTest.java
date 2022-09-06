@@ -28,7 +28,6 @@ import org.apache.wink.webdav.model.Multistatus;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.bar.BarFileReadRunner;
 import io.personium.test.categories.Unit;
 
 /**

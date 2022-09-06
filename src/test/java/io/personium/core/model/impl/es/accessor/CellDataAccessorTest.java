@@ -20,7 +20,7 @@ package io.personium.core.model.impl.es.accessor;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMapOf;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -217,7 +217,7 @@ public class CellDataAccessorTest {
         method.invoke(cellDataAccessor, boxId);
 
         // Confirm result
-        verify(cellDataAccessor, times(0)).deleteByQuery(anyString(), anyMapOf(String.class, Object.class));
+        verify(cellDataAccessor, times(0)).deleteByQuery(anyString(), anyMap());
     }
 
     /**

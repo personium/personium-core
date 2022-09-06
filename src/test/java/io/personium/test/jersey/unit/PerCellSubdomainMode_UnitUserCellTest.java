@@ -129,7 +129,7 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
         String accountODataUrl = unitUserCellUrl + "__ctl/Account";
         HttpDelete del = new HttpDelete(accountODataUrl + "(%27" + UNIT_USER_ACCOUNT + "%27)");
         del.addHeader(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
-        try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)){
+        try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
             client.execute(del);
         } catch (IOException e) {
             e.printStackTrace();
@@ -150,9 +150,10 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
             sb.append(UrlUtils.unitRoot());
             HttpEntity entity = new StringEntity(sb.toString());
             post.setEntity(entity);
-            try (CloseableHttpResponse res = client.execute(post)) {
+            try (CloseableHttpResponse res = client.execute(post);
+                var isr = new InputStreamReader(res.getEntity().getContent(), StandardCharsets.UTF_8)) {
                 assertEquals(200, res.getStatusLine().getStatusCode());
-                JsonObject jo = Json.createReader(new InputStreamReader(res.getEntity().getContent(), StandardCharsets.UTF_8)).readObject();
+                JsonObject jo = Json.createReader(isr).readObject();
                 return jo.getString(OAuth2Helper.Key.ACCESS_TOKEN);
             }
         } catch (Exception e) {
@@ -272,12 +273,13 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
 
     /**
      * ユニットユーザートークンでセル作成を行いオーナーが設定されることを確認.
-     * @throws TokenRootCrtException
-     * @throws TokenDsigException
-     * @throws TokenParseException
+     * @throws TokenRootCrtException .
+     * @throws TokenDsigException .
+     * @throws TokenParseException .
      */
     @Test
-    public void ユニットユーザートークンでセル作成を行いオーナーが設定されることを確認() throws TokenParseException, TokenDsigException, TokenRootCrtException {
+    public void ユニットユーザートークンでセル作成を行いオーナーが設定されることを確認()
+        throws TokenParseException, TokenDsigException, TokenRootCrtException {
         try {
             // 本テスト用 Unit User Cell の作成
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, -1);
@@ -290,11 +292,11 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
             TransCellAccessToken tcToken = TransCellAccessToken.parse(unitUserToken);
             String subject = tcToken.getSubject();
             log.info("##TOKEN##");
-            log.info("Subject: "+ subject);
-            log.info("Issuer : "+ tcToken.getSubject());
-            log.info("Target : "+ tcToken.getTarget());
+            log.info("Subject: " + subject);
+            log.info("Issuer : " + tcToken.getSubject());
+            log.info("Target : " + tcToken.getTarget());
             String localunitSubject = UriUtils.convertSchemeFromHttpToLocalUnit(subject);
-            log.info("Owner Should be : "+ localunitSubject);
+            log.info("Owner Should be : " + localunitSubject);
 
             // ユニットユーザートークンを使ってセル作成をする.
             //   オーナーがユニットユーザー（ここだとuserNameアカウントのURL）になるはず。
@@ -320,12 +322,13 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
 
     /**
      * ユニットユーザートークンでセル作成を行いオーナーとして各種処理が可能なことを確認.
-     * @throws TokenRootCrtException
-     * @throws TokenDsigException
-     * @throws TokenParseException
+     * @throws TokenRootCrtException .
+     * @throws TokenDsigException .
+     * @throws TokenParseException .
      */
     @Test
-    public void ユニットユーザートークンでセル作成を行いオーナーとして各種処理が可能なことを確認() throws TokenParseException, TokenDsigException, TokenRootCrtException {
+    public void ユニットユーザートークンでセル作成を行いオーナーとして各種処理が可能なことを確認()
+        throws TokenParseException, TokenDsigException, TokenRootCrtException {
         try {
             // Creating Unit User Cell for this test case.
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
@@ -447,14 +450,19 @@ public class PerCellSubdomainMode_UnitUserCellTest extends PersoniumTest {
             // アカウントにユニット昇格権限付
             try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_ALWAYS_LOCAL)) {
 //                BasicHttpEntityEnclosingRequest proppatch = new BasicHttpEntityEnclosingRequest("PROPPATCH", unitUserCellUrl);
-                String ppStr = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n" +
-                        "<D:propertyupdate xmlns:D=\"DAV:\" xmlns:p=\"urn:x-personium:xmlns\">\n" +
-                        "  <D:set>\n" +
-                        "    <D:prop>\n" +
-                        "      <p:ownerRepresentativeAccounts><p:account>account1</p:account><p:account>account2</p:account></p:ownerRepresentativeAccounts>\n" +
-                        "    </D:prop>\n" +
-                        "  </D:set>\n" +
-                        "</D:propertyupdate>\n";
+                String ppStr = """
+                    <?xml version=\"1.0\" encoding=\"utf-8\" ?>
+                    <D:propertyupdate xmlns:D=\"DAV:\" xmlns:p=\"urn:x-personium:xmlns\">
+                        <D:set>
+                            <D:prop>
+                                <p:ownerRepresentativeAccounts>
+                                    <p:account>account1</p:account>
+                                    <p:account>account2</p:account>
+                                    </p:ownerRepresentativeAccounts>
+                            </D:prop>
+                        </D:set>
+                    </D:propertyupdate>
+                    """;
                 HttpEntity entity = new StringEntity(ppStr);
                 RequestBuilder proppatch = RequestBuilder.create("PROPPATCH")
                         .setUri(unitUserCellUrl)

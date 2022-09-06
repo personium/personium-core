@@ -38,7 +38,6 @@ import org.odata4j.expression.ExpressionParser;
 import org.odata4j.producer.QueryInfo;
 
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.model.impl.es.odata.EsQueryHandler;
 import io.personium.core.odata.PersoniumOptionsQueryParser;
 import io.personium.test.categories.Unit;
 

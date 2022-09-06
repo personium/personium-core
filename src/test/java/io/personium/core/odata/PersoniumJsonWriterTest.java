@@ -19,9 +19,9 @@ package io.personium.core.odata;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.io.StringWriter;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.experimental.categories.Category;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.experimental.theories.DataPoints;
@@ -116,15 +116,13 @@ public class PersoniumJsonWriterTest {
          */
         @Theory
         public void Double型の値の有効範囲チェック(Fixture f) {
-            StringWriter writer = null;
-            try {
-                writer = new StringWriter();
+            try (var writer = new StringWriter()) {
                 PersoniumJsonWriter jsonWriter = new PersoniumJsonWriter(writer);
                 jsonWriter.writeNumber(f.inputValue);
                 String actual = writer.toString();
                 assertEquals(f.testComment, f.expectedReturnValue, actual);
-            } finally {
-                IOUtils.closeQuietly(writer);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }

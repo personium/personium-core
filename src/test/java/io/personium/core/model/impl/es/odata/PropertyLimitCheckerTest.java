@@ -39,7 +39,6 @@ import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.EntityType;
 import io.personium.core.model.impl.es.doc.ComplexTypePropertyDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyDocHandler;
-import io.personium.core.model.impl.es.odata.PropertyLimitChecker;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker.CheckError;
 import io.personium.test.categories.Unit;
 

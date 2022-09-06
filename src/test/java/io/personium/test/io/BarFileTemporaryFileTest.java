@@ -59,7 +59,7 @@ public class BarFileTemporaryFileTest {
             method.setAccessible(true);
             //any file
             method.invoke(bfi, new FileInputStream("pom.xml"));
-            Mockito.verify(bfi, Mockito.atLeast(1)).sync((FileDescriptor) Mockito.anyObject());
+            Mockito.verify(bfi, Mockito.atLeast(1)).sync((FileDescriptor) Mockito.any());
         } finally {
             PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, String.valueOf(fsyncEnabled));
         }
@@ -83,7 +83,7 @@ public class BarFileTemporaryFileTest {
             method.setAccessible(true);
             //any file
             method.invoke(bfi, new FileInputStream("pom.xml"));
-            Mockito.verify(bfi, Mockito.never()).sync((FileDescriptor) Mockito.anyObject());
+            Mockito.verify(bfi, Mockito.never()).sync((FileDescriptor) Mockito.any());
         } finally {
             PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, String.valueOf(fsyncEnabled));
         }

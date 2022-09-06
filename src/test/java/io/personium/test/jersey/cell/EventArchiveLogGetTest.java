@@ -23,14 +23,13 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.HttpMethod;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
@@ -160,21 +159,14 @@ public class EventArchiveLogGetTest extends ODataCommon {
      * @throws IOException レスポンスボディの読み込みに失敗した場合
      */
     private void checkResponseBody(PersoniumResponse response) throws IOException {
-        InputStream is = null;
-        InputStreamReader isr = null;
-        BufferedReader reader = null;
-        try {
-            is = response.bodyAsStream();
-            isr = new InputStreamReader(is, "UTF-8");
-            reader = new BufferedReader(isr);
+        try (var is = response.bodyAsStream();
+            var isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+            var reader = new BufferedReader(isr)
+        ) {
             String line;
             while ((line = reader.readLine()) != null) {
                 assertEquals(LOG_COLUMNS, line.split(",").length);
             }
-        } finally {
-            IOUtils.closeQuietly(reader);
-            IOUtils.closeQuietly(isr);
-            IOUtils.closeQuietly(is);
         }
     }
 }

@@ -20,7 +20,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -213,7 +213,7 @@ public class UnitCtlResourceTest {
 
         doReturn(AccessContext.TYPE_INVALID).when(ac).getType();
         doReturn(null).when(unitCtlResource).getAcceptableAuthScheme();
-        doThrow(PersoniumCoreAuthzException.EXPIRED_ACCESS_TOKEN).when(ac).throwInvalidTokenException(anyObject());
+        doThrow(PersoniumCoreAuthzException.EXPIRED_ACCESS_TOKEN).when(ac).throwInvalidTokenException(any());
 
         // Expected result
         PersoniumCoreAuthzException expected = PersoniumCoreAuthzException.EXPIRED_ACCESS_TOKEN;

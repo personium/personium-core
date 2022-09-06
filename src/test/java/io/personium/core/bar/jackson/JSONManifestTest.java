@@ -30,7 +30,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.personium.core.bar.jackson.JSONManifest;
 import io.personium.test.categories.Unit;
 
 /**

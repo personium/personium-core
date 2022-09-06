@@ -34,7 +34,7 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 /**
  * UserData elasticsearch query handler.
  */
-public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHandler {
+public class UserDataQueryHandler extends EsQueryHandler {
     /**
      * Property / ComplexTypeProperty and Alias ​​mapping data.
      */
@@ -142,7 +142,7 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
                     || EdmSimpleType.DOUBLE.equals(edmProperty.getType())) {
                 suffix = "double";
             } else if (EdmSimpleType.INT32.equals(edmProperty.getType())
-                    ||EdmSimpleType.DATETIME.equals(edmProperty.getType())) {
+                    || EdmSimpleType.DATETIME.equals(edmProperty.getType())) {
                 suffix = "long";
             }
         }

@@ -50,7 +50,7 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
      * @param range RangeHeader
      * @param cellId Cell ID
      * @param encryptionType encryption type
-     * @throws BinaryDataNotFoundException if the file does not exist.
+     * @throws FileDataNotFoundException if the file does not exist.
      */
     public StreamingOutputForDavFileWithRange(final String fileFullPath,
             final long fileSize,

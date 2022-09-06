@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.test.categories.Unit;
 
 /**

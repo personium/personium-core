@@ -377,17 +377,15 @@ public class DavRsCmp {
 
     /**
      * merging with ancestorial ACL, and check if it is accessible.
-     * @param ac AccessContext
      * @param privilege ACL Privilege (read/write/bind/unbind)
      * @return boolean
      */
     public boolean hasSubjectPrivilege(Privilege privilege) {
-        return hasSubjectPrivilege( privilege, privilege);
+        return hasSubjectPrivilege(privilege, privilege);
     }
 
     /**
      * merging with ancestorial ACL, and check if it is accessible.
-     * @param ac AccessContext
      * @param privilege ACL Privilege (read/write/bind/unbind) If it is null, it does not refer to the current's authority.
      * @param parentPrivilege parent ACL Privilege (read/write/bind/unbind) If it is null, it does not refer to the parent's authority.
      * @return boolean
@@ -432,7 +430,6 @@ public class DavRsCmp {
     /**
      * Check Access Control.
      * Exceptions are thrown if it does not have the privilege
-     * @param ac AccessContext
      * @param privilege Privilege to check if it is given
      */
     public void checkAccessContext(Privilege privilege) {
@@ -442,7 +439,6 @@ public class DavRsCmp {
     /**
      * Check Access Control.
      * Exceptions are thrown if it does not have the privilege
-     * @param ac AccessContext
      * @param privilege Privilege to check if it is given
      * @param parentPrivilege parent ACL Privilege
      */
