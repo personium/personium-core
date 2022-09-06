@@ -18,6 +18,7 @@ package io.personium.core.rs.cell;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,7 +31,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.apache.commons.io.Charsets;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
@@ -94,7 +94,7 @@ public class CellImportResource {
             Path errorFilePath = Paths.get(PersoniumUnitConfig.getBlobStoreRoot(),
                     cellRsCmp.getCell().getDataBundleName(), cellRsCmp.getCell().getId(), Cell.IMPORT_ERROR_FILE_NAME);
             try {
-                jsonString = new String(Files.readAllBytes(errorFilePath), Charsets.UTF_8);
+                jsonString = new String(Files.readAllBytes(errorFilePath), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read error json file").reason(e);
             }

@@ -19,7 +19,6 @@ package io.personium.core.event;
 
 import java.io.Serializable;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -167,8 +166,7 @@ public class PersoniumEvent implements Serializable {
                               Stream.of(rolesStr.split(Pattern.quote(",")))
                                     .map(r -> {
                                          try {
-                                             URL url = new URL(r);
-                                             return new Role(url);
+                                             return Role.createFromRoleInstanceUrl(r);
                                          } catch (MalformedURLException e) {
                                              return null;
                                          }
@@ -528,7 +526,9 @@ public class PersoniumEvent implements Serializable {
             }
             if (this.roles == null) {
                 List<Role> roleList = builder.davRsCmp.getAccessContext().getRoleList();
-                List<String> list = roleList.stream().map(role -> role.toRoleInstanceURL()).collect(Collectors.toList());
+                List<String> list = roleList.stream()
+                    .map(role -> role.toRoleInstanceURL())
+                    .collect(Collectors.toList());
                 this.roles = String.join(",", list);
             }
         }

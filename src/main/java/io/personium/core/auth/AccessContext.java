@@ -20,7 +20,6 @@ package io.personium.core.auth;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -469,7 +468,6 @@ public class AccessContext {
 
     /**
      * Make sure the token is your local cell token or your password change token.
-     * @param cellname cell
      * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkResidentLocalOrPasswordChangeToken(AcceptableAuthScheme acceptableAuthScheme) {
@@ -698,9 +696,9 @@ public class AccessContext {
     }
     public void addScope(String scopeStr) {
         this.scopes.add(scopeStr);
-        if (scopeStr.startsWith("https://")||scopeStr.startsWith("http://")) {
+        if (scopeStr.startsWith("https://") || scopeStr.startsWith("http://")) {
             try {
-                this.scopeRoles.add(new Role(new URL(scopeStr)));
+                this.scopeRoles.add(Role.createFromRoleInstanceUrl(scopeStr));
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
@@ -827,9 +825,9 @@ public class AccessContext {
                 if (OAuth2Helper.Scope.OPENID.contentEquals(scope)) {
                     continue;
                 }
-                if (scope.startsWith("https://")||scope.startsWith("http://")) {
+                if (scope.startsWith("https://") || scope.startsWith("http://")) {
                     try {
-                        ret.scopeRoles.add(new Role(new URL(scope)));
+                        ret.scopeRoles.add(Role.createFromRoleInstanceUrl(scope));
                     } catch (MalformedURLException e) {
                         throw new RuntimeException(e);
                     }
@@ -994,8 +992,8 @@ public class AccessContext {
 
     /**
      * Check if this access context has the cell level privilege.
-     * @param cellPriv
-     * @return
+     * @param cellPriv .
+     * @return .
      */
     public boolean hasScopeCellPrivilege(CellPrivilege cellPriv) {
         for (CellPrivilege scopePriv : this.scopePrivileges) {

@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -1206,8 +1205,8 @@ public class DavCmpFsImpl implements DavCmp {
         Role roleResourceUrl = null;
         try {
             //Since base: xml is not a role resource URL, add "__" as a dummy
-            baseUrl = new Role(new URL(baseUrlStr + "__"));
-            roleResourceUrl = new Role(new URL(roleResourceUrlStr));
+            baseUrl = Role.createFromRoleInstanceUrl(baseUrlStr + "__");
+            roleResourceUrl = Role.createFromRoleInstanceUrl(roleResourceUrlStr);
         } catch (MalformedURLException e) {
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND.reason(e);
         }

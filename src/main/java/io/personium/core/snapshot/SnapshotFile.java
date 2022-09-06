@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -32,8 +33,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.apache.commons.io.Charsets;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
@@ -164,7 +163,7 @@ public class SnapshotFile implements Closeable {
      * @return Total line number
      */
     private long countODataPJson(Path filePath) {
-        try (BufferedReader bufReader = Files.newBufferedReader(filePath, Charsets.UTF_8)) {
+        try (BufferedReader bufReader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             LineNumberReader reader = new LineNumberReader(bufReader);
             while (true) {
                 long readByte = reader.skip(SKIP_DATA_NUM);
@@ -216,7 +215,7 @@ public class SnapshotFile implements Closeable {
     public String readManifestJson() {
         Path pathInZip = pathMap.get(MANIFEST_JSON);
         try {
-            return new String(Files.readAllBytes(pathInZip), Charsets.UTF_8);
+            return new String(Files.readAllBytes(pathInZip), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read manifest json from snapshot file").reason(e);
         }
@@ -228,7 +227,7 @@ public class SnapshotFile implements Closeable {
      */
     public void writeManifestJson(String data) {
         Path pathInZip = pathMap.get(MANIFEST_JSON);
-        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, StandardCharsets.UTF_8)) {
             writer.write(data);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add manifest to snapshot file").reason(e);
@@ -242,7 +241,7 @@ public class SnapshotFile implements Closeable {
     public String readCellJson() {
         Path pathInZip = pathMap.get(CELL_JSON);
         try {
-            return new String(Files.readAllBytes(pathInZip), Charsets.UTF_8);
+            return new String(Files.readAllBytes(pathInZip), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read cell json from snapshot file").reason(e);
         }
@@ -254,7 +253,7 @@ public class SnapshotFile implements Closeable {
      */
     public void writeCellJson(String data) {
         Path pathInZip = pathMap.get(CELL_JSON);
-        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, StandardCharsets.UTF_8)) {
             writer.write(data);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add cell json to snapshot file").reason(e);
@@ -293,7 +292,7 @@ public class SnapshotFile implements Closeable {
      */
     public void writeODataPJson(String edmTypeName, String data) {
         Path pathInZip = pathMap.get(edmTypeName);
-        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8,
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
             writer.write(data);
         } catch (IOException e) {

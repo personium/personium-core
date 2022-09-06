@@ -21,6 +21,7 @@ import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALCELL;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -395,10 +395,10 @@ public class SnapshotFileExportRunner implements Runnable {
 
         try {
             if (PersoniumUnitConfig.getFsyncEnabled()) {
-                Files.write(errorFilePath, messageJson.toJSONString().getBytes(Charsets.UTF_8),
+                Files.write(errorFilePath, messageJson.toJSONString().getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
             } else {
-                Files.write(errorFilePath, messageJson.toJSONString().getBytes(Charsets.UTF_8));
+                Files.write(errorFilePath, messageJson.toJSONString().getBytes(StandardCharsets.UTF_8));
             }
         } catch (IOException e1) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("create error file").reason(e1);

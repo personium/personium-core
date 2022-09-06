@@ -22,12 +22,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.Charsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -111,7 +111,7 @@ public class MyPasswordTest extends PersoniumTest {
             AccountUtils.create(MASTER_TOKEN, Setup.TEST_CELL1, accountName, accountPw, 201);
             // 認証
             HttpResponse httpRes = this.httpReqROPC(this.cellUrl, accountName, accountPw, null, null, null, null);
-            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), Charsets.UTF_8));
+            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), StandardCharsets.UTF_8));
 
             // セルローカルトークンを取得する
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
@@ -155,7 +155,7 @@ public class MyPasswordTest extends PersoniumTest {
 
             // 認証
             HttpResponse httpRes = this.httpReqROPC(this.cellUrl, accountName, accountPw, null, "messsage", null, null);
-            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), Charsets.UTF_8));
+            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), StandardCharsets.UTF_8));
             // セルローカルトークンを取得する
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
             // 確認
@@ -185,7 +185,7 @@ public class MyPasswordTest extends PersoniumTest {
 //            JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
 //                    account, account, -1);
             HttpResponse httpRes = this.httpReqROPC(this.cellUrl, account, account, null, null, null, null);
-            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), Charsets.UTF_8));
+            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), StandardCharsets.UTF_8));
             System.out.println(resBody.toJSONString());
 
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
