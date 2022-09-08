@@ -14,7 +14,7 @@
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
         <module name="JavadocMethod">
-            <property name="scope" value="protected"/>
+            <property name="accessModifiers" value="protected, public"/>
         </module>
         <module name="JavadocType"/>
         <module name="JavadocVariable">
@@ -92,6 +92,11 @@
             <property name="commentFormat" value="CHECKSTYLE IGNORE"/>
             <property name="checkFormat" value=".*"/>
             <property name="influenceFormat" value="0"/>
+        </module>
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
+            <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
+            <property name="checkFormat" value="$1"/>
         </module>
     </module>
     <module name="JavadocPackage"/>
