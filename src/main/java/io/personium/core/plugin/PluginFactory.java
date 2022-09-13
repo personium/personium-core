@@ -81,7 +81,7 @@ public class PluginFactory {
 
                 Class<?> clazz = ucl.loadClass(cname);
                 if (clazz != null) {
-                    plugin = (Object) clazz.newInstance();
+                    plugin = (Object) clazz.getDeclaredConstructor().newInstance();
                 }
                 log.info("Plugin Factory load jar file...... " + cname);
             } catch (ClassNotFoundException e) {
@@ -130,7 +130,7 @@ public class PluginFactory {
             ucl2 = new URLClassLoader(new URL[] {url});
             Class<?> objFile = ucl2.loadClass(cname);
             if (objFile != null) {
-                plugin = (Object) objFile.newInstance();
+                plugin = (Object) objFile.getDeclaredConstructor().newInstance();
                 log.info("Plugin Factory load directory..... " + cname);
             }
 
@@ -149,18 +149,23 @@ public class PluginFactory {
         Object obj = null;
 
         try {
-            Class<?> clazz;
-            clazz = Class.forName(name);
-            obj = clazz.newInstance();
-        } catch (ClassNotFoundException e) {
-            // Class does not exist
-            log.info("ClassNotFoundException: class name = " + name, e);
-        } catch (InstantiationException e) {
-            // Instance can not be created
-            log.info("InstantiationException: class name = " + name, e);
-        } catch (IllegalAccessException e) {
-            // Invocation: Access violation, protected
-            log.info("IllegalAccessException: class name = " + name, e);
+            try {
+                Class<?> clazz;
+                clazz = Class.forName(name);
+                obj = clazz.getDeclaredConstructor().newInstance();
+            } catch (ClassNotFoundException e) {
+                // Class does not exist
+                log.info("ClassNotFoundException: class name = " + name, e);
+            } catch (InstantiationException e) {
+                // Instance can not be created
+                log.info("InstantiationException: class name = " + name, e);
+            } catch (IllegalAccessException e) {
+                // Invocation: Access violation, protected
+                log.info("IllegalAccessException: class name = " + name, e);
+            }
+        } catch (Exception e) {
+            log.info(e.getMessage(), e);
+            return null;
         }
         return obj;
     }
