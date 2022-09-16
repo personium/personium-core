@@ -32,7 +32,6 @@ import io.personium.core.rs.odata.ODataMessageResourceTest;
     CellResourceTest.class,
     EventResourceTest.class,
     ODataMessageResourceTest.class,
-    LogResourceTest.class,
     TokenEndPointResourceTest.class
 })
 public class AllTests {

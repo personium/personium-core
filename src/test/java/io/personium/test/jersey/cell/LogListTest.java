@@ -69,22 +69,6 @@ public class LogListTest extends ODataCommon {
     }
 
     /**
-     * ログファイル一覧取得に対するPROPFINDで501が返却されること.
-     */
-    @Test
-    public final void ログファイル一覧取得に対するPROPFINDで501が返却されること() {
-
-        Http.request("cell/log-propfind-with-nobody.txt")
-                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", Setup.TEST_CELL_EVENTLOG)
-                .with("collection", CURRENT_COLLECTION)
-                .with("depth", "0")
-                .returns()
-                .statusCode(HttpStatus.SC_NOT_IMPLEMENTED);
-    }
-
-    /**
      * ログファイル一覧取得に対する許可しないメソッドで405が返却されること.
      */
     @Test
@@ -150,6 +134,22 @@ public class LogListTest extends ODataCommon {
                 .with("depth", "0")
                 .returns()
                 .statusCode(HttpStatus.SC_NOT_FOUND);
+    }
+
+    /**
+     * propfindCurrent returns information about collection.
+     */
+    @Test
+    public final void propfindCurrent_returns_collection_info() {
+        Http.request("cell/log-propfind-with-nobody.txt")
+                .with("METHOD", io.personium.common.utils.CommonUtils.HttpMethod.PROPFIND)
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .with("cellPath", Setup.TEST_CELL_EVENTLOG)
+                .with("collection", CURRENT_COLLECTION)
+                .with("depth", "1")
+                .returns()
+                .debug()
+                .statusCode(HttpStatus.SC_MULTI_STATUS);
     }
 
     /**
