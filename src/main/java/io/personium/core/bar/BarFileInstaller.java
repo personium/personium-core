@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.SyncFailedException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
@@ -64,7 +63,7 @@ import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.rs.odata.ODataResource;
 
 /**
- * bar The class that performs the installation process.
+ * The class that performs the installation process.
  */
 public class BarFileInstaller {
     /**
@@ -117,7 +116,12 @@ public class BarFileInstaller {
 
         //Store bar file
         File file = storeTemporaryBarFile(inStream);
-        IOUtils.closeQuietly(inStream);
+
+        try {
+            inStream.close();
+        } catch (IOException e) {
+            log.info(e.getMessage());
+        }
 
         // bar_version : 2
         try {
@@ -321,30 +325,27 @@ public class BarFileInstaller {
         //Store bar file on NFS.
         String prefix = this.cell.getId() + "_" + this.boxName;
         File barFile = null;
-        OutputStream outStream = null;
+
         try {
             barFile = File.createTempFile(prefix, ".bar", barFileDir);
             barFile.deleteOnExit(); //Delete setting to be deleted when abnormal termination of VM
-            outStream = new FileOutputStream(barFile);
+        } catch (IOException e) {
+            String message = String.format("unable to create tmp file: %s", barFileDir + prefix + "TMP.bar");
+            throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(message);
+        }
+
+        try (var outStream = new FileOutputStream(barFile)) {
             IOUtils.copyLarge(inStream, outStream);
+            FileDescriptor barFileFD = outStream.getFD();
+            if (PersoniumUnitConfig.getFsyncEnabled()) {
+                sync(barFileFD);
+            }
         } catch (IOException e) {
             String message = "unable save bar file: %s";
-            if (barFile == null) {
-                message = String.format(message, barFileDir + prefix + "XXX.bar");
-            } else {
-                message = String.format(message, barFile.getAbsolutePath());
-            }
+            message = String.format(message, barFile.getAbsolutePath());
             throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(message);
-        } finally {
-            if (null != outStream && PersoniumUnitConfig.getFsyncEnabled()) {
-                try {
-                    sync(((FileOutputStream) outStream).getFD());
-                } catch (Exception e) {
-                    IOUtils.closeQuietly(outStream);
-                    throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(e.getMessage());
-                }
-            }
-            IOUtils.closeQuietly(outStream);
+        } catch (Exception e) {
+            throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(e.getMessage());
         }
         return barFile;
     }
@@ -431,16 +432,13 @@ public class BarFileInstaller {
     }
 
     private void checkAndReadManifest(String entryName, ZipArchiveEntry zae, ZipFile zipFile) throws IOException {
-        InputStream inStream = zipFile.getInputStream(zae);
-        try {
+        try (var inStream = zipFile.getInputStream(zae)) {
             JSONManifest manifest =
                     BarFileUtils.readJsonEntry(inStream, entryName, JSONManifest.class);
             if (!manifest.checkSchema()) {
                 throw PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.params(entryName);
             }
             this.manifestJson = manifest.getJson();
-        } finally {
-            IOUtils.closeQuietly(inStream);
         }
     }
 

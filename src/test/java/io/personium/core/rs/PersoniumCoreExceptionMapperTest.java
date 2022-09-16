@@ -109,7 +109,7 @@ public final class PersoniumCoreExceptionMapperTest {
         public void warn(Marker arg0, String arg1, Throwable arg2) {
         }
         @Override
-        public void warn(Marker arg0, String arg1, Object[] arg2) {
+        public void warn(Marker arg0, String arg1, Object... arg2) {
         }
         @Override
         public void warn(Marker arg0, String arg1, Object arg2) {
@@ -124,7 +124,7 @@ public final class PersoniumCoreExceptionMapperTest {
         public void warn(String arg0, Throwable arg1) {
         }
         @Override
-        public void warn(String arg0, Object[] arg1) {
+        public void warn(String arg0, Object... arg1) {
         }
         @Override
         public void warn(String arg0, Object arg1) {
@@ -139,7 +139,7 @@ public final class PersoniumCoreExceptionMapperTest {
         public void trace(Marker arg0, String arg1, Throwable arg2) {
         }
         @Override
-        public void trace(Marker arg0, String arg1, Object[] arg2) {
+        public void trace(Marker arg0, String arg1, Object... arg2) {
         }
         @Override
         public void trace(Marker arg0, String arg1, Object arg2) {
@@ -154,7 +154,7 @@ public final class PersoniumCoreExceptionMapperTest {
         public void trace(String arg0, Throwable arg1) {
         }
         @Override
-        public void trace(String arg0, Object[] arg1) {
+        public void trace(String arg0, Object... arg1) {
         }
         @Override
         public void trace(String arg0, Object arg1) {
@@ -209,7 +209,7 @@ public final class PersoniumCoreExceptionMapperTest {
         public void info(Marker arg0, String arg1, Throwable arg2) {
         }
         @Override
-        public void info(Marker arg0, String arg1, Object[] arg2) {
+        public void info(Marker arg0, String arg1, Object... arg2) {
         }
         @Override
         public void info(Marker arg0, String arg1, Object arg2) {
@@ -224,7 +224,7 @@ public final class PersoniumCoreExceptionMapperTest {
         public void info(String arg0, Throwable arg1) {
         }
         @Override
-        public void info(String arg0, Object[] arg1) {
+        public void info(String arg0, Object... arg1) {
         }
         @Override
         public void info(String arg0, Object arg1) {
@@ -243,7 +243,7 @@ public final class PersoniumCoreExceptionMapperTest {
         public void error(Marker arg0, String arg1, Throwable arg2) {
         }
         @Override
-        public void error(Marker arg0, String arg1, Object[] arg2) {
+        public void error(Marker arg0, String arg1, Object... arg2) {
         }
         @Override
         public void error(Marker arg0, String arg1, Object arg2) {
@@ -258,7 +258,7 @@ public final class PersoniumCoreExceptionMapperTest {
         public void error(String msg, Throwable t) {
         }
         @Override
-        public void error(String arg0, Object[] arg1) {
+        public void error(String arg0, Object... arg1) {
         }
         @Override
         public void error(String arg0, Object arg1) {
@@ -273,7 +273,7 @@ public final class PersoniumCoreExceptionMapperTest {
         public void debug(Marker arg0, String arg1, Throwable arg2) {
         }
         @Override
-        public void debug(Marker arg0, String arg1, Object[] arg2) {
+        public void debug(Marker arg0, String arg1, Object... arg2) {
         }
         @Override
         public void debug(Marker arg0, String arg1, Object arg2) {
@@ -288,7 +288,7 @@ public final class PersoniumCoreExceptionMapperTest {
         public void debug(String arg0, Throwable arg1) {
         }
         @Override
-        public void debug(String arg0, Object[] arg1) {
+        public void debug(String arg0, Object... arg1) {
         }
         @Override
         public void debug(String arg0, Object arg1) {
