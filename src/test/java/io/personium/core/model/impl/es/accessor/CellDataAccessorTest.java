@@ -36,12 +36,12 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.impl.EsIndexImpl;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.es.response.PersoniumSearchResponse;
@@ -70,7 +70,7 @@ public class CellDataAccessorTest {
         String boxId = "boxId";
 
         // Mock settings
-        EsIndex index = new EsIndexImpl("", "", 0, 0, null);
+        EsIndex index = Mockito.mock(EsIndex.class);
         String cellId = "cellId";
         cellDataAccessor = spy(new CellDataAccessor(index, cellId));
 
@@ -112,7 +112,7 @@ public class CellDataAccessorTest {
         String boxId = "boxId";
 
         // Mock settings
-        EsIndex index = new EsIndexImpl("", "", 0, 0, null);
+        EsIndex index = Mockito.mock(EsIndex.class);
         String cellId = "cellId";
         cellDataAccessor = PowerMockito.spy(new CellDataAccessor(index, cellId));
 
@@ -156,7 +156,7 @@ public class CellDataAccessorTest {
         String nodeId = "nodeId";
 
         // Mock settings
-        EsIndex index = new EsIndexImpl("", "", 0, 0, null);
+        EsIndex index = Mockito.mock(EsIndex.class);
         String cellId = "cellId";
         cellDataAccessor = spy(new CellDataAccessor(index, cellId));
 
@@ -198,7 +198,7 @@ public class CellDataAccessorTest {
         String boxId = "boxId";
 
         // Mock settings
-        EsIndex index = new EsIndexImpl("", "", 0, 0, null);
+        EsIndex index = Mockito.mock(EsIndex.class);
         String cellId = "cellId";
         cellDataAccessor = PowerMockito.spy(new CellDataAccessor(index, cellId));
 
@@ -232,7 +232,7 @@ public class CellDataAccessorTest {
         String boxId = "boxId";
 
         // Mock settings
-        EsIndex index = new EsIndexImpl("", "", 0, 0, null);
+        EsIndex index = Mockito.mock(EsIndex.class);
         String cellId = "cellId";
         cellDataAccessor = PowerMockito.spy(new CellDataAccessor(index, cellId));
 
@@ -294,7 +294,7 @@ public class CellDataAccessorTest {
         String boxId = "boxId";
 
         // Mock settings
-        EsIndex index = new EsIndexImpl("", "", 0, 0, null);
+        EsIndex index = Mockito.mock(EsIndex.class);
         String cellId = "cellId";
         cellDataAccessor = spy(new CellDataAccessor(index, cellId));
 
