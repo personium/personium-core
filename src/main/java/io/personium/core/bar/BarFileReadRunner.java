@@ -134,7 +134,7 @@ import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.rs.odata.ODataResource;
 
 /**
- * Http Class for reading bar files from the request body.
+ * Class for reading bar files from the Http request body.
  */
 public class BarFileReadRunner implements Runnable {
 

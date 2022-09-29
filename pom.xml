@@ -29,6 +29,8 @@
         <activemq.version>5.15.9</activemq.version>
         <kafka.version>1.1.1</kafka.version>
         <powermock.version>2.0.9</powermock.version>
+        <checkstyle.version>10.3.3</checkstyle.version>
+        <plugin.checkstyle.version>3.2.0</plugin.checkstyle.version>
     </properties>
     <dependencies>
         <!-- personium-lib.-->
@@ -531,14 +533,22 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>${plugin.checkstyle.version}</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <configLocation>personium-checkstyle.xml</configLocation>
                     <propertiesLocation>checkstyle_maven.properties</propertiesLocation>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -615,7 +625,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>${plugin.checkstyle.version}</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <configLocation>personium-checkstyle.xml</configLocation>
