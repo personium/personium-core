@@ -384,7 +384,7 @@ public class AssociationEndCreateTest extends ODataCommon {
      */
     @Test
     public final void AssociationEndの新規作成時Nameに指定可能な文字数の最小値を指定した場合201となること() {
-        String assocName = "1";
+        String assocName = "a";
         String multiplicity = EdmMultiplicity.MANY.getSymbolString();
         String entityTypeName = ENTITY_TYPE_NAME;
         String locationHeader = null;
@@ -661,7 +661,7 @@ public class AssociationEndCreateTest extends ODataCommon {
     public final void AssociationEndの新規作成時EntityType名に指定可能な文字数の最小値を指定した場合201となること() {
         String assocName = ASSOCIATION_END_NAME;
         String multiplicity = EdmMultiplicity.MANY.getSymbolString();
-        String entityTypeName = "1";
+        String entityTypeName = "a";
         String locationHeader = null;
         String locationHeaderEntityType = null;
 

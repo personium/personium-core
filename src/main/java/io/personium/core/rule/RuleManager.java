@@ -37,8 +37,7 @@ import java.util.stream.Stream;
 
 import javax.ws.rs.core.UriBuilder;
 
-import org.elasticsearch.action.search.SearchPhaseExecutionException;
-import org.elasticsearch.rest.RestStatus;
+import org.apache.http.HttpStatus;
 import org.odata4j.core.NamedValue;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
@@ -506,8 +505,8 @@ public class RuleManager {
             res = esType.search(source);
         } catch (EsClientException ex) {
             if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
-                SearchPhaseExecutionException speex = (SearchPhaseExecutionException) ex.getCause().getCause();
-                if (speex.status().equals(RestStatus.BAD_REQUEST)) {
+                var pspeex = (PersoniumSearchPhaseExecutionException) ex.getCause();
+                if (pspeex.status() == HttpStatus.SC_BAD_REQUEST) {
                     throw PersoniumCoreException.OData.SEARCH_QUERY_INVALID_ERROR.reason(ex);
                 } else {
                     throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);

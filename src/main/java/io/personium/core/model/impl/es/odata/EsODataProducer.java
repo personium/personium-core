@@ -26,9 +26,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.http.HttpStatus;
 import org.core4j.Enumerable;
-import org.elasticsearch.action.search.SearchPhaseExecutionException;
-import org.elasticsearch.rest.RestStatus;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityIds;
@@ -747,8 +746,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             res = esType.search(source);
         } catch (EsClientException ex) {
             if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
-                SearchPhaseExecutionException speex = (SearchPhaseExecutionException) ex.getCause().getCause();
-                if (speex.status().equals(RestStatus.BAD_REQUEST)) {
+                PersoniumSearchPhaseExecutionException pspeex = (PersoniumSearchPhaseExecutionException) ex.getCause();
+                if (pspeex.status() == HttpStatus.SC_BAD_REQUEST) {
                     throw PersoniumCoreException.OData.SEARCH_QUERY_INVALID_ERROR.reason(ex);
                 } else {
                     throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
@@ -2889,8 +2888,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 tmpCount = esType.count(source);
             } catch (EsClientException ex) {
                 if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
-                    SearchPhaseExecutionException speex = (SearchPhaseExecutionException) ex.getCause().getCause();
-                    if (speex.status().equals(RestStatus.BAD_REQUEST)) {
+                    PersoniumSearchPhaseExecutionException pspeex = (PersoniumSearchPhaseExecutionException) ex.getCause();
+                    if (pspeex.status() == HttpStatus.SC_BAD_REQUEST) {
                         throw PersoniumCoreException.OData.SEARCH_QUERY_INVALID_ERROR.reason(ex);
                     } else {
                         throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
