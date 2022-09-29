@@ -67,7 +67,7 @@ public class ODataEntityAccessorTest {
         PowerMockito.mockStatic(InternalEsClient.class);
         InternalEsClient mockClient = PowerMockito.mock(InternalEsClient.class);
         PowerMockito
-            .when(InternalEsClient.getInstance(anyString(), anyInt()))
+            .when(InternalEsClient.getInstance(anyString()))
             .thenReturn(mockClient);
 
         var mockIndex = PowerMockito.mock(EsIndex.class);

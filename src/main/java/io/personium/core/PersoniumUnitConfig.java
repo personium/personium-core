@@ -261,12 +261,8 @@ public class PersoniumUnitConfig {
      * Elastic Search related settings.
      */
     public static final class ES {
-        /** Elasticsearch hostname configuration property key. */
-        public static final String HOST = KEY_ROOT + "es.host";
-
-        /** Elasticsearch port configuration property key. */
-        public static final String PORT = KEY_ROOT + "es.port";
-
+        /** Elasticsearch hosts configuration property key. */
+        public static final String HOSTS = KEY_ROOT + "es.hosts";
 
         /** When using Elastic Search, the prefix setting property key corresponding to the UNIT name used for DB naming used at DB creation.*/
         public static final String UNIT_PREFIX = KEY_ROOT + "es.unitPrefix";
@@ -1176,19 +1172,11 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Gets the setting value of ElasticSearch's host name.
+     * Gets the setting value of ElasticSearch's hosts.
      * @return setting value
      */
-    public static String getEsHost() {
-        return get(ES.HOST);
-    }
-
-    /**
-     * Get elasticsearch port number to connect.
-     * @return setting value
-     */
-    public static int getEsPort() {
-        return Integer.parseInt(get(ES.PORT));
+    public static String getEsHosts() {
+        return get(ES.HOSTS);
     }
 
     /**
