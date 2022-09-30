@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.test.categories.Unit;
 
 /**

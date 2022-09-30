@@ -59,7 +59,7 @@ public class DataSourceAccessorTest {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        esClient = new EsClient(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
+        esClient = new EsClient(PersoniumUnitConfig.getEsHosts());
     }
 
     /**

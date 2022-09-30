@@ -27,7 +27,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.bar.BarFileReadRunner;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.test.categories.Unit;

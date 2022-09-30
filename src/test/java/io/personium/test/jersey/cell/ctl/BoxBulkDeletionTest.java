@@ -17,7 +17,7 @@
 package io.personium.test.jersey.cell.ctl;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONArray;

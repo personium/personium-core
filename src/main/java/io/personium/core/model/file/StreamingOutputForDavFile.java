@@ -72,7 +72,7 @@ public class StreamingOutputForDavFile implements StreamingOutput {
      * @param fileFullPath Full path of the file to be read
      * @param cellId Cell ID
      * @param encryptionType encryption type
-     * @throws BinaryDataNotFoundException Error when file does not exist.
+     * @throws FileDataNotFoundException Error when file does not exist.
      */
     public StreamingOutputForDavFile(String fileFullPath, String cellId, String encryptionType)
             throws FileDataNotFoundException {

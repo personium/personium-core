@@ -17,6 +17,7 @@
 package io.personium.core.snapshot;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -24,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.apache.commons.io.Charsets;
 import org.json.simple.JSONObject;
 
 import io.personium.core.PersoniumCoreException;
@@ -221,10 +221,10 @@ public class SnapshotFileImportProgressInfo {
         // Create error file.
         try {
             if (PersoniumUnitConfig.getFsyncEnabled()) {
-                Files.write(toPath, jsonObject.toJSONString().getBytes(Charsets.UTF_8),
+                Files.write(toPath, jsonObject.toJSONString().getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
             } else {
-                Files.write(toPath, jsonObject.toJSONString().getBytes(Charsets.UTF_8));
+                Files.write(toPath, jsonObject.toJSONString().getBytes(StandardCharsets.UTF_8));
             }
         } catch (IOException e1) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("create error file").reason(e1);

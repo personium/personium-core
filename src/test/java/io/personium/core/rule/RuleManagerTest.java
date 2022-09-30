@@ -21,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -77,7 +76,8 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -116,7 +116,8 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -171,7 +172,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -227,7 +229,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -286,7 +289,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -345,7 +349,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -402,7 +407,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -459,7 +465,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -516,7 +523,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -573,7 +581,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -630,7 +639,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -687,7 +697,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -744,7 +755,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -807,7 +819,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -863,7 +876,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -919,7 +933,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -976,7 +991,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -1033,7 +1049,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
@@ -1090,7 +1107,8 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class,
+            PersoniumEvent.class);
         isMatched.setAccessible(true);
         boolean result = (boolean) isMatched.invoke(rman, ri, event);
 

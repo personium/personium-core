@@ -56,7 +56,6 @@ import io.personium.test.utils.UrlUtils;
 /**
  * account status test for authorization.
  */
-@SuppressWarnings("restriction")
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
 public class AuthzAccountStatusTest extends PersoniumTest {

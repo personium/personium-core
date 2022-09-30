@@ -22,7 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -792,7 +792,7 @@ public class MessageODataProducerTest {
         assertThat(staticFields.containsKey("_Relation.Name"), is(true));
         // Confirm function call
         ArgumentCaptor<EdmEntitySet> captor = ArgumentCaptor.forClass(EdmEntitySet.class);
-        verify(messageODataProducer, times(1)).getNtkpValueMap(captor.capture(), anyObject(), anyObject());
+        verify(messageODataProducer, times(1)).getNtkpValueMap(captor.capture(), any(), any());
         assertThat(captor.getValue(), is(entitySet));
     }
 

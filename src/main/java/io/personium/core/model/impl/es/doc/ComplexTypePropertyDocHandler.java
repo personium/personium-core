@@ -31,7 +31,7 @@ import io.personium.core.odata.OEntityWrapper;
 /**
  * DocHandler of ComplexType property.
  */
-public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements EntitySetDocHandler {
+public class ComplexTypePropertyDocHandler extends PropertyDocHandler {
 
     /**
      * constructor.

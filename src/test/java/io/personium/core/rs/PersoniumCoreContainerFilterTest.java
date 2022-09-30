@@ -17,7 +17,7 @@
  */
 package io.personium.core.rs;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -55,13 +55,13 @@ public class PersoniumCoreContainerFilterTest {
         PersoniumCoreContainerFilter containerFilter = new PersoniumCoreContainerFilter();
         // ContainerRequiestを準備
         PropertiesDelegate mockPD = mock(PropertiesDelegate.class);
-        doNothing().when(mockPD).setProperty(anyString(), anyObject());
+        doNothing().when(mockPD).setProperty(anyString(), any());
         ContainerRequest request = new ContainerRequest(
                 new URI("http://dc1.example.com/hoge"),
                 new URI("http://dc1.example.com/hoge/hoho"),
                 HttpMethod.POST,
                 null,
-                mockPD);
+                mockPD, null);
         MultivaluedMap<String, String> headers = request.getHeaders();
         // メソッドオーバーライド
         headers.add(CommonUtils.HttpHeaders.X_HTTP_METHOD_OVERRIDE, HttpMethod.OPTIONS);

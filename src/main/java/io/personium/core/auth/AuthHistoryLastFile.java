@@ -19,10 +19,10 @@ package io.personium.core.auth;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
-import org.apache.commons.io.Charsets;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -143,7 +143,7 @@ public class AuthHistoryLastFile {
      * load from the file.
      */
     private void doLoad() throws PersoniumCoreException {
-        try (Reader reader = Files.newBufferedReader(file.toPath(), Charsets.UTF_8)) {
+        try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
             JSONParser parser = new JSONParser();
             this.json = (JSONObject) parser.parse(reader);
         } catch (IOException | ParseException e) {
@@ -164,10 +164,10 @@ public class AuthHistoryLastFile {
         String jsonStr = JSONObject.toJSONString(this.getJSON());
         try {
             if (PersoniumUnitConfig.getFsyncEnabled()) {
-                Files.write(this.file.toPath(), jsonStr.getBytes(Charsets.UTF_8),
+                Files.write(this.file.toPath(), jsonStr.getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
             } else {
-                Files.write(this.file.toPath(), jsonStr.getBytes(Charsets.UTF_8));
+                Files.write(this.file.toPath(), jsonStr.getBytes(StandardCharsets.UTF_8));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

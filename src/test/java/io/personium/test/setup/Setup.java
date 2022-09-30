@@ -1315,7 +1315,7 @@ public class Setup extends AbstractCase {
         for (String url : conf.extCellUrl) {
             Http.request("cell/extCell-create.txt").with("cellPath", conf.cellName)
                     .with("token", AbstractCase.MASTER_TOKEN_NAME).with("accept", "application/xml").with("url", url)
-                    .returns();
+                    .returns().statusCode(HttpStatus.SC_CREATED);
         }
     }
 

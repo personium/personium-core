@@ -371,7 +371,7 @@ public class UserDataValidateTest extends ODataCommon {
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
-        body.put("1", "dynamicPropertyValue");
+        body.put("a", "dynamicPropertyValue");
 
         String locationHeader = null;
 
@@ -396,8 +396,9 @@ public class UserDataValidateTest extends ODataCommon {
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
-        body.put("1234567890123456789012345678901234567890123456789012345678901234567890"
-                + "123456789012345678901234567890123456789012345678901234567x", "dynamicPropertyValue");
+        body.put("x"
+                + "1234567890123456789012345678901234567890123456789012345678901234567890"
+                + "123456789012345678901234567890123456789012345678901234567", "dynamicPropertyValue");
 
         String locationHeader = null;
 

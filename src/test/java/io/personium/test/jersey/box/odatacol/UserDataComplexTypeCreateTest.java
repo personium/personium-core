@@ -1271,7 +1271,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             // 最大要素数+1までデータを追加する。
             for (int i = 0; i <= PersoniumUnitConfig.getMaxPropertyCountInEntityType() - 3; i++) {
-                req.addJsonBody(String.valueOf(i), i);
+                req.addJsonBody("prop" + String.valueOf(i), i);
             }
 
             // リクエスト実行
@@ -1321,8 +1321,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             // 最大要素数までデータを追加する。
             for (int i = 0; i <= PersoniumUnitConfig.getMaxPropertyCountInEntityType() - 4; i++) {
-                req.addJsonBody(String.valueOf(i), String.valueOf(i));
-                expected.put(String.valueOf(i), String.valueOf(i));
+                req.addJsonBody("prop" + String.valueOf(i), String.valueOf(i));
+                expected.put("prop" + String.valueOf(i), String.valueOf(i));
             }
 
             // リクエスト実行

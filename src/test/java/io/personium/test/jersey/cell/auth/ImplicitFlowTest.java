@@ -77,7 +77,6 @@ import io.personium.test.utils.UrlUtils;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-@SuppressWarnings("restriction")
 public class ImplicitFlowTest extends PersoniumTest {
 
     private static final String REDIRECT_HTML = "__/redirect.html";
@@ -137,7 +136,8 @@ public class ImplicitFlowTest extends PersoniumTest {
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
         Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         try {
-            ResidentLocalAccessToken aToken = ResidentLocalAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
+            ResidentLocalAccessToken aToken = ResidentLocalAccessToken.parse(
+                    response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                     UrlUtils.cellRoot(Setup.TEST_CELL1));
             assertNotNull("access token parse error.", aToken);
             assertEquals(OAuth2Helper.Scheme.BEARER, response.get(OAuth2Helper.Key.TOKEN_TYPE));
@@ -414,7 +414,8 @@ public class ImplicitFlowTest extends PersoniumTest {
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
         Map<String, String> response = UrlUtils.parseFragment(res.getFirstHeader(HttpHeaders.LOCATION));
         try {
-            ResidentLocalAccessToken aToken = ResidentLocalAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
+            ResidentLocalAccessToken aToken = ResidentLocalAccessToken.parse(
+                    response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                     UrlUtils.cellRoot(Setup.TEST_CELL1));
             assertNotNull("access token parse error.", aToken);
             assertEquals(OAuth2Helper.Scheme.BEARER, response.get(OAuth2Helper.Key.TOKEN_TYPE));

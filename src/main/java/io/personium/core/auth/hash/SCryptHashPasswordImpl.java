@@ -141,7 +141,7 @@ public class SCryptHashPasswordImpl implements HashPassword {
             JSONObject attributes;
             attributes = (JSONObject) parser.parse(attributesStr);
             if (attributes.containsKey(HASH_ATTRIBUTE_KEYLENGTH)) {
-                keyLength = new Integer(attributes.get(HASH_ATTRIBUTE_KEYLENGTH).toString());
+                keyLength = Integer.parseInt(attributes.get(HASH_ATTRIBUTE_KEYLENGTH).toString());
             }
         } catch (Exception e) {
             throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(attributesStr);

@@ -90,7 +90,8 @@ public class TokenUtils {
      * @param statusCode Expected response code
      * @return API response
      */
-    public static TResponse getTokenPasswordPCookie(String cellName, String username, String password, String expiresIn, int statusCode) {
+    public static TResponse getTokenPasswordPCookie(String cellName,
+        String username, String password, String expiresIn, int statusCode) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append("grant_type=").append(OAuth2Helper.GrantType.PASSWORD)
                    .append("&username=").append(username)
@@ -163,7 +164,7 @@ public class TokenUtils {
     }
 
     /**
-     * Exec token introspection API
+     * Exec token introspection API.
      * @param cellName  Target cell name
      * @param token     A token used to auth
      * @param targetToken     A token to be introspect

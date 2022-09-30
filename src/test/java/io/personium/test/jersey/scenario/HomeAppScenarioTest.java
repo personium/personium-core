@@ -23,6 +23,7 @@ import static io.personium.core.utils.PersoniumUrl.SCHEME_LOCALUNIT;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -33,7 +34,6 @@ import java.util.stream.Collectors;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import org.apache.commons.io.Charsets;
 import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -116,13 +116,17 @@ public class HomeAppScenarioTest extends PersoniumTest {
      *  -  access token issued from token endpoint of user cell.
      *  - BoxDiscovery
      *  - GET BoxMetadata
+     * @throws ClientProtocolException .
+     * @throws IOException .
+     * @throws TokenParseException .
      */
     @Test
     public final void ROPCLogin_SetCookie_AppLaunch_FromCookieToGrantCode_BoxDiscovery_BoxMetadata()
             throws ClientProtocolException, IOException, TokenParseException {
         //ROPC at Test Cell1 By Homeapp
         //account2 (linked with role2) can read the box1 (schema = appCellUrl)
-        JsonHttpResponse res = this.callTokenEndpointWithRopcFlow(this.usrCellUrl, "account2", "password2", null, null, null, true);
+        JsonHttpResponse res = this.callTokenEndpointWithRopcFlow(this.usrCellUrl, "account2", "password2",
+            null, null, null, true);
         assertEquals(200, res.statusCode);
 
         //Start OAuth 2.0 process
@@ -136,7 +140,7 @@ public class HomeAppScenarioTest extends PersoniumTest {
         log.info(location);
 
         //   parsing redirect url (location header)
-        List<NameValuePair> queryList = URLEncodedUtils.parse(location, Charsets.UTF_8);
+        List<NameValuePair> queryList = URLEncodedUtils.parse(location, StandardCharsets.UTF_8);
         Map<String, String> queryMap = queryList.stream().collect(
                 Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
         String grantCode = queryMap.get("code");

@@ -26,7 +26,6 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.test.categories.Unit;
 
 /**

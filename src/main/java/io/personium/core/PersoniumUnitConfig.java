@@ -261,11 +261,8 @@ public class PersoniumUnitConfig {
      * Elastic Search related settings.
      */
     public static final class ES {
-        /** Elastic Search host configuration property key.*/
+        /** Elasticsearch hosts configuration property key. */
         public static final String HOSTS = KEY_ROOT + "es.hosts";
-
-        /** Elastic Search Property key for cluster name setting.*/
-        public static final String CLUSTERNAME = KEY_ROOT + "es.cluster.name";
 
         /** When using Elastic Search, the prefix setting property key corresponding to the UNIT name used for DB naming used at DB creation.*/
         public static final String UNIT_PREFIX = KEY_ROOT + "es.unitPrefix";
@@ -1175,19 +1172,11 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Gets the setting value of ElasticSearch's host name.
+     * Gets the setting value of ElasticSearch's hosts.
      * @return setting value
      */
     public static String getEsHosts() {
         return get(ES.HOSTS);
-    }
-
-    /**
-     * Retrieve ElasticSearch's cluster name setting value.
-     * @return setting value
-     */
-    public static String getEsClusterName() {
-        return get(ES.CLUSTERNAME);
     }
 
     /**

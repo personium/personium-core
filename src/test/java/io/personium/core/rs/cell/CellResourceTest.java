@@ -20,7 +20,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -73,7 +73,7 @@ public class CellResourceTest {
         // Mock settings
         doReturn(cell).when(accessContext).getCell();
         PowerMockito.mockStatic(ModelFactory.class);
-        PowerMockito.doReturn(cellCmp).when(ModelFactory.class, "cellCmp", anyObject());
+        PowerMockito.doReturn(cellCmp).when(ModelFactory.class, "cellCmp", any());
         doReturn(true).when(cellCmp).exists();
         PowerMockito.whenNew(CellRsCmp.class).withAnyArguments().thenReturn(cellRsCmp);
         PowerMockito.mockStatic(PersoniumUnitConfig.class);
@@ -219,7 +219,7 @@ public class CellResourceTest {
         doReturn(AccessContext.TYPE_INVALID).when(accessContext).getType();
         doReturn(null).when(cellRsCmp).getAcceptableAuthScheme();
         doThrow(PersoniumCoreAuthzException.EXPIRED_ACCESS_TOKEN).when(
-                accessContext).throwInvalidTokenException(anyObject());
+                accessContext).throwInvalidTokenException(any());
 
         // Expected result
         PersoniumCoreAuthzException expected = PersoniumCoreAuthzException.EXPIRED_ACCESS_TOKEN;

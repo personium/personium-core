@@ -3,7 +3,7 @@
     <groupId>io.personium</groupId>
     <artifactId>personium-core</artifactId>
     <packaging>war</packaging>
-    <version>1.8.0</version>
+    <version>1.8.1-SNAPSHOT</version>
     <name>personium-core Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <licenses>
@@ -29,6 +29,8 @@
         <activemq.version>5.15.9</activemq.version>
         <kafka.version>1.1.1</kafka.version>
         <powermock.version>2.0.9</powermock.version>
+        <checkstyle.version>10.3.3</checkstyle.version>
+        <plugin.checkstyle.version>3.2.0</plugin.checkstyle.version>
     </properties>
     <dependencies>
         <!-- personium-lib.-->
@@ -40,7 +42,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-es-adapter</artifactId>
-            <version>1_es6.8.22_1</version>
+            <version>2_es7.17.6_1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
@@ -531,14 +533,22 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>${plugin.checkstyle.version}</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <configLocation>personium-checkstyle.xml</configLocation>
                     <propertiesLocation>checkstyle_maven.properties</propertiesLocation>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -615,7 +625,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>${plugin.checkstyle.version}</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <configLocation>personium-checkstyle.xml</configLocation>
