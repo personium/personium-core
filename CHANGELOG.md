@@ -3,7 +3,7 @@ IMPROVEMENTS:
 * Supporting elasticsearch 7.17 and rest client ([#672](https://github.com/personium/personium-core/pull/672))
 
 BUG FIXES:
-* PROPFIND Support for __log related resources ([#564](https://github.com/personium/personium-core/issues/564)
+* PROPFIND Support for __log related resources ([#564](https://github.com/personium/personium-core/issues/564))
 * set MAX_RESOURCE_LENGTH 255 ([#664](https://github.com/personium/personium-core/issues/664)
 
 MISC:
