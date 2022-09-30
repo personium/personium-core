@@ -4,7 +4,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * PROPFIND Support for __log related resources ([#564](https://github.com/personium/personium-core/issues/564))
-* set MAX_RESOURCE_LENGTH 255 ([#664](https://github.com/personium/personium-core/issues/664)
+* set MAX_RESOURCE_LENGTH 255 ([#664](https://github.com/personium/personium-core/issues/664))
 
 MISC:
 * Fix warnings.
