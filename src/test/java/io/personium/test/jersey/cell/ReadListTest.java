@@ -166,8 +166,8 @@ public class ReadListTest extends ODataCommon {
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         PersoniumResponse res = request(req);
 
-        // 未対応のAcceptを指定した場合はUnsupportedMediaType
-        assertEquals(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE, res.getStatusCode());
+        // 未対応のAcceptを指定した場合はNotAcceptable
+        assertEquals(HttpStatus.SC_NOT_ACCEPTABLE, res.getStatusCode());
     }
 
     /**
