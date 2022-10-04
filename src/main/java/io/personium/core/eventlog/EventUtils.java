@@ -60,7 +60,6 @@ public class EventUtils {
         logDir.append(File.separator);
         logDir.append(getSubDirectoryName(cellId));
         logDir.append(cellId);
-        logDir.append(File.separator);
 
         return logDir;
     }
@@ -100,7 +99,7 @@ public class EventUtils {
     }
 
     private static List<String> getLogFileList(String cellId, String owner) {
-        String logDir = EventUtils.getEventLogDir(cellId, owner).toString();
+        String logDir = EventUtils.getEventLogDir(cellId, owner).append(File.separator).toString();
         List<String> logFiles = new ArrayList<String>();
 
         //Acquire current log list
