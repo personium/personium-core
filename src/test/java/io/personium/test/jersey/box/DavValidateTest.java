@@ -41,7 +41,7 @@ import io.personium.test.utils.Http;
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class DavValidateTest extends PersoniumTest {
-    ArrayList<String> validNames;
+    ArrayList<String> invalidNames;
     private static final String CELL_NAME = "testcell1";
     private static final String FILE_BODY = "testFileBody";
 
@@ -50,18 +50,18 @@ public class DavValidateTest extends PersoniumTest {
      */
     public DavValidateTest() {
         super(new PersoniumCoreApplication());
-        validNames = new ArrayList<String>();
-        //validNames.add("a%5c"); // %5C は リクエストを投げる事ができなかったため、手動でのみ確認
-        validNames.add("a%20");
-        validNames.add("a%2F");
-        validNames.add("a%3A");
-        validNames.add("a%2A");
-        validNames.add("a%3F");
-        validNames.add("a%22");
-        validNames.add("a%3C");
-        validNames.add("a%3E");
-        validNames.add("a%7C");
-        validNames.add(StringUtils.repeat("1234567890", 25) + "123456"); // 256
+        invalidNames = new ArrayList<String>();
+        invalidNames.add("a%5c");
+        invalidNames.add("a%20");
+        invalidNames.add("a%2F");
+        invalidNames.add("a%3A");
+        invalidNames.add("a%2A");
+        invalidNames.add("a%3F");
+        invalidNames.add("a%22");
+        invalidNames.add("a%3C");
+        invalidNames.add("a%3E");
+        invalidNames.add("a%7C");
+        invalidNames.add(StringUtils.repeat("12345678", 32)); // 256
     }
 
     /**
@@ -69,9 +69,7 @@ public class DavValidateTest extends PersoniumTest {
      */
     @Test
     public final void ファイル名のバリデートチェック() {
-        String name;
-        for (int i = 0; i < validNames.size(); i++) {
-            name = validNames.get(i);
+        for (var name : invalidNames) {
             final Http theReq = this.putFileRequest(name, FILE_BODY, null, Setup.TEST_BOX1);
             theReq.returns().statusCode(HttpStatus.SC_FORBIDDEN);
         }
@@ -82,9 +80,7 @@ public class DavValidateTest extends PersoniumTest {
      */
     @Test
     public final void コレクション名のバリデートチェック() {
-        String name;
-        for (int i = 0; i < validNames.size(); i++) {
-            name = validNames.get(i);
+        for (var name : invalidNames) {
             final Http theReq = this.mkColRequest(name);
             theReq.returns().statusCode(HttpStatus.SC_FORBIDDEN);
         }
