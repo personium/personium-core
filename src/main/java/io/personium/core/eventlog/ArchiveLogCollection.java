@@ -72,6 +72,7 @@ public class ArchiveLogCollection implements LogCollection {
         this.url = collectionUrl;
 
         StringBuilder archiveDirName = EventUtils.getEventLogDir(cell.getId(), cell.getOwnerNormalized())
+                .append(File.separator)
                 .append("archive");
         this.directoryPath = archiveDirName.toString();
     }
