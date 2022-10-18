@@ -21,23 +21,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpClient.Version;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,7 +53,6 @@ import io.personium.common.utils.CommonUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.rs.PersoniumCoreApplication;
-import io.personium.core.utils.HttpClientFactory;
 import io.personium.core.utils.PersoniumUrl;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
@@ -99,7 +100,7 @@ public class MyPasswordTest extends PersoniumTest {
 
     /**
      * When accessed with residential Access Token with sufficient scope, then return 204.
-     * @throws TokenParseException
+     * @throws TokenParseException .
      */
     @Test
     public final void When_ResidentialAccessTokenWithSufficientScope_Then_Return_204() throws TokenParseException {
@@ -110,9 +111,7 @@ public class MyPasswordTest extends PersoniumTest {
             // Account作成
             AccountUtils.create(MASTER_TOKEN, Setup.TEST_CELL1, accountName, accountPw, 201);
             // 認証
-            HttpResponse httpRes = this.httpReqROPC(this.cellUrl, accountName, accountPw, null, null, null, null);
-            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), StandardCharsets.UTF_8));
-
+            JSONObject resBody = this.httpReqROPC(accountName, accountPw, null, null, null, null);
             // セルローカルトークンを取得する
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
@@ -135,6 +134,7 @@ public class MyPasswordTest extends PersoniumTest {
             assertEquals(204, res.getStatusCode());
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, accountName, 204);
         }
@@ -142,7 +142,7 @@ public class MyPasswordTest extends PersoniumTest {
 
     /**
      * When Access Token_Has Insufficient Scope Then Return_403.
-     * @throws TokenParseException
+     * @throws TokenParseException .
      */
     @Test
     public final void When_ResidentialAccessToken_HasInsufficientScope_Then_Return_403() throws TokenParseException {
@@ -154,8 +154,7 @@ public class MyPasswordTest extends PersoniumTest {
             AccountUtils.create(MASTER_TOKEN, Setup.TEST_CELL1, accountName, accountPw, 201);
 
             // 認証
-            HttpResponse httpRes = this.httpReqROPC(this.cellUrl, accountName, accountPw, null, "messsage", null, null);
-            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), StandardCharsets.UTF_8));
+            JSONObject resBody = this.httpReqROPC(accountName, accountPw, null, "messsage", null, null);
             // セルローカルトークンを取得する
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
             // 確認
@@ -164,6 +163,7 @@ public class MyPasswordTest extends PersoniumTest {
             assertEquals(403, res.getStatusCode());
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, accountName, 204);
         }
@@ -184,8 +184,7 @@ public class MyPasswordTest extends PersoniumTest {
             // Authenticate
 //            JSONObject resBody = ResourceUtils.getLocalTokenByPassAuth(Setup.TEST_CELL1,
 //                    account, account, -1);
-            HttpResponse httpRes = this.httpReqROPC(this.cellUrl, account, account, null, null, null, null);
-            JSONObject resBody = (JSONObject) (new JSONParser()).parse(new InputStreamReader(httpRes.getEntity().getContent(), StandardCharsets.UTF_8));
+            JSONObject resBody = this.httpReqROPC(account, account, null, null, null, null);
             System.out.println(resBody.toJSONString());
 
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
@@ -203,6 +202,7 @@ public class MyPasswordTest extends PersoniumTest {
             assertTrue(tokenStr.startsWith(ResidentLocalAccessToken.PREFIX_ACCESS));
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN, account, -1);
         }
@@ -492,6 +492,7 @@ public class MyPasswordTest extends PersoniumTest {
                     requestheaders);
         } catch (PersoniumException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
         assertEquals(400, res.getStatusCode());
     }
@@ -525,42 +526,48 @@ public class MyPasswordTest extends PersoniumTest {
                     requestheaders);
         } catch (PersoniumException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return res;
     }
 
-    private HttpResponse httpReqROPC(String cellUrl, String username, String password, String pTarget, String scope,
-            String clientId, String clientSecret) throws ClientProtocolException, IOException {
-        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_DEFAULT);
+    private JSONObject httpReqROPC(String username,
+            String password,
+            String pTarget,
+            String scope,
+            String clientId,
+            String clientSecret) throws IOException, InterruptedException, ParseException, ExecutionException {
 
-        String tokenEndpoint = cellUrl + "__token";
-        HttpPost post = new HttpPost(tokenEndpoint);
+        var client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("grant_type=password&username=");
-        sb.append(username);
-        sb.append("&password=");
-        sb.append(password);
+        URI tokenEndpoint = URI.create(this.cellUrl + "__token");
+        var params = new HashMap<String, String>();
+        params.put("grant_type", "password");
+        params.put("username", username);
+        params.put("password", password);
         if (pTarget != null) {
-            sb.append("&p_target=");
-            sb.append(pTarget);
+            params.put("p_target", pTarget);
         }
         if (scope != null) {
-            sb.append("&scope=");
-            sb.append(scope);
+            params.put("scope", scope);
         }
         if (clientId != null) {
-            sb.append("&client_id=");
-            sb.append(clientId);
-            sb.append("&client_secret=");
-            sb.append(clientSecret);
+            params.put("client_id", clientId);
+            params.put("client_secret", clientSecret);
         }
+        String formParams = params.entrySet()
+            .stream()
+            .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+            .collect(Collectors.joining("&"));
 
-        post.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
-        post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+        var request = HttpRequest.newBuilder(tokenEndpoint)
+                .header(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType())
+                .header(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType())
+                .POST(HttpRequest.BodyPublishers.ofString(formParams))
+                .build();
 
-        HttpEntity reqEntity = new StringEntity(sb.toString());
-        post.setEntity(reqEntity);
-        return client.execute(post);
+        HttpResponse<?> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
+
+        return (JSONObject) (new JSONParser()).parse(response.body().toString());
     }
 }
