@@ -65,6 +65,35 @@ jobs:
     - name: Delete Temporary Release Note
       run: rm ${{ github.workflow }}_CHANGELOG.md
 
-    - name: Update versions on develop branch
+    # Preparing next version
+    - name: Prepare develop branch
       run: |
-        bash ./.github/workflows/scripts/update-version.sh
+        git checkout develop
+        git rebase master
+
+    - name: Set next -SNAPSHOT version, and get next version string.
+      run: |
+        NEXT_VERSION=$(echo "$RELEASE_VERSION" | awk -F . '{print $1"."$2"."$3+1}')
+        NEXT_SNAPSHOT_VERSION="$NEXT_VERSION-SNAPSHOT"
+        mvn -B versions:set -DnewVersion=$NEXT_SNAPSHOT_VERSION && mvn -B versions:commit
+        echo "NEXT_SNAPSHOT_VERSION=$NEXT_SNAPSHOT_VERSION" >> $GITHUB_ENV
+        echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+    
+    - name: Update version in properties
+      if: ${{ env.COMPONENT == 'personium-core' || env.COMPONENT == 'personium-engine'}}
+      run: |
+        sed -i "s|^\(io\.personium\.core\.version=\).*|\1${NEXT_VERSION}|" src/main/resources/personium-unit-config-default.properties
+
+    - name: Create pull request for next release
+      uses: peter-evans/create-pull-request@v4
+      with:
+        base: master
+        branch: develop
+        token: ${{ secrets.PERSONIUM_GITHUB_TOKEN }}
+        title: 'Release v${{ env.NEXT_VERSION }}'
+        commit-message: "Update to v${{ env.NEXT_SNAPSHOT_VERSION }}"
+        committer: "Personium Bot <personium.io@gmail.com>"
+        author: "Personium Bot <personium.io@gmail.com>"
+        add-paths: |
+          pom.xml
+          src/main/resources/**/*.properties
