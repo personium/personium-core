@@ -1,3 +1,14 @@
+## 1.8.2
+IMPROVEMENTS:
+* Update release workflow ([#681](https://github.com/personium/personium-core/pull/681))
+
+BUG FIXES:
+* Replace Exception 415 with 406 ([#675](https://github.com/personium/personium-core/pull/675))
+* Fix core version in properties ([#680](https://github.com/personium/personium-core/pull/680))
+
+MISC:
+* Update log settings and tests
+
 ## 1.8.1
 IMPROVEMENTS:
 * Supporting elasticsearch 7.17 and rest client ([#672](https://github.com/personium/personium-core/pull/672))
