@@ -1,13 +1,20 @@
 ## 1.8.2
+
+> **Warning**  
+> This release contains breaking changes.
+
 IMPROVEMENTS:
-* Update release workflow ([#681](https://github.com/personium/personium-core/pull/681))
+* Unify scattered log settings into personium-unit-config. ([#677](https://github.com/personium/personium-core/pull/677))
+  * If you upgrade personium-core from v1.8.1 or under, replace `/personium_nfs/personium-core/eventlog/${eventlog_path}` with `${eventlog_path}` in logback configuration file.
+    1. If you use Ansible to deploy Personium the logback.xml can found in this location: `/opt/logback/logback.xml` in AP server.
+    2. Otherwise, you can find in locations specified in classpath.
 
 BUG FIXES:
 * Replace Exception 415 with 406 ([#675](https://github.com/personium/personium-core/pull/675))
 * Fix core version in properties ([#680](https://github.com/personium/personium-core/pull/680))
 
 MISC:
-* Update log settings and tests
+* Update release workflow ([#681](https://github.com/personium/personium-core/pull/681))
 
 ## 1.8.1
 IMPROVEMENTS:
