@@ -121,7 +121,7 @@ public class NullResource {
 
         // If resource name is invalid, then return an error.
         if (!DavCommon.isValidResourceName(this.davRsCmp.getDavCmp().getName())) {
-            throw PersoniumCoreException.Dav.RESOURCE_NAME_INVALID;
+            throw PersoniumCoreException.Dav.RESOURCE_NAME_INVALID.params(this.davRsCmp.getDavCmp().getName());
         }
 
         //If there is no intermediate path, then return 409 error
@@ -209,7 +209,7 @@ public class NullResource {
 
         // If resource name is invalid, then return an error.
         if (!DavCommon.isValidResourceName(this.davRsCmp.getDavCmp().getName())) {
-            throw PersoniumCoreException.Dav.RESOURCE_NAME_INVALID;
+            throw PersoniumCoreException.Dav.RESOURCE_NAME_INVALID.params(this.davRsCmp.getDavCmp().getName());
         }
 
         // All checks passed, so now tyring to create a collection.

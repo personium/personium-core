@@ -298,6 +298,10 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException NOT_SUCH_NAVPROP = create("PR404-OD-0003");
         /**
+         * The MimeTypes in Accept header are not acceptable.
+         */
+        public static final PersoniumCoreException NOT_ACCEPTABLE = create("PR406-OD-0001");
+        /**
          * Operation on the entity where the relevant data resides.
          */
         public static final PersoniumCoreException CONFLICT_HAS_RELATED = create("PR409-OD-0001");

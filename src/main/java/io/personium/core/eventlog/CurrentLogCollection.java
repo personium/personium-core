@@ -60,6 +60,7 @@ public class CurrentLogCollection implements LogCollection {
         this.url = collectionUrl;
 
         StringBuilder dirName = EventUtils.getEventLogDir(cell.getId(), cell.getOwnerNormalized())
+                .append(File.separator)
                 .append(CURRENT_COLLECTION);
         this.directoryPath = dirName.toString();
     }

@@ -940,10 +940,10 @@ public class ReadTest extends AbstractCase {
     }
 
     /**
-     * Acceptにimage/jpegを指定してCell取得した場合にUnsupportedMediaTypeとなること.
+     * Acceptにimage/jpegを指定してCell取得した場合にNotAcceptableとなること.
      */
     @Test
-    public final void acceptがjpegでCell取得した場合にUnsupportedMediaTypeとなること() {
+    public final void acceptがjpegでCell取得した場合にNotAcceptableとなること() {
         String url = getUrl(this.cellId);
         // $format なし
         // Acceptヘッダ image/jpeg
@@ -953,7 +953,7 @@ public class ReadTest extends AbstractCase {
         this.setHeaders(headers);
 
         PersoniumResponse res = restGet(url);
-        assertEquals(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE, res.getStatusCode());
+        assertEquals(HttpStatus.SC_NOT_ACCEPTABLE, res.getStatusCode());
     }
 
     /**

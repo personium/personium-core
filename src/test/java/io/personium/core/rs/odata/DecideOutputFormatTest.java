@@ -161,17 +161,17 @@ public class DecideOutputFormatTest {
     }
 
     /**
-     * format指定なしでacceptに未サポートの値を指定した場合415エラーが返却されること.
+     * format指定なしでacceptに未サポートの値を指定した場合406エラーが返却されること.
      */
     @Test
-    public final void format指定なしでacceptに未サポートの値を指定した場合415エラーが返却されること() {
+    public final void format指定なしでacceptに未サポートの値を指定した場合406エラーが返却されること() {
         ODataEntityResource odataEntityResource = new ODataEntityResource();
 
         try {
             odataEntityResource.decideOutputFormat("INVALID_VALUE", null);
             fail();
         } catch (PersoniumCoreException e) {
-            assertEquals("PR415-OD-0001", e.getCode());
+            assertEquals("PR406-OD-0001", e.getCode());
         } catch (Exception e) {
             fail();
         }
@@ -202,7 +202,7 @@ public class DecideOutputFormatTest {
     }
 
     /**
-     * format指定なしでacceptにxmlと未サポートの値を指定した場合415エラーが返却されること.
+     * format指定なしでacceptにxmlと未サポートの値を指定した場合xmlが返却されること.
      */
     @Test
     public final void format指定なしでacceptにxmlと未サポートの値を指定した場合xmlが返却されること() {

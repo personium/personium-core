@@ -203,7 +203,7 @@ public abstract class AbstractODataResource {
         } else if (Stream.of(types).anyMatch(this::isAcceptWildcard)) {
             return MediaType.APPLICATION_ATOM_XML_TYPE;
         } else {
-            throw PersoniumCoreException.OData.UNSUPPORTED_MEDIA_TYPE.params(acceptHeaderValue);
+            throw PersoniumCoreException.OData.NOT_ACCEPTABLE.params(acceptHeaderValue);
         }
     }
 
