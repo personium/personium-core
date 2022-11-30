@@ -1,3 +1,15 @@
+## 1.8.3
+
+> **Warning**  
+> This release contains breaking changes.
+
+IMPROVEMENTS:
+* Change the hash algorithm of signing XML signature from SHA-1 to SHA-256. ([#687](https://github.com/personium/personium-core/pull/687))
+  * From this version on, tokens issued by the Unit are not compatible with Unit in prior version. For details, refer to [personium-lib-common#117](https://github.com/personium/personium-lib-common/pull/117).
+
+MISC:
+* Implement unit tests of TokenIntrospectEndpointResource. ([#686](https://github.com/personium/personium-core/pull/686))
+
 ## 1.8.2
 
 > **Warning**  

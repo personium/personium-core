@@ -96,4 +96,4 @@ jobs:
         author: "Personium Bot <personium.io@gmail.com>"
         add-paths: |
           pom.xml
-          src/main/resources/**/*.properties
+          src/main/**/*.properties
