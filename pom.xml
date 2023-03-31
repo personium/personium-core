@@ -22,7 +22,7 @@
         <logback.version>1.2.11</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
         <httpclient.version>4.5.13</httpclient.version>
-        <jackson.version>2.13.3</jackson.version>
+        <jackson.version>2.13.4.2</jackson.version>
         <surefire.version>2.22.2</surefire.version>
         <jacoco.version>0.8.7</jacoco.version>
         <jacoco.include.package>io.personium.*</jacoco.include.package>
